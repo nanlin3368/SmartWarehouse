@@ -1,0 +1,16 @@
+[
+    {
+        "title": "视频大师",
+        "icon": "视频大师_icon.webp",
+        "url": "https://www.shipindashi.cn",
+        "description": "全能型免费在线视频工具箱，涵盖压缩、转换、去水印、提取音频等高频功能，支持视频倒放与特效制作，让视频编辑触手可及",
+        "category": "媒体创作"
+    },
+    {
+        "title": "文本转语音",
+        "icon": "文本转语音_icon.webp",
+        "url": "https://text2voice.cc",
+        "description": "免费、高品质的在线 TTS 服务，内置微软 Neural TTS 技术，支持多种语音风格与多语言合成，是自媒体配音与文档朗读的生产力神器",
+        "category": "媒体创作"
+    }
+]

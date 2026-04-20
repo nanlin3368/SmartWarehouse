@@ -1,0 +1,79 @@
+[
+    {
+        "title": "LocallyTools",
+        "icon": "LocallyTools_icon.webp",
+        "url": "https://locallytools.com/zh-Hans",
+        "description": "安全、隐私、可离线的本地工具集，支持图片压缩、格式转换及开发者工具，所有操作均在浏览器本地完成，数据零上传",
+        "category": "综合效率"
+    },
+    {
+        "title": "FastDo",
+        "icon": "FastDo_icon.webp",
+        "url": "https://fastdo.tools/",
+        "description": "极简主义的高性能在线工具集，支持 200+ 实用工具且完全本地处理，确保文件隐私安全，无需上传即可极速转换",
+        "category": "综合效率"
+    },
+    {
+        "title": "IT-Tools",
+        "icon": "IT-Tools_icon.webp",
+        "url": "https://it-tools.tech",
+        "description": "一站式开发者利器，涵盖了 Token 生成、格式转换、加密解密、网络工具及代码处理等上百种功能，是技术人必备的高性能在线工具",
+        "category": "综合效率"
+    },
+    {
+        "title": "ToolDuck",
+        "icon": "ToolDuck_icon.webp",
+        "url": "https://toolduck.cn",
+        "description": "高颜值极简在线工具箱，涵盖文本处理、图像转换、开发助手等百余项功能，主打清爽无广告，随开随用",
+        "category": "综合效率"
+    },
+    {
+        "title": "一个木函",
+        "icon": "一个木函_icon.webp",
+        "url": "https://ol.woobx.cn",
+        "description": "多功能在线效率工具，基本满足您在数码生活中的所有需求",
+        "category": "综合效率"
+    },
+    {
+        "title": "帮小忙",
+        "icon": "帮小忙_icon.webp",
+        "url": "https://tool.browser.qq.com",
+        "description": "集成视频去水印、PDF转换等数百种工具",
+        "category": "综合效率"
+    },
+    {
+        "title": "奇妙工具箱",
+        "icon": "奇妙工具箱_icon.webp",
+        "url": "https://www.magicalbox.cn",
+        "description": "提供视频压缩、音频转换、图片处理等100+免费在线工具",
+        "category": "综合效率"
+    },
+    {
+        "title": "Mikutools",
+        "icon": "Mikutools_icon.webp",
+        "url": "https://okmiku.com",
+        "description": "极客范十足的轻量化工具库，集视频解析、加密解密及多种实用功能于一体，简洁且强大",
+        "category": "综合效率"
+    },
+    {
+        "title": "123Apps",
+        "icon": "123Apps_icon.webp",
+        "url": "https://123apps.com/cn/",
+        "description": "极简的一站式在线办公工具集，涵盖视频剪辑、音频处理、PDF 编辑及多格式转换",
+        "category": "综合效率"
+    },
+    {
+        "title": "Tools-Web",
+        "icon": "Tools-Web_icon.webp",
+        "url": "https://tools.ranblogs.com",
+        "description": "极简且功能丰富的在线工具箱，涵盖开发运维、文本处理、教育学术、图片处理及数据图表等 7 大分类，主打“轻量、快速、无广告”",
+        "category": "综合效率"
+    },
+    {
+        "title": "Next BConvert",
+        "icon": "Next_BConvert_icon.webp",
+        "url": "https://nextbconvert.com/zh",
+        "description": "浏览器本地文件处理专家，支持视频转码、图片批处理、BT 磁力互转及 AI 语音转文字，纯本地运行，为您提供极致的隐私安全与处理性能",
+        "category": "综合效率"
+    }
+]

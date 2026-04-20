@@ -1,0 +1,16 @@
+[
+    {
+        "title": "菜鸟教程",
+        "icon": "菜鸟教程_icon.webp",
+        "url": "https://www.runoob.com",
+        "description": "国内领先的编程技术学习平台，涵盖全栈开发教程与实例，内置在线编辑器，让编程学习化繁为简、即学即用",
+        "category": "学习成长"
+    },
+    {
+        "title": "wikiHow",
+        "icon": "wikiHow_icon.webp",
+        "url": "https://zh.wikihow.com",
+        "description": "生活百科与技能学习的万能指南，提供数以万计图文并茂的实用教程，涵盖生活百科、职场技能与数码技术，助您掌握任何技能",
+        "category": "学习成长"
+    }
+]

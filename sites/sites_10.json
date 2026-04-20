@@ -1,0 +1,51 @@
+[
+    {
+        "title": "爱PPT",
+        "icon": "爱PPT_icon.webp",
+        "url": "https://www.2ppt.com",
+        "description": "领先的 AI 演示文稿生成平台，支持一键从标题生成高质量 PPT 方案，内置十万级专业模板库，大幅提升办公效率",
+        "category": "文档办公"
+    },
+    {
+        "title": "简历模板资源网",
+        "icon": "简历模板资源网_icon.webp",
+        "url": "https://www.jianlimoban-ziyuan.com",
+        "description": "收录了大量 Word 可编辑的免费模板",
+        "category": "文档办公"
+    },
+    {
+        "title": "QwikPDF",
+        "icon": "QwikPDF_icon.webp",
+        "url": "https://qwikpdf.com/",
+        "description": "极简高效的在线 PDF 处理工具，提供流畅的文档合并、压缩与转换体验，无需下载即可即时办公",
+        "category": "文档办公"
+    },
+    {
+        "title": "iLovePDF",
+        "icon": "iLovePDF_icon.webp",
+        "url": "https://www.ilovepdf.com/zh-cn",
+        "description": "完全免费的在线 PDF 文件处理平台",
+        "category": "文档办公"
+    },
+    {
+        "title": "PDF24",
+        "icon": "PDF24_icon.webp",
+        "url": "https://tools.pdf24.org/zh/all-tools",
+        "description": "合并、压缩、创建、编辑和转换 PDF 文件的免费在线 PDF 工具",
+        "category": "文档办公"
+    },
+    {
+        "title": "FileUNZIP",
+        "icon": "FileUNZIP_icon.webp",
+        "url": "https://cn.fileunzip.com",
+        "description": "专注于在线压缩与解压工具，支持 ZIP、RAR、7Z 等多种格式",
+        "category": "文档办公"
+    },
+    {
+        "title": "TinyWow",
+        "icon": "TinyWow_icon.webp",
+        "url": "https://tinywow.com",
+        "description": "全能型在线工具箱，提供超过 200 种免费的 PDF、视频及图像处理功能，无需注册即可即时使用",
+        "category": "文档办公"
+    }
+]

@@ -1,0 +1,51 @@
+[
+    {
+        "title": "AppTeka",
+        "icon": "AppTeka_icon.webp",
+        "url": "https://appteka.store/apps",
+        "description": "安卓端免费、无广告的第三方应用下载站",
+        "category": "资源下载"
+    },
+    {
+        "title": "FMHY",
+        "icon": "FMHY_icon.webp",
+        "url": "https://fmhy.net",
+        "description": "互联网上最大的开源资源导航库之一",
+        "category": "资源下载"
+    },
+    {
+        "title": "软仓",
+        "icon": "软仓_icon.webp",
+        "url": "https://www.ruancang.net",
+        "description": "集合大型专业软件下载的免费纯公益聚合平台",
+        "category": "资源下载"
+    },
+    {
+        "title": "奇迹秀",
+        "icon": "奇迹秀_icon.webp",
+        "url": "https://www.qijishow.com",
+        "description": "集成设计素材、软件插件、灵感导航及高效办公工具",
+        "category": "资源下载"
+    },
+    {
+        "title": "鹿鸣",
+        "icon": "鹿鸣_icon.webp",
+        "url": "https://www.lumingrj.com",
+        "description": "提供 Mac+Win 软件安装包下载及安装教程",
+        "category": "资源下载"
+    },
+    {
+        "title": "考拉资源库",
+        "icon": "考拉资源库_icon.webp",
+        "url": "https://www.kaolarj.com",
+        "description": "专注分享日常工作生活办公技术资源",
+        "category": "资源下载"
+    },
+    {
+        "title": "Sfile Mobi",
+        "icon": "Sfile_Mobi_icon.webp",
+        "url": "https://sfile.mobi",
+        "description": "极简高效的云端存储与分享平台，主打极简交互与无限制高速下载",
+        "category": "资源下载"
+    }
+]

@@ -1,0 +1,58 @@
+[
+    {
+        "title": "视觉族",
+        "icon": "视觉族_icon.webp",
+        "url": "https://www.shijuezu.com/",
+        "description": "专业级在线屏幕检测平台，提供坏点检测、漏光测试、色彩校准、刷新率验证等 20+ 项全方位检测工具，无需安装，一键评估显示器素质",
+        "category": "网络工具"
+    },
+    {
+        "title": "文件快传-P2P文件传输工具",
+        "icon": "文件快传_icon.webp",
+        "url": "https://transfer.52python.cn",
+        "description": "极简风格的在线文件投递箱，支持跨设备口令取件，无需注册、即传即取，是临时分享文件与跨端传输的效率神器",
+        "category": "网络工具"
+    },
+    {
+        "title": "Temp Number",
+        "icon": "Temp_Number_icon.webp",
+        "url": "https://temp-number.org/zh",
+        "description": "提供临时虚拟电话号码的在线服务平台",
+        "category": "网络工具"
+    },
+    {
+        "title": "TemporaryMail",
+        "icon": "TemporaryMail_icon.webp",
+        "url": "https://temporarymail.com/zh",
+        "description": "无需注册、即开即用的临时电子邮件服务",
+        "category": "网络工具"
+    },
+    {
+        "title": "聚合图床",
+        "icon": "聚合图床_icon.webp",
+        "url": "https://www.superbed.cn",
+        "description": "专业的图片托管与外链服务平台",
+        "category": "图像视听"
+    },
+    {
+        "title": "搜图神器",
+        "icon": "搜图神器_icon.webp",
+        "url": "https://soutushenqi.com/home",
+        "description": "以图搜图引擎，一键搜索所有图片资源",
+        "category": "聚合搜索"
+    },
+    {
+        "title": "枫叶音乐盒",
+        "icon": "枫叶音乐盒_icon.webp",
+        "url": "https://mu-jie.cc/musicBox/#",
+        "description": "在线音乐播放器，点开就能听音乐，随时随地享受音乐",
+        "category": "网络工具"
+    },
+    {
+        "title": "泡椒音乐",
+        "icon": "泡椒音乐_icon.webp",
+        "url": "https://pjmp3.de",
+        "description": "在线音乐搜索，可以在线免费下载全网MP3付费歌曲、流行音乐、经典老歌等",
+        "category": "网络工具"
+    }
+]

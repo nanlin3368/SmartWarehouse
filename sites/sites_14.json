@@ -1,0 +1,51 @@
+[
+    {
+        "title": "SnapWC",
+        "icon": "SnapWC_icon.webp",
+        "url": "https://snapwc.com/zh",
+        "description": "覆盖万余站点的免费在线媒体下载器，一键解析全球主流社交平台的视频、音频与图像，纯净高效且无需安装插件",
+        "category": "视频提取"
+    },
+    {
+        "title": "GreenVideo",
+        "icon": "GreenVideo_icon.webp",
+        "url": "https://greenvideo.cc",
+        "description": "免费、稳定且高速的视频解析下载平台，支持全球 1000+ 海量视频平台的内容提取，包括视频、音频及图片素材，并无次数限制使用",
+        "category": "视频提取"
+    },
+    {
+        "title": "AnyToCopy",
+        "icon": "AnyToCopy_icon.webp",
+        "url": "https://www.anytocopy.com",
+        "description": "一键提取视频文案、视频转音频MP3、视频去水印、图片去水印、Live去水印，支持抖音、小红书等50+平台，AI智能识别，批量下载，免费使用",
+        "category": "视频提取"
+    },
+    {
+        "title": "观云",
+        "icon": "观云_icon.webp",
+        "url": "https://snapvee.com/zh",
+        "description": "极简主义的万能视频提取工具，支持全球 50+ 热门平台高清无水印解析，一键抓取灵感素材",
+        "category": "视频提取"
+    },
+    {
+        "title": "YT1s",
+        "icon": "YT1s_icon.webp",
+        "url": "https://yt1s.media/zh-cn/",
+        "description": "顶级的 YouTube 视频下载与转换工具，支持最高 4K 画质解析及高码率音频提取，无需安装任何软件即可在所有设备上使用",
+        "category": "视频提取"
+    },
+    {
+        "title": "社交媒体下载器",
+        "icon": "社交媒体下载器_icon.webp",
+        "url": "https://downloader.bhwa233.com/zh",
+        "description": "永久免费、无需注册登录的在线多媒体提取平台，支持 B 站、抖音、小红书及海外主流平台的内容解析，支持视频、音频及图文一键获取",
+        "category": "视频提取"
+    },
+    {
+        "title": "Cobalt",
+        "icon": "Cobalt_icon.webp",
+        "url": "https://cobalt.tools",
+        "description": "极致简约的多媒体下载器，支持从 YouTube、TikTok、Instagram、X (Twitter)、Bilibili 等数十个主流平台提取视频和音频",
+        "category": "视频提取"
+    }
+]

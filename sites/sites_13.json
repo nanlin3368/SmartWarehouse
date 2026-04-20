@@ -1,0 +1,23 @@
+[
+    {
+        "title": "夸盘资源网",
+        "icon": "夸盘资源网_icon.webp",
+        "url": "https://ppat.top/hlg",
+        "description": "聚合多源的万能网盘影视搜索神器，能快速找到电影、电视剧、动漫及短剧的可用链接，同时提供实时的热门搜视榜，是找寻稀缺影视资源的捷径",
+        "category": "聚合搜索"
+    },
+    {
+        "title": "网盘资源搜索",
+        "icon": "网盘资源搜索_icon.webp",
+        "url": "https://wpzyss.top",
+        "description": "快速查找百度网盘、夸克网盘、迅雷网盘等平台的分享资源",
+        "category": "聚合搜索"
+    },
+    {
+        "title": "海搜",
+        "icon": "海搜_icon.webp",
+        "url": "https://haisou.cc",
+        "description": "多网盘资源搜索引擎，支持搜索百度网盘、阿里云盘、夸克、迅雷、天翼等主流云盘的内容",
+        "category": "聚合搜索"
+    }
+]

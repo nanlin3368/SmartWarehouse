@@ -1,0 +1,51 @@
+[
+    {
+        "title": "ChatGPT",
+        "icon": "ChatGPT_icon.webp",
+        "url": "https://chatgpt.com",
+        "description": "全球领先的对话式人工智能，支持创意写作、代码编写及复杂问题解决",
+        "category": "人工智能"
+    },
+    {
+        "title": "Claude",
+        "icon": "Claude_icon.webp",
+        "url": "https://claude.ai",
+        "description": "高质量、逻辑严密的 AI 助手，以长文本处理和代码逻辑见长",
+        "category": "人工智能"
+    },
+    {
+        "title": "Gemini",
+        "icon": "Gemini_icon.webp",
+        "url": "https://gemini.google.com",
+        "description": "谷歌推出的多模态 AI，深度集成谷歌生态，支持处理文字、图像和音频",
+        "category": "人工智能"
+    },
+    {
+        "title": "Grok",
+        "icon": "Grok_icon.webp",
+        "url": "https://grok.com",
+        "description": "实时连接全球资讯的硬核 AI，主打真实、犀利且无限制的对话体验",
+        "category": "人工智能"
+    },
+    {
+        "title": "Copilot",
+        "icon": "Copilot_icon.webp",
+        "url": "https://copilot.microsoft.com",
+        "description": "深度集成微软生态的智能助手，全能型的创作与搜索增强工具",
+        "category": "人工智能"
+    },
+    {
+        "title": "Midjourney",
+        "icon": "Midjourney_icon.webp",
+        "url": "https://www.midjourney.com",
+        "description": "艺术级 AI 图像生成工具，将文字指令转化为极具视觉冲击力的摄影与画作",
+        "category": "人工智能"
+    },
+    {
+        "title": "Perplexity",
+        "icon": "Perplexity_icon.webp",
+        "url": "https://www.perplexity.ai",
+        "description": "革命性的 AI 搜索引擎，实时检索全球信息并提供带引用来源的精准回答",
+        "category": "人工智能"
+    }
+]

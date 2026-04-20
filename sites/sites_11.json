@@ -1,0 +1,86 @@
+[
+    {
+        "title": "Google Fonts",
+        "icon": "Google_Fonts_icon.webp",
+        "url": "https://fonts.google.com/icons",
+        "description": "Google 官方出品的 Material 设计符号库，支持高度自定义的变体调节，是全球 Android 与 Web 交互设计的黄金准则",
+        "category": "视觉灵感"
+    },
+    {
+        "title": "svgl",
+        "icon": "svgl_icon.webp",
+        "url": "https://svgl.app",
+        "description": "顶级的开源 SVG Logo 资源库，汇集全球主流品牌与技术标识，提供纯净的矢量代码与极简的检索体验",
+        "category": "视觉灵感"
+    },
+    {
+        "title": "Heroicons",
+        "icon": "Heroicons_icon.webp",
+        "url": "https://heroicons.com",
+        "description": "现代网页设计的审美天花板，精美的手工极简 SVG 图标集，支持 React/Vue 及一键代码复制",
+        "category": "视觉灵感"
+    },
+    {
+        "title": "Remix Icon",
+        "icon": "Remix_Icon_icon.webp",
+        "url": "https://remixicon.com",
+        "description": "精美优雅的开源中性符号库，风格高度一致，涵盖办公、系统、社交等全维度图标，支持矢量下载与商用",
+        "category": "视觉灵感"
+    },
+    {
+        "title": "Uiverse",
+        "icon": "Uiverse_icon.webp",
+        "url": "https://uiverse.io",
+        "description": "全球领先的开源 UI 元素社区，汇聚海量由 HTML/CSS 构建的精美组件，为前端开发与设计注入无限灵感",
+        "category": "视觉灵感"
+    },  
+    {
+        "title": "APPLORE",
+        "icon": "APPLORE_icon.webp",
+        "url": "https://app.uiboy.com",
+        "description": "专门用于探索和发现精美 App 图标设计的视觉灵感平台",
+        "category": "视觉灵感"
+    },
+    {
+        "title": "Unsplash",
+        "icon": "Unsplash_icon.webp",
+        "url": "https://unsplash.com",
+        "description": "全球顶尖的高清摄影社区，提供极具美感且无版权限制的创意视觉素材",
+        "category": "视觉灵感"
+    },
+    {
+        "title": "哲风壁纸",
+        "icon": "哲风壁纸_icon.webp",
+        "url": "https://haowallpaper.com",
+        "description": "海量高分辨壁纸，提供从 4K 到 8K 的超清壁纸",
+        "category": "视觉灵感"
+    },
+    {
+        "title": "创意匹配 Emoji",
+        "icon": "创意匹配_Emoji_icon.webp",
+        "url": "https://emojidir.com/zh-CN",
+        "description": "全平台 Emoji 创意搜索与下载站，收录千余款精致的微软 3D Fluent 系列表情，为您的创意寻找最佳视觉表达",
+        "category": "视觉灵感"
+    },
+    {
+        "title": "阿里巴巴矢量图标库",
+        "icon": "阿里巴巴矢量图标库_icon.webp",
+        "url": "https://www.iconfont.cn",
+        "description": "国内功能强大且图标内容丰富的矢量图标库",
+        "category": "视觉灵感"
+    },
+    {
+        "title": "Undraw",
+        "icon": "Undraw_icon.webp",
+        "url": "https://undraw.co/illustrations",
+        "description": "可定制颜色的开源插画库，互联网产品设计的“万能插画手册”",
+        "category": "视觉灵感"
+    },
+    {
+        "title": "Lucide",
+        "icon": "Lucide_icon.webp",
+        "url": "https://lucide.dev",
+        "description": "现代网页设计的灵感源泉，风格极简且一致性极高的开源图标系统，是构建高品质 UI 界面的首选符号库",
+        "category": "视觉灵感"
+    }
+]

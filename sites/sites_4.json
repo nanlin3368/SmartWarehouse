@@ -1,0 +1,37 @@
+[
+    {
+        "title": "MT论坛",
+        "icon": "MT论坛_icon.webp",
+        "url": "https://bbs.binmt.cc",
+        "description": "用户交流、开发者技术分享及软件发布的核心平台",
+        "category": "技术社区"
+    },
+    {
+        "title": "Oschina",
+        "icon": "Oschina_icon.webp",
+        "url": "https://www.oschina.net",
+        "description": "国内领先的开源技术社区，专注于开源软件的推广、技术资讯分享及开发者生态建设",
+        "category": "技术社区"
+    },
+    {
+        "title": "博客园",
+        "icon": "博客园_icon.webp",
+        "url": "https://www.cnblogs.com",
+        "description": "国内历史悠久且极具影响力的开发者知识分享社区",
+        "category": "技术社区"
+    },
+    {
+        "title": "51CTO博客",
+        "icon": "51CTO博客_icon.webp",
+        "url": "https://blog.51cto.com",
+        "description": "国内领先的 IT 技术创作平台和社区",
+        "category": "技术社区"
+    },
+    {
+        "title": "CSDN",
+        "icon": "CSDN_icon.webp",
+        "url": "https://www.csdn.net",
+        "description": "全球知名中文 IT 技术交流平台",
+        "category": "GitHub项目"
+    }
+]

@@ -1,0 +1,44 @@
+[
+    {
+        "title": "SSR-V2ray-Trojan机场推荐",
+        "icon": "SSR-V2ray-Trojan机场推荐_icon.webp",
+        "url": "https://github.com/hwanz/SSR-V2ray-Trojan",
+        "description": "机场推荐与机场评测",
+        "category": "项目汇总"
+    },
+    {
+        "title": "awesome-shizuku",
+        "icon": "awesome-shizuku_icon.webp",
+        "url": "https://github.com/timschneeb/awesome-shizuku/blob/master/README_cn.md",
+        "description": "汇集了已知可利用 Shizuku 功能的应用",
+        "category": "项目汇总"
+    },
+    {
+        "title": "Public APIs",
+        "icon": "Public_APIs_icon.webp",
+        "url": "https://github.com/public-apis/public-apis",
+        "description": "全球最大的开源免费 API 资源库，汇集千余种涵盖各领域的公共接口，开发者快速原型设计与数据集成的首选宝库",
+        "category": "项目汇总"
+    },
+    {
+        "title": "GitHub中文排行榜",
+        "icon": "GitHub中文排行榜_icon.webp",
+        "url": "https://github.com/GrowingGit/GitHub-Chinese-Top-Charts",
+        "description": "专门收集和整理 GitHub 上高质量中文开源项目的知名项目",
+        "category": "项目汇总"
+    },
+    {
+        "title": "TelegramGroup",
+        "icon": "TelegramGroup_icon.webp",
+        "url": "https://github.com/itgoyo/TelegramGroup",
+        "description": "收集、整理并分享大量（上万个）Telegram群组、频道和机器人",
+        "category": "项目汇总"
+    },
+    {
+        "title": "百分之千-定制版应用收藏",
+        "icon": "百分之千_icon.webp",
+        "url": "https://gitee.com/ww3w/dzb",
+        "description": "深度挖掘厂商定制版 APP，提供 1000+ 纯净版本选择与详尽测评，助您摆脱臃肿广告，回归极致应用体验",
+        "category": "项目汇总"
+    }
+]

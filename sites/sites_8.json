@@ -1,0 +1,30 @@
+[
+    {
+        "title": "抠抠图",
+        "icon": "抠抠图_icon.webp",
+        "url": "https://www.koukoutu.com",
+        "description": "永久免费的在线 AI 抠图工具，支持发丝级精准去背景与图片批量处理，让复杂的图像编辑变得简单高效",
+        "category": "图像处理"
+    },
+    {
+        "title": "Shutterstock Create",
+        "icon": "Shutterstock_Create_icon.webp",
+        "url": "https://www.shutterstock.com/zh/image-design-tools",
+        "description": "强大的在线图像处理工具箱，支持 AI 智能抠图、图片压缩及格式转换",
+        "category": "图像处理"
+    },
+    {
+        "title": "Squoosh",
+        "icon": "Squoosh_icon.webp",
+        "url": "https://squoosh.app",
+        "description": "谷歌出品的顶级图片压缩/转换工具，支持实时预览压缩后的画质对比",
+        "category": "图像处理"
+    },
+    {
+        "title": "To WebP",
+        "icon": "To_WebP_icon.webp",
+        "url": "https://towebp.io",
+        "description": "免费的在线图像转 WebP 格式工具，可快速轻松地将图像转换为 WebP 格式",
+        "category": "图像处理"
+    }
+]
