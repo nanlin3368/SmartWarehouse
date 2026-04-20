@@ -1,0 +1,156 @@
+/* ============================================
+   iOS-STYLE DESIGN SYSTEM — THEME VARIABLES
+   src/styles/theme.css
+============================================ */
+
+/* ── iOS Light Mode（浅色变量） ── */
+:root {
+    --bg-color: #F2F2F7;
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #F2F2F7;
+    --card-bg: #FFFFFF;
+    --grouped-bg: #F2F2F7;
+    --text-main: #000000;
+    --text-secondary: #3C3C43;
+    --text-sub: rgba(60,60,67,0.6);
+    --text-tertiary: rgba(60,60,67,0.3);
+    --border-color: rgba(60,60,67,0.18);
+    --card-border: rgba(0,0,0,0.06);
+    --separator: rgba(60,60,67,0.1);
+    --input-bg: rgba(118,118,128,0.12);
+    --modal-info-bg: #F2F2F7;
+    --search-bar-bg: rgba(242,242,247,0.82);
+    --pagination-bg: rgba(255,255,255,0.85);
+    --accent-color: #007AFF;
+    --accent-secondary: #34C759;
+    --fill-1: rgba(120,120,128,0.2);
+    --fill-2: rgba(120,120,128,0.16);
+    --shadow-1: rgba(0,0,0,0.08);
+    --shadow-2: rgba(0,0,0,0.12);
+}
+
+/* ── iOS Dark Mode（深色变量） ── */
+[data-theme="dark"] {
+    --bg-color: #000000;
+    --bg-secondary: #1C1C1E;
+    --bg-tertiary: #2C2C2E;
+    --card-bg: #1C1C1E;
+    --grouped-bg: #000000;
+    --text-main: #FFFFFF;
+    --text-secondary: #EBEBF5;
+    --text-sub: rgba(235,235,245,0.6);
+    --text-tertiary: rgba(235,235,245,0.3);
+    --border-color: rgba(84,84,88,0.65);
+    --card-border: rgba(255,255,255,0.08);
+    --separator: rgba(84,84,88,0.18);
+    --input-bg: rgba(118,118,128,0.24);
+    --modal-info-bg: #2C2C2E;
+    --search-bar-bg: rgba(0,0,0,0.82);
+    --pagination-bg: rgba(28,28,30,0.88);
+    --accent-color: #0A84FF;
+    --accent-secondary: #30D158;
+    --fill-1: rgba(120,120,128,0.36);
+    --fill-2: rgba(120,120,128,0.32);
+    --shadow-1: rgba(0,0,0,0.3);
+    --shadow-2: rgba(0,0,0,0.4);
+}
+
+/* ============================================
+   iOS ACCENT COLOR THEMES
+   默认靛蓝与 :root 一致，无需覆盖
+============================================ */
+
+/* 薄荷绿 (Mint) */
+[data-accent="mint"] {
+    --accent-color: #00C7BE;
+    --accent-secondary: #34C759;
+}
+[data-accent="mint"][data-theme="dark"] {
+    --accent-color: #63E6E2;
+    --accent-secondary: #30D158;
+}
+
+/* 珊瑚红 (Pink) */
+[data-accent="pink"] {
+    --accent-color: #FF2D55;
+    --accent-secondary: #FF6B6B;
+}
+[data-accent="pink"][data-theme="dark"] {
+    --accent-color: #FF375F;
+    --accent-secondary: #FF6B6B;
+}
+
+/* 紫色 (Purple) */
+[data-accent="purple"] {
+    --accent-color: #AF52DE;
+    --accent-secondary: #BF5AF2;
+}
+[data-accent="purple"][data-theme="dark"] {
+    --accent-color: #BF5AF2;
+    --accent-secondary: #DA8FFF;
+}
+
+/* 橙色 (Orange) */
+[data-accent="orange"] {
+    --accent-color: #FF9500;
+    --accent-secondary: #FF6B00;
+}
+[data-accent="orange"][data-theme="dark"] {
+    --accent-color: #FF9F0A;
+    --accent-secondary: #FF7A00;
+}
+
+/* 青色 (Teal) */
+[data-accent="teal"] {
+    --accent-color: #30B0C7;
+    --accent-secondary: #00C7BE;
+}
+[data-accent="teal"][data-theme="dark"] {
+    --accent-color: #40C8E0;
+    --accent-secondary: #63E6E2;
+}
+
+/* 绿色 (Green) */
+[data-accent="green"] {
+    --accent-color: #34C759;
+    --accent-secondary: #00C7BE;
+}
+[data-accent="green"][data-theme="dark"] {
+    --accent-color: #30D158;
+    --accent-secondary: #63E6E2;
+}
+
+/* ============================================
+   SMOOTH THEME TRANSITION
+   深色/浅色切换全局颜色过渡
+============================================ */
+
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+    transition:
+        background-color 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+        color            0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color     0.32s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow       0.32s cubic-bezier(0.4, 0, 0.2, 1),
+        fill             0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* View Transition API：主题切换淡入淡出（支持时生效） */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.42s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+::view-transition-old(root) { animation-name: theme-fade-out; }
+::view-transition-new(root) { animation-name: theme-fade-in; }
+
+@keyframes theme-fade-out {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+@keyframes theme-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}

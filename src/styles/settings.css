@@ -1,0 +1,803 @@
+/* ============================================
+   SETTINGS — 设置面板 + 拾光足迹抽屉 + 主题色拾色器 样式
+   路径：src/styles/settings.css
+   在 index.html <head> 中静态引用即可。
+============================================ */
+
+/* ============================================
+   THEME PICKER PANEL（旧版浮层，已隐藏保留）
+============================================ */
+#theme-picker-panel {
+    position: fixed;
+    bottom: 90px;
+    right: 16px;
+    z-index: 200;
+    background: var(--pagination-bg);
+    backdrop-filter: saturate(180%) blur(24px);
+    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    border-radius: 18px;
+    padding: 14px 16px 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 0 0 0.5px var(--card-border);
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 168px;
+    transform-origin: bottom right;
+    animation: picker-in 0.22s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes picker-in {
+    from { opacity: 0; transform: scale(0.88) translateY(8px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+#theme-picker-panel.visible { display: flex; }
+
+.picker-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-sub);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding-bottom: 2px;
+}
+.picker-colors {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+.picker-swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.picker-swatch:active { transform: scale(0.88); }
+.picker-swatch.selected::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.picker-label {
+    font-size: 10px;
+    color: var(--text-sub);
+    text-align: center;
+    margin-top: 2px;
+}
+.picker-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ============================================
+   SETTINGS SHEET（iOS Control Center 风格）
+   从顶部下滑的半屏抽屉，毛玻璃效果
+============================================ */
+
+/* 遮罩层 */
+#settings-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 299;
+    background: rgba(0,0,0,0.28);
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+}
+#settings-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    touch-action: none;
+}
+
+/* 面板：从顶部向下滑出（移动端：全宽） */
+#settings-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 300;
+    background: rgba(var(--settings-panel-rgb, 242,242,247), 0.92);
+    backdrop-filter: saturate(180%) blur(32px);
+    -webkit-backdrop-filter: saturate(180%) blur(32px);
+    border-radius: 0 0 26px 26px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.22), 0 0 0 0.5px var(--card-border);
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+    transform: translateY(-102%) translateZ(0);
+    transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+    padding-bottom: 12px;
+    max-height: 80dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+#settings-panel.open {
+    transform: translateY(0) translateZ(0);
+}
+
+/* 桌面端：居中下拉卡片 */
+@media (min-width: 680px) {
+    #settings-panel {
+        left: 50%;
+        right: auto;
+        top: 16px;
+        width: 560px;
+        max-width: calc(100vw - 48px);
+        transform: translateX(-50%) translateY(calc(-100% - 20px));
+        border-radius: 22px;
+        max-height: 85dvh;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.28), 0 0 0 0.5px var(--card-border);
+        opacity: 0;
+        padding-bottom: 6px;
+        transition: transform 0.36s cubic-bezier(0.32, 0.72, 0, 1),
+                    opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #settings-panel.open {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+    #settings-panel .settings-drag-bar { display: none; }
+    #settings-panel .settings-header { padding: 20px 20px 14px; }
+    #settings-panel .settings-close-btn { width: 32px; height: 32px; font-size: 14px; }
+    #settings-panel .settings-body { padding: 0 16px 4px; gap: 8px; }
+    #settings-panel .settings-footer { padding: 8px 0 6px; }
+    #settings-panel .settings-colors-card .picker-swatch { width: 36px; height: 36px; }
+    #settings-panel .settings-colors-card .picker-label { font-size: 10px; }
+    #settings-panel .settings-quick-btn:hover { background: var(--card-bg); }
+    #settings-panel .settings-disclaimer-row:hover { background: var(--card-bg); }
+}
+
+/* 深色模式背景 */
+[data-theme="dark"] #settings-panel {
+    background: rgba(28,28,30,0.92);
+}
+
+/* 顶部 iOS 拖拽条 */
+.settings-drag-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 4px;
+    flex-shrink: 0;
+}
+.settings-drag-bar::after {
+    content: '';
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-color);
+}
+
+/* 标题行 */
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px 12px;
+    flex-shrink: 0;
+}
+.settings-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    color: var(--text-main);
+}
+.settings-close-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--fill-1);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-sub);
+    font-size: 13px;
+    font-weight: 600;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.1s;
+}
+.settings-close-btn:active { background: var(--fill-2); }
+
+/* 内容区 */
+.settings-body {
+    padding: 0 14px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* 快捷操作行：两列并排 */
+.settings-quick-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+/* 快捷按钮块 */
+.settings-quick-btn {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 14px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 1px 4px var(--shadow-1), 0 0 0 0.5px var(--card-border);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.12s;
+    text-align: left;
+    width: 100%;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+.settings-quick-btn:active {
+    transform: scale(0.96) translateZ(0);
+}
+.settings-quick-btn.active-state {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+}
+.settings-quick-btn.active-state .sqb-label,
+.settings-quick-btn.active-state .sqb-icon {
+    color: var(--text-secondary);
+}
+.settings-quick-btn.active-state .sqb-toggle {
+    background: var(--accent-color);
+}
+.sqb-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.sqb-icon {
+    font-size: 20px;
+    line-height: 1;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+}
+.sqb-icon svg { display: block; }
+
+/* 右侧小 toggle */
+.sqb-toggle {
+    width: 40px;
+    height: 24px;
+    border-radius: 12px;
+    background: rgba(120,120,128,0.3);
+    position: relative;
+    flex-shrink: 0;
+    transition: background 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sqb-toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.22);
+    will-change: transform;
+    transition: transform 0.2s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.settings-quick-btn.active-state .sqb-toggle-knob {
+    transform: translateX(16px);
+}
+.sqb-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: -0.1px;
+}
+
+/* 主题色块 */
+.settings-colors-card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 12px 14px 10px;
+    box-shadow: 0 1px 4px var(--shadow-1), 0 0 0 0.5px var(--card-border);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+.settings-colors-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-sub);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.settings-colors-card .picker-colors {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+.settings-colors-card .picker-item { gap: 4px; }
+.settings-colors-card .picker-swatch { width: 32px; height: 32px; }
+.settings-colors-card .picker-label { font-size: 9px; }
+
+/* 免责声明行 */
+.settings-disclaimer-row {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    box-shadow: 0 1px 4px var(--shadow-1), 0 0 0 0.5px var(--card-border);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.12s;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+.settings-disclaimer-row:active {
+    transform: scale(0.98) translateZ(0);
+}
+.settings-disclaimer-row-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.settings-disclaimer-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255,149,0,0.12);
+    color: #FF9500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.settings-disclaimer-label {
+    font-size: 15px;
+    color: var(--text-main);
+}
+
+/* 底部署名 */
+.settings-footer {
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: 11px;
+    padding: 4px 0 2px;
+    letter-spacing: 0.2px;
+}
+
+/* 收录提示行 */
+.settings-notice-row {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 13px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    box-shadow: 0 1px 4px var(--shadow-1), 0 0 0 0.5px var(--card-border);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+.settings-notice-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255,204,0,0.13);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    line-height: 1;
+}
+.settings-notice-text {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.55;
+    padding-top: 4px;
+}
+
+/* 拾光足迹入口卡片 */
+.settings-timeline-row {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    box-shadow: 0 1px 4px var(--shadow-1), 0 0 0 0.5px var(--card-border);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.12s;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+.settings-timeline-row:active {
+    transform: scale(0.98) translateZ(0);
+}
+.settings-timeline-row-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.settings-timeline-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(52,199,89,0.13);
+    color: #34C759;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.settings-timeline-label {
+    font-size: 15px;
+    color: var(--text-main);
+}
+
+/* ============================================
+   TIMELINE — 拾光足迹抽屉 / 弹窗
+============================================ */
+
+#timeline-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    background: rgba(0,0,0,0.32);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s cubic-bezier(0.4,0,0.2,1);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+}
+#timeline-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+/* 移动端：底部抽屉 */
+#timeline-sheet {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 401;
+    background: var(--bg-color, #F2F2F7);
+    border-radius: 22px 22px 0 0;
+    box-shadow: 0 -4px 32px rgba(0,0,0,0.18), 0 0 0 0.5px var(--card-border);
+    max-height: 88dvh;
+    display: none;
+    flex-direction: column;
+    transform: translateY(105%);
+    transition: transform 0.42s cubic-bezier(0.32,0.72,0,1);
+    will-change: transform;
+}
+#timeline-sheet.open {
+    display: flex;
+    transform: translateY(0);
+}
+[data-theme="dark"] #timeline-sheet {
+    background: #1C1C1E;
+}
+
+/* 桌面端：居中弹窗 */
+@media (min-width: 600px) {
+    #timeline-sheet {
+        left: 50%;
+        right: auto;
+        bottom: auto;
+        top: 50%;
+        width: 600px;
+        max-width: calc(100vw - 48px);
+        max-height: 88dvh;
+        border-radius: 22px;
+        transform: translate(-50%, -48%) scale(0.92);
+        opacity: 0;
+        transition: transform 0.32s cubic-bezier(0.32,0.72,0,1),
+                    opacity 0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+    #timeline-sheet.open {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    #timeline-sheet .timeline-drag-bar { display: none; }
+}
+
+.timeline-drag-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 2px;
+    flex-shrink: 0;
+}
+.timeline-drag-bar::after {
+    content: '';
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-color);
+}
+.timeline-sheet-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px 16px;
+    flex-shrink: 0;
+}
+.timeline-sheet-title-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #3B7DFE 0%, #6FA3FF 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(59,125,254,0.35);
+}
+.timeline-sheet-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text-main);
+}
+.timeline-sheet-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--fill-1);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-sub);
+    font-size: 13px;
+    font-weight: 600;
+    margin-left: auto;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.1s;
+}
+.timeline-sheet-close:active { background: var(--fill-2); }
+
+.timeline-sheet-body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 20px 16px;
+    flex: 1;
+}
+
+/* 天数大数字卡片 */
+.tl-days-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 18px 20px 16px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 4px var(--shadow-1), 0 0 0 0.5px var(--card-border);
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+.tl-days-right {
+    flex: 1;
+    padding-left: 0;
+    padding-right: 20px;
+    border-right: 1px solid var(--separator, rgba(0,0,0,0.07));
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    justify-content: center;
+}
+[data-theme="dark"] .tl-days-right {
+    border-right-color: rgba(255,255,255,0.08);
+}
+.tl-days-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    padding-left: 20px;
+    padding-right: 0;
+    border-right: none;
+}
+.tl-days-number-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+.tl-days-number {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--accent-color);
+    letter-spacing: -2px;
+    line-height: 1;
+    display: inline-block;
+}
+.tl-days-unit {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text-main);
+    display: inline-block;
+    margin-bottom: 2px;
+}
+.tl-days-caption {
+    font-size: 11px;
+    color: var(--text-sub);
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+.tl-days-prefix {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: 0.2px;
+    line-height: 1.4;
+}
+.tl-days-sub {
+    font-size: 12px;
+    color: var(--text-sub);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.tl-days-sub-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+.tl-days-start {
+    color: var(--accent-color);
+    font-weight: 500;
+    white-space: nowrap;
+}
+.tl-days-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #34C759;
+    display: inline-block;
+    flex-shrink: 0;
+}
+.tl-days-status {
+    color: var(--text-sub);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tl-story-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    box-shadow: 0 1px 4px var(--shadow-1), 0 0 0 0.5px var(--card-border);
+    margin-bottom: 8px;
+}
+.tl-story-heading {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 12px;
+}
+.tl-story-p {
+    font-size: 13.5px;
+    color: var(--text-sub);
+    line-height: 1.7;
+    margin-bottom: 10px;
+}
+.tl-story-p:last-of-type { margin-bottom: 0; }
+.tl-story-highlight {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--accent-color);
+    margin-top: 12px;
+    line-height: 1.6;
+}
+
+/* 我知道了 按钮 */
+.tl-footer {
+    padding: 12px 20px 20px;
+    border-top: 0.5px solid var(--separator);
+    flex-shrink: 0;
+}
+.tl-ok-btn {
+    width: 100%;
+    padding: 14px 0;
+    background: var(--accent-color);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.15s, transform 0.12s;
+}
+.tl-ok-btn:active {
+    transform: scale(0.97);
+    opacity: 0.85;
+}
+
+/* ============================================
+   SETTINGS 按钮 & FAB 按钮 — 激活/旋转动画
+============================================ */
+
+/* 设置按钮激活高亮 */
+#settings-btn.active { color: var(--accent-color); }
+
+/* 指南针按钮激活高亮 */
+#header-blog-btn.active { color: var(--accent-color); }
+
+/* 设置按钮旋转动画 */
+@keyframes settings-spin-open {
+    0%   { transform: rotate(0deg) scale(1); }
+    40%  { transform: rotate(72deg) scale(1.15); }
+    100% { transform: rotate(90deg) scale(1); }
+}
+@keyframes settings-spin-close {
+    0%   { transform: rotate(90deg) scale(1); }
+    40%  { transform: rotate(18deg) scale(1.12); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+#settings-btn.spin-open svg,
+#fab-settings-btn.spin-open svg {
+    animation: settings-spin-open 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+#settings-btn.spin-close svg,
+#fab-settings-btn.spin-close svg {
+    animation: settings-spin-close 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* 指南针旋转动画 */
+@keyframes compass-spin-open {
+    0%   { transform: rotate(0deg) scale(1); }
+    35%  { transform: rotate(-30deg) scale(1.18); }
+    70%  { transform: rotate(15deg) scale(1.08); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+@keyframes compass-spin-close {
+    0%   { transform: rotate(0deg) scale(1); }
+    35%  { transform: rotate(20deg) scale(1.12); }
+    70%  { transform: rotate(-8deg) scale(1.04); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+#header-blog-btn.spin-open svg {
+    animation: compass-spin-open 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+#header-blog-btn.spin-close svg {
+    animation: compass-spin-close 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* FAB 设置按钮激活高亮 */
+#fab-settings-btn.active {
+    color: var(--accent-color) !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18), 0 0 0 0.5px var(--accent-color) !important;
+}
