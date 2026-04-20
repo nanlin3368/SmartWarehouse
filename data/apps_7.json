@@ -1,0 +1,844 @@
+[
+    {
+        "name": "元力音乐",
+        "pkg": "com.mall.yuanli",
+        "version": "1.5.5",
+        "size": "41.40MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "元力菌",
+        "icon": "元力音乐_icon.webp",
+        "intro": "元力音乐 是一款集音乐播放、搜索、下载、管理于一体的多功能听歌软件，支持整合多个主流音乐平台资源，支持导入音源/歌单链接，实现跨平台听歌，相当于一个“音乐资源整合器，支持标准 / 高品质 / 无损音质，可下载歌曲本地播放，界面简洁，免费无广告听歌体验。",
+        "screenshots": [
+            "元力音乐_screen_1.webp",
+            "元力音乐_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iMPon3mq8hbi",
+        "source": ""
+    },
+    {
+        "name": "BlockAds",
+        "pkg": "app.pwhs.blockads",
+        "version": "6.2.1",
+        "size": "14.32MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "pass-with-high-score",
+        "icon": "BlockAds_icon.webp",
+        "intro": "BlockAds 是一款免费开源的 Android 系统级广告拦截工具，采用本地VPN + DNS过滤技术，无需 Root 权限即可在全系统范围内拦截广告、追踪器和恶意域名。采用 Compose Material 3 构建现代界面，支持双路由模式，多个内置过滤列表、自定义黑白名单、实时DNS日志、自动更新过滤规则等，注重隐私，100%本地运行，不收集任何数据，轻量省电。",
+        "screenshots": [
+            "BlockAds_screen_1.webp",
+            "BlockAds_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iEwEY3n1oztg",
+        "source": "https://github.com/pass-with-high-score/blockads-android"
+    },
+    {
+        "name": "Photok",
+        "pkg": "dev.leonlatsch.photok",
+        "version": "2.8.0",
+        "size": "42.67MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "leonlatsch",
+        "icon": "Photok_icon.webp",
+        "intro": "Photok 是一款开源免费的 Android 私密照片与视频保险箱App，采用AES-256强加密技术对本地媒体进行加密隐藏，提供独立加密图库、指纹/密码解锁、导入导出等功能，无广告、无任何追踪，专注隐私保护。",
+        "screenshots": [
+            "Photok_screen_1.webp",
+            "Photok_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iJZLu3mr7y6f",
+        "source": "https://github.com/leonlatsch/Photok"
+    },
+    {
+        "name": "photoo",
+        "pkg": "com.photoo.app",
+        "version": "3.1",
+        "size": "73.14MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "xigua222",
+        "icon": "photoo_icon.webp",
+        "intro": "Photoo 是一款极简轻量的 Android 照片浏览工具，界面干净纯净无广告，专注于快速查看照片、相册管理以及基础编辑（裁剪、滤镜、旋转、调整等），操作流畅，适合日常简单整理和浏览照片。",
+        "screenshots": [
+            "photoo_screen_1.webp",
+            "photoo_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/igXs13mr94zg",
+        "source": "https://github.com/xigua222/photoo"
+    },
+    {
+        "name": "Nekogram",
+        "pkg": "tw.nekomimi.nekogram",
+        "version": "12.5.2",
+        "size": "61.77MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Nekogram",
+        "icon": "Nekogram_icon.webp",
+        "intro": "Nekogram 是一款开源免费的第三方 Telegram 客户端，基于官方 Telegram 源码优化，修改不多但实用，包含界面自定义（头像背景、系统表情、透明状态栏、隐藏导航栏等）、聊天增强（贴纸大小调节、自动暂停视频、免费语音转文字）、内置多引擎免费翻译（整聊/单消息/文章）、媒体下载优化等功能，界面简洁流畅、无广告，体验更丰富纯粹。",
+        "screenshots": [
+            "Nekogram_screen_1.webp",
+            "Nekogram_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ioHoS3mram9e",
+        "source": "https://github.com/Nekogram/Nekogram"
+    },
+    {
+        "name": "轻昼AppX",
+        "pkg": "com.juhao.toolbox.x",
+        "version": "1.0.8.8",
+        "size": "8.54MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "shijuhao",
+        "icon": "轻昼AppX_icon.webp",
+        "intro": "轻昼AppX 是一款轻量开源的 Android 多功能工具箱，集成全屏时钟、取色器、尺子、RC4加解密、计算器、随机数/笑话、设备信息查看等多种实用小工具，界面采用 Material You 设计，极致轻量、无广告，专注于高效日常快速使用和桌面体验。",
+        "screenshots": [
+            "轻昼AppX_screen_1.webp",
+            "轻昼AppX_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iHvFu3n38o0h",
+        "source": "https://github.com/shijuhao/QingZhou"
+    },
+    {
+        "name": "斑朵元应用",
+        "pkg": "com.madness.collision",
+        "version": "5.1.1",
+        "size": "9.50MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "cliuff",
+        "icon": "斑朵元应用_icon.webp",
+        "intro": "斑朵元应用 是一款免费开源的 Android 高级工具箱和应用管理器，专注于应用信息深度分析与管理，支持查看目标SDK、最低SDK、自适应图标、安装来源、组件详情等，提供应用分类、标签管理、APK 提取、快捷组件创建、系统优化、隐私权限控制、界面美化、设备连接管理等 20+ 项实用功能，界面简洁优雅、无广告，是追求精细化管理和极致体验的实用神器。",
+        "screenshots": [
+            "斑朵元应用_screen_1.webp",
+            "斑朵元应用_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iPYkK3nfaosj",
+        "source": "https://github.com/cliuff/boundo"
+    },
+    {
+        "name": "venera",
+        "pkg": "com.github.wgh136.venera",
+        "version": "1.6.3",
+        "size": "17.03MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "venera-app",
+        "icon": "venera_icon.webp",
+        "intro": "Venera 是一款开源免费的跨平台漫画阅读器，基于 Flutter 开发，专注于本地漫画阅读，同时支持通过自定义JS脚本添加网络漫画源，提供流畅的阅读体验、收藏管理、下载与标签搜索，界面现代简洁，是漫画爱好者聚合本地与在线资源的优秀工具。",
+        "screenshots": [
+            "venera_screen_1.webp",
+            "venera_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iKDJ73mrcskd",
+        "source": "https://github.com/venera-app/venera"
+    },
+    {
+        "name": "棉花音乐",
+        "pkg": "com.caij.puremusic",
+        "version": "4.5.3",
+        "size": "17.89MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "pure-music",
+        "icon": "棉花音乐_icon.webp",
+        "intro": "棉花音乐 是一款干净简洁的 Android 本地+云盘/NAS音乐播放器，支持本地歌曲扫描编辑、歌词显示、元数据刮削，以及挂载WebDAV、阿里云盘、百度网盘、OneDrive、Google Drive等云存储和Plex/Emby/Jellyfin等媒体服务器，纯净无广告，适合管理个人音乐库。",
+        "screenshots": [
+            "棉花音乐_screen_1.webp",
+            "棉花音乐_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i5NJx3mre48j",
+        "source": "https://github.com/pure-music/PureMusic"
+    },
+    {
+        "name": "活动启动器",
+        "pkg": "de.szalkowski.activitylauncher.oss",
+        "version": "2.2.4",
+        "size": "2.52MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "butzist",
+        "icon": "活动启动器_icon.webp",
+        "intro": "活动启动器 是一款开源免费的 Android 工具App，能浏览手机中所有已安装应用的导出与未导出Activity，支持直接启动特定页面、创建桌面快捷方式、查看Intent信息与 Manifest 细节，适合开发者与玩机用户快速测试和访问应用隐藏功能。",
+        "screenshots": [
+            "活动启动器_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iQQgX3mw24aj",
+        "source": "https://github.com/butzist/ActivityLauncher"
+    },
+    {
+        "name": "IYPS",
+        "pkg": "com.iyps",
+        "version": "1.5.8",
+        "size": "3.90MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "StellarSand",
+        "icon": "IYPS_icon.webp",
+        "intro": "IYPS 是一款开源免费的 Android 密码强度检测App，采用 Material Design 3 设计，支持离线评估密码强度、预测破解时间、分析模式并给出改进建议与警告，完全本地运行、无广告，适合检查和优化密码安全性。",
+        "screenshots": [
+            "IYPS_screen_1.webp",
+            "IYPS_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iaQ853mw29aj",
+        "source": "https://github.com/StellarSand/IYPS"
+    },
+    {
+        "name": "Kitsune Mask",
+        "pkg": "io.github.x0eg0.magisk",
+        "version": "v30.7-kitsune",
+        "size": "20.06MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "",
+        "icon": "Kitsune_Mask_icon.webp",
+        "intro": "Kitsune Mask 是一款 Magisk 的流行 Fork 分支（管理器+内核），在官方 Magisk 基础上重新加入隐藏 Root 功能（Magisk Hide），增强对银行/支付/游戏等应用的检测绕过能力，支持 Zygisk 模块与系统级 Root 自定义，是玩机用户常用的 Root 管理工具。",
+        "screenshots": [
+            "Kitsune_Mask_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iFPsD3mw2hfc",
+        "source": ""
+    },
+    {
+        "name": "Magisk",
+        "pkg": "com.topjohnwu.magisk",
+        "version": "30.7",
+        "size": "24.11MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "topjohnwu",
+        "icon": "Magisk_icon.webp",
+        "intro": "Magisk 是一款经典开源的 Android 系统级 Root 工具（The Magic Mask），采用 systemless 方式实现 Root（不修改系统分区），支持安装 Magisk 模块、Zygisk、隐藏Root（MagiskHide）、Boot镜像修补等功能，是安卓玩机与深度自定义的核心神器。",
+        "screenshots": [
+            "Magisk_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i9ykY3mw2jze",
+        "source": "https://github.com/topjohnwu/Magisk"
+    },
+    {
+        "name": "澎湃记",
+        "pkg": "com.Badnng.moe",
+        "version": "26.4.3.C01",
+        "size": "30.65MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "badnng",
+        "icon": "澎湃记_icon.webp",
+        "intro": "澎湃记 是一款免费开源的 Android 本地OCR工具，专为快速识别和管理外卖取餐码、快递取件码、验证码等设计。完全离线运行，支持截图识别、分享识别、划词识别、快捷开关等多种触发方式，采用 Material You 现代界面，所有数据仅在本地处理，注重隐私与速度，识别准确且无需联网。",
+        "screenshots": [
+            "澎湃记_screen_1.webp",
+            "澎湃记_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iM0Ip3myiwni",
+        "source": "https://github.com/badnng/Hyper-pick-up-code"
+    },
+    {
+        "name": "AnExplorer Pro",
+        "pkg": "dev.dworks.apps.anexplorer.pro",
+        "version": "6.0.0",
+        "size": "52.54MB",
+        "system": "Android",
+        "mod": "专业版",
+        "author": "",
+        "icon": "AnExplorer_Pro_icon.webp",
+        "intro": "AnExplorer Pro 是一款功能强大的 Android 文件管理器，界面采用 Material Design 3 风格，支持根目录浏览、隐藏文件显示、SMB/FTP/WebDAV/云盘等多协议连接、文件压缩解压、文本编辑、媒体预览、批量操作、主题自定义与 Root 增强，体验流畅且功能全面，是 MiXplorer 之外的另一款全能文件管理工具。",
+        "screenshots": [
+            "AnExplorer_Pro_screen_1.webp",
+            "AnExplorer_Pro_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iP5nG3myiuve",
+        "source": ""
+    },
+    {
+        "name": "ShotClean",
+        "pkg": "app.gwo.shotclean",
+        "version": "1.0",
+        "size": "7.17MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "GwoApps",
+        "icon": "ShotClean_icon.webp",
+        "intro": "ShotClean 是一款轻量实用的 Android 截图自动化管理工具，核心功能是将手机中不断堆积的截图从系统相册中自动“搬走”，归档到用户指定的独立文件夹中，让相册保持清爽。支持按日期整理、批量删除、设置保留期限（默认30天）后自动清理过期截图，同时保留随时找回的能力，操作简单、无广告，适合解决截图过多导致相册混乱的问题。",
+        "screenshots": [
+            "ShotClean_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i3dAh3myk0af",
+        "source": "https://github.com/GwoApps/ShotClean-releases"
+    },
+    {
+        "name": "Pixel Telo",
+        "pkg": "vip.mystery0.pixel.telo",
+        "version": "1.1.1.r106.d60133ec",
+        "size": "2.05MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "PixelTelo",
+        "icon": "Pixel_Telo_icon.webp",
+        "intro": "Pixel Telo 是一款专为 Google Pixel 及类原生 Android 设备设计的来电识别与拦截工具，采用原生 Material You 风格，与系统拨号器深度集成，支持本地号码识别、无感骚扰拦截、标签注入等功能，完全本地运行、注重隐私。",
+        "screenshots": [
+            "Pixel_Telo_screen_1.webp",
+            "Pixel_Telo_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ijuV93myjxpc",
+        "source": "https://github.com/PixelTelo/AppRelease"
+    },
+    {
+        "name": "Thor",
+        "pkg": "com.valhalla.thor",
+        "version": "1.72.1",
+        "size": "4.10MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "trinadhthatakula",
+        "icon": "Thor_icon.webp",
+        "intro": "Thor 是一款开源免费的轻量 Android 应用管理器（100% Kotlin + Jetpack Compose + Material 3开发），安装包仅约2MB，支持批量安装/卸载/冻结/导出、应用详情查看、APK管理、Root/Shizuku增强等功能，界面简洁现代、无广告、无追踪、完全离线运行，是玩机用户高效管理应用的实用工具。",
+        "screenshots": [
+            "Thor_screen_1.webp",
+            "Thor_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i66L83mzyyfe",
+        "source": "https://github.com/trinadhthatakula/Thor"
+    },
+    {
+        "name": "wifi工具箱",
+        "pkg": "com.wifi.toolbox.debug",
+        "version": "v3.0.0_Alpha-06",
+        "size": "27.09MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "bszapp",
+        "icon": "wifi工具箱_icon.webp",
+        "intro": "WiFi工具箱 是一款开源的 Android WiFi 密码暴力破解工具，支持使用密码字典对 WiFi 进行字典攻击破解，无需 Root （也可支持Shizuku/Root模式加速），采用 Kotlin 重构，v3.0版本界面现代化，体积约27MB，专注于高效跑密码破解。",
+        "screenshots": [
+            "wifi工具箱_screen_1.webp",
+            "wifi工具箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iU7yi3n2gt2b",
+        "source": "https://github.com/bszapp/android-wifi-pojie"
+    },
+    {
+        "name": "EET 能效测试",
+        "pkg": "com.baiyang.eet",
+        "version": "1.0.6",
+        "size": "1.83MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "白羊唐黎明",
+        "icon": "EET_能效测试_icon.webp",
+        "intro": "EET 能效测试 是一款专注于 Android 手机能效比与功耗深度测试的专业工具App，能实时监测设备电流、电压、功耗、CPU/GPU负载等数据，一键生成能效报告，帮助量化分析手机在不同场景下的续航表现与性能功耗比，界面简洁，适合评测、优化和对比机型使用。",
+        "screenshots": [
+            "EET_能效测试_screen_1.webp",
+            "EET_能效测试_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iV4dU3n2jvnc",
+        "source": "https://www.coolapk.com/u/710841"
+    },
+    {
+        "name": "OMaster",
+        "pkg": "com.silas.omaster",
+        "version": "1.4.0",
+        "size": "58.13MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "iCurrer",
+        "icon": "OMaster_icon.webp",
+        "intro": "OMaster 是一款专为OPPO、一加、真我（realme）手机摄影爱好者打造的相机辅助调色工具，内置23款专业摄影预设参数，支持一键应用大师模式调色、悬浮窗快速调用、自定义预设、收藏管理与云端更新参数，界面简洁优雅，支持离线使用，帮助用户轻松复现专业摄影参数，提升出片率。",
+        "screenshots": [
+            "OMaster_screen_1.webp",
+            "OMaster_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i5FND3n397ta",
+        "source": "https://github.com/iCurrer/OMaster"
+    },
+    {
+        "name": "极序",
+        "pkg": "com.norkm.procedure",
+        "version": "2.1.9",
+        "size": "11.29MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "欧阳世雄",
+        "icon": "极序_icon.webp",
+        "intro": "极序 是一款轻量多功能 Android 工具合集App，体积小巧、界面简洁，集成图片拼图、图片切割（九宫格/三宫图）、图片压缩、视频转GIF、倒数日小组件、桌面日程/便签/日历小部件、文本工具、颜色取色器、计数器、随机数生成、通知模拟等多种实用功能，还支持丰富的桌面小组件，适合日常办公、美化与效率提升。",
+        "screenshots": [
+            "极序_screen_1.webp",
+            "极序_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ijDRO3n2m3pe",
+        "source": "https://www.norkm.com/"
+    },
+    {
+        "name": "轻集工具箱",
+        "pkg": "com.qitbox.tool",
+        "version": "1.9.2",
+        "size": "28.93MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "",
+        "icon": "轻集工具箱_icon.webp",
+        "intro": "轻集工具箱 是一款集合数百种实用工具的 Android 多功能工具箱App，涵盖日常工具、生活管理、娱乐、设计、计算等多个类别，提供一站式解决方案，内置浏览器等功能，方便用户无需安装多个App即可满足各种需求。",
+        "screenshots": [
+            "轻集工具箱_screen_1.webp",
+            "轻集工具箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i9QSC3n40oza",
+        "source": "https://v.douyin.com/UY3mHBSHAuk/"
+    },
+    {
+        "name": "Krude",
+        "pkg": "com.kuss.krude",
+        "version": "2026040503.ed9bd2f",
+        "size": "3.99MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "KusStar",
+        "icon": "Krude_icon.webp",
+        "intro": "Krude 是一款小而美、开源的 Android 应用与工作流启动器（Jetpack Compose开发），支持快速搜索启动App、扩展插件、工作流自动化、拼音搜索、Shizuku集成等功能，界面现代简洁，注重高效与个性化，是高效启动与快捷操作工具。",
+        "screenshots": [
+            "Krude_screen_1.webp",
+            "Krude_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ieZoh3mqbu5i",
+        "source": "https://github.com/KusStar/krude"
+    },
+    {
+        "name": "倒带",
+        "pkg": "com.kuss.rewind",
+        "version": "3.5.0",
+        "size": "10.36MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "KusStar",
+        "icon": "倒带_icon.webp",
+        "intro": "倒带 是一款专为 Android 用户设计的极简主义聚合音乐播放器，它通过整合网易云音乐与 QQ 音乐的双平台曲库，在彻底剔除广告与社交冗余功能的同时，为用户提供清爽、高效且高度可定制的跨平台听歌体验。",
+        "screenshots": [
+            "倒带_screen_1.webp",
+            "倒带_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ilcf33mqblmb",
+        "source": "https://github.com/KusStar/rewind-docs"
+    },
+    {
+        "name": "NewPipe",
+        "pkg": "org.schabi.newpipe",
+        "version": "0.28.5",
+        "size": "10.38MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "TeamNewPipe",
+        "icon": "NewPipe_icon.webp",
+        "intro": "NewPipe 是一款专为 Android 设计的开源第三方视频客户端，可在无需 Google 服务和账号登录的情况下提供无广告观看 YouTube 等平台内容、支持后台播放、悬浮窗及视频音频下载，并以轻量、省资源和注重隐私著称，但不具备官方账号同步与互动功能。",
+        "screenshots": [
+            "NewPipe_screen_1.webp",
+            "NewPipe_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ijqsu3n3bv2j",
+        "source": "https://github.com/TeamNewPipe/NewPipe"
+    },
+    {
+        "name": "APK导出工具",
+        "pkg": "com.lrqibazc.apkexport",
+        "version": "2.0 RC3",
+        "size": "1.00M",
+        "system": "Android",
+        "mod": "原版",
+        "author": "雨沐尘风",
+        "icon": "APK导出工具_icon.webp",
+        "intro": "APK导出工具 是一款功能全面、设计精简的 Android 应用管理与系统辅助工具，主打APK 提取备份，并集成了应用冻结、隐藏、网页传输等进阶管理功能，采用侧滑菜单布局，界面干净无广告，操作逻辑直观，适合极客、开发者或有应用备份/换机传输需求的技术型用户。",
+        "screenshots": [
+            "APK导出工具_screen_1.webp",
+            "APK导出工具_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/igUtL3irp1oj",
+        "source": "https://www.coolapk.com/u/3000475"
+    },
+    {
+        "name": "只音",
+        "pkg": "com.zhiyin.music",
+        "version": "3.3.0",
+        "size": "13.26MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "噬心",
+        "icon": "只音_icon.webp",
+        "intro": "只音 是一款集全网多平台音乐搜索播放，手机实用工具箱于一体的高集成度第三方多功能资源搜索神器，支持全网音乐搜索、在线播放、高清/无损音质下载等功能，除了音乐，应用还集成了多个功能板块，工具、影视、短剧等功能板块，实用性极高，界面采用 Material 3 风格，简洁舒适，适合喜欢干净听歌体验的用户。",
+        "screenshots": [
+            "只音_screen_1.webp",
+            "只音_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i1Yan3n42k2f",
+        "source": "https://wwqp.lanzouw.com/b01gh8qela"
+    },
+    {
+        "name": "光源测速",
+        "pkg": "cn.gywc.gycesu",
+        "version": "1.1.10",
+        "size": "1.1.10",
+        "system": "Android",
+        "mod": "原版",
+        "author": "河南省盛源万创信息科技有限公司",
+        "icon": "光源测速_icon.webp",
+        "intro": "光源测速 是一款由中国电信/联通/移动联合认证的专业网络测速工具，专注于光纤/宽带真实速度测试，支持多节点智能选优、延迟/抖动/丢包率检测、Ping测试、单线程与多线程测速，结果准确可靠，是国内用户测试宽带实际网速的常用工具。",
+        "screenshots": [
+            "光源测速_screen_1.webp",
+            "光源测速_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iIF1M3n4465g",
+        "source": "https://v.kuaishou.com/n50kDsDX"
+    },
+    {
+        "name": "Kvaesitso",
+        "pkg": "de.mm20.launcher2.release",
+        "version": "1.40.0",
+        "size": "13.07MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "MM2-0",
+        "icon": "Kvaesitso_icon.webp",
+        "intro": "Kvaesitso 是一款开源免费的搜索驱动型 Android 启动器，采用 Material You 设计，通过全局搜索快速启动应用、联系人、网页、计算、文件等，支持插件扩展、自定义手势、隐藏应用、KDE Connect集成，注重极致效率与隐私，是追求极简高效桌面体验的热门启动器。",
+        "screenshots": [
+            "Kvaesitso_screen_1.webp",
+            "Kvaesitso_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i29UQ3n77lwj",
+        "source": "https://github.com/MM2-0/Kvaesitso"
+    },
+    {
+        "name": "Clock",
+        "pkg": "com.best.deskclock",
+        "version": "2.29",
+        "size": "11.46MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "BlackyHawky",
+        "icon": "Clock_icon.webp",
+        "intro": "Clock 是一款开源免费的 Android 极简时钟App，基于 AOSP 开发，包含闹钟、世界时钟、秒表、计时器四大功能，支持翻转/摇晃关闭闹钟、自定义日期闹钟、电源键关闭等实用操作，界面简洁现代，完全离线、无互联网权限、无广告，是替换系统时钟的优秀选择。",
+        "screenshots": [
+            "Clock_screen_1.webp",
+            "Clock_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iaTHC3n79tyb",
+        "source": "https://github.com/BlackyHawky/Clock"
+    },
+    {
+        "name": "蓝白搜索",
+        "pkg": "com.wen.lanbaisousuo",
+        "version": "1.1.6",
+        "size": "61.54MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "神话Star",
+        "icon": "蓝白搜索_icon.webp",
+        "intro": "蓝白搜索 是一款网盘资源搜索工具，专注于快速搜索百度网盘、阿里云盘、夸克网盘、蓝奏云等平台的资源，支持影视、软件、游戏、文档、音乐等多种类型资源一键搜索，界面简洁，操作简单，是找资源的高效神器。",
+        "screenshots": [
+            "蓝白搜索_screen_1.webp"
+        ],
+        "url": "",
+        "source": "https://myth.lanzouu.com/b03317mna"
+    },
+    {
+        "name": "PixEz",
+        "pkg": "com.perol.pixez",
+        "version": "0.9.100",
+        "size": "17.83MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Notsfsssf",
+        "icon": "PixEz_icon.webp",
+        "intro": "PixEz 是一款开源免费的第三方 Pixiv 客户端，界面采用 Material You 设计，支持浏览插画、漫画、动图、排行榜、搜索、收藏、下载高清原图与多图集打包等功能，体验流畅且注重隐私，无广告、无追踪，是 Pixiv 爱好者最常用的替代客户端。",
+        "screenshots": [
+            "PixEz_screen_1.webp",
+            "PixEz_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iF0sv3n8fvcd",
+        "source": "https://github.com/Notsfsssf/pixez-flutter"
+    },
+    {
+        "name": "粤拼输入法",
+        "pkg": "org.jyutping.jyutping",
+        "version": "0.59.0",
+        "size": "46.12MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "yuetyam",
+        "icon": "粤拼输入法_icon.webp",
+        "intro": "粤拼输入法 是一款开源免费的 Android 粤语拼音输入法（广东话键盘），支持粤语拼音、粤语九宫格、仓颉、五笔等输入方式，词库精准、支持云输入与本地离线使用，无隐私收集，开箱即用，适合广东、香港、澳门及海外粤语使用者。",
+        "screenshots": [
+            "粤拼输入法_screen_1.webp",
+            "粤拼输入法_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ivig13n8gryh",
+        "source": "https://github.com/yuetyam/jyutping-android"
+    },
+    {
+        "name": "Morphe",
+        "pkg": "app.morphe.manager",
+        "version": "1.16.0-dev.2",
+        "size": "13.62MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "MorpheApp",
+        "icon": "Morphe_icon.webp",
+        "intro": "Morphe 是一款开源的 Android 应用修改工具，由前 ReVanced 贡献者开发，通过简单打补丁的方式，能让用户轻松修补 YouTube、YouTube Music 和 Reddit 等官方 APK，添加去广告、后台播放、SponsorBlock跳过赞助、隐藏Shorts、UI自定义等增强功能，实现高度个性化的无广告纯净体验。",
+        "screenshots": [
+            "Morphe_screen_1.webp",
+            "Morphe_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iVkUu3nk0kda",
+        "source": "https://github.com/MorpheApp/morphe-manager"
+    },
+    {
+        "name": "InkRoot",
+        "pkg": "com.didichou.inkroot",
+        "version": "1.0.9",
+        "size": "76.84MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "yyyyymmmmm",
+        "icon": "InkRoot_icon.webp",
+        "intro": "InkRoot 是一款开源免费的极简智能笔记应用，基于 Memos 系统开发，支持 Android、iOS 等平台，集成本地加密存储、云端同步（Memos/WebDAV）、AI 智能助手（续写、洞察、总结）、知识图谱、Notion/Obsidian 同步、微信读书导入等功能，专注于高效记录、深度思考与隐私安全，让笔记成为思想生根发芽的工具。",
+        "screenshots": [
+            "InkRoot_screen_1.webp",
+            "InkRoot_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iu8UA3ne75ve",
+        "source": "https://github.com/yyyyymmmmm/IntRoot"
+    },
+    {
+        "name": "PlainApp",
+        "pkg": "com.ismartcoding.plain",
+        "version": "3.0.16",
+        "size": "85.68MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "plainhub",
+        "icon": "PlainApp_icon.webp",
+        "intro": "PlainApp 是一款免费开源的 Android 手机网页管理工具，它将你的手机变成一个自托管的本地 Web 服务，让你通过同一 Wi-Fi 网络下的电脑浏览器即可安全访问和管理手机文件、媒体、联系人、短信、通话记录、设备信息等，支持屏幕镜像、AI 图像搜索等功能，完全无需云端、简洁、无广告、无注册，注重隐私与本地安全。",
+        "screenshots": [
+            "PlainApp_screen_1.webp",
+            "PlainApp_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ia0cK3nfb6mb",
+        "source": "https://github.com/plainhub/plain-app"
+    },
+    {
+        "name": "Squircle CE",
+        "pkg": "com.blacksquircle.ui",
+        "version": "2025.1.3",
+        "size": "18.38MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "massivemadness",
+        "icon": "Squircle_CE_icon.webp",
+        "intro": "Squircle CE 是一款开源、快速且轻量级的 Android 代码编辑器兼文件管理器，支持 30 多种编程语言（包括 C/C++、Java、Python、Go 等），提供语法高亮、代码自动补全、无限撤销/重做、多种配色主题、文件管理、SFTP/FTP(S) 远程访问以及 Git 版本控制集成，适合学生、爱好者和开发者在手机或平板上随时编写、管理和版本控制代码。",
+        "screenshots": [
+            "Squircle_CE_screen_1.webp",
+            "Squircle_CE_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iXtAt3nf1w1g",
+        "source": "https://github.com/massivemadness/Squircle-CE"
+    },
+    {
+        "name": "开屏跳过",
+        "pkg": "com.zfdang.touchhelper",
+        "version": "2026.04.12",
+        "size": "1.12MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "zfdang",
+        "icon": "开屏跳过_icon.webp",
+        "intro": "开屏跳过 是一款免费开源的 Android 开屏广告自动跳过工具，基于无障碍服务实现。它能智能检测并自动点击“跳过”“关闭”“进入应用”等按钮，支持关键字匹配、指定控件识别等多种跳过方式，完全无需网络权限、无存储权限，无隐私风险、无广告，轻量高效，是替代“李跳跳”等工具的经典开源选择。",
+        "screenshots": [
+            "开屏跳过_screen_1.webp",
+            "开屏跳过_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ivRKp3nf55cj",
+        "source": "https://github.com/zfdang/Android-Touch-Helper"
+    },
+    {
+        "name": "Inure",
+        "pkg": "app.simple.inure",
+        "version": "build107.0.0",
+        "size": "26.51MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Hamza417",
+        "icon": "Inure_icon.webp",
+        "intro": "Inure 是一款开源、优雅美观的 Android 高级应用管理器和分析工具，支持 Root 和 Shizuku 模式，带有内置终端模拟器、应用使用统计、跟踪器扫描、VirusTotal 检查、Debloat 去臃肿、批量操作、APK/Split APK 安装器、组件查看与修改（活动、服务、权限等）、自定义主题引擎等强大功能，适合极客和高级用户深度管理设备上的所有应用（包括已安装和 APK 文件）。",
+        "screenshots": [
+            "Inure_screen_1.webp",
+            "Inure_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iNQS73nfar0j",
+        "source": "https://github.com/Hamza417/Inure"
+    },
+    {
+        "name": "RustDesk",
+        "pkg": "com.carriez.flutter_hbb",
+        "version": "1.4.6",
+        "size": "25.41MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "rustdesk",
+        "icon": "RustDesk_icon.webp",
+        "intro": "RustDesk 是一款免费开源的跨平台远程桌面软件，采用 Rust 语言开发，支持 Windows、macOS、Linux、Android、iOS 等平台，提供端到端加密、文件传输、屏幕共享/控制、自建服务器、无需配置即用等功能，可实现电脑间互控、手机远程控制电脑或分享手机屏幕，注重数据自主与隐私安全，是追求高安全、低延迟远程访问的理想选择。",
+        "screenshots": [
+            "RustDesk_screen_1.webp",
+            "RustDesk_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i0e7Z3nfayab",
+        "source": "https://github.com/rustdesk/rustdesk"
+    },
+    {
+        "name": "RebootNya",
+        "pkg": "github.daisukikaffuchino.rebootnya",
+        "version": "1.7.1",
+        "size": "3.70MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "daisukiKaffuChino",
+        "icon": "RebootNya_icon.webp",
+        "intro": "RebootNya 是一款免费开源的 Android 高级重启工具，支持 Root 和 Shizuku 两种无障碍模式，能快速一键执行普通重启、Recovery、Fastboot、Download、Safe Mode、Soft Reboot 等多种高级重启选项，界面简洁透明，操作安全便捷，兼容 Android 9 至 16 系统，是日常重启设备的实用小工具。",
+        "screenshots": [
+            "RebootNya_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iR8M63nfavqj",
+        "source": "https://github.com/daisukiKaffuChino/RebootNya"
+    },
+    {
+        "name": "屏幕截图磁贴",
+        "pkg": "com.github.cvzi.screenshottile",
+        "version": "2.15.2",
+        "size": "3.69MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "cvzi",
+        "icon": "屏幕截图磁贴_icon.webp",
+        "intro": "屏幕截图磁贴 是一款免费开源的 Android 屏幕截图快捷工具，它通过在快速设置面板（下拉通知栏）添加一个“截图”磁贴（Tile），实现一键快速截取全屏、滚动截图或部分区域截图，支持自定义保存路径、截图后自动隐藏通知栏、延迟截图、通知栏快捷分享/编辑等功能，轻量无广告、无多余权限，兼容 Android 7.0 以上系统，是日常截图最便捷高效的实用小工具。",
+        "screenshots": [
+            "屏幕截图磁贴_screen_1.webp",
+            "屏幕截图磁贴_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iGu413nfapmj",
+        "source": "https://github.com/cvzi/ScreenshotTile"
+    },
+    {
+        "name": "复制验证码",
+        "pkg": "io.github.jd1378.otphelper",
+        "version": "1.20.4",
+        "size": "3.16MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "jd1378",
+        "icon": "复制验证码_icon.webp",
+        "intro": "复制验证码 是一款免费开源的 Android 验证码自动复制工具，它能实时监听短信通知和其他应用通知，智能识别并自动提取 OTP（一次性密码）、验证码等数字代码，直接复制到剪贴板，无需手动打开短信或通知，支持通知模式和短信直读模式，完全离线运行、无需网络权限、无广告，极大提升输入验证码时的效率，是日常登录、验证场景的实用小工具。",
+        "screenshots": [
+            "复制验证码_screen_1.webp",
+            "复制验证码_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iTzC63nfap3a",
+        "source": "https://github.com/jd1378/otphelper"
+    },
+    {
+        "name": "APK Explorer Editor",
+        "pkg": "com.apk.editor",
+        "version": "v0.32",
+        "size": "3.37MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "apk-editor",
+        "icon": "APK_Explorer_Editor_icon.webp",
+        "intro": "APK Explorer Editor 是一款免费开源的 Android APK 浏览器与编辑工具，支持浏览已安装应用或从存储中选择的 APK 文件内容（资源、XML、图片、字体等），提供导出资源、基本文本/XML 编辑、APK/Split APK/App Bundle 安装器、图标替换、批量导出、签名等功能，界面优雅，支持深色模式，无需 Root，体积小巧，是学习 APK 结构、提取资源或简单修改应用的实用工具。",
+        "screenshots": [
+            "APK_Explorer_Editor_screen_1.webp",
+            "APK_Explorer_Editor_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/izE183nfbbba",
+        "source": "https://github.com/apk-editor/APK-Explorer-Editor"
+    },
+    {
+        "name": "Prism File Explorer",
+        "pkg": "com.raival.compose.file.explorer",
+        "version": "1.3.2",
+        "size": "10.23MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Raival-e",
+        "icon": "Prism_File_Explorer_icon.webp",
+        "intro": "Prism File Explorer 是一款免费开源的 Android 文件管理器，完全使用 Kotlin 和 Jetpack Compose 构建，采用 Material Design 3 界面，提供多标签浏览、文件创建/复制/移动/删除/压缩、批量操作、搜索排序、网格/列表视图、内置图片/视频/音频/PDF 查看器、文本编辑器、ZIP 压缩解压等丰富功能，轻量流畅、无广告、注重隐私，是高效且优雅的手机文件管理工具。",
+        "screenshots": [
+            "Prism_File_Explorer_screen_1.webp",
+            "Prism_File_Explorer_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iAo0n3nfau1i",
+        "source": "https://github.com/Raival-e/Prism-File-Explorer"
+    },
+    {
+        "name": "Delta",
+        "pkg": "dev.shadoe.delta",
+        "version": "2025.08+0",
+        "size": "3.43MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "supershadoe",
+        "icon": "Delta_icon.webp",
+        "intro": "Delta 是一款免费开源的 Android 高级热点设置工具，专为 Pixel 类原生系统设计，能解锁系统设置中隐藏的高级个人热点（Wi-Fi 热点）选项，例如自定义 SSID、密码、安全类型、频段、最大连接数、数据限制、MAC 随机化等高级参数，提供详细的信息查看和精细控制，是原生系统用户优化热点体验的实用小工具。",
+        "screenshots": [
+            "Delta_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iMDAl3nfaq0d",
+        "source": "https://github.com/supershadoe/delta"
+    },
+    {
+        "name": "蓝牙音量管理器",
+        "pkg": "eu.darken.bluemusic",
+        "version": "3.3.1-rc0",
+        "size": "5.62MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "d4rken-org",
+        "icon": "蓝牙音量管理器_icon.webp",
+        "intro": "蓝牙音量管理器 是一款免费开源的 Android 蓝牙音量自动化工具，它能为每个不同的蓝牙设备（如耳机、音箱、车载蓝牙）独立记忆并自动恢复音乐、通话、铃声、通知、闹钟等音量设置，支持连接时自动触发操作（启动 App、发送媒体按键、保持屏幕唤醒等）、音量锁定、防突变限速、无广告、无跟踪，界面简洁轻量，是解决蓝牙设备切换时音量反复调整烦恼的实用工具。",
+        "screenshots": [
+            "蓝牙音量管理器_screen_1.webp",
+            "蓝牙音量管理器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iNevt3nfapeb",
+        "source": "https://github.com/d4rken-org/bluemusic"
+    },
+    {
+        "name": "OSS文档扫描",
+        "pkg": "com.akylas.documentscanner",
+        "version": "1.20.4.147",
+        "size": "17.47MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "ossdocumentscanner",
+        "icon": "OSS文档扫描_icon.webp",
+        "intro": "OSS文档扫描 是一款免费开源的移动文档扫描应用，支持相机快速扫描、自动边缘检测、批量处理、OCR文字识别（多语言），可将纸质文档/收据转为可搜索的PDF，支持本地/WebDAV/云同步，无广告且注重隐私，适合需要高效数字化纸质文件的用户。",
+        "screenshots": [
+            "OSS文档扫描_screen_1.webp",
+            "OSS文档扫描_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/inGd83nfaste",
+        "source": "https://github.com/ossdocumentscanner/OSS-DocumentScanner"
+    },
+    {
+        "name": "OSS 卡包",
+        "pkg": "com.akylas.cardwallet",
+        "version": "1.11.5.69",
+        "size": "18.26MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "ossdocumentscanner",
+        "icon": "OSS_卡包_icon.webp",
+        "intro": "OSS 卡包 是一款免费开源的卡片扫描与数字钱包应用，支持相机扫描或导入图像、自动条码/二维码检测、OCR内容提取与存储，可管理身份证、会员卡、名片等，支持生物识别加密和同步，帮用户安全便捷地将实体卡片数字化管理。",
+        "screenshots": [
+            "OSS_卡包_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iKxAe3nfas4j",
+        "source": "https://github.com/ossdocumentscanner/OSS-DocumentScanner"
+    }
+]

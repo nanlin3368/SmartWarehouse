@@ -1,0 +1,842 @@
+[
+    {
+        "name": "音量君",
+        "pkg": "com.gzapp.volumeman",
+        "version": "1.2.8",
+        "size": "1.70MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "咕咕舟",
+        "icon": "音量君_icon.webp",
+        "intro": "音量君 是一款多功能音量助手应用，可以帮助用户管理手机的各种声音类型，如媒体音量、铃声、闹钟、通话等，并提供更精细的音量调节方式。相比系统自带音量控制，它支持音量微调、音效增强和多模式音量管理。",
+        "screenshots": [
+            "音量君_screen_1.webp",
+            "音量君_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iJJju3iitwta",
+        "source": "https://www.coolapk.com/u/1408877"
+    },
+    {
+        "name": "Gboard",
+        "pkg": "com.google.android.inputmethod.latin",
+        "version": "16.8.2.867538971",
+        "size": "72.7MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Google LLC",
+        "icon": "Gboard_icon.webp",
+        "intro": "Gboard 是由谷歌官方开发的免费智能输入法，支持 Android 和 iOS 平台，以流畅可靠著称，内置滑行输入（Glide Typing）、语音输入、手写输入、表情符号/GIF 搜索、实时 Google 搜索、翻译、多语言智能切换、主题自定义等丰富功能，是目前全球用户量最大的手机键盘之一。",
+        "screenshots": [
+            "Gboard_screen_1.webp",
+            "Gboard_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iG5Rh3jarg5g",
+        "source": "https://play.google.com/store"
+    },
+    {
+        "name": "F-Droid",
+        "pkg": "org.fdroid.fdroid",
+        "version": "1.23.2",
+        "size": "11.85MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "fdroid",
+        "icon": "F-Droid_icon.webp",
+        "intro": "F-Droid 是一款免费开源的 Android 应用商店，专注于提供纯净的自由开源软件（FOSS），无需注册账号即可浏览、下载和自动更新数千款高质量开源应用，所有应用均经过安全构建与验证，注重用户隐私、无追踪器、无广告干扰，是追求自由、隐私与纯净 Android 生态的用户的首选应用分发平台。",
+        "screenshots": [
+            "F-Droid_screen_1.webp",
+            "F-Droid_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iXsNL3j0hsha",
+        "source": "https://gitlab.com/fdroid/fdroidclient"
+    },
+    {
+        "name": "一指禅",
+        "pkg": "me.app.xad",
+        "version": "3.4.5",
+        "size": "1.74MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "jdlingyu",
+        "icon": "一指禅_icon.webp",
+        "intro": "一指禅 是一款轻量实用的 Android 自动点击工具，专注于模拟点击操作，可自动跳过开屏广告、弹窗、连续点击等，支持简单脚本或规则设置，操作简便、无需 Root，是日常去广告和挂机操作的实用助手。",
+        "screenshots": [
+            "一指禅_screen_1.webp",
+            "一指禅_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iDXKq3jnoope",
+        "source": "https://github.com/jdlingyu/onefinger"
+    },
+    {
+        "name": "快速瓷砖",
+        "pkg": "com.asdoi.quicktiles",
+        "version": "1.4",
+        "size": "2.07MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "",
+        "icon": "快速瓷砖_icon.webp",
+        "intro": "快速瓷砖 是一款免费的 Android 快速设置瓷砖自定义工具，它专为扩展系统下拉通知栏的快速设置面板而设计，让你能一键添加数多种官方没有的自定义快捷开关（瓷砖），操作更高效、无需 Root、无广告、体积仅约 2MB，支持 Android 5.0 以上系统。",
+        "screenshots": [
+            "快速瓷砖_screen_1.webp",
+            "快速瓷砖_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i7mzx3j4jm6j",
+        "source": ""
+    },
+    {
+        "name": "隐秘参数",
+        "pkg": "com.x1y9.probe",
+        "version": "2.8.7",
+        "size": "442.79KB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "",
+        "icon": "隐秘参数_icon.webp",
+        "intro": "隐秘参数 是一款体积很小的手机硬件检测工具，它可以读取手机内部的各种硬件数据，例如 CPU、屏幕、存储、电池等，让用户看到系统中一些平时看不到的“隐藏参数”。很多手机厂商会隐藏部分硬件信息，而这款软件可以把这些数据展示出来，方便用户进行验机、性能测试或设备检测。",
+        "screenshots": [
+            "隐秘参数_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iwarF3in58mf",
+        "source": ""
+    },
+    {
+        "name": "FusionApp",
+        "pkg": "net.fusionapp",
+        "version": "2.0.0-beta4",
+        "size": "8.68MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "寒歌",
+        "icon": "FusionApp_icon.webp",
+        "intro": "FusionApp 是一款轻量实用的 Android 网页转原生 App 工具，将任意网页（包括网页版 App）打包成独立的 Android 应用（.apk），支持自定义 App 名称、图标、启动图、主题颜色，可添加启动屏、去除网页广告、注入自定义 JS/CSS，支持多标签、通知推送、后台运行、文件下载等原生能力，内置模板市场和社区分享，是制作轻量 WebApp、离线工具或个性化小应用的实用低代码工具。",
+        "screenshots": [
+            "FusionApp_screen_1.webp",
+            "FusionApp_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iDFWO3imkxyb",
+        "source": "https://www.coolapk.com/u/675594"
+    },
+    {
+        "name": "Aurora Store",
+        "pkg": "com.aurora.store",
+        "version": "4.8.1",
+        "size": "8.62MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "AuroraOSS",
+        "icon": "Aurora_Store_icon.webp",
+        "intro": "Aurora Store 是一款免费开源的 Google Play 商店非官方客户端（FOSS），采用 Material 3 设计，支持匿名登录或个人账号，无需 Google 服务或 Google 账号即可浏览、搜索、下载和更新 Play 商店上的应用，同时提供设备伪装（Spoof）、地区切换、Exodus 隐私追踪器检测等功能，注重隐私保护和去 Google 化体验，是 de-Googled 用户和注重隐私者的首选应用商店工具。",
+        "screenshots": [
+            "Aurora_Store_screen_1.webp",
+            "Aurora_Store_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i4T4R3ixb5sj",
+        "source": "https://gitlab.com/AuroraOSS/AuroraStore"
+    },
+    {
+        "name": "用Shizuku激活",
+        "pkg": "com.mihotel.activatebrevent",
+        "version": "1.2",
+        "size": "760.77KB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "dadaewq",
+        "icon": "用Shizuku激活_icon.webp",
+        "intro": "用Shizuku激活 是一款免费小巧的安卓辅助工具，专为非 Root 用户设计。它的核心作用是通过 Shizuku 的 ADB 权限，一键激活常用玩机软件，避免每次手机重启后都要连接电脑手动敲长串 ADB命令 的麻烦。",
+        "screenshots": [
+            "使用Shizuku激活_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ig3qb3ik471e",
+        "source": "https://www.coolapk.com/u/460110"
+    },
+    {
+        "name": "米窗-全局小窗",
+        "pkg": "com.sunshine.freeform",
+        "version": "2.5.18",
+        "size": "3.10MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "sunshine0523",
+        "icon": "米窗-全局小窗_icon.webp",
+        "intro": "米窗-全局小窗 是一款开源的安卓免费浮窗工具，专为非 MIUI / 类原生系统 用户设计。通过 Shizuku / Sui（或可选Root模块）激活后，能让绝大多数App以全局小窗形式运行，完美复刻小米MIUI的自由小窗体验，无需 Root 就能实现多任务悬浮。",
+        "screenshots": [
+            "米窗-全局小窗_screen_1.webp",
+            "米窗-全局小窗_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ibVtf3iijjtc",
+        "source": "https://github.com/sunshine0523/Mi-Freeform"
+    },
+    {
+        "name": "照片编辑器",
+        "pkg": "com.iudesk.android.photo.editor",
+        "version": "12.4",
+        "size": "6.21MB",
+        "system": "Android",
+        "mod": "莫奈版",
+        "author": "PatrickAlex2019",
+        "icon": "照片编辑器_icon.webp",
+        "intro": "照片编辑器 是一款多功能的图片处理与美化工具，用户可以通过各种编辑功能对照片进行优化和创作，例如调整亮度、添加滤镜、拼接照片等，让普通照片变得更美观或更具创意。",
+        "screenshots": [
+            "照片编辑器_screen_1.webp",
+            "照片编辑器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/irkFr3iikc9g",
+        "source": "https://github.com/PatrickAlex2019/PhotoEditor"
+    },
+    {
+        "name": "按键映射器",
+        "pkg": "flar2.homebutton",
+        "version": "3.35",
+        "size": "11.16MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "按键映射器_icon.webp",
+        "intro": "按键映射器 是一款 Android 按键重映射工具。它允许用户轻松自定义手机、平板、Android TV 或遥控器上的各种物理/电容按钮功能，无需Root（部分高级功能需 ADB 或 Root 辅助），通过单按、双按、长按三种手势分配任意操作，极大提升单手操作效率和个性化体验。",
+        "screenshots": [
+            "按键映射器_screen_1.webp",
+            "按键映射器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iwyON3in0rwj",
+        "source": ""
+    },
+    {
+        "name": "Apktool M",
+        "pkg": "ru.maximoff.apktool",
+        "version": "2.4.0-260312",
+        "size": "15.12MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Maximoff",
+        "icon": "Apktool_M_icon.webp",
+        "intro": "Apktool M 是一款由 Maximoff 开发的 Android 上强大的 APK 反编译/编译工具（Apktool 的移动版），支持直接在手机上反编译 APK、查看/修改资源、Manifest、Smali 代码、快速编辑应用名称、图标、包名、版本、SDK 等信息，还内置文本编辑器和翻译功能，是逆向修改、汉化、克隆 APK 的专业玩机神器（无需 Root 即可使用大部分功能）。",
+        "screenshots": [
+            "Apktool_M_screen_1.webp",
+            "Apktool_M_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ivWQL3kmym6d",
+        "source": "https://t.me/s/apktool_m"
+    },
+    {
+        "name": "小黑屋",
+        "pkg": "web1n.stopapp",
+        "version": "1.9.18c",
+        "size": "1.82MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "web1n",
+        "icon": "小黑屋_icon.webp",
+        "intro": "小黑屋 是一款轻量高效的 Android 应用冻结工具，支持无需 Root（设备管理员、ADB、Shizuku 等模式），能一键冻结不常用 App，使其从桌面消失并彻底阻止后台自启、耗电和内存占用，同时支持静默安装等高级功能，是优化手机流畅度和续航的经典省电助手。",
+        "screenshots": [
+            "小黑屋_screen_1.webp",
+            "小黑屋_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iyJVL3ijez0f",
+        "source": "https://stopapp.https.gs/"
+    },
+    {
+        "name": "短信转发器",
+        "pkg": "cn.ppps.forwarder",
+        "version": "3.5.0.260214",
+        "size": "15.91MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "pppscn",
+        "icon": "短信转发器_icon.webp",
+        "intro": "短信转发器 是一款实用的 Android 短信/通知/来电转发工具，可根据规则将短信、通知转发到钉钉、企业微信、Telegram、邮箱、Webhook 等，支持远程控制和查短信，是备用机或监控场景的必备神器。",
+        "screenshots": [
+            "短信转发器_screen_1.webp",
+            "短信转发器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iMFxg3iihhwb",
+        "source": "https://github.com/pppscn/SmsForwarder"
+    },
+    {
+        "name": "Accounts",
+        "pkg": "com.rosan.accounts",
+        "version": "1.5.1",
+        "size": "1.56MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "iamr0s",
+        "icon": "Accounts_icon.webp",
+        "intro": "Accounts 是一款用于管理和查看手机账户信息的工具软件。通常配合 Shizuku 和 雹app 使用，以提高设备管理权限激活成功率。",
+        "screenshots": [
+            "Accounts_screen_1.webp",
+            "Accounts_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ieDO73izz6dg",
+        "source": "https://github.com/iamr0s/AndroidAccounts"
+    },
+    {
+        "name": "Surfboard",
+        "pkg": "com.getsurfboard",
+        "version": "mobile-2.28.1 (Build 270)",
+        "size": "22.16MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "getsurfboard",
+        "icon": "Surfboard_icon.webp",
+        "intro": "Surfboard 是一款在 Android 平台上非常知名的开源网络代理工具。它以界面美观、功能强大且完全遵循 Surge 配置标准而著称，常被广大用户戏称为“Android 版的 Surge”。",
+        "screenshots": [
+            "Surfboard_screen_1.webp",
+            "Surfboard_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i2FHl3kncybe",
+        "source": "https://github.com/getsurfboard/surfboard"
+    },
+    {
+        "name": "TgMonet Theme",
+        "pkg": "com.c3r5b8.telegram_monet",
+        "version": "12.4.0",
+        "size": "1.64MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "mi-g-alex",
+        "icon": "TgMonet_Theme_icon.webp",
+        "intro": "TgMonet Theme 是一款开源的 Android 个性化工具，主要用于为 Telegram 客户端生成 Material You（Monet）风格主题。它可以根据手机系统的动态配色自动生成 Telegram 主题，让聊天界面颜色与系统壁纸保持一致。",
+        "screenshots": [
+            "TgMonet_Theme_screen_1.webp",
+            "TgMonet_Theme_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iHnc73knffxa",
+        "source": "https://github.com/mi-g-alex/Telegram-Monet"
+    },
+    {
+        "name": "阅读",
+        "pkg": "io.legato.kazusa",
+        "version": "3.26.7",
+        "size": "14.21MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "HapeLee",
+        "icon": "阅读_icon.webp",
+        "intro": "legado-with-MD3 是一款基于开源项目“阅读”重构的、采用最新 Material Design 3 设计风格且增强了平板适配与阅读统计功能的现代化电子书阅读器。",
+        "screenshots": [
+            "阅读_screen_1.webp",
+            "阅读_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iRNTS3ivwlvc",
+        "source": "https://github.com/HapeLee/legado-with-MD3"
+    },
+    {
+        "name": "搜索进化 SearchEVO",
+        "pkg": "com.jwg.searchEVO",
+        "version": "4.2.2",
+        "size": "7.53MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "LumiaGG",
+        "icon": "搜索进化_SearchEVO_icon.webp",
+        "intro": "搜索进化 SearchEVO 是一款功能强大的手机全局搜索工具，支持快速搜索应用、联系人、网页、屏幕内容识别、扫码等功能，可通过关键词或快捷方式直接跳转，是提升手机检索效率的实用效率工具。",
+        "screenshots": [
+            "搜索进化_SearchEVO_screen_1.webp",
+            "搜索进化_SearchEVO_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iKDXx3iif8jc",
+        "source": "https://www.coolapk.com/u/913898"
+    },
+    {
+        "name": "StarTravel",
+        "pkg": "com.startravel.app",
+        "version": "1.0.2",
+        "size": "4.72MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "洛夕",
+        "icon": "StarTravel_icon.webp",
+        "intro": "StarTravel 是一款 Android 硬核玩机工具，主页炫酷实时监控 CPU/GPU 频率与多点温度（需搭配同一生态的 Stellar 服务激活），工具页集成充电功率、功耗统计、帧率检测、全局插帧、触屏调节、直驱供电、高温亮度恢复等实用优化功能，专为刷机、游戏调优与硬件诊断玩家设计。",
+        "screenshots": [
+            "StarTravel_screen_1.webp",
+            "StarTravel_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iGtpR3knpi6b",
+        "source": "https://www.coolapk.com/u/4078404"
+    },
+    {
+        "name": "Amarok",
+        "pkg": "deltazero.amarok",
+        "version": "0.10.1",
+        "size": "7.27MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "deltazefiro",
+        "icon": "Amarok_icon.webp",
+        "intro": "Amarok 是一款基于 Material 3 设计的开源轻量级隐私工具，它通过“瞬间混淆文件头”和“免 Root 隐藏应用”的双重机制，为安卓用户提供了一个极速、优雅且支持通知栏一键切换的隐私内容屏蔽方案。",
+        "screenshots": [
+            "Amarok_screen_1.webp",
+            "Amarok_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i2yd83kntmbe",
+        "source": "https://github.com/deltazefiro/Amarok-Hider"
+    },
+    {
+        "name": "智慧岛",
+        "pkg": "com.microfield.zenMaster",
+        "version": "0.0.6",
+        "size": "9.99MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "",
+        "icon": "智慧岛_icon.webp",
+        "intro": "智慧岛（原禅师）是一款基于无障碍服务的 Android 自动化跳广告工具，能智能识别并自动点击“跳过”“关闭”等按钮，有效跳过各类 App 的开屏广告、弹窗广告和内置推广，还支持自定义规则、验证码自动填充等自动化任务，是 GKD、李跳跳之后社区推荐的去广告实用工具。",
+        "screenshots": [
+            "智慧岛_screen_1.webp",
+            "智慧岛_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ik4vg3iiy5od",
+        "source": "https://zenhelp.microfield.cn/"
+    },
+    {
+        "name": "APK编辑器",
+        "pkg": "com.gmail.heagoo.apkeditor.pro",
+        "version": "5.2",
+        "size": "9.72MB",
+        "system": "Android",
+        "mod": "莫奈版",
+        "author": "Galahad_WPX",
+        "icon": "APK编辑器_icon.webp",
+        "intro": "APK编辑器 是一款在 Android 手机上直接运行的APK反编译与修改工具，支持简易编辑（快速替换图标、名称、资源）和全面编辑（反编译后修改Manifest、图片、文字、Smali代码等），常用于汉化、去广告、修改包名、签名打包等，是玩机用户和逆向爱好者的常用神器。",
+        "screenshots": [
+            "APK编辑器_screen_1.webp",
+            "APK编辑器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iXWQT3ik6lfe",
+        "source": "https://t.me/waifupx_official"
+    },
+    {
+        "name": "白眼",
+        "pkg": "org.epcdiy.memory",
+        "version": "2.1.4_uni",
+        "size": "4.64MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "epcdiy",
+        "icon": "白眼_icon.webp",
+        "intro": "白眼 是一款简洁实用的手机硬件真实配置检测工具，无需Root即可精准识别CPU、内存、存储、屏幕等硬件参数，专门用于辨别山寨机、翻新机和虚假配置，界面极简、无广告，是二手验机和防坑的实用助手。",
+        "screenshots": [
+            "白眼_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iaSWj3il3fef",
+        "source": "https://epcdiy.org/"
+    },
+    {
+        "name": "一个木函",
+        "pkg": "com.One.WoodenLetter",
+        "version": "7.17.22-normal",
+        "size": "14.59MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "上海花筏科技有限公司",
+        "icon": "一个木函_icon.webp",
+        "intro": "一个木函 是一款体积小巧、界面纯粹的多功能效率工具箱（支持Android/iOS等多平台），内置超过120个实用小工具（文字识别、翻译、汇率、图片处理、二维码、计算器、设备信息、清理、日期计算等），帮助用户减少安装零散App，节省空间并提升日常效率，强调无后台、无广告、Material Design美学设计。",
+        "screenshots": [
+            "一个木函_screen_1.webp",
+            "一个木函_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iiOwn3il366d",
+        "source": "https://woobx.cn/"
+    },
+    {
+        "name": "安装狮",
+        "pkg": "com.modosa.apkinstaller",
+        "version": "3.7.5",
+        "size": "1.78MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "dadaewq",
+        "icon": "安装狮_icon.webp",
+        "intro": "安装狮 是一款多模式 APK 安装增强工具，支持 Root、Shizuku、设备管理员、冰箱等多种安装方式，可实现静默安装、降级覆盖安装、特殊权限安装等高级功能，适合批量安装或处理系统限制的场景。",
+        "screenshots": [
+            "安装狮_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ikdDx3ij4gij",
+        "source": "https://www.coolapk.com/u/460110"
+    },
+    {
+        "name": "Via",
+        "pkg": "mark.via",
+        "version": "7.0.0",
+        "size": "2.56MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "上海知为网络科技有限公司",
+        "icon": "Via_icon.webp",
+        "intro": "Via 是一款轻量极简的 Android 浏览器，体积小、速度快、资源占用低，支持广告拦截、夜间模式、无痕浏览、插件扩展和书签管理，是追求纯净上网体验用户的优秀选择。",
+        "screenshots": [
+            "Via_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iHZC83iiulde",
+        "source": "https://viayoo.com/zh-cn/"
+    },
+    {
+        "name": "快捷方式",
+        "pkg": "com.syyf.quickpay",
+        "version": "2.2.8",
+        "size": "9.09MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "syyf1092",
+        "icon": "快捷方式_icon.webp",
+        "intro": "快捷方式 是一款专为 Android 极客与效率控打造的轻量化全能桌面增强工具，通过高度自定义的小组件、磁贴和 Activity 跨应用直达功能，将手机多步操作简化为一键触达，是追求极致简洁与高效操控的“系统瑞士军刀”。",
+        "screenshots": [
+            "快捷方式_screen_1.webp",
+            "快捷方式_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iDKyM3kpy9eb",
+        "source": "https://www.coolapk.com/u/1197378"
+    },
+    {
+        "name": "Device Info",
+        "pkg": "com.ytheekshana.deviceinfo",
+        "version": "3.4.1.3",
+        "size": "6.81MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "Device_Info_icon.webp",
+        "intro": "Device Info 是一款轻量、功能全面的 安卓设备信息查看工具，通过读取 Android 系统接口和硬件信息，实时展示手机的详细信息，包括 CPU、内存、存储、屏幕、传感器、网络等内容。用户可以用它来了解手机硬件、检测设备性能以及排查问题。",
+        "screenshots": [
+            "Device_Info_screen_1.webp",
+            "Device_Info_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/idpKN3iiko4d",
+        "source": ""
+    },
+    {
+        "name": "Rotation",
+        "pkg": "com.pranavpandey.rotation",
+        "version": "29.2.0",
+        "size": "6.10MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "Rotation_icon.webp",
+        "intro": "Rotation 是一款屏幕旋转控制工具，可强制指定 App 的横竖屏方向、通过通知栏快捷切换旋转模式，解决某些应用旋转不兼容或自动旋转问题，提升使用便利性。",
+        "screenshots": [
+            "Rotation_screen_1.webp",
+            "Rotation_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i8R013iilohc",
+        "source": ""
+    },
+    {
+        "name": "存储空间清理",
+        "pkg": "com.ktls.fileinfo",
+        "version": "5.4.5",
+        "size": "9.51MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "枯藤老树",
+        "icon": "存储空间清理_icon.webp",
+        "intro": "存储空间清理 是一款专门用于清理手机垃圾文件、优化存储空间、提升系统性能 的 Android 工具软件。它通过扫描手机中的缓存、临时文件、广告文件和大文件，帮助用户释放存储空间，让手机运行更流畅。",
+        "screenshots": [
+            "存储空间清理_screen_1.webp",
+            "存储空间清理_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ioxzo3iitr0b",
+        "source": "https://www.coolapk.com/u/624028"
+    },
+    {
+        "name": "Salt Player",
+        "pkg": "com.salt.music",
+        "version": "11.1.0",
+        "size": "10.86MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Moriafly",
+        "icon": "Salt_Player_icon.webp",
+        "intro": "Salt Player 是一款高音质本地音乐播放器（支持 FLAC 等无损格式），提供高性能解码、32-bit 输出、自定义界面和标签管理，适合发烧友追求纯净离线听歌体验。",
+        "screenshots": [
+            "Salt_Player_screen_1.webp",
+            "Salt_Player_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iuVgB3kv6qgd",
+        "source": "https://github.com/Moriafly/SaltPlayerSource"
+    },
+    {
+        "name": "屏幕一览",
+        "pkg": "com.iunis.tools.display",
+        "version": "1.3.6",
+        "size": "3.26MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "ziyucao",
+        "icon": "屏幕一览_icon.webp",
+        "intro": "屏幕一览 是一款“手机屏幕检测 + 实时帧率工具”的安卓工具类应用，体积小、功能实用，主要用于检测手机屏幕信息和性能状态，比如分辨率、刷新率等。界面简洁，打开就能直接看到关键数据。 ",
+        "screenshots": [
+            "屏幕一览_screen_1.webp",
+            "屏幕一览_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ikjyp3isrjfg",
+        "source": "https://www.coolapk.com/u/2449947"
+    },
+    {
+        "name": "Glow HDR",
+        "pkg": "com.iunis.hdr.glow",
+        "version": "1.2.0",
+        "size": "11.75MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "ziyucao",
+        "icon": "Glow_HDR_icon.webp",
+        "intro": "Glow HDR 是一款专注于 HDR（高动态范围）图像转换和增强的工具类应用，主要功能是将普通的标准动态范围（SDR）照片转换成 Ultra HDR 或类似高亮度、更丰富色彩的 HDR 图像，从而让照片在支持 HDR 的屏幕上显示时看起来更明亮、更鲜活、更有层次感。",
+        "screenshots": [
+            "Glow_HDR_screen_1.webp",
+            "Glow_HDR_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iS7xT3kvayrg",
+        "source": "https://www.coolapk.com/u/2449947"
+    },
+    {
+        "name": "屏幕工具箱",
+        "pkg": "com.chen.screenantitouch",
+        "version": "2.5.0",
+        "size": "3.39MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "大可爱Amor",
+        "icon": "屏幕工具箱_icon.webp",
+        "intro": "屏幕工具箱 是一款轻量级的安卓实用工具，主要通过自定义悬浮窗实现防游戏误触、OLED 屏幕防烧屏、全局防盗图水印及多功能图片悬浮显示等屏幕辅助功能。",
+        "screenshots": [
+            "屏幕工具箱_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iQ3Wc3imflch",
+        "source": "https://www.coolapk.com/u/2415893"
+    },
+    {
+        "name": "SKIP",
+        "pkg": "com.android.skip",
+        "version": "3.1.0",
+        "size": "10.69MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "GuoXiCheng",
+        "icon": "SKIP_icon.webp",
+        "intro": "SKIP 是一款开源的 Android 自动化点击跳过工具（基于无障碍服务），通过订阅规则智能识别并自动点击“跳过广告”“关闭”等按钮，支持自定义规则，是 GKD、一指禅之后社区活跃的去广告实用工具。",
+        "screenshots": [
+            "SKIP_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iQGUT3ij6fpc",
+        "source": "https://github.com/GuoXiCheng/SKIP"
+    },
+    {
+        "name": "ShizukuRunner",
+        "pkg": "com.shizuku.uninstaller",
+        "version": "17",
+        "size": "83.70KB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "WuDi-ZhanShen",
+        "icon": "ShizukuRunner_icon.webp",
+        "intro": "ShizukuRunner 是一款基于 Shizuku 服务框架 的辅助工具，允许用户通过 ADB 或无线调试获取接近 Root 的权限，从而调用系统 API 或执行 ADB 命令。",
+        "screenshots": [
+            "ShizukuRunner_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ijjz73ikq4ob",
+        "source": "https://github.com/WuDi-ZhanShen/ShizukuRunner"
+    },
+    {
+        "name": "Kazumi",
+        "pkg": "com.predidit.kazumi",
+        "version": "2.0.5",
+        "size": "28.68MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Predidit",
+        "icon": "Kazumi_icon.webp",
+        "intro": "Kazumi 是一款开源、免费的动漫追番 / 番剧播放软件，使用 Flutter 框架开发，支持几乎所有主流平台（包括安卓、iOS、Windows、macOS、Linux，甚至鸿蒙 NEXT）。它最核心的特点是基于自定义规则的番剧采集，软件本身不自带资源，而是靠用户导入或编写规则（最多5行 XPath 语法选择器）来从各种网站抓取动漫信息和播放链接。",
+        "screenshots": [
+            "Kazumi_screen_1.webp",
+            "Kazumi_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iOi5o3kwk4ej",
+        "source": "https://github.com/Predidit/Kazumi"
+    },
+    {
+        "name": "Rains浏览器",
+        "pkg": "com.rainsee.create",
+        "version": "3.2.4",
+        "size": "17.40MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "杭州雨见可拓网络科技有限公司",
+        "icon": "Rains浏览器_icon.webp",
+        "intro": "Rains浏览器 是一款主打“全功能、极轻盈”的移动端浏览器，通过深度支持油猴脚本、AI 网页助手及高度自定义的 UI 界面，为用户提供纯净且无限制的个性化冲浪体验。",
+        "screenshots": [
+            "Rains浏览器_screen_1.webp",
+            "Rains浏览器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/icWqP3kxr5ih",
+        "source": "https://rainsee.top/"
+    },
+    {
+        "name": "运行服务监控器",
+        "pkg": "me.biplobsd.rsm",
+        "version": "1.0.23",
+        "size": "9.37MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "biplobsd",
+        "icon": "运行服务监控器_icon.webp",
+        "intro": "运行服务监控器 是一款轻量级、开源的 Android 系统工具应用，主要用于监控和管理设备上正在运行的服务。它填补了现代 Android 系统（尤其是 Android 12+及许多国内定制ROM如 HyperOS、MIUI 等）逐渐隐藏或移除“正在运行的服务”查看入口的空白。",
+        "screenshots": [
+            "运行服务监控器_screen_1.webp",
+            "运行服务监控器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iDnJ63kxmeib",
+        "source": "https://github.com/biplobsd/running_services_monitor"
+    },
+    {
+        "name": "网页转应用",
+        "pkg": "com.sygjx.wyzyy.app",
+        "version": "1.9",
+        "size": "4.22MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "",
+        "icon": "网页转应用_icon.webp",
+        "intro": "网页转应用 是一款将指定网页（URL）或本地 HTML 文件打包成安卓 APK 安装包的配置工具，支持自定义应用图标、包名、启动图、状态栏及多种交互功能（如悬浮球、强制缩放、User-Agent 模拟），旨在让用户无需编程即可快速生成具备原生 App 形态的网页封装应用。",
+        "screenshots": [
+            "网页转应用_screen_1.webp",
+            "网页转应用_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ibOTq3iiwm7g",
+        "source": ""
+    },
+    {
+        "name": "Turbo IMS",
+        "pkg": "io.github.vvb2060.ims",
+        "version": "3.7.1.r106.b4c4dc58",
+        "size": "2.55MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Mystery00",
+        "icon": "Turbo_IMS_icon.webp",
+        "intro": "Turbo IMS 是一款专为 Google Pixel 手机设计的开源工具软件，主要用于开启和配置高级 IMS（IP Multimedia Subsystem）功能，让 Pixel 设备能够正常使用运营商的 VoLTE（4G/5G 语音通话）、VoWiFi（Wi-Fi 通话）、VoNR（5G 语音通话）、视频通话（VT）等功能。",
+        "screenshots": [
+            "Turbo_IMS_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/izB1q3ky8oxi",
+        "source": "https://github.com/Mystery00/TurboIMS"
+    },
+    {
+        "name": "Volume Styles",
+        "pkg": "com.tombayley.volumepanel",
+        "version": "4.5.1",
+        "size": "6.53MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "Volume_Styles_icon.webp",
+        "intro": "Volume Styles 是一款专业的 Android 音量面板美化工具，支持深度自定义音量滑块的颜色、主题（iOS、MIUI、One UI 等风格）、位置、样式和动画效果，让系统音量弹窗变得更加个性化和美观，是界面美化爱好者的实用小工具。",
+        "screenshots": [
+            "Volume_Styles_screen_1.webp",
+            "Volume_Styles_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iXCX03kzacri",
+        "source": ""
+    },
+    {
+        "name": "ClipShare",
+        "pkg": "top.coclyun.clipshare",
+        "version": "1.4.2",
+        "size": "30.27MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "aa2013",
+        "icon": "ClipShare_icon.webp",
+        "intro": "ClipShare 是一款基于 Flutter 开发的开源跨平台剪贴板历史记录与同步工具，支持 Android（10+ 后台同步）、Windows、Linux、macOS 等系统，实现文本、图片、文件、短信的实时安全同步（Diffie-Hellman + AES 加密），并可在公网环境下使用（支持自建中转服务器），让多设备间复制后直接粘贴变得无缝便捷。",
+        "screenshots": [
+            "ClipShare_screen_1.webp",
+            "ClipShare_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iOV503l0jqgb",
+        "source": "https://github.com/aa2013/ClipShare"
+    },
+    {
+        "name": "RuStore",
+        "pkg": "ru.vk.store",
+        "version": "1.96.0.2",
+        "size": "87.94MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "VK Corporation",
+        "icon": "RuStore_icon.webp",
+        "intro": "RuStore 是一款由俄罗斯社交巨头 VK 领衔开发、受政府官方支持，集应用下载、安全扫描、本地化支付及开发者生态于一体的俄罗斯国家级安卓应用商店。",
+        "screenshots": [
+            "RuStore_screen_1.webp",
+            "RuStore_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i7RKN3l0j93g",
+        "source": "https://www.rustore.ru/"
+    },
+    {
+        "name": "SystemUI Tuner",
+        "pkg": "com.zacharee1.systemuituner",
+        "version": "362",
+        "size": "17.12MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "zacharee",
+        "icon": "SystemUI_Tuner_icon.webp",
+        "intro": "SystemUI Tuner 是一款强大且实用的 Android 系统界面微调工具，无需 Root（通过一次 ADB 授权即可使用），深度自定义 SystemUI（状态栏、通知栏、快速设置面板），隐藏/显示状态栏图标（信号、WiFi、电池、闹钟等），开启隐藏的系统功能（如沉浸模式、状态栏双排图标、QS 网格调整等），修改系统动画速度、电源菜单、锁屏界面等隐藏设置，是玩机用户自定义 SystemUI 的经典必备工具。",
+        "screenshots": [
+            "SystemUI_Tuner_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ir3xY3ijtowb",
+        "source": "https://github.com/zacharee/Tweaker"
+    },
+    {
+        "name": "PhoneProfilesPlus",
+        "pkg": "sk.henrichg.phoneprofilesplus",
+        "version": "7.1.2",
+        "size": "17.33MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "henrichg",
+        "icon": "PhoneProfilesPlus_icon.webp",
+        "intro": "PhoneProfilesPlus 是一款强大的 Android 场景配置文件管理器（开源），支持根据时间、位置、Wi-Fi、充电、通知等事件触发器自动切换手机设置（音量、亮度、网络、壁纸、App 等），实现“在家/工作/开车/睡眠”等智能自动化场景管理。",
+        "screenshots": [
+            "PhoneProfilesPlus_screen_1.webp",
+            "PhoneProfilesPlus_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ie6vM3j4d56b",
+        "source": "https://github.com/henrichg/PhoneProfilesPlus"
+    },
+    {
+        "name": "Snapseed",
+        "pkg": "com.niksoftware.snapseed",
+        "version": "2.22.0.633363672",
+        "size": "29.10MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Google LLC",
+        "icon": "Snapseed_icon.webp",
+        "intro": "Snapseed 是一款由 Google 开发的免费专业级移动照片编辑应用，支持 iOS 和 Android 平台，无广告、专注编辑，提供 29+ 种强大工具和滤镜（如修复、画笔、结构、HDR、透视、RAW 显影、局部调整刷子、胶片风格滤镜等），可打开 webp/RAW 文件、非破坏性编辑、保存自定义样式、一键自动校正、精确微调参数，特别适合手机摄影师快速实现专业级修图效果。",
+        "screenshots": [
+            "Snapseed_screen_1.webp",
+            "Snapseed_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iuWre3iiq4xi",
+        "source": "https://play.google.com/store"
+    },
+    {
+        "name": "WebToApp",
+        "pkg": "com.webtoapp",
+        "version": "1.9.5",
+        "size": "20.72MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "shiahonb777",
+        "icon": "WebToApp_icon.webp",
+        "intro": "WebToApp 是一款基于 Kotlin + Jetpack Compose 开发的开源 Android 工具，它能将任何网页、HTML 项目或媒体流秒变原生体验的独立应用，并集成了 AI 辅助开发、全局广告拦截及深度隐私伪装等进阶功能，支持在手机端实现“零编程”一键构建 APK。",
+        "screenshots": [
+            "WebToApp_screen_1.webp",
+            "WebToApp_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i8vBz3iixhte",
+        "source": "https://github.com/shiahonb777/web-to-app"
+    }
+]

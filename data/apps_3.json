@@ -1,0 +1,851 @@
+[
+    {
+        "name": "奇妙应用",
+        "pkg": "com.magicalstory.AppStore",
+        "version": "1.3.9",
+        "size": "15.66MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "奇妙应用_icon.webp",
+        "intro": "奇妙应用 是一款完全免费、无广告的应用资源分享平台，汇聚海量优质软件、游戏及各类资源，支持分类浏览、搜索下载和社区交流，是安卓用户获取精品应用的实用小众应用商店。奇妙应用于2025年11月17日正式关停！🚫",
+        "screenshots": [
+            "奇妙应用_screen_1.webp",
+            "奇妙应用_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iwJvW3iklwdi",
+        "source": "https://v.douyin.com/K9FvoQEVAnk/"
+    },
+    {
+        "name": "应用乐园",
+        "pkg": "com.magicalstory.apps",
+        "version": "1.1.2",
+        "size": "8.59MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "应用乐园_icon.webp",
+        "intro": "应用乐园 是奇妙应用作者的新作，堪称国产 Play 商店，集本地应用高效管理 + 无广告第三方资源下载 + 小众社区于一身，是安卓纯净党与玩机爱好者的实用备选工具。应用乐园于2025年11月11日永久关停！🚫",
+        "screenshots": [
+            "应用乐园_screen_1.webp",
+            "应用乐园_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i1DcX3iklx2d",
+        "source": "https://v.douyin.com/K9FvoQEVAnk/"
+    },
+    {
+        "name": "奇妙工具箱",
+        "pkg": "com.magicalstory.toolbox",
+        "version": "0.4.9",
+        "size": "26.50MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "奇妙工具箱_icon.webp",
+        "intro": "奇妙工具箱 是一款纯净无广告、200+实用工具一触即达的手机超级工具箱，集视频下载、PDF / 图片处理、智能检测、日常效率、创意玩法等功能于一体，被称为“拥有再多工具不如有我”的数字生活神器。",
+        "screenshots": [
+            "奇妙工具箱_screen_1.webp",
+            "奇妙工具箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ih54I3ll4nwf",
+        "source": "https://v.douyin.com/K9FvoQEVAnk"
+    },
+    {
+        "name": "奇妙扫描",
+        "pkg": "com.magicalstory.scanner",
+        "version": "1.0.7",
+        "size": "51.13MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "奇妙扫描_icon.webp",
+        "intro": "奇妙扫描 是一款完全免费、无广告的智能文档助手App，能将手机变成专业扫描仪，支持快速扫描纸质文档 / 证件、OCR文字识别（多语言）、PDF工具、全文检索与云端同步，帮你轻松把纸质资料转为清晰可编辑的电子文件。",
+        "screenshots": [
+            "奇妙扫描_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iSdla3iklssj",
+        "source": "https://v.douyin.com/K9FvoQEVAnk"
+    },
+    {
+        "name": "奇妙搜索",
+        "pkg": "com.magicalstory.search",
+        "version": "2.0.7",
+        "size": "4.94MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "奇妙搜索_icon.webp",
+        "intro": "奇妙搜索 是一款高效的互联网资源搜索App，专为快速聚合查找全网网盘、磁力、影视、软件等资源而生，免费无广告、支持网页嗅探，是资源党查找下载链接的实用工具（注意：仅提供搜索，不内置下载功能）。",
+        "screenshots": [
+            "奇妙搜索_screen_1.webp",
+            "奇妙搜索_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iCgOo3ikla4h",
+        "source": "https://v.douyin.com/K9FvoQEVAnk"
+    },
+    {
+        "name": "安卓清理君",
+        "pkg": "com.magicalstory.cleaner",
+        "version": "3.8.8",
+        "size": "8.31MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "安卓清理君_icon.webp",
+        "intro": "安卓清理君 是一款简洁高效、无广告干扰的安卓手机清理神器，凭借云端垃圾规则与40+实用功能，一键帮你深度清理垃圾、优化系统，让手机保持轻快整洁，是日常维护的实用工具。",
+        "screenshots": [
+            "安卓清理君_screen_1.webp",
+            "安卓清理君_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iqZtu3iki29g",
+        "source": "https://v.douyin.com/K9FvoQEVAnk"
+    },
+    {
+        "name": "漫读",
+        "pkg": "com.magicalstory.reader",
+        "version": "1.0.5",
+        "size": "13.19MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "漫读_icon.webp",
+        "intro": "漫读 是一款免费、无广告、简洁纯净的休闲阅读App，专注于发现和分享优质美文、好句与好音乐，让你漫不经心地享受文字与声音的美好，是日常放松的轻阅读神器。",
+        "screenshots": [
+            "漫读_screen_1.webp",
+            "漫读_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i0OwI3ll6atg",
+        "source": "https://v.douyin.com/K9FvoQEVAnk"
+    },
+    {
+        "name": "朝花夕拾",
+        "pkg": "com.magicalstory.days",
+        "version": "1.3.4",
+        "size": "12.95MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "朝花夕拾_icon.webp",
+        "intro": "朝花夕拾 是一款免费、无广告、简洁优雅的手机日记本App，专注于帮助你静心记录生活中的点点滴滴，支持丰富媒体格式，让日常回忆变得轻松而有温度，是现代快节奏生活中的私人记事神器。",
+        "screenshots": [
+            "朝花夕拾_screen_1.webp",
+            "朝花夕拾_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iSHdL3ikm5ze",
+        "source": "https://v.douyin.com/K9FvoQEVAnk"
+    },
+    {
+        "name": "时光清单",
+        "pkg": "com.magicgrass.todo",
+        "version": "1.8.6",
+        "size": "13.54MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "时光清单_icon.webp",
+        "intro": "时光清单 是一款免费、无广告、简洁优雅的时间管理神器，基于 GTD 与番茄工作法，帮你轻松记录待办、规划日程、专注执行，让每一天的时光更有条理和效率，是提升生产力的实用清单工具。",
+        "screenshots": [
+            "时光清单_screen_1.webp",
+            "时光清单_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iJWn33ikm6bg",
+        "source": "https://v.douyin.com/K9FvoQEVAnk"
+    },
+    {
+        "name": "妙评",
+        "pkg": "com.magicalstory.community",
+        "version": "1.2.4",
+        "size": "12.34MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "妙评_icon.webp",
+        "intro": "妙评 是一款免费、无广告的万物评分社区App，让你轻松给软件、游戏、影视、数码等打分、写测评、分享资源和查看热门榜单，是玩机党与爱好者交流见解的实用互动平台。妙评于2025年2月21日正式停止运营！🚫",
+        "screenshots": [
+            "妙评_screen_1.webp",
+            "妙评_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i9mEg3ikm4jc",
+        "source": "https://v.douyin.com/K9FvoQEVAnk"
+    },
+    {
+        "name": "鸿蒙乐园",
+        "pkg": "com.magicalstory.harmony2",
+        "version": "1.0.3",
+        "size": "47.04MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "鸿蒙乐园_icon.webp",
+        "intro": "鸿蒙乐园 是一款免费、无广告的鸿蒙应用生态平台，专为 HarmonyOS 用户提供精选原生应用下载、排行榜和数据统计，是鸿蒙系统用户的纯净应用商店与生态助手。",
+        "screenshots": [
+            "鸿蒙乐园_screen_1.webp",
+            "鸿蒙乐园_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i4g2O3ll840d",
+        "source": "https://v.douyin.com/K9FvoQEVAnk"
+    },
+    {
+        "name": "奇妙安装程序",
+        "pkg": "com.magicalstory.installer",
+        "version": "1.1",
+        "size": "1.93MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "茂名市奇谈网络科技有限公司",
+        "icon": "奇妙安装程序_icon.webp",
+        "intro": "奇妙安装程序 是一款免费、无广告、极简的安卓安装助手，专为快速安装APK及.apk.1文件、批量管理应用而生，是处理安装包时的实用小工具。",
+        "screenshots": [
+            "奇妙安装程序_screen_1.webp",
+            "奇妙安装程序_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/itDAF3llbkmj",
+        "source": "https://v.douyin.com/K9FvoQEVAnk"
+    },
+    {
+        "name": "MacroDroid",
+        "pkg": "com.arlosoft.macrodroid",
+        "version": "5.60.9",
+        "size": "77.18MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "MacroDroid_icon.webp",
+        "intro": "MacroDroid 是一款功能强大且极度易用的 Android 自动化配置工具。它不需要你懂编程，只要通过“触发器 + 动作 + 约束”的逻辑组合，就能让你的手机在特定条件下自动完成各种复杂任务。",
+        "screenshots": [
+            "MacroDroid_screen_1.webp",
+            "MacroDroid_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/icWr33il07ej",
+        "source": ""
+    },
+    {
+        "name": "小萌GIF",
+        "pkg": "me.tasy5kg.cutegif",
+        "version": "2024.3",
+        "size": "17.54MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "tasy5kg",
+        "icon": "小萌GIF_icon.webp",
+        "intro": "小萌GIF 是一款极简、无广告且功能深度的 Android 动图工具，它不仅能将视频、动态照片秒转 GIF，更提供了逐帧编辑、智能抠图及精细化压缩导出功能，是制作高质感微信表情包的“全能手”。",
+        "screenshots": [
+            "小萌GIF_screen_1.webp",
+            "小萌GIF_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iPJsd3im8goh",
+        "source": "https://github.com/tasy5kg/CuteGIF"
+    },
+    {
+        "name": "Tap, Tap",
+        "pkg": "com.kieronquinn.app.taptap",
+        "version": "1.6.2",
+        "size": "17.54MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "KieronQuinn",
+        "icon": "Tap, Tap_icon.webp",
+        "intro": "Tap, Tap 是一款基于机器视觉和加速度计算法的自动化辅助工具。它允许用户通过手指轻敲手机背部（双击或三击）来触发预设的动作，极大地扩展了手机单手操作的边界。",
+        "screenshots": [
+            "Tap, Tap_screen_1.webp",
+            "Tap, Tap_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iKna63ijtc3a",
+        "source": "https://github.com/KieronQuinn/TapTap"
+    },
+    {
+        "name": "SplitLanzou",
+        "pkg": "com.lanzou.cloud",
+        "version": "1.8.8",
+        "size": "8.26MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Yu2002s",
+        "icon": "SplitLanzou_icon.webp",
+        "intro": "SplitLanzou 是一款专为蓝奏云用户打造的第三方增强型工具，其核心价值在于通过“自动分割与合并”技术，完美突破了云盘对单文件上传大小的限制，同时提供了更纯净、高效的移动端管理体验。",
+        "screenshots": [
+            "SplitLanzou_screen_1.webp",
+            "SplitLanzou_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/irubh3jmp7li",
+        "source": "https://github.com/Yu2002s/SplitLanzou"
+    },
+    {
+        "name": "Image Toolbox",
+        "pkg": "ru.tech.imageresizershrinker",
+        "version": "3.7.1",
+        "size": "74.72MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "T8RIN",
+        "icon": "Image_Toolbox_icon.webp",
+        "intro": "Image Toolbox 是一款功能非常强大的安卓图片处理工具，主打「全能型图像编辑 + 批处理 + 格式转换 + AI工具」，它将高级格式转换、AI 抠图修复、批量压缩与元数据清除等专业功能集成于优雅的 Material You 界面中，且完全离线、无广告，是移动端图片编辑的终极“瑞士军刀”。",
+        "screenshots": [
+            "Image_Toolbox_screen_1.webp",
+            "Image_Toolbox_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i5oJX3l4vjba",
+        "source": "https://github.com/T8RIN/ImageToolbox"
+    },
+    {
+        "name": "SiYuan",
+        "pkg": "org.b3log.siyuan",
+        "version": "3.6.1",
+        "size": "58.89MV",
+        "system": "Android",
+        "mod": "开源",
+        "author": "siyuan-note",
+        "icon": "SiYuan_icon.webp",
+        "intro": "SiYuan（思源笔记）是一款开源、隐私优先的个人知识管理系统（PKM）。它深度融合了内容块（Block）、**列表大纲（Outline）以及双向链接（Backlink）**三大核心理念，被广泛认为是 Notion 的本地化、Markdown 增强版替代方案。与市面上常见的云端笔记不同，思源笔记强调“数据所有权”，默认将所有数据存储在用户的本地设备中。",
+        "screenshots": [
+            "SiYuan_screen_1.webp",
+            "SiYuan_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/icGjp3l4vdra",
+        "source": "https://github.com/siyuan-note/siyuan-android"
+    },
+    {
+        "name": "Clash Meta for Android",
+        "pkg": "com.github.metacubex.clash.meta",
+        "version": "2.11.24.Meta",
+        "size": "29.28MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "MetaCubeX",
+        "icon": "Clash_Meta_for_Android_icon.webp",
+        "intro": "Clash Meta for Android 是一款基于 Clash Meta 内核的安卓平台网络代理工具客户端，主要用于网络代理、流量分流和隐私保护，是经典 Clash for Android 的升级替代版本，主打高性能、多协议支持和灵活分流。",
+        "screenshots": [
+            "Clash_Meta_for_Android_screen_1.webp",
+            "Clash_Meta_for_Android_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i2tkx3l4v3zi",
+        "source": "https://github.com/MetaCubeX/ClashMetaForAndroid"
+    },
+    {
+        "name": "译站",
+        "pkg": "com.funny.translation",
+        "version": "2.9.8",
+        "size": "22.71MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "FunnySaltyFish",
+        "icon": "译站_icon.webp",
+        "intro": "译站 是一款开源、纯净且聚合了顶级 AI 大模型的全能翻译工具，它通过一个界面集成了 GPT-4、Claude、DeepSeek 及传统翻译引擎，支持悬浮窗截图、图片和语音翻译，是 Android 端兼具极致隐私与专业翻译能力的“效率神器”。",
+        "screenshots": [
+            "译站_screen_1.webp",
+            "译站_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i8Ub73il3lif",
+        "source": "https://github.com/FunnySaltyFish/Transtation-KMP"
+    },
+    {
+        "name": "Material Capsule",
+        "pkg": "com.pryshedko.mtisland",
+        "version": "9.9",
+        "size": "28.88M",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "Material_Capsule_icon.webp",
+        "intro": "Material Capsule 是一款极具现代感、高度可定制的安卓“动态岛”增强工具，它通过优雅的 Material 3 动画将手机摄像头区域转化为集媒体控制、通知提醒和快捷手势于一体的智能交互中心。",
+        "screenshots": [
+            "Material_Capsule_screen_1.webp",
+            "Material_Capsule_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iBIDq3l4v8gj",
+        "source": ""
+    },
+    {
+        "name": "NotallyX",
+        "pkg": "com.philkes.notallyx",
+        "version": "7.10.0",
+        "size": "13.24MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Crustack",
+        "icon": "NotallyX_icon.webp",
+        "intro": "NotallyX 是一款开源、全本地存储的安卓极简笔记神器，它在保持轻量体积的同时，通过支持附件、子任务和生物识别锁，填补了原生笔记应用在功能与隐私之间的空白。",
+        "screenshots": [
+            "NotallyX_screen_1.webp",
+            "NotallyX_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iJlan3l4v9mb",
+        "source": "https://github.com/Crustack/NotallyX"
+    },
+    {
+        "name": "Droid-ify",
+        "pkg": "com.looker.droidify",
+        "version": "0.7.1",
+        "size": "5.21MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Droid-ify",
+        "icon": "Droid-ify_icon.webp",
+        "intro": "Droid-ify 是一款兼具极速同步与 Material You 高颜值设计的第三方 F-Droid 商店，它通过内置多仓库和支持 Shizuku 静默安装，为安卓用户提供了比官方客户端更现代、更高效的开源应用管理体验。",
+        "screenshots": [
+            "Droid-ify_screen_1.webp",
+            "Droid-ify_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ip1wf3l4v19a",
+        "source": "https://github.com/Droid-ify/client"
+    },
+    {
+        "name": "Obtainium",
+        "pkg": "dev.imranr.obtainium",
+        "version": "1.4.0",
+        "size": "23.29MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "ImranR98",
+        "icon": "Obtainium_icon.webp",
+        "intro": "Obtainium 是一款专门为 Android 用户设计的开源应用更新管理工具。它的核心定位是它不依赖任何应用商店（如 Google Play 或 F-Droid ），而是让用户直接从软件的源头（Source）获取安装包并进行更新。",
+        "screenshots": [
+            "Obtainium_screen_1.webp",
+            "Obtainium_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iaXbZ3l4valg",
+        "source": "https://github.com/ImranR98/Obtainium"
+    },
+    {
+        "name": "语燕输入法(在线版)",
+        "pkg": "com.yuyan.pinyin.online.release",
+        "version": "20251222.16",
+        "size": "55.93MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "gurecn",
+        "icon": "语燕输入法_online_icon.webp",
+        "intro": "语燕输入法（在线版）是一款基于 Rime 定制开发的中文输入法，支持九键/全拼/双拼、手写、火星文等多种方案，以及悬浮键盘、单手模式、数字行等，界面简洁、响应快速，强调易用性和个性化设置，是主流输入法的优秀替代品。",
+        "screenshots": [
+            "语燕输入法_screen_1.webp",
+            "语燕输入法_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i3Pvu3iirh6f",
+        "source": "https://github.com/gurecn/YuyanIme"
+    },
+    {
+        "name": "语燕输入法(离线版)",
+        "pkg": "com.yuyan.pinyin.offline.release",
+        "version": "20251222.16",
+        "size": "55.93MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "gurecn",
+        "icon": "语燕输入法_offline_icon.webp",
+        "intro": "语燕输入法（离线版）是一款基于 Rime 定制开发的中文输入法，支持九键/全拼/双拼、手写、火星文等多种方案，以及悬浮键盘、单手模式、数字行等，界面简洁、响应快速，强调易用性和个性化设置，是主流输入法的优秀替代品。",
+        "screenshots": [
+            "语燕输入法_screen_1.webp",
+            "语燕输入法_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iQX6z3iirn9e",
+        "source": "https://github.com/gurecn/YuyanIme"
+    },
+    {
+        "name": "TapClick",
+        "pkg": "com.lgh.tapclick",
+        "version": "12.5",
+        "size": "7.29MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "LGH1996",
+        "icon": "TapClick_icon.webp",
+        "intro": "TapClick 是一款开源的 Android 自动化辅助工具，它通过智能识别和自定义规则，能帮你一键跳过 App 开屏广告并实现各类复杂的自动点击操作，是追求极致安卓体验用户的“去广告神器”。",
+        "screenshots": [
+            "TapClick_screen_1.webp",
+            "TapClick_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ieQNg3ilab3c",
+        "source": "https://github.com/LGH1996/TapClick"
+    },
+    {
+        "name": "GestureEVO",
+        "pkg": "com.jwg.gesture_evo",
+        "version": "1.6-0319001",
+        "size": "29.08MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "LumiaGG",
+        "icon": "GestureEVO_icon.webp",
+        "intro": "GestureEVO 是一款 Android 高级手势控制工具，支持自定义边缘滑动、屏幕手势等操作，可快速触发应用启动、系统动作或快捷命令，增强单手操作效率和导航体验，是系统手势的实用补充。",
+        "screenshots": [
+            "GestureEVO_screen_1.webp",
+            "GestureEVO_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i9HrY3l0ihwh",
+        "source": "https://www.coolapk.com/u/913898"
+    },
+    {
+        "name": "NotiGuy",
+        "pkg": "com.dynamic.notifications",
+        "version": "2.5.8",
+        "size": "7.90MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "NotiGuy_icon.webp",
+        "intro": "NotiGuy 是一款全能型 Android 灵动岛增强神器，它通过将摄像头挖孔转化为交互式按钮和动态通知中心，在提供极致视觉美感的同时，极大地扩展了安卓手机通知系统的功能性。",
+        "screenshots": [
+            "NotiGuy_screen_1.webp",
+            "NotiGuy_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iDOeB3l4v9sh",
+        "source": ""
+    },
+    {
+        "name": "Namida",
+        "pkg": "com.msob7y.namida",
+        "version": "5.6.1",
+        "size": "44.28MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "namidaco",
+        "icon": "Namida_icon.webp",
+        "intro": "Namida 是一款基于 Flutter 开发的跨平台美观音乐与视频播放器（支持 Android/iOS/Windows），专注本地音乐库管理、高品质播放、YouTube 支持、智能标签和丰富 UI，是现代界面与强大功能的本地音乐播放神器。",
+        "screenshots": [
+            "Namida_screen_1.webp",
+            "Namida_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i9jwR3iy91gh",
+        "source": "https://github.com/namidaco/namida"
+    },
+    {
+        "name": "AdAway",
+        "pkg": "org.adaway",
+        "version": "6.1.4",
+        "size": "13.31MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "AdAway",
+        "icon": "AdAway_icon.webp",
+        "intro": "AdAway 是一款无需 root 权限的 Android 开源广告拦截应用。它与普通的插件式拦截器不同，主要通过修改系统的 Hosts 文件（或利用本地 VPN 模式）来从网络底层阻断广告域名的解析，从而实现全系统的广告屏蔽。",
+        "screenshots": [
+            "AdAway_screen_1.webp",
+            "AdAway_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iodGX3imi7gf",
+        "source": "https://github.com/AdAway/AdAway"
+    },
+    {
+        "name": "Read You",
+        "pkg": "me.ash.reader",
+        "version": "0.16.1",
+        "size": "10.69MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "ReadYouApp",
+        "icon": "Read_You_icon.webp",
+        "intro": "Read You 是一款现代开源的 Android RSS 阅读器（Material You 设计风格），支持订阅 RSS/Atom 源、OPML 导入导出、文章同步、全文解析、未读/星标过滤、通知提醒和离线阅读，界面简洁优雅，专注于隐私与可用性，是替代 Google Reader 或 Feedly 的优秀 FOSS 选择。",
+        "screenshots": [
+            "Read_You_screen_1.webp",
+            "Read_You_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iKYWl3l4vaza",
+        "source": "https://github.com/ReadYouApp/ReadYou"
+    },
+    {
+        "name": "任务栏",
+        "pkg": "com.farmerbb.taskbar",
+        "version": "6.2.2",
+        "size": "2.63MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "farmerbb",
+        "icon": "任务栏_icon.webp",
+        "intro": "Taskbar 是一款开源、无广告且无需 Root 权限的多功能工具，旨在通过提供类 Windows 的“开始菜单”、最近任务托盘及窗口化管理功能，将 Android 设备（尤其是平板和外接显示器模式）转化为高效的桌面级多任务处理工作站。",
+        "screenshots": [
+            "任务栏_screen_1.webp",
+            "任务栏_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iFszL3ik24fi",
+        "source": "https://github.com/farmerbb/Taskbar"
+    },
+    {
+        "name": "aShell You",
+        "pkg": "in.hridayan.ashell",
+        "version": "v7.1.0",
+        "size": "9.14MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "DP-Hridayan",
+        "icon": "aShell_You_icon.webp",
+        "intro": "aShell You 是一款专为 Android 高级用户和开发者设计的轻量级、开源本地 ADB Shell 工具。它的核心功能是让你无需连接电脑，就能直接在手机上执行 ADB（Android Debug Bridge）命令。相比于传统的终端模拟器，它更强调与现代 Android 设计语言（Material You）的融合以及对 Shizuku 的深度支持。",
+        "screenshots": [
+            "aShell_You_screen_1.webp",
+            "aShell_You_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iOq2M3l7w9ra",
+        "source": "https://github.com/DP-Hridayan/aShellYou"
+    },
+    {
+        "name": "Blocker",
+        "pkg": "com.merxury.blocker",
+        "version": "2.0.5839",
+        "size": "8.91MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "lihenggui",
+        "icon": "Blocker_icon.webp",
+        "intro": "Blocker 是一款开源的 Android 应用组件控制器，它主要用来精细管理已安装应用的四大组件（Activity、Service、Broadcast Receiver、Content Provider），从而有效打击那些后台偷跑、自启、关联唤醒、狂发推送、偷偷耗电的“流氓行为”。",
+        "screenshots": [
+            "Blocker_screen_1.webp",
+            "Blocker_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ig0S53l7x9ba",
+        "source": "https://github.com/lihenggui/blocker"
+    },
+    {
+        "name": "小企鹅输入法",
+        "pkg": "org.fcitx.fcitx5.android",
+        "version": "0.1.2-0-g5a4870c0",
+        "size": "44.19MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "fcitx5-android",
+        "icon": "小企鹅输入法_icon.webp",
+        "intro": "小企鹅输入法（Fcitx5 for Android） 是一款开源的通用输入法框架（Fcitx5移植版），支持中文拼音/双拼/五笔/仓颉、英文、越南语等多种语言，具备主题自定义、候选词展开、剪贴板管理等功能，适合追求自由开源和高度自定义的用户。",
+        "screenshots": [
+            "小企鹅输入法_screen_1.webp",
+            "小企鹅输入法_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iuh2v3iirahe",
+        "source": "https://github.com/fcitx5-android/fcitx5-android"
+    },
+    {
+        "name": "AlgerMusicPlayer",
+        "pkg": "com.algermusic.app",
+        "version": "5.0.0",
+        "size": "16.06MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "algerkong",
+        "icon": "AlgerMusicPlayer_icon.webp",
+        "intro": "AlgerMusicPlayer 是一款极简美观的第三方音乐播放器（多平台支持，包括 Android），支持本地音乐扫描、在线推荐、歌词显示、音乐下载、高音质播放和桌面歌词等功能，界面审美现代，适合追求免费听歌和桌面歌词的用户。",
+        "screenshots": [
+            "AlgerMusicPlayer_screen_1.webp",
+            "AlgerMusicPlayer_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iOAuu3l8r8mf",
+        "source": "https://github.com/algerkong/AlgerMusicPlayer"
+    },
+    {
+        "name": "Pixiv Viewer",
+        "pkg": "org.eu.cocomi.pxvek",
+        "version": "1.7",
+        "size": "10.28MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "asadahimeka",
+        "icon": "Pixiv_Viewer_icon.webp",
+        "intro": "Pixiv Viewer 是一款为全球最大插画交流网站 Pixiv (俗称 P 站) 开发的第三方增强型浏览工具。由于 Pixiv 原生应用在某些地区访问受限，且功能设计上相对保守，Pixiv Viewer 类软件（如著名的 Shaft、PixEz、PxView 等衍生版本）应运而生，旨在提供更流畅、更纯净、功能更强大的二次元创作探索体验。",
+        "screenshots": [
+            "Pixiv_Viewer_screen_1.webp",
+            "Pixiv_Viewer_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iFcdj3l8pysf",
+        "source": "https://github.com/asadahimeka/pixiv-viewer"
+    },
+    {
+        "name": "权限管理 X",
+        "pkg": "com.mirfatif.permissionmanagerx",
+        "version": "v1.31",
+        "size": "5.11MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "mirfatif",
+        "icon": "权限管理_X_icon.webp",
+        "intro": "权限管理 X（Permission Manager X） 是一款开源的增强型 Android 权限管理工具，支持同时查看并精细管理普通清单权限和 AppOps 隐藏权限，可授予/撤销/设置模式、创建权限模板、备份恢复，还能监控并自动撤销不必要权限，是注重隐私和深度控制的用户进阶神器（推荐配合 Shizuku 或 Root 使用以解锁完整功能）。",
+        "screenshots": [
+            "权限管理_X_screen_1.webp",
+            "权限管理_X_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iJ8Et3lc4j1g",
+        "source": "https://github.com/mirfatif/PermissionManagerX"
+    },
+    {
+        "name": "Aves",
+        "pkg": "deckers.thibault.aves.libre",
+        "version": "1.14.1",
+        "size": "49.38MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "deckerst",
+        "icon": "Aves_icon.webp",
+        "intro": "Aves（全称 Aves Gallery）是一款广受好评的开源、全格式、高性能 Android 相册软件。​它不仅仅是一个看图工具，更像是一个媒体资源管理器。它由 Flutter 开发，旨在处理从普通照片到专业摄影、甚至冷门格式的所有媒体文件，并提供极致的检索体验。",
+        "screenshots": [
+            "Aves_screen_1.webp",
+            "Aves_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i9fc53l8or5e",
+        "source": "https://github.com/deckerst/aves"
+    },
+    {
+        "name": "App Manager",
+        "pkg": "io.github.muntashirakon.AppManager",
+        "version": "4.0.5",
+        "size": "25.78MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "MuntashirAkon",
+        "icon": "App_Manager_icon.webp",
+        "intro": "App Manager 是一款集应用管理、权限控制、活动项拦截、安装包分析于一体的开源极致工具，它将原本分散在系统各处的调试工具、权限设置和应用信息整合在一起，甚至提供了许多系统隐藏的底层控制功能，深受开发者和极简主义者的追捧。",
+        "screenshots": [
+            "App_Manager_screen_1.webp",
+            "App_Manager_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/it2hK3ijgn0f",
+        "source": "https://github.com/MuntashirAkon/AppManager"
+    },
+    {
+        "name": "Save It Later",
+        "pkg": "com.saveitlater.app",
+        "version": "8.27.2",
+        "size": "23.31MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "Save_It_Later_icon.webp",
+        "intro": "Save It Later 是一款专注于高效采集与跨平台同步的轻量级书签管理神器，它通过极简的界面、强大的元数据自动抓取以及对多链接批量处理的支持，将散落在各大 App 里的碎片化信息转化为井然有序的个人知识储备库。",
+        "screenshots": [
+            "Save_It_Later_screen_1.webp",
+            "Save_It_Later_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ibk2o3l91pbg",
+        "source": ""
+    },
+    {
+        "name": "Sesame",
+        "pkg": "ninja.sesame.app.edge",
+        "version": "3.7.0",
+        "size": "5.83MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "Sesame_icon.webp",
+        "intro": "Sesame 是一款 Android 端的深层联动全局搜索神器，它通过索引应用内部的 API 和快捷方式，让用户只需输入极简的首字母组合，即可跨越应用界面、直接瞬移到特定的聊天窗口、歌单或功能页面。",
+        "screenshots": [
+            "Sesame_screen_1.webp",
+            "Sesame_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ighHM3l92qda",
+        "source": ""
+    },
+    {
+        "name": "vFlow",
+        "pkg": "com.chaomixian.vflow",
+        "version": "1.4.7",
+        "size": "58.53MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "ChaoMixian",
+        "icon": "vFlow_icon.webp",
+        "intro": "vFlow 是一款为 Android 平台设计的、强大且高度可扩展的自动化工具。它允许你通过图形化界面，将一系列“动作模块”自由组合成强大的“工作流”，从而自动完成各种日常的、重复性的屏幕操作任务。",
+        "screenshots": [
+            "vFlow_screen_1.webp",
+            "vFlow_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iAoBj3l9ajxg",
+        "source": "https://github.com/ChaoMixian/vFlow"
+    },
+    {
+        "name": "Breezy Weather",
+        "pkg": "org.breezyweather",
+        "version": "6.1.3",
+        "size": "14.50MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "breezy-weather",
+        "icon": "Breezy_Weather_icon.webp",
+        "intro": "Breezy Weather 是一款广受好评的开源、免费、无广告的 Android 天气应用。它基于已停止维护的知名天气应用 Geometric Weather（几何天气）进行重构和增强，不仅延续了其简洁美观的设计，并在此基础上进行了大量的现代化重构与功能扩展。",
+        "screenshots": [
+            "Breezy_Weather_screen_1.webp",
+            "Breezy_Weather_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iITsQ3l9bdsb",
+        "source": "https://github.com/breezy-weather/breezy-weather"
+    },
+    {
+        "name": "Hermit",
+        "pkg": "com.chimbori.hermitcrab",
+        "version": "31.4.3",
+        "size": "5.35MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "Hermit_icon.webp",
+        "intro": "Hermit 是一款轻量级、可定制的 Android 浏览器，专注于提高隐私保护和减少资源消耗。它允许用户将不同的网站和 Web 应用封装成独立的 \"轻应用\"，从而避免使用传统浏览器的复杂界面，并且能够显著节省设备存储和内存资源。",
+        "screenshots": [
+            "Hermit_screen_1.webp",
+            "Hermit_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iELlT3l9hl0h",
+        "source": ""
+    },
+    {
+        "name": "蓝云搜索",
+        "pkg": "com.lyss.apk",
+        "version": "1.3.1",
+        "size": "14.51MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "",
+        "icon": "蓝云搜索_icon.webp",
+        "intro": "蓝云搜索 是一款全平台、全免费的聚合资源搜索工具，它通过集成多系统应用搜索与阿里/蓝奏云网盘资源抓取功能，为用户提供了一个简洁、高效且无门槛的一站式文件获取体验。",
+        "screenshots": [
+            "蓝云搜索_screen_1.webp",
+            "蓝云搜索_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iLUdH3l9j8zg",
+        "source": "https://www.lanzouu.com/b009gmxq1e"
+    },
+    {
+        "name": "AutoCMD+",
+        "pkg": "com.lerist.autocmd",
+        "version": "1.3.5",
+        "size": "31.40MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Lanes_",
+        "icon": "AutoCMD_icon.webp",
+        "intro": "AutoCMD+ 是一款将 AI 大模型与 Android 无障碍自动化深度融合的效率工具，通过“自然语言生成脚本”与“可视化积木编程”双重模式，让普通用户也能零门槛实现手机任务的智能化、自动化运行。",
+        "screenshots": [
+            "AutoCMD_screen_1.webp",
+            "AutoCMD_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i4HZu3lafudi",
+        "source": "https://www.coolapk.com/u/34025638"
+    },
+    {
+        "name": "Iceraven",
+        "pkg": "io.github.forkmaintainers.iceraven",
+        "version": "iceraven-2.41.3",
+        "size": "116.10MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "fork-maintainers",
+        "icon": "Iceraven_icon.webp",
+        "intro": "IceRaven 是一个开源的 Android 浏览器，基于 Firefox 的代码库，旨在为用户提供更高的隐私保护、速度优化以及自定义功能。它是 Mozilla Firefox 的一个衍生版本，专注于改进隐私、安全性和轻量化的用户体验。",
+        "screenshots": [
+            "Iceraven_screen_1.webp",
+            "Iceraven_screen_2.webp"
+        ],
+        "url": "https://www.123912.com/s/TUtbTd-1QGtH",
+        "source": "https://github.com/fork-maintainers/iceraven-browser"
+    },
+    {
+        "name": "澎湃工具箱",
+        "pkg": "com.compose.batteryinfo",
+        "version": "3.8.5",
+        "size": "2.70MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "于逸风",
+        "icon": "澎湃工具箱_icon.webp",
+        "intro": "澎湃工具箱 是一款专为小米/红米澎湃OS（HyperOS）打造的第三方系统增强工具，无需 Root 权限（通过 Shizuku 授权），提供硬件检测、性能优化、状态栏/通知自定义、阻止系统更新、动画调节、电池健康查看等实用玩机功能，界面贴合原生系统，是玩机爱好者优化澎湃OS体验的深度辅助利器。",
+        "screenshots": [
+            "澎湃工具箱_screen_1.webp",
+            "澎湃工具箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iFFga3lagjpa",
+        "source": "https://www.coolapk.com/u/852927"
+    }
+]

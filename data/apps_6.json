@@ -1,0 +1,847 @@
+[
+    {
+        "name": "AppShare",
+        "pkg": "info.muge.appshare",
+        "version": "5.0.9",
+        "size": "33.15MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "邢台市牧歌信息技术有限公司",
+        "icon": "AppShare_icon.webp",
+        "intro": "AppShare 是一款用户驱动的 Android 应用分享与下载平台，专注于各类官方/测试版系统应用（如小米、OPPO、vivo等）、黑科技小众软件的分享与更新提醒，支持分类浏览、排行榜、积分任务、资源上传下载，界面纯净高效，适合极客用户快速获取最新或隐藏版本的 APK 资源。",
+        "screenshots": [
+            "AppShare_screen_1.webp",
+            "AppShare_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iUdV53lv69gh",
+        "source": "https://app.sharess.cn/download"
+    },
+    {
+        "name": "Telegram X",
+        "pkg": "org.thunderdog.challegram",
+        "version": "0.28.3.1785",
+        "size": "56.60MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Telegram FZ-LLC",
+        "icon": "Telegram_X_icon.webp",
+        "intro": "Telegram X 是一款由 Telegram 官方推出的实验性替代客户端（基于TDLib开发），专为 Android 优化，相比原版具有更快的速度、更流畅的动画、更低的资源占用和更省电，同时提供更多实验性功能、手势操作、自定义选项以及前沿界面设计，常作为测试新特性的“实验室”版本，所有账号和数据与官方版完全同步。",
+        "screenshots": [
+            "Telegram X_screen_1.webp",
+            "Telegram X_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iy95J3lv8cub",
+        "source": "https://github.com/TGX-Android/Telegram-X"
+    },
+    {
+        "name": "雨见浏览器",
+        "pkg": "com.yujian.ResideMenuDemo",
+        "version": "7.9.9.5",
+        "size": "110.63MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "杭州雨见可拓网络科技有限公司",
+        "icon": "雨见浏览器_icon.webp",
+        "intro": "雨见浏览器 是一款由独立开发者长期维护的 Android 全功能浏览器，支持火狐/谷歌浏览器扩展（油猴、uBlock等2W+插件）、窗口化多标签、网页资源嗅探、智能播放器（倍速/下载/投屏）、聚合搜索、AI辅助、阅读/朗读模式、强隐私保护与高度自定义UI，功能丰富强大却保持轻盈流畅，适合喜欢折腾插件与深度浏览的用户。",
+        "screenshots": [
+            "雨见浏览器_screen_1.webp",
+            "雨见浏览器_screen_2.webp"
+        ],
+        "url": "https://www.123912.com/s/TUtbTd-MoGtH",
+        "source": "https://www.yjllq.com/"
+    },
+    {
+        "name": "暮光",
+        "pkg": "com.Twilight.app",
+        "version": "3.4.8",
+        "size": "16.09MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "鹤东流",
+        "icon": "暮光_icon.webp",
+        "intro": "暮光 是一款 Android 多功能聚合工具箱，采用Material Design 3简洁美观界面，轻量流畅，集成高清壁纸/头像一键下载设置、短视频无水印解析下载、查询工具（快递、手机号、QQ吉凶等）、文本工具（OCR、语音转文字、AES/MD5加解密）、颜色图片处理、单位换算、AI搜索等上百项实用工具，适合日常美化、娱乐、办公与玩机一站式需求。",
+        "screenshots": [
+            "暮光_screen_1.webp",
+            "暮光_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iHcLc3lvt0xi",
+        "source": "https://github.com/QiSuHe/QiSuHe.github.io"
+    },
+    {
+        "name": "Simple Live",
+        "pkg": "com.xycz.simple_live",
+        "version": "1.11.4",
+        "size": "38.35MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "xiaoyaocz",
+        "icon": "Simple_Live_icon.webp",
+        "intro": "Simple Live 是一款开源免费的跨平台直播聚合App（基于Flutter开发），支持虎牙、斗鱼、哔哩哔哩、抖音四大主流直播平台，一站式浏览、搜索与观看，支持实时弹幕、多种画质切换（最高原画）、观看历史、关注主播、夜间模式等功能，界面简洁、启动快、体积小、无广告，适合追求干净流畅多平台直播体验的用户。",
+        "screenshots": [
+            "Simple_Live_screen_1.webp",
+            "Simple_Live_screen_2.webp"
+        ],
+        "url": "",
+        "source": "https://github.com/xiaoyaocz/dart_simple_live"
+    },
+    {
+        "name": "小米计算器",
+        "pkg": "com.miui.calculator",
+        "version": "16.1.6",
+        "size": "9.04MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "小米科技有限责任公司",
+        "icon": "小米计算器_icon.webp",
+        "intro": "小米计算器 是小米官方开发的多功能计算器App，支持基本计算、科学计算器、货币汇率转换、单位换算、贷款/抵押计算、年龄计算、BMI、折扣、GST等丰富功能，界面简洁直观，历史记录清晰，兼容小米及其他安卓手机，是日常数学、财务与单位换算的实用工具。",
+        "screenshots": [
+            "小米计算器_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iDKZE3j6s18b",
+        "source": "https://app.xiaomi.com/"
+    },
+    {
+        "name": "博树",
+        "pkg": "com.busuu.android.enc",
+        "version": "32.28.0(1547155)",
+        "size": "57.72MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "博树_icon.webp",
+        "intro": "博树（Busuu）是一款全球热门的语言学习App，支持英语、日语、法语、西班牙语等12-14种语言，提供互动课程、词汇语法练习、发音训练、母语者实时反馈、AI辅助、学习计划与社区交流，结合离线模式与认证证书，帮助用户从零基础到进阶高效掌握外语，适合随时随地学习语言的用户。",
+        "screenshots": [
+            "博树_screen_1.webp",
+            "博树_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iTCA13ioqz0h",
+        "source": ""
+    },
+    {
+        "name": "启动遮罩进化",
+        "pkg": "com.gswxxn.restoresplashscreen",
+        "version": "3.1-CI.aca3600",
+        "size": "2.21MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "GSWXXN",
+        "icon": "启动遮罩进化_icon.webp",
+        "intro": "启动遮罩进化 是一款开源 Xposed/LSPosed 模块，专为小米MIUI/HyperOS系统设计，主要功能是恢复并增强被系统阉割的 App 启动遮罩，支持为所有应用显示原生启动屏、自定义启动画面选项，需激活于系统框架和 SystemUI 作用域，重启生效，适合小米玩机用户实现更美观统一的 App 启动体验。",
+        "screenshots": [
+            "启动遮罩进化_screen_1.webp",
+            "启动遮罩进化_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iBJFn3il87eh",
+        "source": "https://github.com/GSWXXN/RestoreSplashScreen"
+    },
+    {
+        "name": "1DM",
+        "pkg": "idm.internet.download.manager.plus",
+        "version": "18.0",
+        "size": "50.83MB",
+        "system": "Android",
+        "mod": "莫奈版",
+        "author": "",
+        "icon": "1DM_icon.webp",
+        "intro": "1DM 是一款 Android 上速度极快、功能强大的下载管理器，集成隐私浏览器，支持多线程加速、断点续传、磁力/Torrent下载、视频嗅探（抖音、B站等）、同时多任务下载与后台续传，无广告干扰，是高效下载大文件和资源的首选工具。",
+        "screenshots": [
+            "1DM_screen_1.webp",
+            "1DM_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iQaDd3ild8hg",
+        "source": ""
+    },
+    {
+        "name": "ADM",
+        "pkg": "com.dv.adm",
+        "version": "14.0.37",
+        "size": "29.55MB",
+        "system": "Android",
+        "mod": "莫奈版",
+        "author": "",
+        "icon": "ADM_icon.webp",
+        "intro": "ADM 是一款 Android 上经典的多线程下载神器，支持最多16线程加速下载、同时下载多个文件、断点续传、从浏览器/剪贴板自动抓取链接、视频音乐嗅探、BT种子下载、大文件支持（>2GB）、自动分类保存及计划任务等功能，下载速度快、界面简洁，被誉为安卓版的IDM，适合需要高速、稳定下载大文件和资源的用户。",
+        "screenshots": [
+            "ADM_screen_1.webp",
+            "ADM_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iDtev3lyzkpe",
+        "source": ""
+    },
+    {
+        "name": "AxManager",
+        "pkg": "frb.axeron.manager",
+        "version": "1.4.6.r336",
+        "size": "7.07MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "fahrez182",
+        "icon": "AxManager_icon.webp",
+        "intro": "AxManager 是一款免 Root（支持ADB/Shizuku模式）的 Android 系统控制与玩机工具，支持 Shell 命令执行、插件/模块扩展（性能优化、游戏帧率提升、应用管理等）、应用优化与系统调优，即使没有 Root 也能实现类似 Root 管理器的深度控制，适合追求无 Root 搞机、性能提升与自定义的用户。",
+        "screenshots": [
+            "AxManager_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iWEE53lyzstg",
+        "source": "https://github.com/fahrez182/AxManager"
+    },
+    {
+        "name": "侠客日记",
+        "pkg": "com.yucore.swashbucklerdiary",
+        "version": "1.31.5",
+        "size": "84.84MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Yu-Core",
+        "icon": "侠客日记_icon.webp",
+        "intro": "侠客日记是一款开源、跨平台（Android/Win/Mac/Web/Linux）的本地化日记应用，主打极简设计与隐私安全。该软件基于 Markdown 即时渲染，支持多媒体（图片、音频、视频）及复杂图表记录，数据完全存储在本地，并支持 WebDAV 备份与局域网同步。 ",
+        "screenshots": [
+            "侠客日记_screen_1.webp",
+            "侠客日记_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/idJBq3m08laf",
+        "source": "https://github.com/Yu-Core/SwashbucklerDiary"
+    },
+    {
+        "name": "小米主题安装器",
+        "pkg": "com.mifont.kit.monet",
+        "version": "13.0",
+        "size": "465.03KB",
+        "system": "Android",
+        "mod": "莫奈版",
+        "author": "MonetCarlos",
+        "icon": "小米主题安装器_icon.webp",
+        "intro": "",
+        "screenshots": [
+            "小米主题安装器_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iO8Ct3lwhx0h",
+        "source": "https://www.coolapk.com/u/9021855"
+    },
+    {
+        "name": "一次性邮箱",
+        "pkg": "air.kukulive.mailbox",
+        "version": "2023.02.13",
+        "size": "5.74MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "一次性邮箱_icon.webp",
+        "intro": "一次性邮箱 是一款支持永久保留、可收发附件且具备推送通知功能的无限量一次性邮箱工具，无需注册，能快速生成临时邮箱地址，用于应对垃圾邮件、临时注册等场景，支持邮件查看和便捷的转发功能。通过使用这些虚拟地址注册不信任的网站或服务，可以有效拦截垃圾邮件并防止个人真实邮箱泄露。",
+        "screenshots": [
+            "一次性邮箱_screen_1.webp",
+            "一次性邮箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i0QON3m1f3bg",
+        "source": ""
+    },
+    {
+        "name": "DeepSeek",
+        "pkg": "com.deepseek.chat",
+        "version": "1.8.0",
+        "size": "12.57MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "杭州深度求索人工智能基础技术研究有限公司",
+        "icon": "DeepSeek_icon.webp",
+        "intro": "DeepSeek 是一款由深度求索（DeepSeek）官方推出的Android AI智能助手App，搭载其最新旗舰大模型，支持免费快速对话、深度思考、实时联网搜索、复杂问题解答等功能，响应速度快、安装包小巧，界面丝滑，适合日常答疑、写作、编程、学习等场景使用。",
+        "screenshots": [
+            "DeepSeek_screen_1.webp",
+            "DeepSeek_screen_2.webp"
+        ],
+        "url": "",
+        "source": "https://github.com/deepseek-ai"
+    },
+    {
+        "name": "LeapMusic",
+        "pkg": "com.leapmusic.leapmusic",
+        "version": "5.5.1",
+        "size": "4.37MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "夏天的风__",
+        "icon": "LeapMusic_icon.webp",
+        "intro": "LeapMusic 是一款极简风格的 Android 本地音乐播放器，亮点包括全局音乐主题匹配、全局丝滑动画、逐字动态歌词、音频可视化、倍速/音调/均衡器调节、快捷播放与标签编辑，支持无损格式，注重流畅美观与个性化听歌体验。",
+        "screenshots": [
+            "LeapMusic_screen_1.webp",
+            "LeapMusic_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iurI53m53q3i",
+        "source": "https://www.coolapk.com/u/27275389"
+    },
+    {
+        "name": "MonoMusic",
+        "pkg": "com.tireless.monomusic",
+        "version": "1.0.0",
+        "size": "27.04MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "给予i",
+        "icon": "MonoMusic_icon.webp",
+        "intro": "MonoMusic 是一款由 Tireless 开发的实验性 Android 本地音乐播放器，专注纯净无广告体验，支持高效扫描本地曲库、智能分类、流光背景、无感切歌、专业均衡器音效调节与精美分享，界面简洁轻量，适合音乐发烧友追求沉浸式本地聆听。",
+        "screenshots": [
+            "MonoMusic_screen_1.webp",
+            "MonoMusic_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ituOJ3m555ri",
+        "source": "https://www.coolapk.com/u/1506251"
+    },
+    {
+        "name": "FDE.AI",
+        "pkg": "com.android.system.optimizer",
+        "version": "26.02.3",
+        "size": "4.34MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "feravolt",
+        "icon": "FDE.AI_icon.webp",
+        "intro": "FDE.AI 是一款全能 Android 系统优化工具，支持 Root 或 Shizuku 模式，基于FeraDroid引擎，根据每台设备的硬件和软件特性进行个性化AI适配优化，自动调整Linux内核、CPU/GPU、I/O、内存、电池等低级参数，实现性能提升与续航改善的平衡，系统级无痕修改，适合追求极致流畅、省电与稳定体验的玩机用户。",
+        "screenshots": [
+            "FDE.AI_screen_1.webp",
+            "FDE.AI_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iNxxm3m6h4wf",
+        "source": "https://github.com/feravolt/FDE.AI-docs"
+    },
+    {
+        "name": "Easter Eggs",
+        "pkg": "com.dede.android_eggs",
+        "version": "4.4.4",
+        "size": "5.09MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "hushenghao",
+        "icon": "Easter_Eggs_icon.webp",
+        "intro": "Easter Eggs 是一款开源免费的 Android 应用，完整收录并还原了从 Android 早期版本（Gingerbread）到最新版本的所有官方系统彩蛋，支持在任意 Android 设备上体验历史各版本的隐藏小游戏、动画与互动（如Nyan Cat、猫咪收集、火箭小游戏等），无需Root，轻量兼容性强。",
+        "screenshots": [
+            "Easter_Eggs_screen_1.webp",
+            "Easter_Eggs_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i47wa3m6lc0f",
+        "source": "https://github.com/hushenghao/AndroidEasterEggs"
+    },
+    {
+        "name": "爱玩机工具箱",
+        "pkg": "com.byyoung.setting",
+        "version": "S-22.1.0.7",
+        "size": "9.40MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "潇风残月",
+        "icon": "爱玩机工具箱_icon.webp",
+        "intro": "爱玩机工具箱 是一款功能极其丰富的 Android 玩机神器，支持Shizuku/ADB免Root + Root/Magisk多种激活方式，集成应用冻结/隐藏/伪装/多开/备份、系统优化、模块管理、刷机辅助、硬件监控、实用工具等400+项功能，是安卓搞机爱好者常用的“百宝箱”。",
+        "screenshots": [
+            "爱玩机工具箱_screen_1.webp",
+            "爱玩机工具箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i84Ie3m7p59c",
+        "source": "https://doc.byyoung.top/"
+    },
+    {
+        "name": "侠客工具箱",
+        "pkg": "com.shiyi.toolbox",
+        "version": "5.0.3",
+        "size": "36.89MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "台州拾忆网络科技有限公司",
+        "icon": "侠客工具箱_icon.webp",
+        "intro": "侠客工具箱 是一款功能全面的 Android 实用工具合集App，内置200+种日常工具，涵盖文字/图片/音视频处理、系统清理、文件管理、单位换算、查询、计算器、手电筒等，界面简洁无广告，分类清晰且支持收藏，适合一站式解决生活和工作中的各种小需求。",
+        "screenshots": [
+            "侠客工具箱_screen_1.webp",
+            "侠客工具箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i3JKi3m7tbtc",
+        "source": ""
+    },
+    {
+        "name": "一句心情签名",
+        "pkg": "com.goodluck.qianming",
+        "version": "3.9.9.3",
+        "size": "16.59MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "北京宏伟瑞腾网络科技有限公司",
+        "icon": "一句心情签名_icon.webp",
+        "intro": "一句心情签名 是一款纯净简洁的心情签名App，每日精选唯美伤感、正能量、励志、英文等各类经典短句和美文，供用户快速更换微信/QQ个性签名或朋友圈文案，无需注册登录，专注于优美文字与好心情分享。",
+        "screenshots": [
+            "一句心情签名_screen_1.webp",
+            "一句心情签名_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iSGWq3m7vjpi",
+        "source": ""
+    },
+    {
+        "name": "YC调度管理",
+        "pkg": "com.sulisong.uperf",
+        "version": "1.1.3",
+        "size": "6.65MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "小家伙su",
+        "icon": "YC调度管理_icon.webp",
+        "intro": "YC调度管理 是一款专为 Android 打造的性能调度优化工具（常配合Uperf内核模块或Magisk使用），支持全局与分应用动态性能模式，可一键切换省电、均衡、性能、极速/激进等多种调度策略，实时监控CPU/GPU/刷新率等参数，支持高通骁龙处理器与MIUI/HyperOS刷新率显示，帮助用户在流畅度与续航之间实现精准平衡，是玩机用户常用的性能调优神器。",
+        "screenshots": [
+            "YC调度管理_screen_1.webp",
+            "YC调度管理_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iXiT63imjn6h",
+        "source": "https://www.coolapk.com/u/491255"
+    },
+    {
+        "name": "DNA桌面",
+        "pkg": "com.atlantis.launcher",
+        "version": "2.9.9.96",
+        "size": "11.52MB",
+        "system": "Android",
+        "mod": "专业版",
+        "author": "",
+        "icon": "DNA桌面_icon.webp",
+        "intro": "DNA桌面 是一款高度可定制的 Android 桌面启动器，支持横向滚动页面、极简单手操作、字母索引、iOS风格模仿、Widgets小组件、图标与壁纸深度自定义等功能，帮助用户打造独一无二的个性化主屏幕体验。",
+        "screenshots": [
+            "DNA桌面_screen_1.webp",
+            "DNA桌面_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ivfOB2yq4sxi",
+        "source": ""
+    },
+    {
+        "name": "魔方",
+        "pkg": "com.app.rubiks",
+        "version": "1.2.4",
+        "size": "63.59MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "",
+        "icon": "魔方_icon.webp",
+        "intro": "",
+        "screenshots": [
+            "魔方_screen_1.webp",
+            "魔方_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/inTOa3m8lbde",
+        "source": "https://dmla.lanzouo.com/b00tbvt6cf"
+    },
+    {
+        "name": "磁域",
+        "pkg": "com.metacube.magnet",
+        "version": "1.0.2",
+        "size": "9.67MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "",
+        "icon": "磁域_icon.webp",
+        "intro": "",
+        "screenshots": [
+            "磁域_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iSeie3m8lmhe",
+        "source": "https://bgg.lanzout.com/b0w9bde5a"
+    },
+    {
+        "name": "Karing",
+        "pkg": "com.nebula.karing",
+        "version": "1.2.15",
+        "size": "46.87MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "KaringX",
+        "icon": "Karing_icon.webp",
+        "intro": "Karing 是一款免费开源的跨平台网络工具（基于sing-box内核），兼容Clash、V2ray、Shadowsocks等多种订阅格式和协议，支持智能分流、规则管理、一键导入配置与自定义代理组，界面简洁易用，适用于 Android 等多平台网络连接与优化需求。",
+        "screenshots": [
+            "Karing_screen_1.webp",
+            "Karing_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iABwH3m9zf5a",
+        "source": "https://github.com/KaringX/karing"
+    },
+    {
+        "name": "EhViewer",
+        "pkg": "com.xjs.ehviewer",
+        "version": "2.0.1.6",
+        "size": "26.42MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "xiaojieonly",
+        "icon": "EhViewer_绿_icon.webp",
+        "intro": "EhViewer 是一款开源免费的Android E-Hentai/ExHentai漫画浏览器，支持画廊浏览、在线阅读、批量下载、收藏评分与搜索，采用 Material Design 3 现代界面，注重隐私保护与流畅体验，是漫画爱好者常用的专业阅读工具。",
+        "screenshots": [
+            "EhViewer_screen_1.webp",
+            "EhViewer_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ieLbz3m9zgja",
+        "source": "https://github.com/xiaojieonly/Ehviewer_CN_SXJ"
+    },
+    {
+        "name": "EhViewer",
+        "pkg": "org.moedog.ehviewer",
+        "version": "1.8.13",
+        "size": "3.41MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "EhViewer-NekoInverter",
+        "icon": "EhViewer_黄_icon.webp",
+        "intro": "",
+        "screenshots": [
+            "EhViewer_screen_1.webp",
+            "EhViewer_screen_2.webp"
+        ],
+        "url": "",
+        "source": "https://github.com/EhViewer-NekoInverter/EhViewer"
+    },
+    {
+        "name": "EhViewer",
+        "pkg": "moe.tarsin.ehviewer",
+        "version": "1.14.6",
+        "size": "8.61MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "FooIbar",
+        "icon": "EhViewer_白_icon.webp",
+        "intro": "",
+        "screenshots": [
+            "EhViewer_screen_1.webp",
+            "EhViewer_screen_2.webp"
+        ],
+        "url": "",
+        "source": "https://github.com/FooIbar/EhViewer"
+    },
+    {
+        "name": "BiliPai",
+        "pkg": "com.android.purebilibili",
+        "version": "7.3.3",
+        "size": "19.95MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "jay3-yy",
+        "icon": "BiliPai_icon.webp",
+        "intro": "BiliPai 是一款开源纯净的第三方 Bilibili 客户端（Android），采用原生 Kotlin 开发，界面简洁现代且支持 Material You 设计、无任何广告，专注于视频播放（支持4K/HDR/DASH高画质）、弹幕精细调节、空降助手、SponsorBlock跳过片头片尾等实用功能，体验流畅且可扩展，适合追求干净无干扰B站观看的用户。",
+        "screenshots": [
+            "BiliPai_screen_1.webp",
+            "BiliPai_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iyKIH3m9zu6b",
+        "source": "https://github.com/jay3-yy/BiliPai"
+    },
+    {
+        "name": "无水印解析",
+        "pkg": "mjie.dyxhsjx",
+        "version": "1.0.3",
+        "size": "11.94MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "昔枫沐杰",
+        "icon": "无水印解析_icon.webp",
+        "intro": "",
+        "screenshots": [
+            "无水印解析_screen_1.webp",
+            "无水印解析_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iG4gR3ma0sdc",
+        "source": "https://mu-jie.cc/jxAPP/"
+    },
+    {
+        "name": "LightNovelReader",
+        "pkg": "indi.dmzz_yyhyy.lightnovelreader",
+        "version": "1.1.7a",
+        "size": "4.44MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "dmzz-yyhyy",
+        "icon": "LightNovelReader_icon.webp",
+        "intro": "LightNovelReader 是一款开源免费的多数据源轻小说阅读器（Android），采用Kotlin + Jetpack Compose开发，界面轻量现代、阅读流畅，支持探索发现、书架管理、更新提醒、内容缓存离线阅读、EPUB导出、自定义背景样式，甚至可切换数据源浏览漫画，适合轻小说爱好者追求纯净高效阅读体验。",
+        "screenshots": [
+            "LightNovelReader_screen_1.webp",
+            "LightNovelReader_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iiRQB3mdbckh",
+        "source": "https://github.com/dmzz-yyhyy/LightNovelReader"
+    },
+    {
+        "name": "Anx Reader",
+        "pkg": "com.anxcye.anx_reader",
+        "version": "1.14.0",
+        "size": "26.25MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Anxcye",
+        "icon": "Anx_Reader_icon.webp",
+        "intro": "Anx Reader 是一款开源跨平台AI智能电子书阅读器（支持Android/iOS/Windows等），采用 Flutter 开发，无广告干扰，支持EPUB、MOBI、PDF、TXT等多种格式，本地AI功能（总结、翻译、语音等）、WebDAV多设备同步阅读进度与笔记、丰富自定义配色、阅读统计，界面简洁专注，帮助用户更智能、更沉浸地阅读电子书与漫画。",
+        "screenshots": [
+            "Anx_Reader_screen_1.webp",
+            "Anx_Reader_screen_2.webp"
+        ],
+        "url": "",
+        "source": "https://github.com/Anxcye/anx-reader"
+    },
+    {
+        "name": "Extinguish",
+        "pkg": "own.moderpach.extinguish",
+        "version": "0.9.5.1",
+        "size": "3.39MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Moderpach",
+        "icon": "Extinguish_icon.webp",
+        "intro": "Extinguish 是一款轻量开源的 Android 屏幕控制工具（支持 Shizuku 激活），能使用系统隐藏功能真正关闭屏幕（而非黑屏覆盖），同时保持设备唤醒状态，让前台应用继续正常运行，适合听音乐/视频、挂机任务、接听电话时关闭屏幕省电，兼容LCD与OLED屏，操作简洁实用。",
+        "screenshots": [
+            "Extinguish_screen_1.webp",
+            "Extinguish_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/imuwg3mhdmng",
+        "source": "https://github.com/Moderpach/Extinguish"
+    },
+    {
+        "name": "贴吧 Lite",
+        "pkg": "com.huanchengfly.tieba.post",
+        "version": "4.0.0-beta.2+a627b05",
+        "size": "10.31MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "zzc10086",
+        "icon": "贴吧_Lite_icon.webp",
+        "intro": "贴吧 Lite 是一款开源免费的第三方百度贴吧客户端（Android），主打极致简洁清爽、无任何广告，安装包体积仅约6-10MB，启动快、内存占用低，支持登录账号、一键签到（支持自动签到）、浏览帖子、发帖回复、收藏、消息提醒、主题切换等核心功能，界面排版干净流畅，是追求纯净贴吧体验用户的热门替代工具。",
+        "screenshots": [
+            "贴吧_Lite_screen_1.webp",
+            "贴吧_Lite_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iRRNt3mlo7ha",
+        "source": "https://github.com/zzc10086/TiebaLite"
+    },
+    {
+        "name": "Share",
+        "pkg": "com.hengye.share",
+        "version": "3.9.6",
+        "size": "17.51MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Jayden Yu",
+        "icon": "Share_icon.webp",
+        "intro": "Share 是一款简洁小巧的第三方微博客户端，采用 Material Design 风格，体积轻、内存占用低，支持浏览动态、发帖（多图）、热门评论、视频播放（悬浮窗）、实时热搜、布局自定义（字体、导航、沉浸式等）等核心功能，纯净无多余广告，深受用户喜爱，曾是许多人找回刷微博乐趣的首选工具。",
+        "screenshots": [
+            "Share_screen_1.webp",
+            "Share_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iJHx53mrw8tc",
+        "source": ""
+    },
+    {
+        "name": "Lumolight",
+        "pkg": "com.bitmavrick.lumolight",
+        "version": "5.1.0.35",
+        "size": "5.73MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "BitMavrick",
+        "icon": "Lumolight_icon.webp",
+        "intro": "Lumolight 是一款基于 Material You 设计语言的开源高级手电筒工具，支持屏幕补光与后置闪光双模式，并允许用户通过音量键调节亮度或自定义闪烁频率，是兼具美感与功能性的系统工具进阶版。",
+        "screenshots": [
+            "Lumolight_screen_1.webp",
+            "Lumolight_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iEjY73l7x1ab",
+        "source": "https://github.com/BitMavrick/Lumolight"
+    },
+    {
+        "name": "inBox笔记",
+        "pkg": "name.gudong.think",
+        "version": "2.3.0",
+        "size": "10.28MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "北京小茅屋科技有限公司",
+        "icon": "inBox笔记_icon.webp",
+        "intro": "inBox笔记 是一款本地优先的卡片式笔记App，灵感来源于flomo，采用聊天式快速输入、无分类设计（仅用标签管理）、支持Markdown、随机回顾、桌面小组件、WebDAV同步以及灵活的导入导出，纯离线存储注重隐私，界面简洁流畅，适合随时捕捉灵感与碎片化记录的用户。",
+        "screenshots": [
+            "inBox笔记_screen_1.webp",
+            "inBox笔记_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ijzg23mpzhmf",
+        "source": "https://doc.gudong.site/"
+    },
+    {
+        "name": "一木清单",
+        "pkg": "com.wangc.todolist",
+        "version": "2.4.3",
+        "size": "25.93MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "杭州一木宇宙科技有限责任公司",
+        "icon": "一木清单_icon.webp",
+        "intro": "一木清单 是一款简约智能的 Android 待办清单App，支持快速记录任务、日程、出行计划与笔记，提供多视图规划（日历、四象限等）、智能提醒、打卡功能与多端同步，操作简单，帮助用户高效管理日常事项。",
+        "screenshots": [
+            "一木清单_screen_1.webp",
+            "一木清单_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i6qCL3mpzkhi",
+        "source": "https://www.yimutodo.com/"
+    },
+    {
+        "name": "Google Shortcuts Launcher",
+        "pkg": "com.wstxda.gsl",
+        "version": "5.7",
+        "size": "6.17MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "WSTxda",
+        "icon": "Google_Shortcuts_Launcher_icon.webp",
+        "intro": "Google Shortcuts Launcher 是一款开源免费的 Android 小工具，可在应用抽屉中快速添加Google服务的各种快捷方式，包括Google Assistant、密码管理器、音乐搜索、天气、Lens搜索历史、游戏模式等隐藏或深层功能，一键直达，无需额外权限，操作简洁高效。",
+        "screenshots": [
+            "Google_Shortcuts_Launcher_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iJceU3mpvdni",
+        "source": "https://github.com/WSTxda/Google-Shortcuts-Launcher"
+    },
+    {
+        "name": "FFUpdater",
+        "pkg": "de.marmaro.krt.ffupdater",
+        "version": "81.0.0",
+        "size": "4.73MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Tobi823",
+        "icon": "FFUpdater_icon.webp",
+        "intro": "FFUpdater 是一款开源免费的 Android 应用更新工具，专注于自动检查并下载 Firefox 系列浏览器（Firefox、Focus、Nightly、Fennec F-Droid等）及其他隐私友好应用的最新版本，支持后台更新，在Android 12+或Root/Shizuku环境下可实现无需交互自动安装更新。",
+        "screenshots": [
+            "FFUpdater_screen_1.webp",
+            "FFUpdater_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ia8oc3mpve0b",
+        "source": "https://github.com/Tobi823/ffupdater"
+    },
+    {
+        "name": "代码编辑器",
+        "pkg": "com.rhmsoft.code",
+        "version": "0.11.6",
+        "size": "15.89MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "代码编辑器_icon.webp",
+        "intro": "代码编辑器 是一款专注于编程的 Android 文本编辑器，提供语法高亮、自动缩进、代码补全、文件编译与运行等功能，支持多种编程语言，界面简洁实用，是手机上进行代码编写与调试的工具。",
+        "screenshots": [
+            "代码编辑器_screen_1.webp",
+            "代码编辑器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iT9fy3mpzmjc",
+        "source": ""
+    },
+    {
+        "name": "MiXplorer",
+        "pkg": "com.mixplorer",
+        "version": "6.70.3",
+        "size": "7.62MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "driftywinds",
+        "icon": "MiXplorer_icon.webp",
+        "intro": "MiXplorer 是一款功能强大、免费无广告的 Android 文件管理器，界面简洁流畅，支持SD卡、本地文件、FTP、LAN、SMB、WebDAV、云存储等多协议连接，提供多标签页、主题自定义、文件预览、压缩/解压、Root模式增强等丰富功能，是安卓平台经典的全能文件管理工具。",
+        "screenshots": [
+            "MiXplorer_screen_1.webp",
+            "MiXplorer_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/isQtv3mpzolg",
+        "source": "https://github.com/driftywinds/mixplorer-releases"
+    },
+    {
+        "name": "口袋画板",
+        "pkg": "org.catrobat.paintroid",
+        "version": "2.12.0",
+        "size": "3.67MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Catrobat",
+        "icon": "口袋画板_icon.webp",
+        "intro": "口袋画板 是一款开源免费的 Android 光栅图像绘图与编辑工具，支持画笔绘制、图层管理、颜色填充/拾取、透明度调整、插入文本/图像、缩放编辑、旋转与裁剪等功能，界面直观，是简单实用的手机绘画编辑软件。",
+        "screenshots": [
+            "口袋画板_screen_1.webp",
+            "口袋画板_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ipvA53mpzq7e",
+        "source": "https://github.com/Catrobat/Paintroid"
+    },
+    {
+        "name": "Kite",
+        "pkg": "com.zenzer0s.kite",
+        "version": "1.0.0",
+        "size": "68.11MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "zenzer0s",
+        "icon": "Kite_icon.webp",
+        "intro": "Kite 是一款现代开源的 Android 视频与音频下载器，基于 Flutter 开发，采用 Material 3 设计，支持从数百个网站下载高清视频（最高4K/8K）和高品质音频（MP3/M4A/OPUS），采用yt-dlp核心，提供Cookie-based认证、Telegram集成、高级下载队列与后台处理、流畅UI与动态颜色支持，界面简洁美观，功能强大，是高效批量下载视频音频的实用工具。",
+        "screenshots": [
+            "Kite_screen_1.webp",
+            "Kite_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ifgfn3mq6ysf",
+        "source": "https://github.com/zenzer0s/kite"
+    },
+    {
+        "name": "iLovePDF",
+        "pkg": "com.ilovepdf.www",
+        "version": "3.12.2",
+        "size": "124.78MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "iLovePDF_icon.webp",
+        "intro": "iLovePDF 是一款功能强大的Android PDF工具箱，支持PDF转Word/Excel/Image、合并、拆分、压缩、解锁、添加水印、旋转、签名等数十种PDF操作，操作简单、处理速度快、支持云端与本地文件，是日常办公最常用的PDF全能工具。",
+        "screenshots": [
+            "iLovePDF_screen_1.webp",
+            "iLovePDF_screen_2.webp"
+        ],
+        "url": "https://www.123912.com/s/TUtbTd-WfGtH",
+        "source": ""
+    },
+    {
+        "name": "MobiPDF",
+        "pkg": "com.mobisystems.mobiscanner",
+        "version": "11.12.270227",
+        "size": "272.28MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "MobiPDF_icon.webp",
+        "intro": "MobiPDF 是一款轻量高效的Android PDF阅读与编辑器，支持PDF浏览、标注、高亮、添加笔记、表单填写、夜间模式与手写签名等功能，界面简洁流畅，注重阅读体验，适合快速查看和轻度编辑PDF文档。",
+        "screenshots": [
+            "MobiPDF_screen_1.webp",
+            "MobiPDF_screen_2.webp"
+        ],
+        "url": "https://www.123912.com/s/TUtbTd-CfGtH",
+        "source": ""
+    },
+    {
+        "name": "MobiOffice",
+        "pkg": "com.mobisystems.office",
+        "version": "16.2.59203",
+        "size": "110.71MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "MobiOffice_icon.webp",
+        "intro": "MobiOffice 是一款集成式 Android 办公套件（Word、Excel、PowerPoint + PDF），支持创建、编辑、格式化、转换与保护文档、表格和演示文稿，兼容Microsoft Office格式，包含PDF查看与签名功能，是移动办公常用工具。",
+        "screenshots": [
+            "MobiOffice_screen_1.webp",
+            "MobiOffice_screen_2.webp"
+        ],
+        "url": "https://www.123912.com/s/TUtbTd-NfGtH",
+        "source": ""
+    },
+    {
+        "name": "维基百科",
+        "pkg": "org.wikipedia",
+        "version": "r/50575-r-2026-03-26",
+        "size": "73.09MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "wikimedia",
+        "icon": "维基百科_icon.webp",
+        "intro": "维基百科安 是一款免费、开源且无广告的知识获取工具，它将全球最大的百科全书与移动设备深度整合，提供离线阅读、多语言切换及地理位置探索等高效功能，让用户能随时随地便捷地阅读、编辑和守护人类的知识总和。",
+        "screenshots": [
+            "维基百科_screen_1.webp",
+            "维基百科_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ikSMU3mq75od",
+        "source": "https://github.com/wikimedia/apps-android-wikipedia"
+    }
+]

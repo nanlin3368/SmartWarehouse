@@ -1,0 +1,839 @@
+[
+    {
+        "name": "Neo Store",
+        "pkg": "com.machiav3lli.fdroid",
+        "version": "1.2.4",
+        "size": "5.35MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "NeoApplications",
+        "icon": "Neo_Store_icon.webp",
+        "intro": "Neo Store 是一款基于 Material Design 设计语言、功能丰富的第三方 F-Droid 客户端，旨在为安卓用户提供比官方客户端更现代、更流畅且支持多源管理的开源应用下载体验。",
+        "screenshots": [
+            "Neo_Store_screen_1.webp",
+            "Neo_Store_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iDvEU3izc6wh",
+        "source": "https://github.com/NeoApplications/Neo-Store"
+    },
+    {
+        "name": "LX Music",
+        "pkg": "cn.toside.music.mobile",
+        "version": "1.8.1",
+        "size": "14.07MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "lyswhut",
+        "icon": "LX_Music_icon.webp",
+        "intro": "LX Music 是一款免费开源的跨平台音乐查找与播放工具，支持搜索在线音乐源、播放、下载、无广告纯净体验，界面简洁，专注于为用户提供高效的音乐获取与本地播放功能。",
+        "screenshots": [
+            "LX_Music_screen_1.webp",
+            "LX_Music_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iRWqW3lpgjuf",
+        "source": "https://github.com/lyswhut/lx-music-mobile"
+    },
+    {
+        "name": "陀螺仪MC",
+        "pkg": "com.tile.tuoluoyi",
+        "version": "17",
+        "size": "89.30KB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "WuDi-ZhanShen",
+        "icon": "陀螺仪MC_icon.webp",
+        "intro": "陀螺仪MC 是一款开源的 Android 辅助工具，专为安卓版 Minecraft（我的世界基岩版）设计，能利用手机内置陀螺仪传感器实时控制游戏视角（相当于虚拟手柄右摇杆），让玩家通过倾斜手机实现流畅视角转动，支持全版本 MC 使用，需 ADB 或 Root 权限注入虚拟手柄，避免与触屏操作冲突。",
+        "screenshots": [
+            "陀螺仪MC_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/imPqR3iroy7e",
+        "source": "https://github.com/WuDi-ZhanShen/Android-Gyroscope-MC"
+    },
+    {
+        "name": "跳过广告",
+        "pkg": "decemberpei.gmail.adskipper",
+        "version": "5.0.1",
+        "size": "1.15MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "",
+        "icon": "跳过广告_icon.webp",
+        "intro": "跳过广告 是一款利用 Android 辅助功能 API 实现自动识别并点击开屏广告“跳过”按钮的轻量化工具，通过自动识别并模拟点击开屏广告的“跳过”按钮，来提升应用启动速度与用户体验。",
+        "screenshots": [
+            "跳过广告_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ieRef3ildiwb",
+        "source": ""
+    },
+    {
+        "name": "MissLee",
+        "pkg": "cn.litiaotiao.app",
+        "version": "派大星2.01",
+        "size": "2.45MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "rongzhiy",
+        "icon": "MissLee_icon.webp",
+        "intro": "MissLee（李跳跳）是一款经典的 Android 开屏广告自动跳过工具（俗称“互联网药神”），利用无障碍服务智能识别并模拟点击“跳过”“关闭”“取消”等按钮，可快速跳过绝大多数 App 的启动页广告、弹窗广告和青少年模式提示等，无需 Root、不联网、隐私友好、体积小巧，被广大用户视为提升手机使用体验的神器。",
+        "screenshots": [
+            "MissLee_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/in7QZ3ilcixg",
+        "source": "https://github.com/rongzhiy/LiTiaotiao"
+    },
+    {
+        "name": "酷客工具箱",
+        "pkg": "com.yorick.cokotools",
+        "version": "3.0.4-lion-606",
+        "size": "3.82MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Yorick-Ryu",
+        "icon": "酷客工具箱_icon.webp",
+        "intro": "酷客工具箱 是一款专为 vivo/iQOO（OriginOS 系统）打造的开源/半开源 Android 玩机工具箱，通过 Shizuku 或 Root 权限调用原生设置，实现大量被厂商阉割的隐藏功能，如状态栏显秒、WIFI 密码查看、满血充电、锁频段、应用冻结、降级安装、电池优化、电量统计等，是 vivo/iQOO 用户优化系统、提升可玩性和性能的实用黑科技神器。",
+        "screenshots": [
+            "酷客工具箱_screen_1.webp",
+            "酷客工具箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/im5DT3ijhxja",
+        "source": "https://github.com/Yorick-Ryu/CokoTools"
+    },
+    {
+        "name": "拼音打字练习",
+        "pkg": "com.zhangpei.pinyindazi",
+        "version": "5.5",
+        "size": "21.24MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "阳江市掌培科技有限公司",
+        "icon": "拼音打字练习_icon.webp",
+        "intro": "",
+        "screenshots": [
+            "拼音打字练习_screen_1.webp",
+            "拼音打字练习_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iVVL53ile6mf",
+        "source": ""
+    },
+    {
+        "name": "直达",
+        "pkg": "luyao.direct",
+        "version": "1.5.5.4179a69",
+        "size": "5.1MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "lulululbj",
+        "icon": "直达_icon.webp",
+        "intro": "",
+        "screenshots": [
+            "直达_screen_1.webp",
+            "直达_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iOwCX3imbi6j",
+        "source": "https://github.com/lulululbj/Direct"
+    },
+    {
+        "name": "真实好友",
+        "pkg": "com.litiaotiao.realfriends4",
+        "version": "v4.0",
+        "size": "2.46MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "rongzhiy",
+        "icon": "真实好友_icon.webp",
+        "intro": "真实好友 是一款由知名“李跳跳”开发者推出的 Android 免费工具，利用无障碍服务自动模拟转账操作（假转账法），批量检测微信好友中哪些人已将你删除、拉黑或单向好友关系，支持自动为异常好友添加备注（如@bsc、@blh），帮助用户快速清理通讯录，无需 Root、不联网、仅需无障碍权限，隐私安全且操作简便。",
+        "screenshots": [
+            "真实好友_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iOFOx3ilatda",
+        "source": "https://github.com/rongzhiy/LiTiaotiao"
+    },
+    {
+        "name": "海阔视界",
+        "pkg": "com.example.hikerview",
+        "version": "8.82",
+        "size": "40.15MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "新方圆小棉袄",
+        "icon": "海阔视界_icon.webp",
+        "intro": "海阔视界 是一款安卓规则容器/小程序平台（俗称“空壳”或“聚合神器”），用户通过导入各种自定义规则（小程序），可将网页资源转化为原生界面体验，支持影视聚合、视频嗅探、磁力/种子/云播、音乐小说新闻浏览、工具小程序等，几乎无所不能，特别适合喜欢折腾规则的进阶用户，实现无广告、高清投屏和个性化浏览。",
+        "screenshots": [
+            "海阔视界_screen_1.webp",
+            "海阔视界_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iL6c33ikn4gf",
+        "source": "https://haikuo.lanzouf.com/u/GoldRiver"
+    },
+    {
+        "name": "嗅觉浏览器",
+        "pkg": "com.hiker.youtoo",
+        "version": "6.82",
+        "size": "39.74MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "新方圆小棉袄",
+        "icon": "嗅觉浏览器_icon.webp",
+        "intro": "嗅觉浏览器 是一款轻量极简的安卓浏览器，核心亮点在于强大资源嗅探功能（可智能探测并下载网页中的视频、音频等媒体），同时支持多窗口、自定义插件、广告拦截、智能深色模式、书签管理、无痕浏览等，内存占用小、界面干净，适合日常网页浏览和快速提取网络资源。",
+        "screenshots": [
+            "嗅觉浏览器_screen_1.webp",
+            "嗅觉浏览器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/isKaY3ikn75c",
+        "source": "https://haikuo.lanzouf.com/u/GoldRiver"
+    },
+    {
+        "name": "Reex",
+        "pkg": "xyz.re.player.ex",
+        "version": "1.8.9",
+        "size": "21.07MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "lntls",
+        "icon": "Reex_icon.webp",
+        "intro": "Reex 是一款免费开源的安卓本地视频播放器（基于 libmpv 内核），界面极简无广告，支持几乎所有主流视频格式（MKV、MP4、RMVB 等），可自动扫描本地视频、长按最高 10 倍速播放、画中画小窗、自定义着色器（Anime4K 等）、字幕精细调节，并支持 SMB/FTP/WebDAV 协议播放局域网和云盘资源，是追求高画质、强自定义和纯净体验的本地播放神器。",
+        "screenshots": [
+            "Reex_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/icJ8Z3ik8d8b",
+        "source": "https://gitee.com/lntls/reex/releases"
+    },
+    {
+        "name": "AppDash",
+        "pkg": "flar2.appdashboard",
+        "version": "2.11",
+        "size": "6.98MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "AppDash_icon.webp",
+        "intro": "AppDash 是一款 Android 应用管理器，界面现代美观，支持标签分组、排序、权限管理、APK 解析与批量操作、详细应用分析（存储占用、使用统计等），并提供强大的备份/恢复功能（非 Root 导出 APK，Root 可备份应用数据），是管理已安装应用和 APK 文件的进阶工具。",
+        "screenshots": [
+            "AppDash_screen_1.webp",
+            "AppDash_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/im4zB3iijntg",
+        "source": ""
+    },
+    {
+        "name": "dynamicSpot",
+        "pkg": "com.jamworks.dynamicspot",
+        "version": "2.00",
+        "size": "8.16MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "dynamicSpot_icon.webp",
+        "intro": "dynamicSpot 是一款 Android 应用，旨在为安卓手机模拟苹果 iPhone 灵动岛功能，通过顶部动态弹出岛（浮岛）显示通知、实时活动、音乐控件、计时器、电池状态等，支持动态动画展开、直接回复通知、自定义颜色与音乐可视化、无需 Root，极大提升通知交互体验和桌面美观度。",
+        "screenshots": [
+            "dynamicSpot_screen_1.webp",
+            "dynamicSpot_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/icpyG3iiiwfa",
+        "source": ""
+    },
+    {
+        "name": "InxLocker",
+        "pkg": "io.github.chimio.inxlocker",
+        "version": "1.4",
+        "size": "4.1MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Chimioo",
+        "icon": "InxLocker_icon.webp",
+        "intro": "InxLocker 是一款专为某些深度定制化 Android 设备设计的安装器锁定 Xposed 模块。可以选择锁定系统框架以实现全局锁定，也可以选择特定应用，并在需要时调起目标安装器。",
+        "screenshots": [
+            "InxLocker_screen_1.webp",
+            "InxLocker_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/igAOg3ilfcbg",
+        "source": "https://github.com/Chimioo/InxLocker"
+    },
+    {
+        "name": "绿色守护",
+        "pkg": "com.oasisfeng.greenify",
+        "version": "5.1.1",
+        "size": "6.27MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "oasisfeng",
+        "icon": "绿色守护_icon.webp",
+        "intro": "绿色守护 是一款经典的安卓省电与系统优化工具，通过“绿色化”技术在屏幕关闭后自动休眠指定App，阻止其后台运行、互相唤醒和耗电，同时保持正常启动时的完整功能，是老牌的后台管理神器（支持Root/Xposed增强效果）。",
+        "screenshots": [
+            "绿色守护_screen_1.webp",
+            "绿色守护_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iF82i3lodifa",
+        "source": "https://greenify.github.io/README.chs.html"
+    },
+    {
+        "name": "炼妖壶",
+        "pkg": "com.oasisfeng.island",
+        "version": "6.4.2",
+        "size": "3.36MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "oasisfeng",
+        "icon": "炼妖壶_icon.webp",
+        "intro": "炼妖壶（Island）是一款无需 Root 的 Android 隐私隔离与应用管理工具，基于系统原生工作资料（Android for Work）模式创建独立“壶中界”空间，实现应用克隆/双开、数据与隐私完全隔离、冻结后台行为（支持God Mode冻结主系统应用）、隐藏应用等功能，常与绿色守护搭配使用，显著提升隐私保护和省电优化。",
+        "screenshots": [
+            "炼妖壶_screen_1.webp",
+            "炼妖壶_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ilV6I3imfrcd",
+        "source": "https://github.com/oasisfeng/island"
+    },
+    {
+        "name": "闪电藤",
+        "pkg": "com.cmlanche.lightningvine",
+        "version": "3.1.5",
+        "size": "30.78MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "cmlanche",
+        "icon": "闪电藤_icon.webp",
+        "intro": "闪电藤 是一款基于 LocalSend 二次开发的跨平台局域网文件传输工具（支 Android/iOS/Windows/Mac/Linux），界面仿微信聊天式传输，支持高速无损文件/文本/应用包分享、传输历史记录、跨网段连接和WebDAV扩展，是日常本地文件快速互传的便捷助手。",
+        "screenshots": [
+            "闪电藤_screen_1.webp",
+            "闪电藤_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iNO8g3imiiid",
+        "source": "https://github.com/cmlanche/lightningvine-docs"
+    },
+    {
+        "name": "AccuBattery",
+        "pkg": "com.digibites.accubattery",
+        "version": "2.1.8",
+        "size": "16.28MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "AccuBattery_icon.webp",
+        "intro": "AccuBattery 是一款科学精准的安卓电池健康监测工具，能通过充电控制器数据测量真实电池容量（mAh）、每次充电损耗、健康状况、应用耗电详情、充电速度和剩余使用时间，并提供充电提醒功能，帮助用户延长电池寿命。",
+        "screenshots": [
+            "AccuBattery_screen_1.webp",
+            "AccuBattery_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iHmdB3lodm4d",
+        "source": ""
+    },
+    {
+        "name": "CaptiveMgr",
+        "pkg": "tech.evlsoc.captivemgr",
+        "version": "3.2",
+        "size": "2.24MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Turbo42",
+        "icon": "CaptiveMgr_icon.webp",
+        "intro": "CaptiveMgr 是一款专为解决中国大陆安卓设备网络检测问题的工具（支持 Root / Shizuku），可切换Captive Portal服务器（推荐小米MIUI等）、关闭HTTPS检测、刷新网络图标，从而去除WiFi和移动信号上的“x”或“！”标志，优化显示效果。",
+        "screenshots": [
+            "CaptiveMgr_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/igZSJ3iqnxyd",
+        "source": "https://www.coolapk.com/u/722547"
+    },
+    {
+        "name": "CWM",
+        "pkg": "sun.jyc.cwm",
+        "version": "1.8.2",
+        "size": "17.48MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "林海",
+        "icon": "CWM_icon.webp",
+        "intro": "CWM 是一款轻量免费的 Android 照片水印工具，专为手机照片一键添加徕卡（Leica）风格水印（含Logo、型号、拍摄参数、日期、位置等），同时支持索尼、佳能、尼康等多种相机品牌模板，可自定义样式、颜色、尺寸与边框，支持批量处理与实时预览，让普通手机照片瞬间呈现专业大牌相机拍摄效果。",
+        "screenshots": [
+            "CWM_screen_1.webp",
+            "CWM_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iIrng3iu5jpg",
+        "source": "https://www.pgyer.com/cwmj"
+    },
+    {
+        "name": "Clash Mi",
+        "pkg": "com.nebula.clashmi",
+        "version": "1.0.19",
+        "size": "35.54MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "KaringX",
+        "icon": "Clash_Mi_icon.webp",
+        "intro": "Clash Mi 是一款基于最新 Mihomo（Clash Meta）内核的跨平台开源网络代理工具（支持 Android、iOS、Windows、macOS、Linux），界面简洁易用，支持规则分流、订阅导入、强大覆写功能和内置 Zashboard 面板，可实现网络代理、流量分流和节点管理，是小火箭（Shadowrocket）的免费替代品，适合需要稳定代理的用户。",
+        "screenshots": [
+            "Clash_Mi_screen_1.webp",
+            "Clash_Mi_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ihctJ3loecyj",
+        "source": "https://github.com/KaringX/clashmi"
+    },
+    {
+        "name": "多邻国",
+        "pkg": "com.duolingo",
+        "version": "6.56.3",
+        "size": "97.96MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "多邻国_icon.webp",
+        "intro": "多邻国（Duolingo）是一款全球最受欢迎的免费语言学习 App，通过游戏化设计（经验值、连胜、宝石、心心系统）和趣味短课（5-10 分钟），采用听、说、读、写结合的方式，帮助用户学习超过 40 种语言（包括英语、西班牙语、法语、日语、中文等），支持个性化自适应学习路径和 AI 辅助，是适合零基础到进阶用户的日常语言打卡工具。",
+        "screenshots": [
+            "多邻国_screen_1.webp",
+            "多邻国_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iYpD53ip8p7c",
+        "source": ""
+    },
+    {
+        "name": "XMSLEEP",
+        "pkg": "org.xmsleep.app",
+        "version": "2.2.1",
+        "size": "30.38MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Tosencen",
+        "icon": "XMSLEEP_icon.webp",
+        "intro": "XMSLEEP 是一款基于 Material Design 3 风格开发的开源 Android 白噪音应用。它不仅采用了最前沿的 Material Design 3 设计语言，提供丝滑、现代的沉浸式界面，更结合了强大的 ExoPlayer/Media3 引擎，确保音频在多场景（如雨声、篝火、猫咪呼噜等）下能够实现完美的无缝循环播放。",
+        "screenshots": [
+            "XMSLEEP_screen_1.webp",
+            "XMSLEEP_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iz1ku3lole2b",
+        "source": "https://github.com/Tosencen/XMSLEEP"
+    },
+    {
+        "name": "星闪生活",
+        "pkg": "com.arcticluckystar.starlife",
+        "version": "1.0",
+        "size": "6.21MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "北极幸运星",
+        "icon": "星闪生活_icon.webp",
+        "intro": "星闪生活 是一款基于 Jetpack Compose 现代化架构开发的 Android 综合管理应用。它深度践行了 Material Design 3 (MD3) 的设计哲学，将“财务管理、资产追踪、时间提醒”三大核心功能无缝集成，旨在通过一个清爽、直观的界面，帮助用户实现对生活琐事的全方位掌控。",
+        "screenshots": [
+            "星闪生活_screen_1.webp",
+            "星闪生活_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iKcT53loj2oj",
+        "source": "https://www.coolapk.com/u/3765013"
+    },
+    {
+        "name": "Battery Guru",
+        "pkg": "com.paget96.batteryguru",
+        "version": "2.4.6.2",
+        "size": "13.56MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "Battery_Guru_icon.webp",
+        "intro": "Battery Guru 是一款实时电池健康监测App，能精确显示电池容量（mAh）、健康度、温度、充电性能、耗电统计及剩余时间估算，支持自定义充电/温度警报和小部件，帮助用户优化充电习惯、延长电池寿命，是玩机用户常用的电池诊断工具。",
+        "screenshots": [
+            "Battery_Guru_screen_1.webp",
+            "Battery_Guru_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i2HGU3lodoja",
+        "source": ""
+    },
+    {
+        "name": "ADB KIT",
+        "pkg": "com.nightmare.adbtools",
+        "version": "1.5.4",
+        "size": "24.04MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "nightmare-space",
+        "icon": "ADB_KIT_icon.webp",
+        "intro": "ADB KIT（又称魇ADB工具箱）是一款跨平台 ADB 客户端GUI工具（支持Windows、macOS、Linux与Android），以图形界面简化 ADB 命令操作，提供多设备管理、快速连接（扫码/局域网）、应用安装管理、文件传输、免Root开启ADB、应用管理器与桌面启动器等功能，大幅提升安卓开发者和极客玩机用户的调试与管理效率。",
+        "screenshots": [
+            "ADB_KIT_screen_1.webp",
+            "ADB_KIT_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ilXkx3istlgb",
+        "source": "https://github.com/nightmare-space/adb_kit"
+    },
+    {
+        "name": "Thanox",
+        "pkg": "github.tornaco.android.thanos",
+        "version": "8.6-prc",
+        "size": "21.36MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Tornaco",
+        "icon": "Thanox_icon.webp",
+        "intro": "Thanox 是一款强大的 Android 系统管理工具（支持 Xposed/LSPosed 或 Shizuku 激活），专注于隐私保护与优化，可精细管理应用权限、后台自启动、运行限制、任务清理及情景模式，帮助用户彻底控制应用行为、节省电量并提升系统安全性。",
+        "screenshots": [
+            "Thanox_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/il43p3lp9l9e",
+        "source": "https://github.com/Tornaco/Thanox"
+    },
+    {
+        "name": "Next Player",
+        "pkg": "dev.anilbeesetti.nextplayer",
+        "version": "0.16.0",
+        "size": "12.47MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "anilbeesetti",
+        "icon": "Next_Player_icon.webp",
+        "intro": "Next Player 是一款基于 Kotlin 和 Jetpack Compose 开发的开源免费 Android 原生视频播放器，界面简洁现代（Material You），支持本地视频及流媒体播放、多种字幕和格式、无广告、滑动手势调节，适合追求轻量纯净观影体验的用户。",
+        "screenshots": [
+            "Next_Player_screen_1.webp",
+            "Next_Player_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iiaap3lpabja",
+        "source": "https://github.com/anilbeesetti/nextplayer"
+    },
+    {
+        "name": "点击助手Pro",
+        "pkg": "top.bogey.touch_tool_pro.beta",
+        "version": "250506_1510",
+        "size": "14.94MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "MrBogey",
+        "icon": "点击助手Pro_icon.webp",
+        "intro": "点击助手Pro 是一款开源免费的全能自动点击器（支持无障碍服务），提供多种点击/滑动/手势模式，支持手势、文本、图片、颜色识别、系统功能调用等高级任务，可编程条件执行、循环、并行操作，适用于跳过广告、游戏脚本、重复劳动自动化等，无需 Root，本地运行，无联网权限，隐私安全。",
+        "screenshots": [
+            "点击助手Pro_screen_1.webp",
+            "点击助手Pro_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ilrlr3jcm4wd",
+        "source": "https://www.coolapk.com/u/3429590"
+    },
+    {
+        "name": "输入法切换",
+        "pkg": "com.inputswitcher",
+        "version": "6",
+        "size": "52.36KB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "无敌战神领主",
+        "icon": "输入法切换_icon.webp",
+        "intro": "",
+        "screenshots": [
+            "输入法切换_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iHezy3j42e1e",
+        "source": "https://www.coolapk.com/u/2638279"
+    },
+    {
+        "name": "搞机工具箱",
+        "pkg": "com.cz.GJ2X",
+        "version": "1.1.0",
+        "size": "3.23MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "晨钟酱",
+        "icon": "搞机工具箱_icon.webp",
+        "intro": "搞机工具箱是一款免 Root的ADB图形化玩机神器（Windows端工具），专为安卓手机优化设计，支持软件管理、隐藏状态栏、调节字体/动画、模拟充电、电池管理等数十项功能，界面简洁易用，适合新手和小白一键搞机，提升系统自定义能力。",
+        "screenshots": [
+            "搞机工具箱_screen_1.webp",
+            "搞机工具箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iztTJ3iscq2f",
+        "source": "https://www.coolapk.com/u/630380"
+    },
+    {
+        "name": "AdClose",
+        "pkg": "com.close.hook.ads",
+        "version": "4.2.3.202603272116",
+        "size": "5.39MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "isxlan0",
+        "icon": "AdClose_icon.webp",
+        "intro": "AdClose 是一款基于LSPosed/Xposed框架的 Android 广告屏蔽模块，通过阻止应用内广告SDK初始化、拦截广告网络请求，同时移除截图录屏限制、传感器监听及 Root 检测等，提供无广告的纯净应用浏览体验，显著减少干扰并优化使用流畅度。",
+        "screenshots": [
+            "AdClose_screen_1.webp",
+            "AdClose_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iezqF3lpgooj",
+        "source": "https://github.com/isxlan0/AdClose_fix"
+    },
+    {
+        "name": "Xposed Edge Pro",
+        "pkg": "com.jozein.xedgepro",
+        "version": "8.0.1",
+        "size": "767.62KB",
+        "system": "Android",
+        "mod": "专业版",
+        "author": "jozein",
+        "icon": "Xposed_Edge_Pro_icon.webp",
+        "intro": "Xposed Edge Pro 是一款强大的LSPosed/Xposed模块，专注于边缘手势自定义与系统级操作，支持重新映射边缘滑动、按键、PIE菜单等触发器，实现导航控制、媒体操作、快速滚动、应用冻结、电源菜单等高级功能，极大提升全面屏手机的操作流畅性和个性化体验。",
+        "screenshots": [
+            "Xposed_Edge_Pro_screen_1.webp",
+            "Xposed_Edge_Pro_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iekoQ3in0vfg",
+        "source": ""
+    },
+    {
+        "name": "无线 adb",
+        "pkg": "moe.haruue.wadb",
+        "version": "7.0.0.r212.65458e8",
+        "size": "1.76MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "RikkaApps",
+        "icon": "无线_adb_icon.webp",
+        "intro": "无线 adb 是一款专为 Android 开发者和玩机爱好者设计的无线调试切换器。它的核心作用是取代数据线，让你通过 Wi-Fi 网络就能实现电脑对手机的 ADB 调试控制。",
+        "screenshots": [
+            "无线_adb_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ijwDx3in0sbe",
+        "source": "https://github.com/RikkaApps/WADB"
+    },
+    {
+        "name": "玄戒工具箱",
+        "pkg": "com.xuanjiecjd.app",
+        "version": "3.3",
+        "size": "5.28MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "陈进东",
+        "icon": "玄戒工具箱_icon.webp",
+        "intro": "玄戒工具箱 是一款专为小米澎湃OS/Redmi系统打造的第三方玩机工具（无需Root，基于Shizuku），提供性能优化（如关闭桌面预加载、调节动画）、界面定制（隐藏图标、通知限制、AOD强制开启）、快捷开关等功能，深度适配系统，帮助小米用户精细调优手机体验。",
+        "screenshots": [
+            "玄戒工具箱_screen_1.webp",
+            "玄戒工具箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iFrbR3iiiouh",
+        "source": "https://space.bilibili.com/2728626"
+    },
+    {
+        "name": "欢太工具箱",
+        "pkg": "com.xianbei.app",
+        "version": "16.2",
+        "size": "4.26MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "陈进东",
+        "icon": "欢太工具箱_icon.webp",
+        "intro": "欢太工具箱 是一款专为OPPO、一加、真我（realme）手机打造的系统优化工具（支持Shizuku），集成去广告、极暗模式、状态栏自定义、电池优化、垃圾清理、性能加速等实用功能，一键操作简便，深度适配品牌系统底层，帮助用户释放设备潜能并获得更纯净流畅的使用体验。",
+        "screenshots": [
+            "欢太工具箱_screen_1.webp",
+            "欢太工具箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i6YPK3iiip5i",
+        "source": "https://space.bilibili.com/2728626"
+    },
+    {
+        "name": "蓝河工具箱",
+        "pkg": "com.bluestudiocjd.app",
+        "version": "6.4",
+        "size": "7.15MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "陈进东",
+        "icon": "蓝河工具箱_icon.webp",
+        "intro": "蓝河工具箱 是一款针对vivo/iQOO（部分支持其他品牌）系统的优化工具箱，支持 Shizuku 授权激活高级功能，如全局插帧、强开直驱供电、核心调度优化、自定义分辨率、GPU超频、内存管理等，旨在解锁隐藏性能选项，提升游戏与日常流畅度。",
+        "screenshots": [
+            "蓝河工具箱_screen_1.webp",
+            "蓝河工具箱_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/inqpp3iiipdg",
+        "source": "https://space.bilibili.com/2728626"
+    },
+    {
+        "name": "陀螺仪点击",
+        "pkg": "com.gyro.click",
+        "version": "2",
+        "size": "20.67KB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "无敌战神领主",
+        "icon": "陀螺仪点击_icon.webp",
+        "intro": "",
+        "screenshots": [
+            "陀螺仪点击_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ihXwH3jpkdri",
+        "source": "https://www.coolapk.com/u/2638279"
+    },
+    {
+        "name": "衔枝",
+        "pkg": "info.muge.xianzhi",
+        "version": "1.1.3",
+        "size": "55.74MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "邢台市牧歌信息技术有限公司",
+        "icon": "衔枝_icon.webp",
+        "intro": "衔枝 是一款简洁高效的 Android 待办事项管理工具，支持创建多种清单、标签分类、智能统计进度、模板快速添加任务，以及深色/浅色主题切换，本地优先存储注重隐私，帮助用户有序规划工作、学习与生活任务，提升时间管理效率。",
+        "screenshots": [
+            "衔枝_screen_1.webp",
+            "衔枝_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i8O0j3lptdsf",
+        "source": "https://www.coolapk.com/u/1468873"
+    },
+    {
+        "name": "APK安装工具",
+        "pkg": "com.uptodown.installer",
+        "version": "0.2.43",
+        "size": "3.38MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Uptodown",
+        "icon": "APK安装工具_icon.webp",
+        "intro": "APK安装工具 是一款简单实用的 Android APK 文件管理与安装助手，能快速扫描设备存储/SD卡中的 APK/XAPK/APKM/APKS 文件，支持搜索、批量安装、批量删除、安装状态查看等功能，适合侧载应用、批量部署或管理下载的安装包，操作便捷高效。",
+        "screenshots": [
+            "APK安装工具_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iuwfU3lpy1lg",
+        "source": "https://uptodown-apk-installer.en.uptodown.com/android"
+    },
+    {
+        "name": "Unit Converter",
+        "pkg": "com.techsial.android.unitconverter_pro",
+        "version": "4.6.0",
+        "size": "6.90MB",
+        "system": "Android",
+        "mod": "专业版",
+        "author": "",
+        "icon": "Unit_Converter_icon.webp",
+        "intro": "Unit Converter 是一款轻量实用的 Android 单位转换工具，支持长度、重量、温度、速度、功率、电压等多种常用单位快速互换，支持实时计算与历史记录，界面简洁，支持离线使用，适合日常学习、工作中进行精确单位换算。",
+        "screenshots": [
+            "Unit_Converter_screen_1.webp",
+            "Unit_Converter_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iNmYw3lqdrof",
+        "source": ""
+    },
+    {
+        "name": "屏幕录制",
+        "pkg": "com.kimcy929.screenrecorder",
+        "version": "1.2.6.8",
+        "size": "4.07MB",
+        "system": "Android",
+        "mod": "莫奈版",
+        "author": "",
+        "icon": "屏幕录制_icon.webp",
+        "intro": "屏幕录制 是一款无需 Root 的高清 Android 屏幕录像应用，支持全屏/内部音频录制、暂停恢复、游戏/视频通话捕捉、无水印无时长限制、画质调节及简单编辑，帮助用户轻松录制操作演示、游戏精彩时刻或教学内容。",
+        "screenshots": [
+            "屏幕录制_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ilUYB3iiq4ch",
+        "source": ""
+    },
+    {
+        "name": "SD Maid SE",
+        "pkg": "eu.darken.sdmse",
+        "version": "1.6.5-rc0",
+        "size": "12.34MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "d4rken-org",
+        "icon": "SD_Maid_SE_icon.webp",
+        "intro": "SD Maid SE（SD Maid 2）是一款开源免费的 Android 系统清理工具，专注于智能扫描并安全删除卸载 App 残留文件、系统垃圾、重复文件、缓存等，帮助用户彻底释放存储空间，支持 Shizuku/Root 增强功能，界面简洁高效，部分功能需内购，是维护 Android 设备清洁的可靠助手。",
+        "screenshots": [
+            "SD_Maid_SE_screen_1.webp",
+            "SD_Maid_SE_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iFedR3lqhysf",
+        "source": "https://github.com/d4rken-org/sdmaid-se"
+    },
+    {
+        "name": "椒盐笔记",
+        "pkg": "com.moriafly.note",
+        "version": "0.30.1-预售版",
+        "size": "9.10MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Moriafly",
+        "icon": "椒盐笔记_icon.webp",
+        "intro": "椒盐笔记 是一款纯文本 + Markdown 的笔记软件，也可以用于便签、日记、文稿撰写等。软件在追求稳定性和流畅性、满足用户不同使用需求的同时，也注重页面设计的简约与美观，致力于为用户创造便捷舒适的使用体验。",
+        "screenshots": [
+            "椒盐笔记_screen_1.webp",
+            "椒盐笔记_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ipf1j3lqv1oh",
+        "source": "https://github.com/Moriafly/SaltNoteSource"
+    },
+    {
+        "name": "青盐云听",
+        "pkg": "com.xuncorp.qinalt.music",
+        "version": "2.0.0-dev08",
+        "size": "37.43MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Moriafly",
+        "icon": "青盐云听_icon.webp",
+        "intro": "青盐云听 是一款轻量级 Android 云音乐管理播放器，专注于本地音乐扫描整理与网盘整合（支持阿里云盘、百度云盘、WebDAV协议等），实现本地+云端音乐一站式管理、智能歌词匹配、去重与分类播放，无广告、极简纯净，帮助用户轻松聚合个人音乐库并享受高品质本地播放。",
+        "screenshots": [
+            "青盐云听_screen_1.webp",
+            "青盐云听_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iqIYO3lr06zi",
+        "source": "https://moriafly.com/program/qinalt.html"
+    },
+    {
+        "name": "Activity Manager",
+        "pkg": "com.activitymanager",
+        "version": "5.4.20",
+        "size": "5.16MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "sdex",
+        "icon": "Activity_Manager_icon.webp",
+        "intro": "Activity Manager 是一款轻量实用 Android 应用调试与快捷工具，能浏览已安装 App 的所有Activity（包括导出的和未导出的）、直接启动指定Activity、创建自定义快捷方式，支持 Root 增强，适合开发者、玩机用户快速测试和访问隐藏界面。",
+        "screenshots": [
+            "Activity_Manager_screen_1.webp",
+            "Activity_Manager_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iLF483lr191i",
+        "source": "https://github.com/sdex/ActivityManager"
+    },
+    {
+        "name": "Kbattery",
+        "pkg": "com.example.kbattery",
+        "version": "1.2",
+        "size": "9.19MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "kebaicute",
+        "icon": "Kbattery_icon.webp",
+        "intro": "Kbattery（Kbattery直驱供电）是一款专为vivo/iQOO手机打造的电池与系统优化工具（需 Shizuku 授权），支持实时监测电池健康、电压温度、调节充电策略与直驱供电模式、一键隐藏HD标识、开启虚拟显卡、清理后台进程等功能，有效延长电池寿命、降低发热并提升续航与性能表现。",
+        "screenshots": [
+            "Kbattery_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iSdnc3lu8j5c",
+        "source": "https://www.coolapk.com/u/29253237"
+    },
+    {
+        "name": "系统优化",
+        "pkg": "com.itos.sysopt",
+        "version": "2.1",
+        "size": "6.11MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "ItosEO",
+        "icon": "系统优化_icon.webp",
+        "intro": "系统优化（vivo系统优化Pro）是一款专为vivo/iQOO OriginOS设计的深度调优工具，提供一键优化、后台进程管理、网络加速、游戏稳帧等功能，支持 Shizuku/ADB 激活，可精细调整系统资源分配、提升日常与游戏流畅性，适合追求极致体验的用户。",
+        "screenshots": [
+            "系统优化_screen_1.webp",
+            "系统优化_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iyfbC3luxymj",
+        "source": "https://www.coolapk.com/u/3287595"
+    },
+    {
+        "name": "vivo性能引擎",
+        "pkg": "com.itos.vivothermal",
+        "version": "Pro-21",
+        "size": "7.97MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "ItosEO",
+        "icon": "vivo性能引擎_icon.webp",
+        "intro": "vivo性能引擎 是一款专为vivo/iQOO手机设计的第三方性能优化工具（需 Shizuku或ADB 激活），支持自定义性能策略、解决降亮度问题、提升游戏帧率稳定性、增加性能输出、调节LTPO等，帮助用户突破系统默认限制，获得更强的游戏与日常流畅体验。",
+        "screenshots": [
+            "vivo性能引擎_screen_1.webp",
+            "vivo性能引擎_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iP6Ny3lw1lih",
+        "source": "https://www.coolapk.com/u/3287595"
+    }
+]

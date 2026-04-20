@@ -1,0 +1,847 @@
+[
+    {
+        "name": "Acode",
+        "pkg": "com.foxdebug.acode",
+        "version": "1.11.8-nightly.b6ae63c",
+        "size": "30.46MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Acode-Foundation",
+        "icon": "Acode_icon.webp",
+        "intro": "Acode 是一款轻量、开源且高度可定制的 Android 端代码编辑器，凭借其媲美 PC 端的流畅度、强大的插件扩展体系以及对 Web 前端开发的完美支持，成为了移动端开发者进行随时随地编码、脚本修改及远程服务器管理的必备利器。",
+        "screenshots": [
+            "Acode_screen_1.webp",
+            "Acode_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ipujP3myista",
+        "source": "https://github.com/Acode-Foundation/Acode"
+    },
+    {
+        "name": "Xed-Editor",
+        "pkg": "com.rk.xededitor",
+        "version": "3.2.7",
+        "size": "21.88MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Xed-Editor",
+        "icon": "Xed-Editor_icon.webp",
+        "intro": "Xed-Editor 是一款开源免费的 Android 高级文本/代码编辑器，专为开发者、程序员和高级用户设计，支持200+种语言语法高亮、LSP代码智能补全、自动缩进、多标签页编辑、内置终端（可运行Python/Node.js等）、文件浏览器、Git版本控制、插件扩展与项目级搜索等功能，界面现代流畅、自定义丰富，是手机上高效编码与文本编辑的强大工具。",
+        "screenshots": [
+            "Xed-Editor_screen_1.webp",
+            "Xed-Editor_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iIM5v3mglgqf",
+        "source": "https://github.com/Xed-Editor/Xed-Editor"
+    },
+    {
+        "name": "Termux",
+        "pkg": "com.termux",
+        "version": "0.118.3",
+        "size": "33.48MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "termux",
+        "icon": "Termux_icon.webp",
+        "intro": "Termux 是一款基于 Android 系统的开源终端模拟器及 Linux 环境沙箱，它无需 Root 权限即可提供完整的 APT 软件包管理系统，使用户能够在移动设备上运行原生的 Linux 命令行工具、搭建各种编程语言的开发调试环境，并能通过与 Acode 等编辑器联动，将普通的手机或平板转变为一台功能完备、便携且高度可定制的生产力工作站。",
+        "screenshots": [
+            "Termux_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ilDAH3lsq0cb",
+        "source": "https://github.com/termux/termux-app"
+    },
+    {
+        "name": "安卓快捷设置",
+        "pkg": "com.android.settings.new",
+        "version": "3.2.7_beta_05",
+        "size": "2.38MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "启明星",
+        "icon": "安卓快捷设置_icon.webp",
+        "intro": "安卓快捷设置 是一款功能强大的系统增强工具，专为追求极致设备定制的用户设计。应用深度整合了300多项隐藏设置，提供澎湃OS风格界面，让用户全面掌控 Android 设备的每一个细节。",
+        "screenshots": [
+            "安卓快捷设置_screen_1.webp",
+            "安卓快捷设置_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iIuLQ3lagvre",
+        "source": "https://www.coolapk.com/u/3849393"
+    },
+    {
+        "name": "KeePassDX",
+        "pkg": "com.kunzisoft.keepass.libre",
+        "version": "4.3.2",
+        "size": "15.95MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Kunzisoft",
+        "icon": "KeePassDX_icon.webp",
+        "intro": "KeePassDX 是一款强大的开源密码管理器，基于 KeePass 2.x 开发，专为安卓设备设计。它允许用户安全地存储和管理各种账户信息和密码。KeePassDX 采用本地加密，支持创建、编辑和存储密码数据库，确保用户的隐私和安全。",
+        "screenshots": [
+            "KeePassDX_screen_1.webp",
+            "KeePassDX_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iuTu13j78pqj",
+        "source": "https://github.com/Kunzisoft/KeePassDX"
+    },
+    {
+        "name": "谷歌相机",
+        "pkg": "com.samsung.android.ruler",
+        "version": "8.4.300.414775575.18",
+        "size": "152.40MB",
+        "system": "Android",
+        "mod": "特别版",
+        "author": "Bigkaka",
+        "icon": "谷歌相机_icon.webp",
+        "intro": "谷歌相机（75合一滤镜）是一款由开发者 BigKaka 基于谷歌原生相机深层定制的专业级摄影软件，它通过将 Google HDR+ 的顶级堆栈算法与超高自由度的 Libpatcher 调节引擎相结合，配合直观的 徕卡/哈苏/富士 调色滤镜库以及高度自定义的数字水印系统，让普通手机也能跨品牌实现极致的画质表现力与胶片艺术感。",
+        "screenshots": [
+            "谷歌相机_screen_1.webp",
+            "谷歌相机_screen_2.webp"
+        ],
+        "url": "https://www.123912.com/s/TUtbTd-IQGtH",
+        "source": ""
+    },
+    {
+        "name": "InstallerX",
+        "pkg": "com.rosan.installer.x",
+        "version": "1.7-20241104",
+        "size": "2.65MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "iamr0s",
+        "icon": "InstallerX_icon.webp",
+        "intro": "InstallerX 是一款开源的现代 Android 应用安装器，专为改善 Android（尤其是国产定制 ROM）上的 APK 安装体验而设计。它能替换系统默认安装程序，提供更简洁、高效且功能丰富的安装流程。",
+        "screenshots": [
+            "InstallerX_screen_1.webp",
+            "InstallerX_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iErQR3li4eub",
+        "source": "https://github.com/iamr0s/InstallerX"
+    },
+    {
+        "name": "bilimiao",
+        "pkg": "com.a10miaomiao.bilimiao",
+        "version": "2.4.8.1",
+        "size": "31.11MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "10miaomiao",
+        "icon": "bilimiao_icon.webp",
+        "intro": "bilimiao 是一款专为安卓用户打造、主打“轻量纯净”与“实用工具”的开源第三方 B 站客户端，让你在彻底告别广告干扰的同时，还能轻松实现 4K 视频下载与高清封面提取。",
+        "screenshots": [
+            "bilimiao_screen_1.webp",
+            "bilimiao_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i49X93lhztpg",
+        "source": "https://github.com/10miaomiao/bilimiao2"
+    },
+    {
+        "name": "纯粹直播",
+        "pkg": "com.mystyle.purelive",
+        "version": "2.0.14",
+        "size": "77.53MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "liuchuancong",
+        "icon": "纯粹直播_icon.webp",
+        "intro": "纯粹直播 是一款汇聚了斗鱼、虎牙、B 站及网易 CC 等主流平台的开源聚合工具，通过剥离所有广告、礼物特效和冗余社交功能，为用户提供极其纯净、支持 4K 原画及画中画播放的极简看播体验。",
+        "screenshots": [
+            "纯粹直播_screen_1.webp",
+            "纯粹直播_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iacQ33li0ged",
+        "source": "https://github.com/liuchuancong/pure_live"
+    },
+    {
+        "name": "Klick'r",
+        "pkg": "com.buzbuz.smartautoclicker",
+        "version": "3.4.0",
+        "size": "27.74MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Nain57",
+        "icon": "Klick'r_icon.webp",
+        "intro": "Klick'r（原名 Smart AutoClicker）是一款功能极其强大的 Android 开源智能自动点击器。与市面上大多数仅基于“固定时间间隔”循环的点击器不同，Klick'r 的核心逻辑是 “图像识别触发”。它能像人类一样“看懂”屏幕内容，并在特定图像出现时自动执行操作。",
+        "screenshots": [
+            "Klick'r_screen_1.webp",
+            "Klick'r_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/izJL63li3exi",
+        "source": "https://github.com/Nain57/Smart-AutoClicker"
+    },
+    {
+        "name": "Weather Master",
+        "pkg": "com.pranshulgg.weather_master_app",
+        "version": "2.7.1",
+        "size": "29.90MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "PranshulGG",
+        "icon": "Weather_Master_icon.webp",
+        "intro": "Weather Master 是一款基于 Flutter 构建的安卓开源天气应用，它通过完美复刻 Google 经典的“天气小青蛙”动画与 Material You 动态配色美学，为追求极致视觉体验与隐私保护的用户提供了一个无广告、多数据源且深度适配原生安卓系统的极简气象站。",
+        "screenshots": [
+            "Weather_Master_screen_1.webp",
+            "Weather_Master_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iR7aL3l9bjwb",
+        "source": "https://github.com/PranshulGG/WeatherMaster"
+    },
+    {
+        "name": "权限导航",
+        "pkg": "eu.darken.myperm",
+        "version": "2.0.1-rc1",
+        "size": "5.93MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "d4rken-org",
+        "icon": "权限导航_icon.webp",
+        "intro": "权限导航 是一款免费开源的 Android 权限浏览工具，能从一个界面提供所有已安装应用的权限“鸟瞰视图”，让你轻松查看每个 App 请求的权限或每个权限被哪些 App 使用，解决 Android 系统权限信息分散的问题，是帮助 Android 用户一目了然审查所有应用权限的开源权限浏览器。",
+        "screenshots": [
+            "权限导航_screen_1.webp",
+            "权限导航_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i1yYk3li11bg",
+        "source": "https://github.com/d4rken-org/permission-pilot"
+    },
+    {
+        "name": "Legado",
+        "pkg": "io.legado.app.release",
+        "version": "3.25",
+        "size": "17.96MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "gedoor",
+        "icon": "Legado_icon.webp",
+        "intro": "Legado（阅读）是一款开源的 Android 全能媒体聚合工具，它通过“空壳+自定义规则”的机制，实现了搜书、追更、漫画、订阅及 TTS 朗读等功能，是自定义程度最高且彻底无广告的纯净阅读引擎。",
+        "screenshots": [
+            "Legado_screen_1.webp",
+            "Legado_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/itYOq3li3r3g",
+        "source": "https://github.com/gedoor/legado"
+    },
+    {
+        "name": "NekoBox",
+        "pkg": "moe.nb4a",
+        "version": "1.4.2",
+        "size": "14.55MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "MatsuriDayo",
+        "icon": "NekoBox_icon.webp",
+        "intro": "NekoBox（全称 NekoBox for Android）是一款开源的 Android 通用网络代理工具，基于现代 sing-box 内核开发。它被广泛用于网络代理、隐私保护和绕过网络限制，是目前安卓端功能强大、界面美观、协议支持全面的代理客户端之一。",
+        "screenshots": [
+            "NekoBox_screen_1.webp",
+            "NekoBox_screen_2.webp"
+        ],
+        "url": "",
+        "source": "https://github.com/MatsuriDayo/NekoBoxForAndroid"
+    },
+    {
+        "name": "MT管理器(共存版)",
+        "pkg": "bin.mt.plus.canary",
+        "version": "2.26.3-clone",
+        "size": "28.61MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "南京州游网络科技有限公司",
+        "icon": "MT管理器_clone_icon.webp",
+        "intro": "MT管理器（共存版）是一款功能强大的 Android 文件管理与 APK 逆向修改神器，采用独特的双窗口操作模式，支持文件复制/移动/批量操作、ZIP/RAR 直接编辑（无需完整解压）、强大文本编辑器（语法高亮、正则搜索替换）、APK 深度编辑（DEX/Smali、ARSC、XML 编辑、签名、优化、共存、去签名校验、资源混淆、汉化等），Root/Shizuku 支持下可访问系统目录、修改权限，还内置十六进制编辑器、网络存储（FTP/SFTP/SMB/WebDAV）、插件系统等功能，是玩机爱好者、逆向开发者与深度定制用户的必备工具。",
+        "screenshots": [
+            "MT管理器_screen_1.webp",
+            "MT管理器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iJjMB3li51sh",
+        "source": "https://mt2.cn/"
+    },
+    {
+        "name": "Dhizuku",
+        "pkg": "com.rosan.dhizuku",
+        "version": "2.11.2",
+        "size": "2.54MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "iamr0s",
+        "icon": "Dhizuku_icon.webp",
+        "intro": "Dhizuku 是一款开源 Android 工具，参考 Shizuku 设计思想，能将 Device Owner（设备所有者） 的全部高级权限分享给多个其他应用使用，无需 Root 即可实现更深度的系统管理功能。",
+        "screenshots": [
+            "Dhizuku_screen_1.webp",
+            "Dhizuku_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i2gW83ljxc1a",
+        "source": "https://github.com/iamr0s/Dhizuku"
+    },
+    {
+        "name": "QuickEdit",
+        "pkg": "com.rhmsoft.edit.pro",
+        "version": "1.12.9",
+        "size": "34.29MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "QuickEdit_icon.webp",
+        "intro": "QuickEdit 是一款专为 Android 平台打造的高性能、全功能文本与代码编辑器，它以极速启动、流畅处理万行大文件为核心优势，集成了 170 多种语言的语法高亮、完善的 FTP/SFTP 远程访问以及深度云端同步功能，是移动端程序员、网站管理员及重度文字工作者手中最接近桌面级体验的生产力工具。",
+        "screenshots": [
+            "QuickEdit_screen_1.webp",
+            "QuickEdit_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iTYdn3ljvagb",
+        "source": ""
+    },
+    {
+        "name": "Billbook",
+        "pkg": "com.billbook.android",
+        "version": "2.5.4",
+        "size": "33.73MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "上海芒竹信息科技有限公司",
+        "icon": "Billbook_icon.webp",
+        "intro": "Billbook 是一款主打“无广告、极简快记”的专业财务管理工具，集多场景账本、多维度预算、资产账户监控及数据云同步于一体，致力于为用户提供纯净且高效的数字化记账体验。",
+        "screenshots": [
+            "Billbook_screen_1.webp",
+            "Billbook_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iUykN3ljddvg",
+        "source": "https://billbook.net.cn/"
+    },
+    {
+        "name": "Package Manager",
+        "pkg": "com.smartpack.packagemanager",
+        "version": "v7.6",
+        "size": "2.60MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "SmartPack",
+        "icon": "Package_Manager_icon.webp",
+        "intro": "Package Manager 是一款开源、免费且无广告的 Android 应用管理工具，支持通过 Root 或 Shizuku 权限深度管理应用，实现批量备份 APK、禁用软件以及彻底卸载系统预装垃圾。",
+        "screenshots": [
+            "Package_Manager_screen_1.webp",
+            "Package_Manager_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iRh5D3lje13c",
+        "source": "https://github.com/SmartPack/PackageManager"
+    },
+    {
+        "name": "酷安",
+        "pkg": "com.coolapk.market",
+        "version": "16.1.2",
+        "size": "96.98MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "深圳市酷安网络科技有限公司",
+        "icon": "酷安_icon.webp",
+        "intro": "酷安 是一款真实有趣的 Android 数码社区与应用平台，聚集数千万科技爱好者与极客用户，提供精品应用下载、真实用户评分点评、新鲜科技资讯、玩机攻略、硬件测评、话题讨论及酷图壁纸等功能，氛围活跃且干货丰富，是安卓玩家与数码爱好者交流分享的首选社区。",
+        "screenshots": [
+            "酷安_screen_1.webp",
+            "酷安_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iSvbl3lv67sh",
+        "source": "https://www.coolapk.com/"
+    },
+    {
+        "name": "Telegram",
+        "pkg": "org.telegram.messenger.web",
+        "version": "12.5.2",
+        "size": "80.09MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Telegram FZ-LLC",
+        "icon": "Telegram_icon.webp",
+        "intro": "Telegram 是一款以极致速度、端到端安全隐私、以及强大的大文件传输（最高 4GB）为核心竞争力的全球化通讯工具，它凭借无限人数的频道（Channel）、高度智能的机器人（Bot）生态以及跨设备云端实时同步，构建了一个集社交、资讯分发与极客协作于一体的自由通信平台。",
+        "screenshots": [
+            "Telegram_screen_1.webp",
+            "Telegram_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iAtFH3lv8vmh",
+        "source": "https://telegram.org/"
+    },
+    {
+        "name": "Google Translate",
+        "pkg": "com.google.android.apps.translate",
+        "version": "10.13.22.897673619.8",
+        "size": "47.48MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Google LLC",
+        "icon": "Google_Translate_icon.webp",
+        "intro": "Google 翻译 是一款由 Gemini AI 驱动的全球顶级语言处理工具，它集成了实时相机视觉翻译、双向同声传译及深度神经网络文本转译功能，旨在打破全球 240 多种语言间的沟通壁垒，实现从文档阅读到面对面交流的无缝智能化体验。",
+        "screenshots": [
+            "Google_Translate_screen_1.webp",
+            "Google_Translate_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iAeJm3ndlqkh",
+        "source": "https://play.google.com/store"
+    },
+    {
+        "name": "Hidden Settings",
+        "pkg": "com.netvor.hiddensettings",
+        "version": "1.6.15",
+        "size": "11.68MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "Hidden_Settings_icon.webp",
+        "intro": "Hidden Settings 是一款功能强大的安卓系统活动启动器（Activity Launcher），它通过挖掘系统深层组件，让用户能够绕过厂商限制，一键直达并自定义包括开发者模式、工程模式、私有DNS及电池优化在内的各种隐藏或高级设置选项。",
+        "screenshots": [
+            "Hidden_Settings_screen_1.webp",
+            "Hidden_Settings_screen_2.webp"
+        ],
+        "url": "",
+        "source": ""
+    },
+    {
+        "name": "HTTP 快捷方式",
+        "pkg": "ch.rmy.android.http_shortcuts",
+        "version": "4.2.0",
+        "size": "11.91MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Waboodoo",
+        "icon": "HTTP_快捷方式_icon.webp",
+        "intro": "HTTP 快捷方式 是一款将复杂网络请求（HTTP/MQTT/WOL）转化为 Android 桌面图标或自动化插件的强大开源工具，让用户通过“一键点击”即可实现对智能家居、服务器脚本或各类 Web 服务的深度交互与精准控制。",
+        "screenshots": [
+            "HTTP_快捷方式_screen_1.webp",
+            "HTTP_快捷方式_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iJI6s3iii7qb",
+        "source": "https://github.com/Waboodoo/HTTP-Shortcuts"
+    },
+    {
+        "name": "黑阈",
+        "pkg": "me.piebridge.brevent",
+        "version": "4.2.29.1",
+        "size": "1.70MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "南京简域网络科技工作室",
+        "icon": "黑阈_icon.webp",
+        "intro": "黑阈 是一款经典的 Android 应用后台管理工具，主要用于无需 Root 权限的情况下，智能待机或强行停止应用，防止后台偷跑、耗电、占用内存和相互唤醒，从而让手机更流畅、省电、控温。它特别适合对付国产“流氓”App（自启动、推送频繁唤醒等），是许多 Android 重度用户的老牌优化神器。",
+        "screenshots": [
+            "黑阈_screen_1.webp",
+            "黑阈_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i64it3ljs0xa",
+        "source": "https://www.coolapk.com/u/1650109"
+    },
+    {
+        "name": "B仔浏览器",
+        "pkg": "com.huicunjun.bbrowser",
+        "version": "2.8.0",
+        "size": "4.63MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "中山市坦洲镇右佳广告工程部",
+        "icon": "B仔浏览器_icon.webp",
+        "intro": "B仔浏览器 是一款兼具速度、隐私保护和简洁设计的浏览器，体积仅几 MB，无广告、无推送、无后台唤醒，支持油猴脚本、JS 扩展、资源嗅探、自定义手势与界面，追求“返璞归真”的清爽高效浏览体验。",
+        "screenshots": [
+            "B仔浏览器_screen_1.webp",
+            "B仔浏览器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iohMO3ljsgra",
+        "source": "https://bzbrowser.com/"
+    },
+    {
+        "name": "FV悬浮球",
+        "pkg": "com.fooview.android.fooview",
+        "version": "1.6.2",
+        "size": "32.69MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "北京浮阅科技有限公司",
+        "icon": "FV悬浮球_icon.webp",
+        "intro": "FV悬浮球 是一款安卓系统上的辅助工具应用，主要通过悬浮在屏幕上的虚拟按钮为用户提供便捷的操作体验。它通常用于提高用户在手机操作中的效率，尤其在进行多任务处理时，可以快速切换和访问常用功能。",
+        "screenshots": [
+            "FV悬浮球_screen_1.webp",
+            "FV悬浮球_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i8ihG3ljsxwh",
+        "source": "https://www.coolapk.com/u/541036"
+    },
+    {
+        "name": "BatteryRecorder",
+        "pkg": "yangfentuozi.batteryrecorder",
+        "version": "1.3.0",
+        "size": "3.19M",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Itosang",
+        "icon": "BatteryRecorder_icon.webp",
+        "intro": "BatteryRecorder是一款轻量级Android电池功率记录App，专注于以极低CPU占用记录精确的电池功率数据，并提供较为精准的续航预测功能，适合追求准确电池监控和续航分析的用户（常与澎湃工具箱等玩机工具搭配使用）。",
+        "screenshots": [
+            "BatteryRecorder_screen_1.webp",
+            "BatteryRecorder_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iAntr3ljtq6f",
+        "source": "https://github.com/Itosang/BatteryRecorder"
+    },
+    {
+        "name": "Stratum",
+        "pkg": "com.stratumauth.app",
+        "version": "1.6.1",
+        "size": "33.61MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "stratumauth",
+        "icon": "Stratum_icon.webp",
+        "intro": "Stratum 是一款开源、安全且支持高度定制的 Android 两步验证（2FA）管理工具，它通过本地加密备份、多算法兼容（如 Steam/TOTP）以及离线运行特性，为用户的账号登录提供比传统验证器更灵活且隐私的二次安全防护。",
+        "screenshots": [
+            "Stratum_screen_1.webp",
+            "Stratum_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iPpqu3ljua0j",
+        "source": "https://github.com/stratumauth/app"
+    },
+    {
+        "name": "pixiv",
+        "pkg": "jp.pxv.android",
+        "version": "6.176.0",
+        "size": "39.31MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "pixiv_icon.webp",
+        "intro": "pixiv 是一款全球最大的日系二次元创意社区，集插画、漫画、小说展示与同人创作交流于一体，是画师发布作品、粉丝互动及追踪二次元流行趋势的核心平台。",
+        "screenshots": [
+            "pixiv_screen_1.webp",
+            "pixiv_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iEhid3ljv2uh",
+        "source": ""
+    },
+    {
+        "name": "Nova Launcher",
+        "pkg": "com.teslacoilsw.launcher",
+        "version": "8.1.1",
+        "size": "12.50M",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "Nova_Launcher_icon.webp",
+        "intro": "Nova Launcher 是一款安卓端极具统治力的第三方桌面启动器，它以“原生增强”为设计灵魂，通过对图标包、网格布局、手势交互及应用抽屉的像素级自定义，让用户能够彻底摆脱手机厂商的系统视觉束缚，打造出兼具极致流畅感与个人生产力的深度定制化桌面。",
+        "screenshots": [
+            "Nova_Launcher_screen_1.webp",
+            "Nova_Launcher_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iIyyj3ljy5sb",
+        "source": ""
+    },
+    {
+        "name": "Snaptube",
+        "pkg": "com.snaptube.premium",
+        "version": "7.56.0.75650110",
+        "size": "47.56MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "Snaptube_icon.webp",
+        "intro": "Snaptube 是一款功能强大的 Android 全能型流媒体下载器，它整合了全球主流视频与社交平台的资源入口，支持从 144p 到 4K 分辨率的视频抓取以及高码率的 MP3/M4A 音频提取，是用户实现跨平台离线视听资源的“一站式”采集终端。",
+        "screenshots": [
+            "Snaptube_screen_1.webp",
+            "Snaptube_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i4qkt3lk0zkf",
+        "source": ""
+    },
+    {
+        "name": "WEcho",
+        "pkg": "com.qumolangmo.wecho",
+        "version": "1.3.0",
+        "size": "19.21MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "qumolangmo",
+        "icon": "WEcho_icon.webp",
+        "intro": "WEcho 是一款功能丰富的 Android 全局音效处理器，无需 root 或 adb 权限，开箱即用。底层采用 Native C++ 实现 DSP 算法，上层使用 Flutter 构建现代化交互界面，为现代 Android 设备带来清晰、高质量的全局音频增强体验。",
+        "screenshots": [
+            "WEcho_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iyb0Y3li3y7c",
+        "source": "https://github.com/qumolangmo/wecho"
+    },
+    {
+        "name": "艾跳跳",
+        "pkg": "com.one.my_ai",
+        "version": "3.0.0",
+        "size": "14.66MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "北京渐近线科技有限公司",
+        "icon": "艾跳跳_icon.webp",
+        "intro": "艾跳跳 是一款集“智能证件照制作”与“轻办公文档处理”于一体的多功能工具，不仅能一键生成各类考试、签证及常用规格照片，还提供智能换装、背景替换及文档扫描转PDF等实用功能。",
+        "screenshots": [
+            "艾跳跳_screen_1.webp",
+            "艾跳跳_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iVgE73ll2gti",
+        "source": "https://www.coolapk.com/u/2694907"
+    },
+    {
+        "name": "See微博",
+        "pkg": "com.caij.see",
+        "version": "3.0.0.10",
+        "size": "6.59MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "funcenter",
+        "icon": "See微博_icon.webp",
+        "intro": "See微博 是一款基于 Material Design 设计语言、专为安卓用户打造的第三方微博强力客户端，它通过彻底移除广告、强制回归时间轴排序、集成高清多媒体下载及极致的个性化定制，为深度用户找回了纯粹、丝滑且高效的社交阅读体验。",
+        "screenshots": [
+            "See微博_screen_1.webp",
+            "See微博_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iyssd3ll31te",
+        "source": "https://github.com/funcenter/See"
+    },
+    {
+        "name": "Keyguard",
+        "pkg": "com.artemchep.keyguard",
+        "version": "2.6.1",
+        "size": "40.69MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "AChep",
+        "icon": "Keyguard_icon.webp",
+        "intro": "Keyguard 是一款基于 Material You 设计语言的高颜值、开源第三方 Bitwarden 客户端，通过支持多账号同时登录、本地快速搜索及流畅的原生动画，为安卓用户提供比官方版本更极致、更现代的密码管理体验。",
+        "screenshots": [
+            "Keyguard_screen_1.webp",
+            "Keyguard_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/isQ3N3ll3nwj",
+        "source": "https://github.com/AChep/keyguard-app"
+    },
+    {
+        "name": "AB DM",
+        "pkg": "com.abdownloadmanager",
+        "version": "1.8.7",
+        "size": "10.28MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "amir1376",
+        "icon": "AB_DM_icon.webp",
+        "intro": "AB DM是一款由 Kotlin 驱动、界面现代且完全开源免费的跨平台下载加速工具，旨在通过多线程技术和灵活的计划任务，为 Windows、macOS、Linux 及 Android 用户提供比浏览器原生下载更高效、纯净且可定制的下载管理体验。",
+        "screenshots": [
+            "AB_DM_screen_1.webp",
+            "AB_DM_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iz9ng3ll46ab",
+        "source": "https://github.com/amir1376/ab-download-manager"
+    },
+    {
+        "name": "PiliPala",
+        "pkg": "com.guozhigq.pilipala",
+        "version": "1.0.27",
+        "size": "20.16MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "guozhigq",
+        "icon": "PiliPala_icon.webp",
+        "intro": "PiliPala 是一款基于 Google 开源框架 Flutter 开发的第三方 Bilibili（哔哩哔哩）客户端。它以界面简洁、功能实用、无广告干扰等特点，在 B 站用户（尤其是极客和追求简约体验的用户）群体中拥有较高的知名度。不过需要注意的是，根据 2025 年 7 月的最新消息，该项目的开发者已宣布停止更新。",
+        "screenshots": [
+            "PiliPala_screen_1.webp",
+            "PiliPala_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iXlHf3lhznpa",
+        "source": "https://github.com/guozhigq/pilipala"
+    },
+    {
+        "name": "方向锁定",
+        "pkg": "com.tuyafeng.orientationlock",
+        "version": "1.0",
+        "size": "60.53KB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "tuyafeng",
+        "icon": "方向锁定_icon.webp",
+        "intro": "方向锁定 是一款功能强大的全局屏幕旋转控制工具，旨在打破系统原生限制，实现对手机显示方向（正反竖屏、正反横屏、传感器联动）的全场景强制锁定与自定义切换。",
+        "screenshots": [
+            "方向锁定_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i2t0t3lalxxc",
+        "source": "https://github.com/tuyafeng/OrientationLock"
+    },
+    {
+        "name": "SAI",
+        "pkg": "com.aefyr.sai",
+        "version": "4.5",
+        "size": "4.89MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Aefyr",
+        "icon": "SAI_icon.webp",
+        "intro": "SAI（Split APKs Installer）是一款功能强大的开源 Android 应用安装器，它允许用户安装 Split APKs，即那些以 Android App Bundle（AAB） 格式分发的应用。支持 root 权限和非 root 权限的安装方法，让用户能够灵活地在 Android 设备上安装分割 APK 包。",
+        "screenshots": [
+            "SAI_screen_1.webp",
+            "SAI_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iQqAd3lb8fkj",
+        "source": "https://github.com/Aefyr/SAI"
+    },
+    {
+        "name": "Scene4",
+        "pkg": "com.omarea.vtools",
+        "version": "4.7.3",
+        "size": "4.57MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "helloklf",
+        "icon": "Scene4_icon.webp",
+        "intro": "Scene4 是一款针对 Android 手机用户设计的系统辅助工具/系统优化软件，主要用于监控及管理手机性能、系统状态和行为自动化等。它功能全面，尤其适合有技术需求或喜欢深度调校手机的用户。",
+        "screenshots": [
+            "Scene4_screen_1.webp",
+            "Scene4_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/imStw3ilkw3i",
+        "source": "https://github.com/helloklf/vtools"
+    },
+    {
+        "name": "AdGuard",
+        "pkg": "com.adguard.android",
+        "version": "4.14.41",
+        "size": "34.14MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "AdGuard_icon.webp",
+        "intro": "AdGuard 是一款跨平台的专业广告拦截与隐私保护软件，支持系统级/浏览器级拦截广告、跟踪器、恶意内容，并提供 DNS 保护和 Stealth 隐身模式，提升上网安全与速度。",
+        "screenshots": [
+            "AdGuard_screen_1.webp",
+            "AdGuard_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i1PAm3lmd4pe",
+        "source": ""
+    },
+    {
+        "name": "AIDA64",
+        "pkg": "com.finalwire.aida64",
+        "version": "2.19",
+        "size": "11.85MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "AIDA64_icon.webp",
+        "intro": "AIDA64 是一款由 FinalWire 开发的行业领先系统信息、诊断与基准测试软件，能提供极其详细的硬件（CPU、主板、内存、显卡、存储等）和软件配置信息，支持实时传感器监控、压力稳定性测试、性能基准测试以及硬件诊断，是装机、超频、故障排查的必备工具。",
+        "screenshots": [
+            "AIDA64_screen_1.webp",
+            "AIDA64_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iwiwy3lmc4ib",
+        "source": ""
+    },
+    {
+        "name": "Safe Space",
+        "pkg": "org.privacymatters.safespace",
+        "version": "2.3.5",
+        "size": "60.85MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "aashishksahu",
+        "icon": "Safe_Space_icon.webp",
+        "intro": "Safe Space 是一款开源的 Android 隐私保护工具，它能在设备上创建一个独立的加密存储空间，用于安全隐藏和存放照片、视频、文件等私人资料，该空间对其他应用不可见，并通过系统加密和生物识别/PIN 认证进行保护，适合需要额外隐私防护的用户。",
+        "screenshots": [
+            "Safe_Space_screen_1.webp",
+            "Safe_Space_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i3LZQ3lmc2qh",
+        "source": "https://github.com/aashishksahu/SafeSpace"
+    },
+    {
+        "name": "QQ 版本列表实用工具",
+        "pkg": "com.xiaoniu.qqversionlist",
+        "version": "1.5.3",
+        "size": "8.03MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "klxiaoniu",
+        "icon": "QQ_版本列表实用工具_icon.webp",
+        "intro": "QQ 版本列表实用工具 是一款开源的 Android 应用，使用 Material 3 设计，可快速查看并下载 Android QQ、TIM 及微信的完整版本列表（包括历史版本、最新正式版/测试版），支持更新日志查看、应用包分析和枚举法猜测下载链接，是怀旧旧版 QQ 或解决兼容性问题的实用工具。",
+        "screenshots": [
+            "QQ_版本列表实用工具_screen_1.webp",
+            "QQ_版本列表实用工具_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iqjIz3il7gsj",
+        "source": "https://github.com/klxiaoniu/QQVersionList"
+    },
+    {
+        "name": "CatShare",
+        "pkg": "moe.reimu.catshare",
+        "version": "1.6",
+        "size": "11.96MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "kmod-midori",
+        "icon": "CatShare_icon.webp",
+        "intro": "CatShare 是一款开源的 Android 文件互传工具，专为类原生系统和海外设备设计，通过蓝牙发现附近设备，实现快速文件发送与接收，支持文本传输（同为 CatShare 时自动复制到剪贴板），发送文件需 Shizuku 辅助获取 MAC 地址以兼容小米/OPPO/vivo 等品牌的互传协议。",
+        "screenshots": [
+            "CatShare_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/irqgo3lmb5gj",
+        "source": "https://github.com/kmod-midori/CatShare"
+    },
+    {
+        "name": "ShortX+",
+        "pkg": "1.0.0-rc6-7-852121d-main-row",
+        "version": "tornaco.apps.shortx",
+        "size": "37.43MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "ShortX_icon.webp",
+        "intro": "ShortX+ 是一款强大的 Xposed/LSPosed 模块，专为 Root 用户设计，提供强大的 Android 系统级一键指令和自动指令功能，类似 Tasker、米柚自动任务或颜色小布指令，但支持更多底层系统操作，可通过边缘手势、触发器等实现场景模式式的日常自动化，面向普通玩家提供简洁实用的系统自定义工具。",
+        "screenshots": [
+            "ShortX_screen_1.webp",
+            "ShortX_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i6RqF3lm7buf",
+        "source": ""
+    },
+    {
+        "name": "FolderSync",
+        "pkg": "dk.tacit.android.foldersync.lite",
+        "version": "4.8.5",
+        "size": "45.22MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "FolderSync_icon.webp",
+        "intro": "FolderSync 是一款功能强大的 Android 文件同步工具，支持 20+ 云存储服务（如 Google Drive、OneDrive、Dropbox、Amazon S3 等）和多种文件协议（SMB、SFTP、WebDAV、FTP），可实现本地文件夹与云端、NAS 或不同云服务之间的单向/双向自动同步，包含定时任务、文件过滤、冲突处理和内置文件管理器，适合备份照片、音乐、文档等重要文件。",
+        "screenshots": [
+            "FolderSync_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/inFOu3lm7u3c",
+        "source": ""
+    },
+    {
+        "name": "MyAndroidTools",
+        "pkg": "cn.wq.myandroidtools",
+        "version": "1.6.9.beta",
+        "size": "2.48MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "wangqi060934",
+        "icon": "MyAndroidTools_icon.webp",
+        "intro": "MyAndroidTools 是一款需要 Root 权限的 Android 系统管理神器，专注于深度控制应用组件，能查看并启用/禁用任意 App 的 Activity、服务、BroadcastReceiver、Content Provider，还支持查看运行进程、Logcat 日志、当前 Activity/Fragment、编辑 SharedPreferences 和 SQLite 数据库，以及详细 App 信息管理，是优化省电、阻止自启、屏蔽广告追踪的经典进阶工具。",
+        "screenshots": [
+            "MyAndroidTools_screen_1.webp",
+            "MyAndroidTools_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/icPXI3lmb91i",
+        "source": "https://www.coolapk.com/u/263272"
+    },
+    {
+        "name": "RAR",
+        "pkg": "com.rarlab.rar",
+        "version": "7.20.build131",
+        "size": "10.35MB",
+        "system": "Android",
+        "mod": "高级版",
+        "author": "",
+        "icon": "RAR_icon.webp",
+        "intro": "RAR 是一款 Android 压缩/解压缩工具，免费且功能强大，能创建 RAR 和 ZIP 压缩包，同时支持解压 RAR、ZIP、7z、TAR、GZ、BZ2、XZ、ISO、ARJ 等多种常见格式，还兼具基本文件管理器功能（复制、移动、删除、重命名等），适合日常解压下载文件、备份资料和创建加密压缩包。",
+        "screenshots": [
+            "RAR_screen_1.webp",
+            "RAR_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ib9tw3il3hqj",
+        "source": ""
+    }
+]

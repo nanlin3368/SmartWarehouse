@@ -1,0 +1,844 @@
+[
+    {
+        "name": "Shizuku",
+        "pkg": "moe.shizuku.privileged.api",
+        "version": "13.6.0.r1349-thedjchi-beta",
+        "size": "3.48MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "thedjchi",
+        "icon": "Shizuku_icon.webp",
+        "intro": "Shizuku 是一款免费开源的 Android 系统权限桥接工具，通过 ADB（或 Root）一次性授权启动一个高权限服务进程，让普通 App 能直接调用系统级 API（如 appops 权限管理、卸载系统应用等），无需完整 Root 即可实现许多高级功能，支持无线调试一键启动，兼容 Android 8.0+，是 App Ops、Canta、InstallerX 等大量玩机工具的核心依赖，被誉为“免 Root 玩机神器”。",
+        "screenshots": [
+            "Shizuku_screen_1.webp",
+            "Shizuku_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iIKDJ3iifbzg",
+        "source": "https://github.com/thedjchi/Shizuku"
+    },
+    {
+        "name": "GKD",
+        "pkg": "li.songe.gkd",
+        "version": "1.11.6",
+        "size": "3.87MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "gkd-kit",
+        "icon": "GKD_icon.webp",
+        "intro": "GKD 是一款开源的 Android 自定义屏幕点击自动化工具，基于无障碍服务 + 高级选择器 + 订阅规则，能智能识别并自动点击“跳过广告”“关闭”“确认”等按钮，还支持快捷操作和自定义自动化流程，是李跳跳之后最受欢迎的跳广告神器。",
+        "screenshots": [
+            "GKD_screen_1.webp",
+            "GKD_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/izk0Q3iifhyb",
+        "source": "https://github.com/gkd-kit/gkd"
+    },
+    {
+        "name": "甲壳虫ADB助手",
+        "pkg": "com.didjdk.adbhelper",
+        "version": "1.3.1",
+        "size": "5.61MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "didjdk",
+        "icon": "甲壳虫ADB助手_icon.webp",
+        "intro": "甲壳虫ADB助手 是一款轻量开源/免费的 Android 手机端 ADB 调试工具，无需电脑和 Root，通过 WiFi/OTG 轻松连接并管理其他 Android 设备，提供设备信息、应用卸载、屏幕镜像、命令执行等一站式图形化操作，是开发者、刷机爱好者和车机/电视用户清理系统、调试设备的实用神器。",
+        "screenshots": [
+            "甲壳虫ADB助手_screen_1.webp",
+            "甲壳虫ADB助手_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ikdSH3ij3bmh",
+        "source": "https://github.com/didjdk/adbhelper"
+    },
+    {
+        "name": "Stellar",
+        "pkg": "roro.stellar.manager",
+        "version": "1.0.13",
+        "size": "4.40MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "roro2239",
+        "icon": "Stellar_icon.webp",
+        "intro": "Stellar 是一款基于 Shizuku 深度定制的高级系统权限与 API 调用工具（免 Root 玩机增强版），专为安卓高阶用户设计，可为其他 App（如 MT管理器、工具箱）提供更稳定强大的 ADB-like 权限支持，帮助实现更多系统级操作，是 Shizuku 的进阶替代或增强工具。",
+        "screenshots": [
+            "Stellar_screen_1.webp",
+            "Stellar_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ittD73khlupc",
+        "source": "https://github.com/roro2239/Stellar"
+    },
+    {
+        "name": "无障碍管理器",
+        "pkg": "com.accessibilitymanager",
+        "version": "14",
+        "size": "63.18kB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "WuDi-ZhanShen",
+        "icon": "无障碍管理器_icon.webp",
+        "intro": "无障碍管理器 是一款可以完全替代系统设置中的辅助功能设置页面。该应用程序只需要授权即可将安全设置写入功能。支持不耗电、不主动唤醒的可访问保活，保活速度极快。",
+        "screenshots": [
+            "无障碍管理器_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iZjKH3iif95e",
+        "source": "https://github.com/WuDi-ZhanShen/AccessibilityManager"
+    },
+    {
+        "name": "Anywhere-",
+        "pkg": "com.absinthe.anywhere_",
+        "version": "2.5.5",
+        "size": "4.42MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "zhaobozhen",
+        "icon": "Anywhere-_icon.webp",
+        "intro": "Anywhere- 是一款免费开源 Android 快捷方式管理工具，专为收集和整理 App 内常用页面（Activity）而设计，支持 URL Scheme 快捷方式创建、直接打开任意可启动的 Activity 等功能，提供普通模式、Root 模式和 Shizuku 模式（无需 Root 即可实现高级打开能力），还集成 AccessibilityService 辅助自动化，是提升日常操作效率、实现深度快捷访问的实用工具。",
+        "screenshots": [
+            "Anywhere-_screen_1.webp",
+            "Anywhere-_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iCH1z3ij3o2f",
+        "source": "https://github.com/zhaobozhen/Anywhere-"
+    },
+    {
+        "name": "LibChecker",
+        "pkg": "com.absinthe.libchecker",
+        "version": "2.5.4.dev.36f53c6",
+        "size": "5.13MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "LibChecker",
+        "icon": "LibChecker_icon.webp",
+        "intro": "LibChecker 是一款开源的 Android 应用库分析工具，能详细查看已安装 App 使用的第三方库、ABI 架构（32/64 位）、原生库以及四大组件（Activity / Service 等），帮助用户分析 App 组成、隐私风险和兼容性，是开发者与玩机用户的实用检测器。",
+        "screenshots": [
+            "LibChecker_screen_1.webp",
+            "LibChecker_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iPaBR3khptqb",
+        "source": "https://github.com/LibChecker/LibChecker"
+    },
+    {
+        "name": "ShizukuFlow",
+        "pkg": "dev.xw.androidtoolkit",
+        "version": "1.31.3",
+        "size": "2.72MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "xiaowan12",
+        "icon": "ShizukuFlow_icon.webp",
+        "intro": "ShizukuFlow 是一款功能强大的 Android 系统信息查看和管理工具，专为需要深入了解和管理 Android 设备的用户设计。基于 Shizuku 权限框架，能够提供丰富的系统信息查询和高级管理功能，让您更好地了解和控制自己的设备。",
+        "screenshots": [
+            "ShizukuFlow_screen_1.webp",
+            "ShizukuFlow_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/izgjE3kb4vni",
+        "source": "https://gitee.com/xiaowan12/v-app-info"
+    },
+    {
+        "name": "MT管理器",
+        "pkg": "bin.mt.plus",
+        "version": "2.26.2",
+        "size": "27.46MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "南京州游网络科技有限公司",
+        "icon": "MT管理器_icon.webp",
+        "intro": "MT管理器 是一款功能强大的 Android 文件管理与 APK 逆向修改神器，采用独特的双窗口操作模式，支持文件复制/移动/批量操作、ZIP/RAR 直接编辑（无需完整解压）、强大文本编辑器（语法高亮、正则搜索替换）、APK 深度编辑（DEX/Smali、ARSC、XML 编辑、签名、优化、共存、去签名校验、资源混淆、汉化等），Root/Shizuku 支持下可访问系统目录、修改权限，还内置十六进制编辑器、网络存储（FTP/SFTP/SMB/WebDAV）、插件系统等功能，是玩机爱好者、逆向开发者与深度定制用户的必备工具。",
+        "screenshots": [
+            "MT管理器_screen_1.webp",
+            "MT管理器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iQE793iigo7c",
+        "source": "https://mt2.cn/"
+    },
+    {
+        "name": "自动任务",
+        "pkg": "top.xjunz.tasker",
+        "version": "1.4.7r56",
+        "size": "5.56MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "xjunz",
+        "icon": "自动任务_icon.webp",
+        "intro": "自动任务 是一款开源免费的 Android 自动化任务工具，支持 Shizuku 和无障碍服务两种模式，可创建常驻任务与一次性任务，支持手势录制、布局审查，事件驱动省电且无需刻意保活，Material 3 界面美观，是 GKD、一指禅之外更强大的自动化神器，适合实现跳广告、自动操作等场景。",
+        "screenshots": [
+            "自动任务_screen_1.webp",
+            "自动任务_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iMqHk3iif97g",
+        "source": "https://github.com/xjunz/AutoTask"
+    },
+    {
+        "name": "Canta",
+        "pkg": "io.github.samolego.canta",
+        "version": "3.2.2",
+        "size": "4.48MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "samolego",
+        "icon": "Canta_icon.webp",
+        "intro": "Canta 是一款开源且强大的 Android 免 Root 卸载工具，基于 Shizuku 实现高级权限，无需电脑或 Root 即可卸载系统预装应用和用户应用，集成社区 debloat 列表提供安全推荐、批量操作、已卸载应用检测、预设配置分享等功能，支持 Android 9.0+，操作安全，界面简洁，注重隐私无广告，是清理手机臃肿、释放空间的实用神器",
+        "screenshots": [
+            "Canta_screen_1.webp",
+            "Canta_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iqMfv3khm8ub",
+        "source": "https://github.com/samolego/Canta"
+    },
+    {
+        "name": "蓝牙遥控器",
+        "pkg": "com.atharok.btremote",
+        "version": "1.10.0",
+        "size": "4.82MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Atharok",
+        "icon": "蓝牙遥控器_icon.webp",
+        "intro": "蓝牙遥控器 是一款免费开源的 Android 蓝牙遥控工具，它能将你的手机变成蓝牙 HID 设备（键盘+鼠标+遥控器），通过蓝牙连接控制 Android TV、电视盒子、智能电视、电脑、投影仪等支持蓝牙 HID 的设备。支持方向键、音量调节、媒体播放控制（播放/暂停/下一曲）、数字键盘、鼠标模式、自定义快捷键等功能，操作流畅延迟低，无需网络、无广告，是客厅娱乐和办公的实用工具。",
+        "screenshots": [
+            "蓝牙遥控器_screen_1.webp",
+            "蓝牙遥控器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/izYu73khluyb",
+        "source": "https://gitlab.com/Atharok/BtRemote"
+    },
+    {
+        "name": "InstallerX Revived",
+        "pkg": "com.rosan.installer.x.revived",
+        "version": "2.3.3.50e686d",
+        "size": "4.57MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "wxxsfxyzm",
+        "icon": "InstallerX_Revived_icon.webp",
+        "intro": "InstallerX Revived 是一款免费开源的现代 Android 高级应用安装器，支持 Root 或 Shizuku 模式替换系统默认安装器，能无缝安装 APK、APKS、APKM、XAPK 以及 ZIP 内的 APK，支持批量安装、智能 Split 选择、安装后自动删除 APK、允许降级、绕过低目标 SDK、允许受限权限、安装给所有用户等高级选项，提供现代 Material You / Miuix 美观界面、智能错误建议、包信息对比等功能，特别适合国产 ROM 用户解决系统安装器体验差的问题，是侧载与深度安装的强大工具。",
+        "screenshots": [
+            "InstallerX_Revived_screen_1.webp",
+            "InstallerX_Revived_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i9yh53nge0kh",
+        "source": "https://github.com/wxxsfxyzm/InstallerX-Revived"
+    },
+    {
+        "name": "App Ops",
+        "pkg": "rikka.appops",
+        "version": "9.0.7.r1708.57e6ad70",
+        "size": "9.86MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "RikkaApps",
+        "icon": "App_Ops_icon.webp",
+        "intro": "App Ops 是一款开源的 Android 高级权限管理工具，核心功能是修改系统隐藏的应用操作设置，支持对每个应用的相机、位置、剪贴板、后台运行、震动、通知等上百项操作进行精细控制（包括“忽略”模式，让应用以为有权限但实际返回空数据），支持 Root、Shizuku 或 ADB（无线调试）三种方式，无需 Root 也能使用，界面友好、跟随最新 Android 系统，是隐私保护和解决“不给权限就不运行”问题的强大工具。",
+        "screenshots": [
+            "App_Ops_screen_1.webp",
+            "App_Ops_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ilLSg3iif6ef",
+        "source": "https://github.com/RikkaApps/App-Ops-issue-tracker"
+    },
+    {
+        "name": "幻·实验室",
+        "pkg": "com.itos.shellbox",
+        "version": "4.3",
+        "size": "5.08MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "ItosEO",
+        "icon": "幻_实验室_icon.webp",
+        "intro": "幻·实验室 是一款免费轻量级 Android 系统工具，专注于玩机与系统优化。它集成了系统隐藏功能开关、Shell 脚本执行、自动化任务、应用管理、后台进程控制、性能调优等功能，支持 Shizuku 模式（无需 Root），特别对 MIUI、OriginOS 等国产系统有较好适配，能实现 CPU 频率调节、内存优化、隐藏应用、自动化操作等高级玩法，是追求深度玩机、提升流畅度和自定义体验的实用工具。",
+        "screenshots": [
+            "幻_实验室_screen_1.webp",
+            "幻_实验室_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i2A033khlv7a",
+        "source": "https://www.coolapk.com/u/3287595"
+    },
+    {
+        "name": "李跳跳",
+        "pkg": "hello.litiaotiao.app",
+        "version": "派大星2.2",
+        "size": "3.06MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "rongzhiy",
+        "icon": "李跳跳_icon.webp",
+        "intro": "李跳跳 是一款经典的 Android 开屏广告自动跳过工具（俗称“互联网药神”），利用无障碍服务智能识别并模拟点击“跳过”“关闭”“取消”等按钮，可快速跳过绝大多数 App 的启动页广告、弹窗广告和青少年模式提示等，无需 Root、不联网、隐私友好、体积小巧，被广大用户视为提升手机使用体验的神器。",
+        "screenshots": [
+            "李跳跳_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ilxGK3iifcna",
+        "source": "https://github.com/rongzhiy/LiTiaotiao"
+    },
+    {
+        "name": "手机性能排行",
+        "pkg": "com.nasoft.socmark",
+        "version": "5.3.2",
+        "size": "8.98MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "signfordev",
+        "icon": "手机性能排行_icon.webp",
+        "intro": "手机性能排行 是一款实用的 Android 手机参数查询与性能对比工具，它收集了市面上大量手机和处理器的详细信息，包括安兔兔分数、Geekbench 单核/多核分数、GFXBench 图形帧数、处理器功耗、屏幕参数（尺寸、分辨率、PPI）、摄像头规格、电池容量、充电功率、DxOMark 相机分数、发售日期、价格参考等，支持按品牌、处理器、分数等条件筛选、排行、手机对比、收藏，以及查看新机/降价信息，数据定期更新，让你快速了解任意手机的真实性能与规格，是买手机、换机时的实用参考工具。",
+        "screenshots": [
+            "手机性能排行_screen_1.webp",
+            "手机性能排行_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iG95W3iifb9a",
+        "source": "https://www.coolapk.com/u/1294791"
+    },
+    {
+        "name": "雹",
+        "pkg": "com.aistra.hail",
+        "version": "1.10.0",
+        "size": "5.87MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "aistra0528",
+        "icon": "雹_icon.webp",
+        "intro": "雹（Hail）是一款免费开源的 Android 应用冻结工具，无需 Root 即可通过 Shizuku、Dhizuku、设备所有者模式或 Root 方式，将不需要的 App 进行停用、隐藏或暂停，有效阻止后台运行、节省电量和内存，减少隐私泄露风险，支持批量操作、快捷方式一键冻结/解冻、卸载等功能，界面简洁，全部功能免费开放，Greenify、冰箱等工具的现代开源替代品，是隐私保护与性能优化的轻量必备工具。",
+        "screenshots": [
+            "雹_screen_1.webp",
+            "雹_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ivQip3iifccj",
+        "source": "https://github.com/aistra0528/Hail"
+    },
+    {
+        "name": "LocalSend",
+        "pkg": "org.localsend.localsend_app",
+        "version": "1.17.0",
+        "size": "16.68MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "localsend",
+        "icon": "LocalSend_icon.webp",
+        "intro": "LocalSend 是一款免费开源的跨平台文件共享工具（AirDrop / Quick Share 平替），支持 Windows、macOS、Linux、Android、iOS 等全平台，仅需设备连接同一 Wi-Fi（无需互联网），即可快速安全地传输文件、照片、视频、消息，支持端到端加密、离线优先、无广告、无跟踪、无服务器中转，传输速度快、操作简洁，是注重隐私与效率的多设备用户必备神器。",
+        "screenshots": [
+            "LocalSend_screen_1.webp",
+            "LocalSend_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iYb3h3iif9hg",
+        "source": "https://github.com/localsend/localsend"
+    },
+    {
+        "name": "蓝云",
+        "pkg": "com.tooyoung.lanzou",
+        "version": "1.3.4.7",
+        "size": "4.33MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "stardew",
+        "icon": "蓝云_icon.webp",
+        "intro": "蓝云 是一款轻量、简洁的蓝奏云第三方客户端，它专为蓝奏云网盘设计，提供更流畅的手机端体验，支持文件上传、下载、批量管理、文件夹创建、搜索、分享链接生成、直链解析（解析下载地址）、密码自动填充、暗黑模式等功能，相比官方网页版操作更便捷、功能更丰富，是蓝奏云重度用户在 Android 上管理文件的首选工具。",
+        "screenshots": [
+            "蓝云_screen_1.webp",
+            "蓝云_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i8c3c3isbi5e",
+        "source": "https://www.coolapk.com/u/3980170"
+    },
+    {
+        "name": "R-安装组件",
+        "pkg": "com.yxer.packageinstalles",
+        "version": "2.6.11-beta(350)",
+        "size": "2.51MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "yxer",
+        "icon": "R-安装组件_icon.webp",
+        "intro": "R-安装组件 是一款轻量 Android 高级应用安装管理工具，专为 Shizuku（或 Root）用户设计。它能替换或增强系统默认安装器，支持 APK / APKS 安装、静默安装、降级安装、安装后自动删除安装包、批量操作、保留原文件等功能，还可处理部分显式 Intent，与 InstallerX、安装狮功能类似，是替换系统安装器、实现免 Root 高级安装的实用工具。",
+        "screenshots": [
+            "R-安装组件_screen_1.webp",
+            "R-安装组件_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ivqGJ3iif90j",
+        "source": "https://t.me/joinchat/AE6otyLVOCtlYzhl"
+    },
+    {
+        "name": "ColorBlendr",
+        "pkg": "com.drdisagree.colorblendr",
+        "version": "v2.1.1",
+        "size": "4.71MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Mahmud0808",
+        "icon": "ColorBlendr_icon.webp",
+        "intro": "ColorBlendr 是一款免费开源的 Material You 主题定制神器，它可以深度修改 Android 12+ 系统自带的 Monet 动态取色方案，允许用户手动调整主色调、强调色、背景色、中性色等数十个颜色参数，支持预览实时生效、保存自定义配色方案、主题备份还原等功能，完美解决系统根据壁纸自动取色不理想的问题，让你的界面颜色真正随心所欲，是追求极致个性化主题配色的必备神器。",
+        "screenshots": [
+            "ColorBlendr_screen_1.webp",
+            "ColorBlendr_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iGwol3ij5tkf",
+        "source": "https://github.com/Mahmud0808/ColorBlendr"
+    },
+    {
+        "name": "青听音乐",
+        "pkg": "com.qingmusic.changqing",
+        "version": "1.3.3",
+        "size": "26.35MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "kejichangqing",
+        "icon": "青听音乐_icon.webp",
+        "intro": "青听音乐 是一款专注于“纯净聆听”的 Android 本地音乐播放器，支持导入自定义音源（类似洛雪音乐），它主打永久免费、无广告、无损音质，支持本地音乐扫描与播放，同时集成在线搜索、下载资源的功能，界面简洁清爽，注重高音质体验（支持 FLAC、APE 等无损格式），并提供歌词显示、均衡器、歌单管理、黑白主题等实用功能，是追求干净、无干扰听歌体验用户的优秀选择。",
+        "screenshots": [
+            "青听音乐_screen_1.webp",
+            "青听音乐_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iP2qI3j222od",
+        "source": "https://github.com/kejichangqing/QingMusic"
+    },
+    {
+        "name": "Play Store",
+        "pkg": "com.android.vending",
+        "version": "50.9.23-31 [0] [PR] 895453497",
+        "size": "94.18MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Google LLC",
+        "icon": "Play_Store_icon.webp",
+        "intro": "Play Store 是由 Google LLC 开发的 Android 官方应用商店，也是全球最大、最权威的 Android 应用分发平台。它为手机、平板、智能手表、电视等 Android 设备提供应用、游戏、影视、音乐、书籍等内容的下载、更新和管理服务，同时集成支付系统、用户评价、开发者工具和安全扫描等功能，是纯净 Android 系统（Pixel、部分国际版 ROM）默认的应用商店。",
+        "screenshots": [
+            "Play_Store_screen_1.webp",
+            "Play_Store_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i4zgj3ndnbyd",
+        "source": "https://play.google.com/store"
+    },
+    {
+        "name": "De1984",
+        "pkg": "io.github.dorumrr.de1984",
+        "version": "2.6.2",
+        "size": "6.12MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "dorumrr",
+        "icon": "De1984_icon.webp",
+        "intro": "De1984 是一款免费开源的 Android 隐私防火墙 + 应用包管理器，它支持多种后端（VPN-based 无需 Root + Root 模式），提供按应用阻断网络访问（WiFi/移动数据单独控制）、应用启用/禁用（包括系统应用和 bloatware）、工作资料支持、轻量高效等功能，无跟踪、无广告，注重本地数据存储，是真正帮助用户反抗监控、夺回设备控制权的隐私保护工具。",
+        "screenshots": [
+            "De1984_screen_1.webp",
+            "De1984_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i4hXd3iihokb",
+        "source": "https://github.com/dorumrr/de1984"
+    },
+    {
+        "name": "GitHub Store",
+        "pkg": "zed.rainxch.githubstore",
+        "version": "1.6.2",
+        "size": "12.12MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "OpenHub-Store",
+        "icon": "GitHub_Store_icon.webp",
+        "intro": "GitHub Store 是一款免费开源的跨平台应用商店，专为 GitHub Releases 打造。它将 GitHub 变成一个类似 Play Store 的体验，能自动发现并展示带有可安装文件（APK、EXE、DMG、AppImage 等）的开源项目仓库，提供热门、新发布、最近更新等智能分类，一键下载安装最新版本，支持平台过滤、更新追踪、Shizuku 静默安装、已安装应用关联 GitHub 仓库等高级功能，完全免费、无广告，适合 FOSS（自由开源软件）爱好者发现和安装 Android 及其他平台开源应用。",
+        "screenshots": [
+            "GitHub_Store_screen_1.webp",
+            "GitHub_Store_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ibnRk3khlx1g",
+        "source": "https://github.com/OpenHub-Store/GitHub-Store"
+    },
+    {
+        "name": "AniCh",
+        "pkg": "app.anich",
+        "version": "1.5.8",
+        "size": "17.63MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Sle2p",
+        "icon": "AniCh_icon.webp",
+        "intro": "AniCh 是一款开源的跨平台在线动漫弹幕App（支持 Android/iOS/Windows 等多平台），聚合多番剧源，提供超分辨率高清播放、多弹幕互动、无广告追番体验，包含番剧搜索、追番管理、离线缓存、倍速播放等功能，是二次元爱好者免费看番的热门神器。",
+        "screenshots": [
+            "AniCh_screen_1.webp",
+            "AniCh_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iNh1u3khdpfe",
+        "source": "https://github.com/Sle2p/AniCh"
+    },
+    {
+        "name": "PiliPlus",
+        "pkg": "com.example.piliplus",
+        "version": "2.0.0-8d312d8cf",
+        "size": "23.80MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "bggRGjQaUbCoE",
+        "icon": "PiliPlus_icon.webp",
+        "intro": "PiliPlus 是一款免费开源的 Bilibili（哔哩哔哩）第三方客户端，使用 Flutter 框架开发，支持 Android、iOS、平板等多平台。主打清爽无广告、沉浸式观看体验，提供视频/直播/番剧浏览、弹幕播放、评论互动、收藏、搜索、离线缓存、DLNA 投屏、自定义主题、画质音质调节、手势操作等丰富功能，界面流畅，注重用户体验，，是官方客户端的优秀开源替代品。",
+        "screenshots": [
+            "PiliPlus_screen_1.webp",
+            "PiliPlus_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iJ3st3khtjaj",
+        "source": "https://github.com/bggRGjQaUbCoE/PiliPlus"
+    },
+    {
+        "name": "Gemini",
+        "pkg": "com.google.android.apps.bard",
+        "version": "1.0.795460806",
+        "size": "5.11MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Google LLC",
+        "icon": "Gemini_icon.webp",
+        "intro": "Gemini 是谷歌官方推出的 AI 助手应用，它基于谷歌最先进的 Gemini 大模型系列（包括 Gemini 1.5 / 2.0 等），支持文字聊天、语音对话、图像分析、生成图片、总结文档、写作辅助、规划行程、代码生成、实时屏幕理解（Android 深度集成）等功能。在 Android 上可替代 Google Assistant，支持“Hey Google”唤醒、与 Gmail / Drive / YouTube / Maps 等 Google 服务深度联动，还能生成图像、进行多模态对话，是目前功能最全面的移动端生成式 AI 助手之一。",
+        "screenshots": [
+            "Gemini_screen_1.webp",
+            "Gemini_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ieKpu3licgxe",
+        "source": "https://play.google.com/store"
+    },
+    {
+        "name": "Google",
+        "pkg": "com.google.android.googlequicksearchbox",
+        "version": "17.7.60.sa.arm64",
+        "size": "319.04MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Google LLC",
+        "icon": "Google_icon.webp",
+        "intro": "Google 是谷歌官方的 AI 搜索与智能助手 App，它是 Android 系统中最重要的一款原生应用，早已从单纯的搜索框进化成一个强大的 AI 信息枢纽，主要功能包括智能搜索（支持文字、语音、图片、镜头实时搜索）、Gemini AI 深度对话和生成式 AI 能力、Discover 个性化信息流（新闻、天气、体育等）、Google Lens 视觉搜索与实时翻译、快捷入口直达 Gmail、Drive、YouTube、地图等 Google 服务，是 Android 用户日常使用最核心的谷歌应用。",
+        "screenshots": [
+            "Google_screen_1.webp"
+        ],
+        "url": "https://www.123912.com/s/TUtbTd-E3GtH?pwd=Sv9v",
+        "source": "https://play.google.com/store"
+    },
+    {
+        "name": "Nrfr",
+        "pkg": "com.github.nrfr",
+        "version": "1.0.3",
+        "size": "7.46MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Ackites",
+        "icon": "Nrfr_icon.webp",
+        "intro": "Nrfr 是一款免费开源的 Android SIM 卡国家码修改工具，无需 Root 权限，仅需配合 Shizuku 即可使用。它通过调用 Android 系统原生 API 修改运营商配置参数，实现更改 SIM 卡显示的国家/地区码，支持双卡独立设置、运营商名称自定义、修改可逆（随时还原）等功能，主要用于解决国际漫游兼容性问题、优化信号显示、解锁运营商限制、突破部分区域限制应用（如 TikTok 国际版）的地域检测等，是出国漫游或使用国际版 App 的实用玩机工具。",
+        "screenshots": [
+            "Nrfr_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iH29p3iif8pi",
+        "source": "https://github.com/Ackites/Nrfr"
+    },
+    {
+        "name": "远航工具箱",
+        "pkg": "com.manchuan.tools",
+        "version": "9.4.0",
+        "size": "243.75MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "川意",
+        "icon": "远航工具箱_icon.webp",
+        "intro": "远航工具箱 是一款大型综合性 Android 工具箱应用，功能极其丰富。它将生活工具、系统工具、开发工具、图像处理、媒体解析、实用小组件等上百项功能集成到一个 App 中，主要包括：应用管理、文件管理、系统信息、Shizuku/Root 增强功能、图片处理、视频/音频解析、开发者工具、日常实用工具（如扫码、翻译、天气、记事等），界面采用 Material Design 风格，分类清晰，大部分功能免费且支持离线使用，是追求“一App走天下”的玩机和效率用户的全能工具合集。",
+        "screenshots": [
+            "远航工具箱_screen_1.webp",
+            "远航工具箱_screen_2.webp"
+        ],
+        "url": "https://www.123912.com/s/TUtbTd-o3GtH?pwd=rImd",
+        "source": "https://t.me/hyperosapk"
+    },
+    {
+        "name": "Flowmix",
+        "pkg": "cn.ykload.flowmix",
+        "version": "Beta 5 - 10",
+        "size": "6.37MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Akko亚可",
+        "icon": "Flowmix_icon.webp",
+        "intro": "Flowmix 是一款轻量级的 Android 全局音频均衡器与音效优化工具，它能在系统层面实时处理音频输出，提供专业的图形均衡器、多频段调节、音效预设、低音增强、虚拟环绕声、音量均衡、动态压缩等功能，支持音乐、视频、游戏等全局生效，可对不同 App 进行独立音效配置，界面简洁现代，是追求高音质体验的实用音效神器。",
+        "screenshots": [
+            "Flowmix_screen_1.webp",
+            "Flowmix_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iRcnR3khlw1a",
+        "source": "https://docs.flowmix.ykload.com/"
+    },
+    {
+        "name": "WiFi 密码管理器",
+        "pkg": "io.github.wifi_password_manager",
+        "version": "1.11",
+        "size": "5.34MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "Khh-vu",
+        "icon": "WiFi_密码管理器_icon.webp",
+        "intro": "WiFi 密码管理器 是一款简洁开源的 Android WiFi 密码查看工具，它通过 Shizuku（推荐）或 Root 权限安全访问系统 WiFi 配置数据库，可以一键查看当前已连接和曾经保存过的所有 WiFi 网络名称及密码，支持复制密码、删除记录、导出备份等功能，界面干净简洁，无广告、无多余权限，是日常需要分享或找回 WiFi 密码时的必备小工具。",
+        "screenshots": [
+            "WiFi_密码管理器_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iAofr3khlyqh",
+        "source": "https://github.com/Khh-vu/wifi-password-manager"
+    },
+    {
+        "name": "microG 服务",
+        "pkg": "app.revanced.android.gms",
+        "version": "0.3.1.4.240913-hw",
+        "size": "36.46MB",
+        "system": "Android",
+        "mod": "汉化",
+        "author": "",
+        "icon": "microG_服务_icon.webp",
+        "intro": "microG 服务（microG GmsCore） 是一款开源的 Google Play Services 免费替代框架（由 microG 项目开发），可在无 Google 服务的 AOSP/自定义 ROM 上运行依赖 Google API 的应用（如推送、地图、认证），显著提升隐私保护、降低电量占用，且无需 Google 账号登录。",
+        "screenshots": [
+            "microG_服务_screen_1.webp",
+            "microG_服务_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iBiJr3jf2s4h",
+        "source": ""
+    },
+    {
+        "name": "Fake Location",
+        "pkg": "com.lerist.fakelocation",
+        "version": "1.3.10",
+        "size": "34.97MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Lerist",
+        "icon": "Fake_Location_icon.webp",
+        "intro": "Fake Location 是一款经典的 Android 虚拟定位（Mock Location）工具，能模拟任意 GPS 位置、路线移动、海拔等信息，支持摇杆控制和多场景应用（如游戏、打卡、地图测试），常用于隐私保护或开发调试（部分版本需开发者选项启用模拟位置或配合 Root/Shizuku 使用）。",
+        "screenshots": [
+            "Fake_Location_screen_1.webp",
+            "Fake_Location_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i5qKS3iif86j",
+        "source": "https://github.com/Lerist/FakeLocation"
+    },
+    {
+        "name": "ShizuWall",
+        "pkg": "com.arslan.shizuwall",
+        "version": "4.3",
+        "size": "14.69MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "AhmetCanArslan",
+        "icon": "ShizuWall_icon.webp",
+        "intro": "ShizuWall 是一款轻量开源的 Android 应用防火墙工具（FOSS），它基于 Shizuku（推荐）或 Root/本地 ADB 方式工作，无需 VPN、无需完整 Root，即可精准阻断指定 App 的 WiFi 和移动数据网络访问，支持按应用、按网络类型（WiFi/移动数据）独立控制，白名单/黑名单模式切换，规则简单高效，资源占用极低，是注重隐私、严格管控 App 联网权限的实用工具。",
+        "screenshots": [
+            "ShizuWall_screen_1.webp",
+            "ShizuWall_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iKzUE3khly9a",
+        "source": "https://github.com/AhmetCanArslan/ShizuWall"
+    },
+    {
+        "name": "Appteka",
+        "pkg": "com.tomclaw.appsend",
+        "version": "18.3",
+        "size": "3.51MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "solkin",
+        "icon": "Appteka_icon.webp",
+        "intro": "Appteka 是一款免费开源的 Android 替代应用商店 + APK 分享平台，主要功能包括浏览和搜索纯净/开源/旧版 APK、从已安装的应用（包括系统 App）一键提取 APK、上传分享自己提取的 APK 到社区、查看应用详细信息、版本历史、签名信息等、支持 FOSS（自由开源软件）应用推荐，它不依赖 Google Play，强调社区分享和纯净应用，是寻找旧版、纯净版、FOSS 应用以及 APK 管理的便捷平台。",
+        "screenshots": [
+            "Appteka_screen_1.webp",
+            "Appteka_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i1FKv3jm1aub",
+        "source": "https://github.com/solkin/appteka-android"
+    },
+    {
+        "name": "音理音理!",
+        "pkg": "moe.ouom.neriplayer",
+        "version": "dd5942c.03120751",
+        "size": "15.75MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "cwuom",
+        "icon": "音理音理!_icon.webp",
+        "intro": "音理音理! 是一款开源的原生 Android 多源音频聚合播放器，基于 Jetpack Compose + Media3 开发，支持整合网易云音乐、Bilibili、YouTube Music 等平台的内容，提供在线流媒体播放、歌单同步、应用内下载、缓存、本地歌单管理和歌词显示，界面现代，专注多平台听歌体验。",
+        "screenshots": [
+            "音理音理!_screen_1.webp",
+            "音理音理!_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iQGUp3khlvgj",
+        "source": "https://github.com/cwuom/NeriPlayer"
+    },
+    {
+        "name": "爱次元壁纸",
+        "pkg": "com.lqh.splash.wallpaper",
+        "version": "1.0.9",
+        "size": "14.12MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "合肥环尚网络科技有限公司",
+        "icon": "爱次元壁纸_icon.webp",
+        "intro": "爱次元壁纸 是一款免费的安卓壁纸应用，汇集了大量高清、4K壁纸资源，包含动漫、游戏、风景、美女等多种类型。用户可以通过该软件浏览、下载并设置手机桌面或锁屏壁纸，让手机界面更加个性化。",
+        "screenshots": [
+            "爱次元壁纸_screen_1.webp",
+            "爱次元壁纸_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iNhZJ3jgfgch",
+        "source": ""
+    },
+    {
+        "name": "账号本子",
+        "pkg": "com.wei.account",
+        "version": "8.0.1",
+        "size": "8.14MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "UCCMAWEI（何日伟）",
+        "icon": "账号本子_icon.webp",
+        "intro": "账号本子 是一款轻量、本地化、完全离线的 Android 账号密码管理工具，它专注于安全存储各类账号信息，包括网站账号、App 账号、邮箱、银行卡、身份证、WiFi 密码等，支持 AES 加密、本地生物识别解锁（指纹/面部）、自定义分类、搜索、备份导出（加密文件）、自动生成强密码等功能，完全无需联网、无广告、无任何云服务，极致注重隐私安全，是追求数据完全掌握在自己手中的用户的理想选择。",
+        "screenshots": [
+            "账号本子_screen_1.webp",
+            "账号本子_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iQWjH3khlvle",
+        "source": "https://uccmawei.com/"
+    },
+    {
+        "name": "清浊",
+        "pkg": "com.farplace.qingzhuo",
+        "version": "2.1.6",
+        "size": "5.16MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "成都无尽远方科技有限公司",
+        "icon": "清浊_icon.webp",
+        "intro": "清浊 是一款简洁高效的 Android 深度清理工具，采用 Material You 设计风格。它结合云端规则库 + 本地智能扫描，可一键深度清理应用缓存、卸载残留文件、空文件夹、日志文件、广告痕迹等，支持存储空间分类分析、自动清理计划、ROOT 增强模式等功能，清理效果彻底且安全，界面干净流畅，是目前体验较好的国产系统垃圾清理工具。",
+        "screenshots": [
+            "清浊_screen_1.webp",
+            "清浊_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iL3QN3kha50b",
+        "source": "https://www.dircleaner.com/"
+    },
+    {
+        "name": "冰箱 IceBox",
+        "pkg": "com.catchingnow.icebox",
+        "version": "3.30.11 C",
+        "size": "14.64MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Ruoxin He",
+        "icon": "冰箱_IceBox_icon.webp",
+        "intro": "冰箱 IceBox 是一款经典且强大的 Android 应用冻结/隐藏工具，它能将不常用的 App “放入冰箱”彻底冻结，阻止其后台运行、耗电、耗流量和自启动，同时支持完全隐藏应用图标（从桌面和抽屉中消失）。支持 Root 模式 和 无线调试（ADB）免 Root 模式，可通过快捷方式、悬浮球、通知栏等快速冻结/解冻，兼容 Android 8 到 Android 16 高版本，是老牌的省电、隐私保护和清理后台神器。",
+        "screenshots": [
+            "冰箱_IceBox_screen_1.webp",
+            "冰箱_IceBox_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iiMLY3ij3yra",
+        "source": "https://iceboxdoc.catchingnow.com/"
+    },
+    {
+        "name": "创建快捷方式",
+        "pkg": "com.x7890.shortcutcreator",
+        "version": "1.18",
+        "size": "1.26MB",
+        "system": "Android",
+        "mod": "莫奈版",
+        "author": "",
+        "icon": "创建快捷方式_icon.webp",
+        "intro": "创建快捷方式 是一款非常轻量、纯净的安卓工具应用，安装包小、运行几乎不耗电、不后台驻留、无广告、无内购、无联网权限，专注帮你快速创建应用内任意界面的桌面快捷方式。",
+        "screenshots": [
+            "创建快捷方式_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/i3gR03iifaqb",
+        "source": ""
+    },
+    {
+        "name": "Permissions Summary",
+        "pkg": "com.simpol.permissionssummary",
+        "version": "1.3.0",
+        "size": "4.82MB",
+        "system": "Android",
+        "mod": "汉化",
+        "author": "SimpolCo",
+        "icon": "Permissions_Summary_icon.webp",
+        "intro": "Permissions Summary 是一款轻量开源的 Android 权限管理查看工具，它能快速扫描手机上所有已安装应用，清晰列出每个 App 拥有的敏感权限（如相机、麦克风、位置、存储等），并按权限类型分组显示，是用户检查隐私泄露风险、发现流氓权限的轻量好工具。",
+        "screenshots": [
+            "Permissions_Summary_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/isgYH3j9xowb",
+        "source": "https://f-droid.org/packages/com.simpol.permissionssummary/"
+    },
+    {
+        "name": "FlClash",
+        "pkg": "com.follow.clash",
+        "version": "0.8.92",
+        "size": "45.33MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "chen08209",
+        "icon": "FlClash_icon.webp",
+        "intro": "FlClash 是一款基于 ClashMeta 内核的开源、多平台代理客户端，采用 Flutter 框架开发，界面风格高度类似经典的 Surfboard ，简单直观、Material You 现代设计，无广告、无追踪、完全开源免费。",
+        "screenshots": [
+            "FlClash_screen_1.webp",
+            "FlClash_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iPAZh3khu70d",
+        "source": "https://github.com/chen08209/FlClash"
+    },
+    {
+        "name": "APKUpdater",
+        "pkg": "com.apkupdater.ci",
+        "version": "0.0.591",
+        "size": "3.94MB",
+        "system": "Android",
+        "mod": "开源",
+        "author": "rumboalla",
+        "icon": "APKUpdater_icon.webp",
+        "intro": "APKUpdater 是一款免费开源的 Android APK 更新检查工具，它可以从多个第三方源（APKMirror、F-Droid、Aptoide、GitHub Releases、APKPure 等）自动检测已安装应用的更新情况，支持忽略特定应用、架构过滤（arm64、x86 等）、通知提醒，并提供直链下载，无需通过 Google Play 即可保持应用更新，是追求纯净、独立、不依赖谷歌生态用户的实用工具。",
+        "screenshots": [
+            "APKUpdater_screen_1.webp",
+            "APKUpdater_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iQV9N3kklv1c",
+        "source": "https://github.com/rumboalla/apkupdater"
+    },
+    {
+        "name": "方向控制",
+        "pkg": "com.tile.rotation2",
+        "version": "23",
+        "size": "66.81KB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "无敌战神领主",
+        "icon": "方向控制_icon.webp",
+        "intro": "方向控制 是一款 Android 屏幕旋转控制工具，可以强制设置手机屏幕的显示方向，例如锁定横屏、竖屏或反向屏幕，并且支持为不同应用单独设置屏幕方向。",
+        "screenshots": [
+            "方向控制_screen_1.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iuYMj3ij7vpe",
+        "source": "https://www.coolapk.com/u/2638279"
+    },
+    {
+        "name": "点击助手",
+        "pkg": "top.bogey.touch_tool",
+        "version": "260313_1848",
+        "size": "23.36MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "Bogey",
+        "icon": "点击助手_icon.webp",
+        "intro": "点击助手 是一款功能强大的 Android 无 Root 自动化点击工具，它支持手势录制、自定义点击点、曲线滑动、两指缩放、多点连击、定时任务、浮动面板快捷控制等功能，可实现自动挂机、自动刷资源、跳过广告、自动签到、游戏辅助等操作，操作逻辑清晰，界面简洁，支持多场景脚本管理，是免 Root 自动化点击神器。",
+        "screenshots": [
+            "点击助手_screen_1.webp",
+            "点击助手_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/ivD753kkmt0f",
+        "source": ""
+    },
+    {
+        "name": "NP管理器",
+        "pkg": "com.wn.app.np",
+        "version": "3.1.37",
+        "size": "44.69MB",
+        "system": "Android",
+        "mod": "原版",
+        "author": "吹牛儿",
+        "icon": "NP管理器_icon.webp",
+        "intro": "NP管理器 是一款功能强大的 Android 逆向与文件编辑工具，它专注于 APK 深度修改，支持直接编辑 DEX、Smali 代码、资源文件（XML、图片、arsc 等）、签名修改、混淆、字符串加密解密、APK 优化、多开、共存、插件化分析等高级功能，同时具备强大的文件管理、文本编辑、十六进制编辑和批量操作能力，界面采用 Material Design，操作流畅，是逆向开发者、玩机深度用户和 APK 修改爱好者的专业级工具。",
+        "screenshots": [
+            "NP管理器_screen_1.webp",
+            "NP管理器_screen_2.webp"
+        ],
+        "url": "https://nanlinyou.lanzoul.com/iWoRw3j6wl1i",
+        "source": "http://normalplayer.top/"
+    }
+]
