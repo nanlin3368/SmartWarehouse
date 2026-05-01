@@ -401,9 +401,10 @@
         window.timelineOpen = false;
 
         if (!fromPopstate) {
-            // 用 replaceState 替换掉弹窗历史条目，回到 base 状态
-            // 不调用 history.back()，避免 GitHub Pages 下退出页面
-            window.history.replaceState({ state: 'base' }, '');
+    // 用 _timelineClosing 标志拦截 popstate，再 go(-1) 弹出弹窗历史条目
+    // open 时已先 replaceState(base)，所以 go(-1) 退回的是 base 而非页面外
+    window._timelineClosing = true;
+    window.history.go(-1);
         }
     };
 
