@@ -162,8 +162,9 @@
     }, 420);
 
     if (!fromPopstate) {
-      window._timelineClosing = true;
-      window.history.back();
+      // 用 replaceState 把弹窗历史条目原地改成中性状态
+      // 绝对不调用 back()/go(-1)，避免 GitHub Pages 下退出页面
+      window.history.replaceState({ state: 'closed' }, '');
     }
   }
 
