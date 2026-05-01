@@ -379,23 +379,32 @@
             sheet.classList.add('open');
         });
         window.timelineOpen = true;
+
+        // 先把当前历史条目标记为 base，确保 back() 有退路
+        // 再 push 一条弹窗状态，供 Android 硬件返回键触发 popstate
+        window.history.replaceState({ state: 'base' }, '');
         window.history.pushState({ state: 'timeline' }, '');
     };
 
     /* ── 5. 关闭 ── */
-   window.closeTimeline = function (fromPopstate) {
-    const overlay = document.getElementById('timeline-overlay');
-    const sheet   = document.getElementById('timeline-sheet');
-    if (!overlay || !sheet) return;
+    window.closeTimeline = function (fromPopstate) {
+        const overlay = document.getElementById('timeline-overlay');
+        const sheet   = document.getElementById('timeline-sheet');
+        if (!overlay || !sheet) return;
 
-    overlay.classList.remove('active');
-    sheet.classList.remove('open');
-    setTimeout(() => {
-        overlay.style.display = 'none';
-        sheet.style.display   = 'none';
-    }, 420);
-    window.timelineOpen = false;
-    // 什么都不做，不操作 history
-};
-   
+        overlay.classList.remove('active');
+        sheet.classList.remove('open');
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            sheet.style.display   = 'none';
+        }, 420);
+        window.timelineOpen = false;
+
+        if (!fromPopstate) {
+            // 用 replaceState 替换掉弹窗历史条目，回到 base 状态
+            // 不调用 history.back()，避免 GitHub Pages 下退出页面
+            window.history.replaceState({ state: 'base' }, '');
+        }
+    };
+
 })();
