@@ -324,6 +324,10 @@
         overlay.style.display = 'flex';
         requestAnimationFrame(() => overlay.classList.add('active'));
         document.body.style.overflow = 'hidden';
+
+        // 先把当前历史条目标记为 base，确保 back() 有退路
+        // 再 push 一条弹窗状态，供 Android 硬件返回键触发 popstate
+        window.history.replaceState({ state: 'base' }, '');
         window.history.pushState({ state: 'disclaimer' }, '');
 
         // 5 秒倒计时，防止未读直接关闭
@@ -354,9 +358,11 @@
             overlay.style.display = 'none';
             document.body.style.overflow = '';
         }, 320);
+
         if (!fromPopstate) {
-            window._disclaimerClosing = true;
-            window.history.back();
+            // 用 replaceState 替换掉弹窗历史条目，回到 base 状态
+            // 不调用 history.back()，避免 GitHub Pages 下退出页面
+            window.history.replaceState({ state: 'base' }, '');
         }
     };
 
