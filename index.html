@@ -1331,7 +1331,11 @@
             if (window._sidebarClosing)   { window._sidebarClosing = false;   return; }
             if (window._settingsClosing)  { window._settingsClosing = false;  return; }
             if (window._disclaimerClosing){ window._disclaimerClosing = false; return; }
-            if (window._timelineClosing)  { window._timelineClosing = false;  return; }
+            // 拾光足迹关闭后留下的 closed 状态条目，按返回键时直接忽略（再次 replaceState 保持中性）
+            if (event.state && event.state.state === 'closed') {
+                window.history.replaceState({ state: 'closed' }, '');
+                return;
+            }
             // 设置面板优先（设置打开时返回键关闭设置）
             if (window.settingsOpen) { closeSettings(true); return; }
             // 侧栏次优先
