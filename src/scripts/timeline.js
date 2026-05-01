@@ -383,7 +383,7 @@
     };
 
     /* ── 5. 关闭 ── */
-    window.closeTimeline = function (fromPopstate) {
+   window.closeTimeline = function (fromPopstate) {
     const overlay = document.getElementById('timeline-overlay');
     const sheet   = document.getElementById('timeline-sheet');
     if (!overlay || !sheet) return;
@@ -395,10 +395,7 @@
         sheet.style.display   = 'none';
     }, 420);
     window.timelineOpen = false;
-    if (!fromPopstate) {
-        // 只清理历史状态，不后退
-        window.history.replaceState(null, '', window.location.href);
-    }
+    // 什么都不做，不操作 history
 };
-
+   
 })();
