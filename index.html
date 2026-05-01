@@ -1338,15 +1338,14 @@
             if (window.sidebarOpen) { closeSidebar(true); return; }
             // 时间线弹窗：强制只能点按钮关闭，返回键无效
             if (window.timelineOpen) {
+            // 弹窗还开着，禁止返回键，重新压入相同状态
                 window.history.pushState({ state: 'timeline' }, '');
-                return;
-            }
-            // 免责声明弹窗：强制只能点按钮关闭
-            const disclaimerOverlay = document.getElementById('disclaimer-overlay');
-            if (disclaimerOverlay && disclaimerOverlay.classList.contains('active')) {
+    return;
+}
+            if (window.disclaimerOpen) {   // 需要给 disclaimer 也加一个全局状态
                 window.history.pushState({ state: 'disclaimer' }, '');
-                return;
-            }
+    return;
+}
             // 页码跳转输入框：返回键取消
             if (window._paginationJumping) {
                 window._paginationJumping = false;
