@@ -1216,7 +1216,7 @@
     <!-- 拾光足迹：HTML + CSS 动态注入，openTimeline / closeTimeline -->
     <script src="src/scripts/timeline.js"></script>
     <!-- 拾光足迹：openTimeline / closeTimeline + 随机文案 -->
-    <script src="src/scripts/memento.js"></script>
+
     <!-- 免责声明：CSS + HTML + 弹窗逻辑 + 声明内容，全部由 disclaimer.js 注入 -->
     <script src="src/scripts/disclaimer.js"></script>
     <!-- ════ 授权码验证模块（动态加载：文件存在则验证，不存在则直接放行） ════ -->
@@ -1331,16 +1331,11 @@
             if (window._sidebarClosing)   { window._sidebarClosing = false;   return; }
             if (window._settingsClosing)  { window._settingsClosing = false;  return; }
             if (window._disclaimerClosing){ window._disclaimerClosing = false; return; }
-            // 拾光足迹关闭后留下的 closed 状态条目，按返回键时直接忽略（再次 replaceState 保持中性）
-            if (event.state && event.state.state === 'closed') {
-                window.history.replaceState({ state: 'closed' }, '');
-                return;
-            }
             // 设置面板优先（设置打开时返回键关闭设置）
             if (window.settingsOpen) { closeSettings(true); return; }
             // 侧栏次优先
             if (window.sidebarOpen) { closeSidebar(true); return; }
-            // 视光足迹弹窗：强制只能点按钮关闭，返回键无效
+            // 拾光足迹弹窗：强制只能点按钮关闭，返回键无效
             if (window.timelineOpen) {
                 window.history.pushState({ state: 'timeline' }, '');
                 return;
