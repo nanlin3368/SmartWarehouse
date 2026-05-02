@@ -366,24 +366,124 @@
     /* ── 3. 状态标记 ── */
     window.timelineOpen = false;
 
+    /* ══════════════════════════════════════════════
+       原 memento.js 内容（已合并，memento.js 可删除）
+       ══════════════════════════════════════════════ */
+
+    const START_DATE = new Date('2026-03-01T00:00:00');
+
+    const phrases = [
+        "与美好相遇",
+        "拾起岁月的贝壳",
+        "在数字荒原漫步",
+        "记录纯粹的光芒",
+        "按下生活的暂停键",
+        "寻找灵魂的共鸣",
+        "于此间停留",
+        "捕捉时间的切面",
+        "在数字洪流中驻足",
+        "慢下来的数字生活",
+        "与光阴握手言和",
+        "打捞遗失的美好",
+        "在像素间寻宝",
+        "偶遇灵魂的火花",
+        "回归工具的本真",
+        "给代码赋予温度",
+        "在秩序中寻找自由",
+        "收集散落的灵感",
+        "不追逐，自有光芒",
+        "独享这片静谧角落",
+        "遇见久违的纯粹"
+    ];
+
+    const essays = [
+        {
+            heading: '🌊 数字世界的浪漫留白',
+            paragraphs: [
+                '在这个万物皆被算法标记、万物都在追逐"最新版本"的时代，我们似乎渐渐失去了对一件工具最原始的审美。智汇仓库的诞生，并不是为了做一个冷冰冰的下载器，而是想在喧嚣的互联网角落，按下一次微小的"暂停键"。',
+                '这里收录的每一款软件，都像是我们在数字荒原里捡拾到的贝壳。',
+                '我们不设预案，不划定边界，只是随性地收录那些撞进眼帘的灵感。它们有的出自独立开发者之手，带着鲜明的性格与偏执；有的交互优雅、灵魂有趣，即便不再更迭，依然闪烁着纯粹的光芒。',
+                '我们从不刻意追求所谓的"功能堆砌"。因为我们相信，软件最动人的时刻，往往藏在它最本真、最原始的那个切面里。我们不想要一个臃肿的资源库，而想要一座属于数字美学的"标本馆"——收录那些转瞬即逝的创意，留住那些不该被掩埋的像素。',
+                '这里没有广告的喧嚣，没有红点的催促。我们把复杂留给代码，把最干净的相遇留给你。',
+            ],
+            highlight: '随缘遇见，不负责更新世界，只负责收藏美好',
+        },
+        // 在下方继续添加新篇章：
+        // {
+        //   heading: '✨ 你的标题',
+        //   paragraphs: ['第一段……', '第二段……'],
+        //   highlight: '结尾金句',
+        // },
+    ];
+
+    function applyRandomPhrase() {
+        const el = document.querySelector('.tl-days-prefix');
+        if (!el) return;
+        el.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+    }
+
+    function renderDays() {
+        const el = document.getElementById('tl-days-number');
+        if (el) el.textContent = Math.floor((new Date() - START_DATE) / 86400000);
+    }
+
+    function renderStory() {
+        const body = document.querySelector('.timeline-sheet-body');
+        if (!body) return;
+        const existing = body.querySelector('.tl-story-card');
+        if (existing) existing.remove();
+
+        const essay = essays[Math.floor(Math.random() * essays.length)];
+        const card = document.createElement('div');
+        card.className = 'tl-story-card';
+
+        const heading = document.createElement('div');
+        heading.className = 'tl-story-heading';
+        heading.textContent = essay.heading;
+        card.appendChild(heading);
+
+        essay.paragraphs.forEach(text => {
+            const p = document.createElement('p');
+            p.className = 'tl-story-p';
+            p.textContent = text;
+            card.appendChild(p);
+        });
+
+        if (essay.highlight) {
+            const hl = document.createElement('div');
+            hl.className = 'tl-story-highlight';
+            hl.textContent = essay.highlight;
+            card.appendChild(hl);
+        }
+
+        body.appendChild(card);
+    }
+
     /* ── 4. 开启 ── */
     window.openTimeline = function () {
+        if (typeof closeSettings === 'function') closeSettings();
+
         const overlay = document.getElementById('timeline-overlay');
         const sheet   = document.getElementById('timeline-sheet');
         if (!overlay || !sheet) return;
 
         overlay.style.display = 'block';
         sheet.style.display   = 'flex';
-        requestAnimationFrame(() => {
-            overlay.classList.add('active');
-            sheet.classList.add('open');
-        });
-        window.timelineOpen = true;
+        document.body.style.overflow = 'hidden';
 
-        // 先把当前历史条目标记为 base，确保 back() 有退路
-        // 再 push 一条弹窗状态，供 Android 硬件返回键触发 popstate
-        window.history.replaceState({ state: 'base' }, '');
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                overlay.classList.add('active');
+                sheet.classList.add('open');
+            });
+        });
+
+        window.timelineOpen = true;
         window.history.pushState({ state: 'timeline' }, '');
+
+        applyRandomPhrase();
+        renderDays();
+        renderStory();
     };
 
     /* ── 5. 关闭 ── */
@@ -394,15 +494,18 @@
 
         overlay.classList.remove('active');
         sheet.classList.remove('open');
+        document.body.style.overflow = '';
+
         setTimeout(() => {
             overlay.style.display = 'none';
             sheet.style.display   = 'none';
         }, 420);
+
         window.timelineOpen = false;
 
         if (!fromPopstate) {
-            // 用 replaceState 替换掉弹窗历史条目，回到 base 状态
-            // 不调用 history.back()，避免 GitHub Pages 下退出页面
+            // replaceState 原地替换弹窗历史条目，不触发任何导航
+            // 绝不调用 back()/go(-1)，避免 GitHub Pages 下退出页面
             window.history.replaceState({ state: 'base' }, '');
         }
     };
