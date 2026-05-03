@@ -1,0 +1,23 @@
+[
+    {
+        "title": "视频播放器",
+        "emoji": "🎞️",
+        "path": "视频播放器.html",
+        "description": "",
+        "category": "媒体工具"
+    },
+    {
+        "title": "音频播放器",
+        "emoji": "🎵",
+        "path": "音频播放器.html",
+        "description": "",
+        "category": "媒体工具"
+    },
+    {
+        "title": "智能录音",
+        "emoji": "🎙️",
+        "path": "智能录音.html",
+        "description": "",
+        "category": "媒体工具"
+    }
+]

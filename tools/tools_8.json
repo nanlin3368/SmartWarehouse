@@ -1,0 +1,44 @@
+[
+    {
+        "title": "JS 代码混淆",
+        "emoji": "🌀",
+        "path": "JS代码混淆.html",
+        "description": "",
+        "category": "开发工具"
+    },
+    {
+        "title": "随机密码生成",
+        "emoji": "🎲",
+        "path": "随机密码生成.html",
+        "description": "",
+        "category": "安全工具"
+    },
+    {
+        "title": "密码强度检测",
+        "emoji": "🛡️",
+        "path": "密码强度检测.html",
+        "description": "",
+        "category": "安全工具"
+    },
+    {
+        "title": "哈希生成器",
+        "emoji": "#️⃣",
+        "path": "哈希生成器.html",
+        "description": "",
+        "category": "安全工具"
+    },
+    {
+        "title": "文本转 Base64",
+        "emoji": "🔒",
+        "path": "文本转Base64.html",
+        "description": "",
+        "category": "安全工具"
+    },
+    {
+        "title": "Base64 转文本",
+        "emoji": "🔓",
+        "path": "Base64转文本.html",
+        "description": "",
+        "category": "安全工具"
+    }
+]

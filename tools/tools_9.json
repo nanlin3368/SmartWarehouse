@@ -1,0 +1,79 @@
+[
+    {
+        "title": "Emoji 表情库",
+        "emoji": "🥳",
+        "path": "Emoji表情库.html",
+        "description": "",
+        "category": "查询工具"
+    },
+    {
+        "title": "特殊符号大全",
+        "emoji": "🔣",
+        "path": "特殊符号大全.html",
+        "description": "",
+        "category": "查询工具"
+    },
+    {
+        "title": "Win 快捷键大全",
+        "emoji": "⌨️",
+        "path": "Win快捷键大全.html",
+        "description": "",
+        "category": "查询工具"
+    },
+    {
+        "title": "Git 命令速查",
+        "emoji": "🐙",
+        "path": "Git命令速查.html",
+        "description": "",
+        "category": "查询工具"
+    },
+    {
+        "title": "CSS 属性速查",
+        "emoji": "🎨",
+        "path": "CSS属性速查.html",
+        "description": "",
+        "category": "查询工具"
+    },
+    {
+        "title": "常用号码查询",
+        "emoji": "☎️",
+        "path": "常用号码查询.html",
+        "description": "",
+        "category": "查询工具"
+    },
+    {
+        "title": "国际区号查询",
+        "emoji": "📞",
+        "path": "国际区号查询.html",
+        "description": "",
+        "category": "查询工具"
+    },
+    {
+        "title": "中国地理文化",
+        "emoji": "🇨🇳",
+        "path": "中国地理文化.html",
+        "description": "",
+        "category": "查询工具"
+    },
+    {
+        "title": "天文历法",
+        "emoji": "🗓️",
+        "path": "天文历法.html",
+        "description": "",
+        "category": "查询工具"
+    },
+    {
+        "title": "辈分关系查询",
+        "emoji": "🧑‍🧑‍🧒‍🧒",
+        "path": "辈分关系查询.html",
+        "description": "",
+        "category": "查询工具"
+    },
+    {
+        "title": "单位换算表",
+        "emoji": "🔢",
+        "path": "单位换算表.html",
+        "description": "",
+        "category": "查询工具"
+    }
+]

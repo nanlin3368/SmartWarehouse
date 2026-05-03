@@ -1,0 +1,72 @@
+[
+    {
+        "title": "在线黄历",
+        "emoji": "📅",
+        "path": "在线黄历.html",
+        "description": "",
+        "category": "日常工具"
+    },
+    {
+        "title": "单位换算",
+        "emoji": "📐",
+        "path": "单位换算.html",
+        "description": "",
+        "category": "日常工具"
+    },
+    {
+        "title": "倒计时 · 番茄钟",
+        "emoji": "🍅",
+        "path": "计时器.html",
+        "description": "",
+        "category": "日常工具"
+    },
+    {
+        "title": "人民币小写转大写",
+        "emoji": "🔁",
+        "path": "人民币小写转大写.html",
+        "description": "",
+        "category": "日常工具"
+    },
+    {
+        "title": "人民币大写转小写",
+        "emoji": "🔄",
+        "path": "人民币大写转小写.html",
+        "description": "",
+        "category": "日常工具"
+    },
+    {
+        "title": "BMI 计算器",
+        "emoji": "⚖️",
+        "path": "BMI计算器.html",
+        "description": "",
+        "category": "日常工具"
+    },
+    {
+        "title": "二维码生成",
+        "emoji": "🔳",
+        "path": "二维码生成.html",
+        "description": "",
+        "category": "日常工具"
+    },
+    {
+        "title": "科学计算器",
+        "emoji": "🧮",
+        "path": "科学计算器.html",
+        "description": "",
+        "category": "日常工具"
+    },
+    {
+        "title": "反应速度测试",
+        "emoji": "🎯",
+        "path": "反应速度测试.html",
+        "description": "",
+        "category": "日常工具"
+    },
+    {
+        "title": "每日一言",
+        "emoji": "📖",
+        "path": "每日一言.html",
+        "description": "",
+        "category": "文本工具"
+    }
+]

@@ -1,0 +1,23 @@
+[   
+    {
+        "title": "IP 信息查询",
+        "emoji": "🌐",
+        "path": "IP信息查询.html",
+        "description": "",
+        "category": "网络工具"
+    },
+    {
+        "title": "URL 编码",
+        "emoji": "🔒",
+        "path": "URL编码.html",
+        "description": "",
+        "category": "网络工具"
+    },
+    {
+        "title": "URL 解码",
+        "emoji": "🔓",
+        "path": "URL解码.html",
+        "description": "",
+        "category": "网络工具"
+    }
+]

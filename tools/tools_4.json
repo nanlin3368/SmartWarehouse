@@ -1,0 +1,51 @@
+[
+    {
+        "title": "文字转拼音",
+        "emoji": "🔤",
+        "path": "文字转拼音.html",
+        "description": "",
+        "category": "文本工具"
+    },
+    {
+        "title": "文本格式化",
+        "emoji": "📝",
+        "path": "文本格式化.html",
+        "description": "",
+        "category": "文本工具"
+    },
+    {
+        "title": "PDF 文件预览",
+        "emoji": "📕",
+        "path": "PDF文件预览.html",
+        "description": "",
+        "category": "文本工具"
+    },
+    {
+        "title": "文本批量替换",
+        "emoji": "🔂",
+        "path": "文本批量替换.html",
+        "description": "",
+        "category": "文本工具"
+    },
+    {
+        "title": "字数统计",
+        "emoji": "📊",
+        "path": "字数统计.html",
+        "description": "",
+        "category": "文本工具"
+    },
+    {
+        "title": "简体转繁体",
+        "emoji": "🀄",
+        "path": "简体转繁体.html",
+        "description": "",
+        "category": "文本工具"
+    },
+    {
+        "title": "繁体转简体",
+        "emoji": "🅰️",
+        "path": "繁体转简体.html",
+        "description": "",
+        "category": "文本工具"
+    }
+]
