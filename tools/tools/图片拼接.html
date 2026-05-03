@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>图片拼接</title>
+  <style>
+    /* ========== 新拟态设计系统 (边距/尺寸严格对齐 imgFormat.html，无多余装饰条) ========== */
+    :root {
+      --bg-primary: #e0e5ec;
+      --shadow-light: #ffffff;
+      --shadow-dark: #a3b1c6;
+      --text-primary: #2c3e50;
+      --text-secondary: #5a6c7d;
+      --text-muted: #8b9dc3;
+      --accent-primary: #667eea;
+      --accent-secondary: #764ba2;
+      --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --success: #4ecdc4;
+      --danger: #fc5c65;
+      --warning: #f7b731;
+      --border-radius: 20px;
+      --border-radius-sm: 14px;
+      --border-radius-xs: 10px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent; /* 全局禁用点击高亮 */
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: pageLoad 0.8s ease;
+    }
+
+    @keyframes pageLoad {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 头部 - 完全对齐原文件 */
+    header {
+      width: 100%;
+      max-width: 680px;
+      text-align: center;
+      padding: 28px 24px 22px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      animation: headerSlide 0.8s ease 0.2s both;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      animation: headerShine 4s ease-in-out infinite;
+    }
+
+    @keyframes headerSlide {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes headerShine {
+      0%   { left: -100%; }
+      50%  { left: 100%; }
+      100% { left: 100%; }
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* 主容器 - 最大宽度 680px，元素间距 20px */
+    .main {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: contentSlide 0.8s ease 0.4s both;
+    }
+
+    @keyframes contentSlide {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 卡片内边距严格 22px 20px */
+    .card {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+      padding: 22px 20px;
+    }
+
+    /* 卡片标签 - 去掉了左侧装饰竖条和多余内边距 */
+    .card-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 上传区域 - 完全对齐原 .file-drop */
+    .file-drop {
+      border: 2px dashed var(--text-muted);
+      border-radius: var(--border-radius-sm);
+      padding: 26px 20px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      background: var(--bg-primary);
+      box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+      transition: var(--transition);
+      margin-bottom: 12px;
+    }
+
+    .file-drop:hover, .file-drop.dragover {
+      border-color: var(--accent-primary);
+      box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                  0 0 0 2px rgba(102,126,234,0.15);
+    }
+
+    .file-drop input[type="file"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .file-drop-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+    .file-drop-text {
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+    .file-drop-sub {
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+    }
+
+    /* 图片列表容器 (类似原 .file-list-wrap) */
+    .image-list {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      max-height: 260px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    .empty-list {
+      text-align: center;
+      padding: 18px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    /* 图片条目 - 对齐原 .file-item */
+    .image-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      margin-bottom: 8px;
+      gap: 10px;
+      cursor: grab;
+      transition: var(--transition);
+    }
+    .image-item:active { cursor: grabbing; }
+    .image-item.dragging { opacity: 0.4; }
+    .image-item:last-child { margin-bottom: 0; }
+
+    .thumb {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #eef2f5;
+      flex-shrink: 0;
+    }
+    .img-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .img-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .img-dim {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .remove-img {
+      background: transparent;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--danger);
+      box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+      border-radius: 30px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .remove-img:active { transform: scale(0.92); }
+
+    /* 拼接设置卡片 - 简化装饰 */
+    .settings-group {
+      margin-bottom: 20px;
+    }
+    .settings-group:last-child {
+      margin-bottom: 0;
+    }
+    .group-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    /* 方向按钮容器：两个大按钮各占一半 */
+    .direction-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    /* 按钮样式完全对齐下方 .action-btn (外凸，无凹陷) */
+    .dir-action-btn {
+      padding: 13px 10px;
+      border: none;
+      border-radius: var(--border-radius-xs);
+      background: var(--bg-primary);
+      box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+    }
+    .dir-action-btn.active {
+      background: var(--accent-gradient);
+      color: white;
+      box-shadow: 4px 4px 8px rgba(102,126,234,0.4);
+    }
+    .dir-action-btn:active {
+      transform: scale(0.97);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+    }
+
+    /* 间距与背景行 - 左右两列布局 */
+    .double-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .double-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-primary);
+      padding: 10px 14px;
+      border-radius: var(--border-radius-xs);
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+    }
+    .double-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+    .spacing-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    input[type="range"] {
+      flex: 1;
+      min-width: 100px;
+      -webkit-appearance: none;
+      height: 5px;
+      border-radius: 5px;
+      background: var(--bg-primary);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-gradient);
+      cursor: pointer;
+    }
+    .spacing-val {
+      min-width: 40px;
+      font-weight: 700;
+      color: var(--accent-primary);
+    }
+    .color-preview {
+      width: 48px;
+      height: 36px;
+      border-radius: 10px;
+      border: none;
+      background: var(--bg-primary);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      cursor: pointer;
+    }
+    @media (max-width: 580px) {
+      .double-row {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .double-item {
+        width: 100%;
+      }
+    }
+
+    /* 预览区 */
+    .preview-wrap {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      overflow-x: auto;
+    }
+    .preview-canvas {
+      max-width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 4px 4px 12px var(--shadow-dark);
+    }
+    .preview-placeholder {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* 操作按钮区 */
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .action-btn {
+      padding: 13px 10px;
+      border: none;
+      border-radius: var(--border-radius-xs);
+      background: var(--bg-primary);
+      box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .action-btn.primary {
+      background: var(--accent-gradient);
+      color: white;
+      grid-column: span 2;
+    }
+    .action-btn:active {
+      transform: scale(0.97);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+    }
+
+    /* 使用说明卡片 */
+    .instr-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .instr-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+    }
+    .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+    .instr-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+    .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+    /* 响应式 */
+    @media (max-width: 480px) {
+      .card { padding: 18px 16px; }
+      .action-btn, .dir-action-btn { font-size: 0.75rem; padding: 10px 6px; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>图片拼接</h1>
+  <p class="subtitle">横向/纵向 · 自由排序 · 本地拼接</p>
+</header>
+
+<div class="main">
+  <!-- 上传卡片 -->
+  <div class="card">
+    <div class="card-label">上传图片</div>
+    <div class="file-drop" id="dropArea">
+      <span class="file-drop-icon">📂</span>
+      <div class="file-drop-text">拖放图片到这里</div>
+      <div class="file-drop-sub">或点击选择（支持多选，JPG/PNG/WEBP）</div>
+      <input type="file" id="fileInput" accept="image/*" multiple>
+    </div>
+    <div class="image-list" id="imageListContainer">
+      <div class="empty-list">暂无图片，请添加上方图片</div>
+    </div>
+  </div>
+
+  <!-- 拼接设置卡片 - 方向按钮独立一行且等宽，间距与背景同行 -->
+  <div class="card">
+    <!-- 方向按钮组：横向 / 纵向，各占一半宽度 -->
+    <div class="settings-group">
+      <div class="group-title"><span>选择方向</div>
+      <div class="direction-grid">
+        <button class="dir-action-btn" data-dir="horizontal">➡️ 横向</button>
+        <button class="dir-action-btn" data-dir="vertical">⬇️ 纵向</button>
+      </div>
+    </div>
+    <!-- 间距与背景同行，左右各半 -->
+    <div class="settings-group">
+      <div class="group-title"><span>间距与背景</div>
+      <div class="double-row">
+        <div class="double-item">
+          <span class="double-label">图片间距</span>
+          <div class="spacing-control">
+            <input type="range" id="spacingSlider" min="0" max="40" value="8" step="1">
+            <span class="spacing-val" id="spacingVal">8px</span>
+          </div>
+        </div>
+        <div class="double-item">
+          <span class="double-label">背景颜色</span>
+          <input type="color" id="bgColor" class="color-preview" value="#ffffff">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览卡片 -->
+  <div class="card">
+    <div class="card-label">拼接预览</div>
+    <div class="preview-wrap" id="previewWrap">
+      <div class="preview-placeholder">上传图片后自动生成预览</div>
+    </div>
+  </div>
+
+  <!-- 操作按钮 -->
+  <div class="card">
+    <div class="card-label">操作</div>
+    <div class="action-grid">
+      <button class="action-btn" id="refreshPreviewBtn">🔄 刷新预览</button>
+      <button class="action-btn" id="resetBtn">🗑️ 清空所有</button>
+      <button class="action-btn primary" id="downloadBtn">⬇️ 下载拼接图片</button>
+    </div>
+  </div>
+
+  <!-- 使用说明卡片 -->
+  <div class="card">
+    <div class="card-label">📖 使用说明</div>
+    <div class="instr-list">
+      <div class="instr-item"><span class="instr-icon">📁</span><div class="instr-text"><strong>上传图片</strong>：拖拽或点击上传多张图片，支持 JPG/PNG/WEBP 格式</div></div>
+      <div class="instr-item"><span class="instr-icon">🔄</span><div class="instr-text"><strong>排序调整</strong>：鼠标拖拽图片列表可自由排序，拼接顺序以此为准</div></div>
+      <div class="instr-item"><span class="instr-icon">🧩</span><div class="instr-text"><strong>方向&间距</strong>：选择横向或纵向拼接，并可调节图片间距与背景色</div></div>
+      <div class="instr-item"><span class="instr-icon">✨</span><div class="instr-text"><strong>实时预览</strong>：任何改动都会自动刷新预览，所见即所得</div></div>
+      <div class="instr-item"><span class="instr-icon">💾</span><div class="instr-text"><strong>下载保存</strong>：点击下载按钮将最终拼接图片保存为 PNG 格式</div></div>
+      <div class="instr-item"><span class="instr-icon">🔒</span><div class="instr-text"><strong>隐私安全</strong>：所有处理均在本地完成，图片不上传任何服务器</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // DOM 元素
+  const fileInput = document.getElementById('fileInput');
+  const dropArea = document.getElementById('dropArea');
+  const imageListContainer = document.getElementById('imageListContainer');
+  const dirBtns = document.querySelectorAll('.dir-action-btn');
+  const spacingSlider = document.getElementById('spacingSlider');
+  const spacingVal = document.getElementById('spacingVal');
+  const bgColorPicker = document.getElementById('bgColor');
+  const previewWrap = document.getElementById('previewWrap');
+  const refreshPreviewBtn = document.getElementById('refreshPreviewBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+
+  // 全局数据
+  let imagesData = [];            // 每个元素: { file, url, name, width, height }
+  let currentDirection = 'horizontal';
+  let spacing = 8;
+  let bgColor = '#ffffff';
+
+  // 辅助: 加载图片并获取宽高
+  function loadImage(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          resolve({
+            file: file,
+            url: e.target.result,
+            name: file.name,
+            width: img.width,
+            height: img.height,
+          });
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // 添加新文件
+  async function addFiles(files) {
+    const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+    if (imageFiles.length === 0) return;
+    for (const file of imageFiles) {
+      try {
+        const imgObj = await loadImage(file);
+        imagesData.push(imgObj);
+      } catch (err) {
+        console.warn('加载失败', file.name);
+      }
+    }
+    renderImageList();
+    generatePreview();
+  }
+
+  // 渲染列表（带拖拽排序）
+  let dragSrcIndex = null;
+  function renderImageList() {
+    if (!imagesData.length) {
+      imageListContainer.innerHTML = '<div class="empty-list">暂无图片，请添加上方图片</div>';
+      return;
+    }
+    let html = '';
+    imagesData.forEach((img, idx) => {
+      html += `
+        <div class="image-item" draggable="true" data-index="${idx}">
+          <img class="thumb" src="${img.url}" alt="thumb">
+          <div class="img-info">
+            <div class="img-name">${img.name.length > 28 ? img.name.slice(0,25)+'...' : img.name}</div>
+            <div class="img-dim">${img.width}×${img.height}</div>
+          </div>
+          <button class="remove-img" data-index="${idx}" title="移除">✖</button>
+        </div>
+      `;
+    });
+    imageListContainer.innerHTML = html;
+    // 删除按钮
+    document.querySelectorAll('.remove-img').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.dataset.index);
+        if (!isNaN(idx)) removeImageAtIndex(idx);
+      });
+    });
+    // 拖拽事件
+    const items = document.querySelectorAll('.image-item');
+    items.forEach(item => {
+      item.addEventListener('dragstart', handleDragStart);
+      item.addEventListener('dragover', handleDragOver);
+      item.addEventListener('drop', handleDrop);
+      item.addEventListener('dragend', handleDragEnd);
+    });
+  }
+
+  function removeImageAtIndex(index) {
+    if (index >= 0 && index < imagesData.length) {
+      URL.revokeObjectURL(imagesData[index].url);
+      imagesData.splice(index, 1);
+      renderImageList();
+      generatePreview();
+    }
+  }
+
+  function handleDragStart(e) {
+    const target = e.target.closest('.image-item');
+    if (!target) return;
+    dragSrcIndex = parseInt(target.dataset.index);
+    e.dataTransfer.effectAllowed = 'move';
+    target.classList.add('dragging');
+  }
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }
+  function handleDrop(e) {
+    e.preventDefault();
+    const targetItem = e.target.closest('.image-item');
+    if (!targetItem) return;
+    const targetIndex = parseInt(targetItem.dataset.index);
+    if (dragSrcIndex !== null && dragSrcIndex !== targetIndex) {
+      const moved = imagesData[dragSrcIndex];
+      imagesData.splice(dragSrcIndex, 1);
+      imagesData.splice(targetIndex, 0, moved);
+      renderImageList();
+      generatePreview();
+    }
+  }
+  function handleDragEnd(e) {
+    const item = e.target.closest('.image-item');
+    if (item) item.classList.remove('dragging');
+    dragSrcIndex = null;
+  }
+
+  // 拼接核心 (返回canvas)
+  async function stitchImages() {
+    if (!imagesData.length) throw new Error('无图片');
+    return new Promise((resolve, reject) => {
+      const loadedImgs = [];
+      let pending = imagesData.length;
+      if (pending === 0) reject('无图片');
+      imagesData.forEach((imgData, idx) => {
+        const img = new Image();
+        img.onload = () => {
+          loadedImgs[idx] = img;
+          pending--;
+          if (pending === 0) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            let totalWidth = 0, totalHeight = 0;
+            const widths = loadedImgs.map(i => i.width);
+            const heights = loadedImgs.map(i => i.height);
+            if (currentDirection === 'horizontal') {
+              totalWidth = widths.reduce((a,b) => a+b, 0) + spacing * (loadedImgs.length-1);
+              totalHeight = Math.max(...heights);
+            } else {
+              totalHeight = heights.reduce((a,b) => a+b, 0) + spacing * (loadedImgs.length-1);
+              totalWidth = Math.max(...widths);
+            }
+            canvas.width = totalWidth;
+            canvas.height = totalHeight;
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, totalWidth, totalHeight);
+            let xOff = 0, yOff = 0;
+            for (let i=0; i<loadedImgs.length; i++) {
+              const img = loadedImgs[i];
+              if (currentDirection === 'horizontal') {
+                const yPos = (totalHeight - img.height) / 2;
+                ctx.drawImage(img, xOff, yPos, img.width, img.height);
+                xOff += img.width + spacing;
+              } else {
+                const xPos = (totalWidth - img.width) / 2;
+                ctx.drawImage(img, xPos, yOff, img.width, img.height);
+                yOff += img.height + spacing;
+              }
+            }
+            resolve(canvas);
+          }
+        };
+        img.onerror = () => { pending--; if(pending===0) reject('图片加载失败'); };
+        img.src = imgData.url;
+      });
+    });
+  }
+
+  async function generatePreview() {
+    if (!imagesData.length) {
+      previewWrap.innerHTML = '<div class="preview-placeholder">上传图片后自动生成预览</div>';
+      return;
+    }
+    try {
+      const canvas = await stitchImages();
+      previewWrap.innerHTML = `<img class="preview-canvas" src="${canvas.toDataURL()}" alt="拼接预览">`;
+    } catch (err) {
+      previewWrap.innerHTML = '<div class="preview-placeholder">拼接失败，请检查图片</div>';
+    }
+  }
+
+  async function download() {
+    if (!imagesData.length) {
+      alert('请先上传图片');
+      return;
+    }
+    try {
+      const canvas = await stitchImages();
+      const link = document.createElement('a');
+      link.download = `stitch_${currentDirection}_${Date.now()}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    } catch (err) {
+      alert('生成失败，请重试');
+    }
+  }
+
+  function resetAll() {
+    imagesData.forEach(img => URL.revokeObjectURL(img.url));
+    imagesData = [];
+    renderImageList();
+    previewWrap.innerHTML = '<div class="preview-placeholder">上传图片后自动生成预览</div>';
+  }
+
+  function updateSettingsAndPreview() {
+    spacing = parseInt(spacingSlider.value);
+    spacingVal.innerText = spacing + 'px';
+    bgColor = bgColorPicker.value;
+    generatePreview();
+  }
+
+  // 方向切换
+  dirBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      dirBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentDirection = btn.dataset.dir;
+      generatePreview();
+    });
+  });
+
+  spacingSlider.addEventListener('input', () => updateSettingsAndPreview());
+  bgColorPicker.addEventListener('input', () => updateSettingsAndPreview());
+  refreshPreviewBtn.addEventListener('click', () => generatePreview());
+  resetBtn.addEventListener('click', () => resetAll());
+  downloadBtn.addEventListener('click', () => download());
+
+  // 文件上传
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length) addFiles(e.target.files);
+    fileInput.value = '';
+  });
+  dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.classList.add('dragover'); });
+  dropArea.addEventListener('dragleave', () => dropArea.classList.remove('dragover'));
+  dropArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropArea.classList.remove('dragover');
+    if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+  });
+
+  // 初始化激活横向按钮
+  document.querySelector('.dir-action-btn[data-dir="horizontal"]').classList.add('active');
+  currentDirection = 'horizontal';
+  spacing = 8;
+  bgColor = '#ffffff';
+  spacingSlider.value = 8;
+  spacingVal.innerText = '8px';
+  bgColorPicker.value = '#ffffff';
+  updateSettingsAndPreview();
+</script>
+</body>
+</html>

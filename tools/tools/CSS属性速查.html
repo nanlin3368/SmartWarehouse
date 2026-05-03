@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>CSS 属性速查</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes headerShine {
+            0%   { left: -100%; }
+            50%  { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to   { filter: brightness(1.15); }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            flex: 1;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            padding: 12px 8px;
+            text-align: center;
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .stats-divider {
+            border: none;
+            border-top: 1px solid rgba(163, 177, 198, 0.3);
+            margin: 0 0 16px 0;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 44px 14px 42px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .search-input:focus {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light),
+                        0 0 0 2px rgba(102,126,234,0.15);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: none;
+            padding: 4px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .search-clear.visible { display: flex; align-items: center; justify-content: center; }
+        .search-clear:active { color: var(--accent-primary); }
+
+        .categories-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .category-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+            overflow: hidden;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 16px;
+            cursor: pointer;
+            background: var(--bg-primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .category-header:active {
+            background: rgba(102, 126, 234, 0.06);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            color: var(--accent-primary);
+        }
+
+        .category-count {
+            background: var(--bg-primary);
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+        }
+
+        .emojis-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.38s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: var(--bg-primary);
+        }
+
+        .category-item.expanded .emojis-container {
+            max-height: 500px;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            padding: 14px 16px;
+            border-top: 1px solid rgba(163, 177, 198, 0.25);
+            max-height: 440px;
+            overflow-y: auto;
+        }
+
+        .emoji-grid::-webkit-scrollbar { width: 4px; }
+        .emoji-grid::-webkit-scrollbar-track { background: transparent; }
+        .emoji-grid::-webkit-scrollbar-thumb {
+            background: var(--shadow-dark);
+            border-radius: 4px;
+        }
+
+        .emoji-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            text-align: center;
+            padding: 10px 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .emoji-item:active {
+            transform: scale(0.92);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .emoji-item.fav-item {
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light),
+                        0 0 0 2px rgba(247, 183, 49, 0.4);
+        }
+
+        .emoji-symbol {
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1.2;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            word-break: break-word;
+        }
+
+        .emoji-name {
+            font-size: 0.62rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        .emoji-fav-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 0.55rem;
+            line-height: 1;
+        }
+
+        .recent-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .recent-emoji-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            text-align: center;
+            padding: 10px 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 100px;
+        }
+
+        .recent-emoji-item:active {
+            transform: scale(0.92);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .recent-empty {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 10px 0;
+        }
+
+        .no-result {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .reset-search-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 18px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: 30px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            cursor: pointer;
+        }
+
+        .action-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 14px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .instr-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(44, 62, 80, 0.92);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 550px) {
+            .card { padding: 18px 16px; }
+            h1 { font-size: 1.8rem; }
+            .emoji-grid { grid-template-columns: repeat(2, 1fr); }
+            .emoji-symbol { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CSS 属性速查</h1>
+        <p class="subtitle">分类整理 · 属性速查 · 点击复制</p>
+    </header>
+
+    <div class="main">
+        <!-- 🔍 搜索卡片 -->
+        <div class="card">
+            <div class="card-label">🔍 搜索 CSS 属性</div>
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="搜索属性（如：display、flex、margin）" autocomplete="off">
+                <button class="search-clear" id="searchClear">✕</button>
+            </div>
+        </div>
+
+        <!-- 📊 数据概览 + 📂 分类浏览 -->
+        <div class="card">
+            <div class="card-label">📊 属性总览</div>
+            <div class="stats-grid" id="statsPanel"></div>
+            <hr class="stats-divider">
+            <div class="categories-stack" id="categoriesContainer"></div>
+            <div class="action-sub">点击任意属性卡片复制属性名 · 长按可收藏 ⭐ 常用属性</div>
+        </div>
+
+        <!-- 最近复制 -->
+        <div class="card">
+            <div class="card-label">🕐 最近复制</div>
+            <div id="recentGrid" class="recent-grid"></div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item"><span class="instr-icon">🔍</span><div class="instr-text"><strong>搜索过滤</strong>：输入 CSS 属性名或关键词，实时筛选，搜索时自动展开所有匹配分类</div></div>
+                <div class="instr-item"><span class="instr-icon">📂</span><div class="instr-text"><strong>互斥展开</strong>：点击分类标题展开该分类，同时自动收起其他分类；固定高度滚动查看</div></div>
+                <div class="instr-item"><span class="instr-icon">⭐</span><div class="instr-text"><strong>收藏属性</strong>：长按卡片即可收藏，收藏分类自动置顶，方便快速查阅</div></div>
+                <div class="instr-item"><span class="instr-icon">📋</span><div class="instr-text"><strong>一键复制</strong>：点击任意卡片复制属性名（如 `display`），最近10条记录自动保存</div></div>
+                <div class="instr-item"><span class="instr-icon">🔒</span><div class="instr-text"><strong>隐私安全</strong>：所有操作及收藏数据本地完成，不联网上传任何数据</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        // ── CSS 属性数据库（9个分类，已修正原“viewport”错误为“column-span”）────────────
+        const categoriesData = [
+            {
+                id: "layout",
+                name: "📐 布局 & 盒模型",
+                emojis: [
+                    { e: "display", n: "指定元素的显示类型（block, flex, grid, inline等）" },
+                    { e: "position", n: "定位方式（static, relative, absolute, fixed, sticky）" },
+                    { e: "top / right / bottom / left", n: "偏移位置（与定位配合）" },
+                    { e: "z-index", n: "层叠顺序" },
+                    { e: "float", n: "浮动（left, right, none）" },
+                    { e: "clear", n: "清除浮动" },
+                    { e: "visibility", n: "可见性（visible, hidden, collapse）" },
+                    { e: "overflow", n: "溢出处理（visible, hidden, scroll, auto）" },
+                    { e: "box-sizing", n: "盒模型计算（content-box, border-box）" },
+                    { e: "width", n: "宽度" },
+                    { e: "max-width", n: "最大宽度" },
+                    { e: "min-width", n: "最小宽度" },
+                    { e: "height", n: "高度" },
+                    { e: "max-height", n: "最大高度" },
+                    { e: "min-height", n: "最小高度" },
+                    { e: "margin", n: "外边距（上右下左）" },
+                    { e: "padding", n: "内边距" },
+                    { e: "border", n: "边框（宽度、样式、颜色）" },
+                    { e: "border-radius", n: "圆角" },
+                    { e: "box-shadow", n: "盒子阴影" },
+                    { e: "outline", n: "轮廓（不占空间）" }
+                ]
+            },
+            {
+                id: "flex_grid",
+                name: "🧩 Flexbox & Grid",
+                emojis: [
+                    { e: "flex-direction", n: "主轴方向（row, column）" },
+                    { e: "flex-wrap", n: "是否换行" },
+                    { e: "flex-flow", n: "flex-direction + flex-wrap 简写" },
+                    { e: "justify-content", n: "主轴对齐（flex-start, center, space-between等）" },
+                    { e: "align-items", n: "交叉轴对齐" },
+                    { e: "align-content", n: "多行对齐" },
+                    { e: "flex-grow", n: "放大比例" },
+                    { e: "flex-shrink", n: "缩小比例" },
+                    { e: "flex-basis", n: "基准尺寸" },
+                    { e: "flex", n: "flex-grow + flex-shrink + flex-basis 简写" },
+                    { e: "order", n: "排列顺序" },
+                    { e: "align-self", n: "单个项目交叉轴对齐" },
+                    { e: "grid-template-columns", n: "定义网格列宽" },
+                    { e: "grid-template-rows", n: "定义网格行高" },
+                    { e: "gap / grid-gap", n: "网格间隙" },
+                    { e: "grid-column", n: "列合并（起始/结束线）" },
+                    { e: "grid-row", n: "行合并" },
+                    { e: "place-items", n: "align-items + justify-items 简写" },
+                    { e: "place-content", n: "align-content + justify-content 简写" }
+                ]
+            },
+            {
+                id: "text_font",
+                name: "📝 文本 & 字体",
+                emojis: [
+                    { e: "color", n: "文字颜色" },
+                    { e: "font-family", n: "字体族" },
+                    { e: "font-size", n: "字体大小" },
+                    { e: "font-weight", n: "字重（normal, bold, 100-900）" },
+                    { e: "font-style", n: "字体样式（normal, italic, oblique）" },
+                    { e: "line-height", n: "行高" },
+                    { e: "text-align", n: "水平对齐（left, center, right, justify）" },
+                    { e: "text-decoration", n: "文本修饰（underline, line-through等）" },
+                    { e: "text-transform", n: "大小写转换（uppercase, lowercase）" },
+                    { e: "text-indent", n: "首行缩进" },
+                    { e: "letter-spacing", n: "字符间距" },
+                    { e: "word-spacing", n: "单词间距" },
+                    { e: "white-space", n: "空白处理（nowrap, pre, pre-wrap）" },
+                    { e: "word-break", n: "断行规则" },
+                    { e: "overflow-wrap / word-wrap", n: "长单词换行" },
+                    { e: "text-shadow", n: "文字阴影" }
+                ]
+            },
+            {
+                id: "background",
+                name: "🎨 背景 & 颜色",
+                emojis: [
+                    { e: "background-color", n: "背景颜色" },
+                    { e: "background-image", n: "背景图片" },
+                    { e: "background-repeat", n: "平铺方式" },
+                    { e: "background-position", n: "背景位置" },
+                    { e: "background-size", n: "背景尺寸（cover, contain）" },
+                    { e: "background-attachment", n: "背景滚动（fixed, scroll）" },
+                    { e: "background-clip", n: "背景绘制区域" },
+                    { e: "background-origin", n: "背景定位原点" },
+                    { e: "background", n: "背景简写" },
+                    { e: "opacity", n: "不透明度（0-1）" }
+                ]
+            },
+            {
+                id: "transform_transition",
+                name: "✨ 变换 & 过渡",
+                emojis: [
+                    { e: "transform", n: "2D/3D 变换（translate, scale, rotate等）" },
+                    { e: "transform-origin", n: "变换原点" },
+                    { e: "transition", n: "过渡（属性 时长 延迟 曲线）" },
+                    { e: "transition-property", n: "要过渡的属性" },
+                    { e: "transition-duration", n: "过渡时长" },
+                    { e: "transition-timing-function", n: "缓动曲线（ease, linear等）" },
+                    { e: "transition-delay", n: "过渡延迟" }
+                ]
+            },
+            {
+                id: "animation",
+                name: "🎬 动画",
+                emojis: [
+                    { e: "animation", n: "动画简写" },
+                    { e: "animation-name", n: "关键帧名称" },
+                    { e: "animation-duration", n: "动画时长" },
+                    { e: "animation-timing-function", n: "缓动曲线" },
+                    { e: "animation-delay", n: "动画延迟" },
+                    { e: "animation-iteration-count", n: "播放次数" },
+                    { e: "animation-direction", n: "播放方向（normal, reverse, alternate）" },
+                    { e: "animation-fill-mode", n: "填充模式（forwards, backwards）" },
+                    { e: "animation-play-state", n: "播放状态（running, paused）" },
+                    { e: "@keyframes", n: "定义关键帧规则" }
+                ]
+            },
+            {
+                id: "effects",
+                name: "🔧 其他常用效果",
+                emojis: [
+                    { e: "cursor", n: "鼠标样式（pointer, wait, move等）" },
+                    { e: "pointer-events", n: "元素是否响应鼠标事件" },
+                    { e: "user-select", n: "控制文本选择" },
+                    { e: "filter", n: "滤镜（blur, brightness, drop-shadow等）" },
+                    { e: "backdrop-filter", n: "背景滤镜" },
+                    { e: "mix-blend-mode", n: "混合模式" },
+                    { e: "clip-path", n: "裁剪路径（多边形、圆形等）" },
+                    { e: "object-fit", n: "替换元素适应方式（contain, cover）" },
+                    { e: "object-position", n: "替换元素位置" }
+                ]
+            },
+            {
+                id: "responsive",
+                name: "📱 响应式 & 多列",
+                emojis: [
+                    { e: "@media", n: "媒体查询，响应式条件" },
+                    { e: "column-span", n: "元素跨列 (all, none)" },
+                    { e: "columns", n: "多列布局简写" },
+                    { e: "column-count", n: "列数" },
+                    { e: "column-gap", n: "列间隙" },
+                    { e: "column-rule", n: "列间分隔线" },
+                    { e: "break-inside", n: "避免元素跨页/跨列中断" }
+                ]
+            },
+            {
+                id: "scroll",
+                name: "📜 滚动 & 滚动捕捉",
+                emojis: [
+                    { e: "overflow-y / overflow-x", n: "垂直/水平溢出控制" },
+                    { e: "scroll-behavior", n: "平滑滚动（smooth, auto）" },
+                    { e: "scroll-snap-type", n: "滚动捕捉类型" },
+                    { e: "scroll-snap-align", n: "滚动捕捉对齐" },
+                    { e: "scroll-margin", n: "滚动捕捉边距" },
+                    { e: "overscroll-behavior", n: "滚动边界行为" }
+                ]
+            }
+        ];
+
+        // ── 状态管理 ─────────────────────────────────────────────
+        let currentFilterText = '';
+        let currentExpandedId = null;
+        let favorites = JSON.parse(localStorage.getItem('cssFavorites') || '[]');
+        let recentCopies = JSON.parse(localStorage.getItem('cssRecent') || '[]');
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+        }
+
+        async function copyProperty(prop, desc) {
+            try {
+                await navigator.clipboard.writeText(prop);
+                showToast('✅ 已复制 ' + prop);
+                addRecent(prop, desc);
+            } catch {
+                showToast('❌ 复制失败，请手动复制');
+            }
+        }
+
+        function isFav(prop) { return favorites.some(f => f.e === prop); }
+
+        function toggleFav(prop, desc) {
+            if (isFav(prop)) {
+                favorites = favorites.filter(f => f.e !== prop);
+                showToast('💔 已取消收藏 ' + prop);
+            } else {
+                favorites.unshift({ e: prop, n: desc });
+                showToast('⭐ 已收藏 ' + prop);
+            }
+            localStorage.setItem('cssFavorites', JSON.stringify(favorites));
+            updateStats();
+            renderCategories();
+        }
+
+        function addRecent(prop, desc) {
+            recentCopies = recentCopies.filter(r => r.e !== prop);
+            recentCopies.unshift({ e: prop, n: desc });
+            if (recentCopies.length > 10) recentCopies = recentCopies.slice(0, 10);
+            localStorage.setItem('cssRecent', JSON.stringify(recentCopies));
+            renderRecent();
+        }
+
+        let longPressTimer = null;
+        function attachEvents(el, prop, desc) {
+            el.addEventListener('click', e => { e.stopPropagation(); copyProperty(prop, desc); });
+            el.addEventListener('touchstart', () => {
+                longPressTimer = setTimeout(() => { longPressTimer = null; toggleFav(prop, desc); }, 600);
+            }, { passive: true });
+            el.addEventListener('touchend', () => clearTimeout(longPressTimer));
+            el.addEventListener('touchmove', () => clearTimeout(longPressTimer), { passive: true });
+            el.addEventListener('contextmenu', e => { e.preventDefault(); toggleFav(prop, desc); });
+        }
+
+        function updateStats() {
+            const total = categoriesData.reduce((s, c) => s + c.emojis.length, 0);
+            document.getElementById('statsPanel').innerHTML = `
+            <div class="stat-item"><div class="stat-number">${total}</div><div class="stat-label">🎨 属性总数</div></div>
+            <div class="stat-item"><div class="stat-number">${categoriesData.length}</div><div class="stat-label">📂 分类数</div></div>
+            <div class="stat-item"><div class="stat-number">${favorites.length}</div><div class="stat-label">⭐ 已收藏</div></div>`;
+        }
+
+        function updateSearchClear() {
+            document.getElementById('searchClear').classList.toggle('visible', currentFilterText.length > 0);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', e => {
+            currentFilterText = e.target.value;
+            updateSearchClear();
+            if (currentFilterText) currentExpandedId = null;
+            renderCategories();
+        });
+        document.getElementById('searchClear').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            currentFilterText = '';
+            currentExpandedId = null;
+            updateSearchClear();
+            renderCategories();
+        });
+
+        function buildPropGrid(items) {
+            return items.map(item => {
+                const favMark = isFav(item.e) ? '<span class="emoji-fav-dot">⭐</span>' : '';
+                const favClass = isFav(item.e) ? ' fav-item' : '';
+                return `<div class="emoji-item${favClass}" data-prop="${escapeHtml(item.e)}" data-desc="${escapeHtml(item.n)}">
+            ${favMark}<div class="emoji-symbol">${escapeHtml(item.e)}</div><div class="emoji-name">${escapeHtml(item.n)}</div></div>`;
+            }).join('');
+        }
+
+        function renderCategories() {
+            const filter = currentFilterText.trim().toLowerCase();
+            const container = document.getElementById('categoriesContainer');
+            let allCats = [];
+            if (favorites.length && !filter) allCats.push({ id: '__fav__', name: '⭐ 我的收藏', emojis: favorites, actualCount: favorites.length });
+
+            categoriesData.forEach(cat => {
+                let items = cat.emojis;
+                if (filter) items = cat.emojis.filter(item => item.n.toLowerCase().includes(filter) || item.e.toLowerCase().includes(filter) || cat.name.toLowerCase().includes(filter));
+                if (items.length) allCats.push({ ...cat, emojis: items, actualCount: cat.emojis.length });
+            });
+
+            if (!allCats.length) {
+                container.innerHTML = `<div class="no-result">😢 没有找到匹配的 CSS 属性<br><button class="reset-search-btn" id="resetSearchBtn">清空搜索</button></div>`;
+                document.getElementById('resetSearchBtn')?.addEventListener('click', () => {
+                    document.getElementById('searchInput').value = ''; currentFilterText = ''; currentExpandedId = null; updateSearchClear(); renderCategories();
+                });
+                return;
+            }
+
+            let activeId = filter ? null : currentExpandedId;
+            if (!filter && activeId !== null) {
+                const activeExists = allCats.some(c => c.id === activeId);
+                if (!activeExists) { activeId = allCats[0]?.id; currentExpandedId = activeId; }
+            }
+
+            let html = '';
+            for (const cat of allCats) {
+                const expanded = filter ? true : (activeId === cat.id);
+                const countLabel = filter ? `${cat.emojis.length}/${cat.actualCount}` : cat.emojis.length;
+                html += `<div class="category-item ${expanded ? 'expanded' : ''}" data-category-id="${cat.id}">
+              <div class="category-header"><div class="category-title"><span class="toggle-icon" style="transform:${expanded ? 'rotate(180deg)' : 'rotate(0deg)'}">▼</span><span>${cat.name}</span></div><span class="category-count">${countLabel}</span></div>
+              <div class="emojis-container"><div class="emoji-grid">${buildPropGrid(cat.emojis)}</div></div></div>`;
+            }
+            container.innerHTML = html;
+
+            container.querySelectorAll('.category-item').forEach(item => {
+                item.querySelector('.category-header')?.addEventListener('click', e => {
+                    e.stopPropagation(); if (filter) return;
+                    const cid = item.dataset.categoryId;
+                    const isExpanded = item.classList.contains('expanded');
+                    container.querySelectorAll('.category-item').forEach(other => { other.classList.remove('expanded'); const arr = other.querySelector('.toggle-icon'); if (arr) arr.style.transform = 'rotate(0deg)'; });
+                    if (!isExpanded) { item.classList.add('expanded'); const arr = item.querySelector('.toggle-icon'); if (arr) arr.style.transform = 'rotate(180deg)'; currentExpandedId = cid; }
+                    else { currentExpandedId = null; }
+                });
+            });
+
+            container.querySelectorAll('.emoji-item').forEach(el => { attachEvents(el, el.dataset.prop, el.dataset.desc); });
+        }
+
+        function renderRecent() {
+            const el = document.getElementById('recentGrid');
+            if (!recentCopies.length) { el.innerHTML = '<div class="recent-empty">暂无复制记录</div>'; return; }
+            el.innerHTML = recentCopies.map(r => `<div class="recent-emoji-item" data-prop="${escapeHtml(r.e)}" data-desc="${escapeHtml(r.n)}"><div class="emoji-symbol">${escapeHtml(r.e)}</div><div class="emoji-name">${escapeHtml(r.n)}</div></div>`).join('');
+            el.querySelectorAll('.recent-emoji-item').forEach(el => { attachEvents(el, el.dataset.prop, el.dataset.desc); });
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+        }
+
+        updateStats();
+        renderCategories();
+        renderRecent();
+    </script>
+</body>
+</html>

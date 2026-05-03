@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>华夏文化·天文历法</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes headerShine {
+            0%   { left: -100%; }
+            50%  { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to   { filter: brightness(1.15); }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ── 主内容 ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── 通用卡片 ── */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ── 统计数字区 ── */
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            flex: 1;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            padding: 12px 8px;
+            text-align: center;
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .stats-divider {
+            border: none;
+            border-top: 1px solid rgba(163, 177, 198, 0.3);
+            margin: 0 0 16px 0;
+        }
+
+        /* ── 搜索区域 ── */
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 44px 14px 42px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .search-input:focus {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light),
+                        0 0 0 2px rgba(102,126,234,0.15);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: none;
+            padding: 4px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .search-clear.visible { display: flex; align-items: center; justify-content: center; }
+        .search-clear:active { color: var(--accent-primary); }
+
+        /* ── 手风琴分类 ── */
+        .categories-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .category-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+            overflow: hidden;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 16px;
+            cursor: pointer;
+            background: var(--bg-primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .category-header:active {
+            background: rgba(102, 126, 234, 0.06);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            color: var(--accent-primary);
+        }
+
+        .category-count {
+            background: var(--bg-primary);
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+        }
+
+        /* ── 内容折叠区（固定高度 + 内部滚动） ── */
+        .emojis-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.38s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: var(--bg-primary);
+        }
+
+        .category-item.expanded .emojis-container {
+            max-height: 500px;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            padding: 14px 16px;
+            border-top: 1px solid rgba(163, 177, 198, 0.25);
+            max-height: 440px;
+            overflow-y: auto;
+        }
+
+        .emoji-grid::-webkit-scrollbar { width: 4px; }
+        .emoji-grid::-webkit-scrollbar-track { background: transparent; }
+        .emoji-grid::-webkit-scrollbar-thumb {
+            background: var(--shadow-dark);
+            border-radius: 4px;
+        }
+
+        .emoji-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            text-align: center;
+            padding: 10px 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .emoji-item:active {
+            transform: scale(0.92);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .emoji-item.fav-item {
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light),
+                        0 0 0 2px rgba(247, 183, 49, 0.4);
+        }
+
+        .emoji-symbol {
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.2;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            word-break: break-word;
+        }
+
+        .emoji-name {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        .emoji-fav-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 0.55rem;
+            line-height: 1;
+        }
+
+        .recent-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .recent-emoji-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            text-align: center;
+            padding: 10px 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 100px;
+        }
+
+        .recent-emoji-item:active {
+            transform: scale(0.92);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .recent-empty {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 10px 0;
+        }
+
+        .no-result {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .reset-search-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 18px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: 30px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            cursor: pointer;
+        }
+
+        .action-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 14px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .instr-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(44, 62, 80, 0.92);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 550px) {
+            .card { padding: 18px 16px; }
+            h1 { font-size: 1.8rem; }
+            .emoji-grid { grid-template-columns: repeat(2, 1fr); }
+            .emoji-symbol { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>华夏文化·天文历法</h1>
+        <p class="subtitle">二十四节气 · 十二生肖 · 十二星座 · 传统节日 · 四季</p>
+    </header>
+
+    <div class="main">
+
+        <!-- 🔍 搜索卡片（独立放置于最上方） -->
+        <div class="card">
+            <div class="card-label">🔍 搜索文化条目</div>
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input"
+                placeholder="搜索（如：立春、鼠、射手座、春节、春季）" autocomplete="off">
+                <button class="search-clear" id="searchClear">✕</button>
+            </div>
+        </div>
+
+        <!-- 📊 数据概览 + 📂 分类浏览（合并为一个卡片） -->
+        <div class="card">
+            <div class="card-label">📊 文化总览</div>
+            <!-- 统计面板 -->
+            <div class="stats-grid" id="statsPanel"></div>
+            <hr class="stats-divider">
+            <!-- 分类手风琴列表 -->
+            <div class="categories-stack" id="categoriesContainer"></div>
+            <div class="action-sub">点击卡片复制条目 · 长按收藏⭐常用文化知识</div>
+        </div>
+
+        <!-- 最近复制 -->
+        <div class="card">
+            <div class="card-label">🕐 最近复制</div>
+            <div id="recentGrid" class="recent-grid"></div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">🔍</span>
+                    <div class="instr-text"><strong>搜索过滤</strong>：输入关键词实时筛选全部文化条目，搜索时自动展开所有匹配分类</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📂</span>
+                    <div class="instr-text"><strong>互斥展开</strong>：点击分类标题展开该分类，同时自动收起其他分类；展开区域固定高度，超出可滚动查看</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">⭐</span>
+                    <div class="instr-text"><strong>收藏条目</strong>：长按卡片即可收藏，收藏分类自动置顶，方便快速查阅</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📋</span>
+                    <div class="instr-text"><strong>一键复制</strong>：点击任意卡片复制条目信息，最近10条记录自动保存</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔒</span>
+                    <div class="instr-text"><strong>隐私安全</strong>：所有操作及收藏数据本地完成，不联网上传任何数据</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        const categoriesData = [
+            {
+                id: "solar_terms",
+                name: "🌾 二十四节气（公历日期约数）",
+                emojis: [
+                    { e: "立春 (2月3-5日)", n: "春季开始，万物复苏" },
+                    { e: "雨水 (2月18-20日)", n: "降水增多，冰雪融化" },
+                    { e: "惊蛰 (3月5-7日)", n: "春雷乍动，昆虫苏醒" },
+                    { e: "春分 (3月20-22日)", n: "昼夜平分，春意正浓" },
+                    { e: "清明 (4月4-6日)", n: "气清景明，扫墓祭祖" },
+                    { e: "谷雨 (4月19-21日)", n: "雨生百谷，播种移苗" },
+                    { e: "立夏 (5月5-7日)", n: "夏季开始，作物旺盛" },
+                    { e: "小满 (5月20-22日)", n: "麦类灌浆，小得盈满" },
+                    { e: "芒种 (6月5-7日)", n: "麦收稻种，忙种时节" },
+                    { e: "夏至 (6月21-22日)", n: "白昼最长，阳气至极" },
+                    { e: "小暑 (7月6-8日)", n: "初伏前后，天气炎热" },
+                    { e: "大暑 (7月22-24日)", n: "一年最热，雷暴频繁" },
+                    { e: "立秋 (8月7-9日)", n: "秋季开始，暑去凉来" },
+                    { e: "处暑 (8月22-24日)", n: "暑气渐消，秋老虎" },
+                    { e: "白露 (9月7-9日)", n: "天气转凉，露凝而白" },
+                    { e: "秋分 (9月22-24日)", n: "昼夜平分，中秋前后" },
+                    { e: "寒露 (10月8-9日)", n: "露水寒冷，将凝结霜" },
+                    { e: "霜降 (10月23-24日)", n: "初霜出现，秋收冬藏" },
+                    { e: "立冬 (11月7-8日)", n: "冬季开始，万物收藏" },
+                    { e: "小雪 (11月22-23日)", n: "降雪初现，寒气袭人" },
+                    { e: "大雪 (12月6-8日)", n: "雪量增大，仲冬时节" },
+                    { e: "冬至 (12月21-23日)", n: "白昼最短，数九寒天" },
+                    { e: "小寒 (1月5-7日)", n: "天寒地冻，滴水成冰" },
+                    { e: "大寒 (1月20-21日)", n: "全年最冷，春节临近" }
+                ]
+            },
+            {
+                id: "zodiac_chinese",
+                name: "🐀 十二生肖（地支·年份）",
+                emojis: [
+                    { e: "鼠 (子)", n: "聪明机灵 · 2008, 2020, 2032" },
+                    { e: "牛 (丑)", n: "勤劳稳重 · 2009, 2021, 2033" },
+                    { e: "虎 (寅)", n: "勇敢威猛 · 2010, 2022, 2034" },
+                    { e: "兔 (卯)", n: "温柔敏捷 · 2011, 2023, 2035" },
+                    { e: "龙 (辰)", n: "尊贵活力 · 2012, 2024, 2036" },
+                    { e: "蛇 (巳)", n: "智慧神秘 · 2013, 2025, 2037" },
+                    { e: "马 (午)", n: "自由奔放 · 2014, 2026, 2038" },
+                    { e: "羊 (未)", n: "温顺善良 · 2015, 2027, 2039" },
+                    { e: "猴 (申)", n: "聪明活泼 · 2016, 2028, 2040" },
+                    { e: "鸡 (酉)", n: "勤奋守信 · 2017, 2029, 2041" },
+                    { e: "狗 (戌)", n: "忠诚可靠 · 2018, 2030, 2042" },
+                    { e: "猪 (亥)", n: "憨厚福气 · 2019, 2031, 2043" }
+                ]
+            },
+            {
+                id: "zodiac_western",
+                name: "♈ 十二星座（阳历日期）",
+                emojis: [
+                    { e: "摩羯座 (12.22-1.19)", n: "坚韧务实，有责任心" },
+                    { e: "水瓶座 (1.20-2.18)", n: "独立创新，博爱友善" },
+                    { e: "双鱼座 (2.19-3.20)", n: "浪漫温柔，富有想象力" },
+                    { e: "白羊座 (3.21-4.19)", n: "勇敢直率，充满活力" },
+                    { e: "金牛座 (4.20-5.20)", n: "稳重务实，享受生活" },
+                    { e: "双子座 (5.21-6.21)", n: "聪明善变，好奇心强" },
+                    { e: "巨蟹座 (6.22-7.22)", n: "温柔顾家，情感细腻" },
+                    { e: "狮子座 (7.23-8.22)", n: "自信慷慨，领导力强" },
+                    { e: "处女座 (8.23-9.22)", n: "细致完美，有条不紊" },
+                    { e: "天秤座 (9.23-10.23)", n: "优雅公正，善于交际" },
+                    { e: "天蝎座 (10.24-11.22)", n: "神秘敏锐，意志坚定" },
+                    { e: "射手座 (11.23-12.21)", n: "乐观自由，热爱冒险" }
+                ]
+            },
+            {
+                id: "trad_festivals",
+                name: "🏮 中国传统节日（主要）",
+                emojis: [
+                    { e: "春节 (农历正月初一)", n: "辞旧迎新，阖家团圆" },
+                    { e: "元宵节 (正月十五)", n: "赏灯猜谜，吃元宵" },
+                    { e: "龙抬头 (二月初二)", n: "春耕节，剃龙头" },
+                    { e: "上巳节 (三月初三)", n: "祓禊踏青，女儿节" },
+                    { e: "清明节 (4月4-6日)", n: "扫墓祭祖，踏青插柳" },
+                    { e: "端午节 (五月初五)", n: "赛龙舟，吃粽子" },
+                    { e: "七夕节 (七月初七)", n: "中国情人节，乞巧" },
+                    { e: "中元节 (七月十五)", n: "祭祖普渡，放河灯" },
+                    { e: "中秋节 (八月十五)", n: "赏月团圆，吃月饼" },
+                    { e: "重阳节 (九月初九)", n: "登高敬老，赏菊" },
+                    { e: "寒衣节 (十月初一)", n: "送寒衣，祭祖先" },
+                    { e: "冬至 (12月21-23日)", n: "冬至大如年，吃饺子" },
+                    { e: "腊八节 (腊月初八)", n: "喝腊八粥，祈福" },
+                    { e: "小年 (腊月廿三/廿四)", n: "祭灶神，扫尘" },
+                    { e: "除夕 (腊月最后一天)", n: "守岁迎新年" }
+                ]
+            },
+            {
+                id: "seasons",
+                name: "🍃 四季（北半球）",
+                emojis: [
+                    { e: "春季 (3月-5月)", n: "万物复苏，气温回暖" },
+                    { e: "夏季 (6月-8月)", n: "炎热多雨，生机勃勃" },
+                    { e: "秋季 (9月-11月)", n: "秋高气爽，硕果累累" },
+                    { e: "冬季 (12月-2月)", n: "寒冷干燥，白雪皑皑" }
+                ]
+            }
+        ];
+
+        // ── 状态管理 ─────────────────────────────────────────────
+        let currentFilterText = '';
+        // 默认收起所有分类
+        let currentExpandedId = null;
+        let favorites = JSON.parse(localStorage.getItem('cultureFavorites') || '[]');
+        let recentCopies = JSON.parse(localStorage.getItem('cultureRecent') || '[]');
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+        }
+
+        async function copyItem(name, desc) {
+            try {
+                await navigator.clipboard.writeText(name);
+                showToast('✅ 已复制 ' + name);
+                addRecent(name, desc);
+            } catch {
+                showToast('❌ 复制失败，请手动复制');
+            }
+        }
+
+        function isFav(itemName) {
+            return favorites.some(f => f.e === itemName);
+        }
+
+        function toggleFav(itemName, desc) {
+            if (isFav(itemName)) {
+                favorites = favorites.filter(f => f.e !== itemName);
+                showToast('💔 已取消收藏 ' + itemName);
+            } else {
+                favorites.unshift({ e: itemName, n: desc });
+                showToast('⭐ 已收藏 ' + itemName);
+            }
+            localStorage.setItem('cultureFavorites', JSON.stringify(favorites));
+            updateStats();
+            renderCategories();
+        }
+
+        function addRecent(itemName, desc) {
+            recentCopies = recentCopies.filter(r => r.e !== itemName);
+            recentCopies.unshift({ e: itemName, n: desc });
+            if (recentCopies.length > 10) recentCopies = recentCopies.slice(0, 10);
+            localStorage.setItem('cultureRecent', JSON.stringify(recentCopies));
+            renderRecent();
+        }
+
+        let longPressTimer = null;
+        function attachEvents(el, name, desc) {
+            el.addEventListener('click', e => {
+                e.stopPropagation();
+                copyItem(name, desc);
+            });
+            el.addEventListener('touchstart', () => {
+                longPressTimer = setTimeout(() => {
+                    longPressTimer = null;
+                    toggleFav(name, desc);
+                }, 600);
+            }, { passive: true });
+            el.addEventListener('touchend', () => clearTimeout(longPressTimer));
+            el.addEventListener('touchmove', () => clearTimeout(longPressTimer), { passive: true });
+            el.addEventListener('contextmenu', e => {
+                e.preventDefault();
+                toggleFav(name, desc);
+            });
+        }
+
+        function updateStats() {
+            const total = categoriesData.reduce((s, c) => s + c.emojis.length, 0);
+            document.getElementById('statsPanel').innerHTML = `
+            <div class="stat-item">
+                <div class="stat-number">${total}</div>
+                <div class="stat-label">📜 文化条目总数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${categoriesData.length}</div>
+                <div class="stat-label">📂 分类数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${favorites.length}</div>
+                <div class="stat-label">⭐ 已收藏</div>
+            </div>`;
+        }
+
+        function updateSearchClear() {
+            document.getElementById('searchClear').classList.toggle('visible', currentFilterText.length > 0);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', e => {
+            currentFilterText = e.target.value;
+            updateSearchClear();
+            if (currentFilterText) currentExpandedId = null;
+            renderCategories();
+        });
+
+        document.getElementById('searchClear').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            currentFilterText = '';
+            currentExpandedId = null;
+            updateSearchClear();
+            renderCategories();
+        });
+
+        function buildItemGrid(items) {
+            return items.map(item => {
+                const favMark = isFav(item.e) ? '<span class="emoji-fav-dot">⭐</span>' : '';
+                const favClass = isFav(item.e) ? ' fav-item' : '';
+                return `<div class="emoji-item${favClass}" data-name="${escapeHtml(item.e)}" data-desc="${escapeHtml(item.n)}">
+            ${favMark}
+            <div class="emoji-symbol">${escapeHtml(item.e)}</div>
+            <div class="emoji-name">${escapeHtml(item.n)}</div>
+          </div>`;
+            }).join('');
+        }
+
+        function renderCategories() {
+            const filter = currentFilterText.trim().toLowerCase();
+            const container = document.getElementById('categoriesContainer');
+
+            let allCats = [];
+            if (favorites.length && !filter) {
+                allCats.push({ id: '__fav__', name: '⭐ 我的收藏', emojis: favorites, actualCount: favorites.length });
+            }
+
+            categoriesData.forEach(cat => {
+                let items = cat.emojis;
+                if (filter) {
+                    items = cat.emojis.filter(item =>
+                        item.n.toLowerCase().includes(filter) ||
+                        item.e.toLowerCase().includes(filter) ||
+                        cat.name.toLowerCase().includes(filter)
+                    );
+                }
+                if (items.length) allCats.push({ ...cat, emojis: items, actualCount: cat.emojis.length });
+            });
+
+            if (!allCats.length) {
+                container.innerHTML = `
+            <div class="no-result">
+              😢 没有找到匹配的文化条目<br>
+              <button class="reset-search-btn" id="resetSearchBtn">清空搜索</button>
+            </div>`;
+                document.getElementById('resetSearchBtn')?.addEventListener('click', () => {
+                    document.getElementById('searchInput').value = '';
+                    currentFilterText = '';
+                    currentExpandedId = null;
+                    updateSearchClear();
+                    renderCategories();
+                });
+                return;
+            }
+
+            let activeId = filter ? null : currentExpandedId;
+            if (!filter && activeId !== null) {
+                const activeExists = allCats.some(c => c.id === activeId);
+                if (!activeExists) {
+                    activeId = allCats[0]?.id;
+                    currentExpandedId = activeId;
+                }
+            }
+
+            let html = '';
+            for (const cat of allCats) {
+                const expanded = filter ? true : (activeId === cat.id);
+                const countLabel = filter ? `${cat.emojis.length}/${cat.actualCount}` : cat.emojis.length;
+                html += `
+            <div class="category-item ${expanded ? 'expanded' : ''}" data-category-id="${cat.id}">
+              <div class="category-header">
+                <div class="category-title">
+                  <span class="toggle-icon" style="transform:${expanded ? 'rotate(180deg)' : 'rotate(0deg)'}">▼</span>
+                  <span>${cat.name}</span>
+                </div>
+                <span class="category-count">${countLabel}</span>
+              </div>
+              <div class="emojis-container">
+                <div class="emoji-grid">
+                  ${buildItemGrid(cat.emojis)}
+                </div>
+              </div>
+            </div>`;
+            }
+            container.innerHTML = html;
+
+            // 手风琴互斥点击
+            container.querySelectorAll('.category-item').forEach(item => {
+                item.querySelector('.category-header')?.addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (filter) return;
+                    const cid = item.dataset.categoryId;
+                    const isExpanded = item.classList.contains('expanded');
+                    container.querySelectorAll('.category-item').forEach(other => {
+                        other.classList.remove('expanded');
+                        const arr = other.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(0deg)';
+                    });
+                    if (!isExpanded) {
+                        item.classList.add('expanded');
+                        const arr = item.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(180deg)';
+                        currentExpandedId = cid;
+                    } else {
+                        currentExpandedId = null;
+                    }
+                });
+            });
+
+            // 绑定卡片事件
+            container.querySelectorAll('.emoji-item').forEach(el => {
+                const name = el.dataset.name;
+                const desc = el.dataset.desc;
+                attachEvents(el, name, desc);
+            });
+        }
+
+        function renderRecent() {
+            const el = document.getElementById('recentGrid');
+            if (!recentCopies.length) {
+                el.innerHTML = '<div class="recent-empty">暂无复制记录</div>';
+                return;
+            }
+            el.innerHTML = recentCopies.map(r => `
+            <div class="recent-emoji-item" data-name="${escapeHtml(r.e)}" data-desc="${escapeHtml(r.n)}">
+                <div class="emoji-symbol">${escapeHtml(r.e)}</div>
+                <div class="emoji-name">${escapeHtml(r.n)}</div>
+            </div>`).join('');
+            el.querySelectorAll('.recent-emoji-item').forEach(el => {
+                const name = el.dataset.name;
+                const desc = el.dataset.desc;
+                attachEvents(el, name, desc);
+            });
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // 初始化
+        updateStats();
+        renderCategories();
+        renderRecent();
+    </script>
+</body>
+</html>

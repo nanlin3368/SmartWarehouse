@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 转图片</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        /* ── 主布局 ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ── 输入区 ── */
+        .b64-textarea {
+            width: 100%;
+            min-height: 160px;
+            padding: 14px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--border-radius-xs);
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            font-family: 'SF Mono', 'Menlo', monospace;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            outline: none;
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.5;
+        }
+
+        .b64-textarea:focus {
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .b64-textarea::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* ── 预览区 ── */
+        .preview-box {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 16px;
+            margin-top: 14px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .preview-placeholder {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 260px;
+            border-radius: var(--border-radius-xs);
+            box-shadow: 4px 4px 12px var(--shadow-dark), -2px -2px 8px var(--shadow-light);
+        }
+
+        /* ── 文件信息 ── */
+        .file-info {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .file-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            font-size: 0.72rem;
+        }
+
+        .file-info-label {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .file-info-value {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-family: 'SF Mono', 'Menlo', monospace;
+        }
+
+        /* ── 状态栏 ── */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            margin-top: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-height: 42px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+
+        .status-dot.ready {
+            background: var(--text-muted);
+        }
+
+        .status-dot.ok {
+            background: var(--success);
+            animation: dotPulse 2s infinite;
+        }
+
+        .status-dot.loading {
+            background: var(--warning);
+            animation: dotPulse 1s infinite;
+        }
+
+        .status-dot.error {
+            background: var(--danger);
+        }
+
+        @keyframes dotPulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ── 按钮行 ── */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 0;
+            padding: 12px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(102, 126, 234, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.primary:hover {
+            box-shadow: 5px 5px 14px rgba(102, 126, 234, 0.45);
+        }
+
+        .btn.primary:active {
+            box-shadow: inset 3px 3px 8px rgba(50, 50, 150, 0.4), inset -2px -2px 6px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(78, 205, 196, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.danger {
+            color: var(--danger);
+        }
+
+        /* ── 使用说明列表 ── */
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .instr-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .instr-text strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* ── 响应式 ── */
+        @media (max-width: 420px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            .btn {
+                font-size: 0.74rem;
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Base64 转图片</h1>
+        <p class="subtitle">将 Base64 编码字符串解码为图片 · 实时预览 · 一键下载</p>
+    </header>
+
+    <div class="main">
+
+        <!-- 主功能卡片 -->
+        <div class="card">
+            <div class="card-label">📄 粘贴 Base64 编码</div>
+
+            <textarea
+            class="b64-textarea"
+            id="base64Input"
+            placeholder="在此粘贴 Base64 编码字符串…&#10;&#10;支持以下格式：&#10;• data:image/png;base64,iVBORw0KGgo…（带前缀）&#10;• iVBORw0KGgo…（纯 Base64 字符串）&#10;• 也支持 JPEG、GIF、WebP、BMP、SVG 等图片格式"
+        ></textarea>
+
+        <div class="preview-box" id="base64Preview">
+            <span class="preview-placeholder">🖼️ 解码预览区</span>
+        </div>
+
+        <div class="status-bar" id="decodeStatus">
+            <div class="status-dot ready" id="decodeDot"></div>
+            <span id="decodeStatusText">就绪 — 请粘贴 Base64 编码</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn primary" id="convertFromBase64" disabled>🔄 解码为图片</button>
+            <button class="btn success" id="downloadImage" disabled>📥 下载图片</button>
+            <button class="btn danger" id="clearBase64">🗑️ 清空</button>
+        </div>
+    </div>
+
+    <!-- 使用说明 -->
+    <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+            <div class="instr-item">
+                <span class="instr-icon">📥</span>
+                <div class="instr-text"><strong>粘贴编码</strong>：将 Base64 编码字符串粘贴到上方输入框，支持带 <code>data:image/…;base64,</code> 前缀或纯 Base64 字符串</div>
+            </div>
+            <div class="instr-item">
+                <span class="instr-icon">🔄</span>
+                <div class="instr-text"><strong>点击解码</strong>：点击「解码为图片」按钮，工具将自动识别图片格式并显示预览</div>
+            </div>
+            <div class="instr-item">
+                <span class="instr-icon">📐</span>
+                <div class="instr-text"><strong>格式支持</strong>：支持 PNG、JPEG、GIF、WebP、BMP、SVG 等常见图片格式，自动检测编码类型</div>
+            </div>
+            <div class="instr-item">
+                <span class="instr-icon">📋</span>
+                <div class="instr-text"><strong>一键下载</strong>：解码成功后，点击「下载图片」即可将图片保存到本地设备</div>
+            </div>
+            <div class="instr-item">
+                <span class="instr-icon">🔒</span>
+                <div class="instr-text"><strong>隐私安全</strong>：所有处理完全在浏览器本地完成，不会将任何数据上传到服务器，无需外部依赖</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        /* ── DOM 元素引用 ── */
+        const base64Input = document.getElementById('base64Input');
+        const base64Preview = document.getElementById('base64Preview');
+        const convertFromBase64Btn = document.getElementById('convertFromBase64');
+        const downloadImageBtn = document.getElementById('downloadImage');
+        const clearBase64Btn = document.getElementById('clearBase64');
+        const decodeDot = document.getElementById('decodeDot');
+        const decodeStatusText = document.getElementById('decodeStatusText');
+
+        /* ── 状态变量 ── */
+        let decodedImageBlob = null;
+
+        /* ── 状态更新函数 ── */
+        function setDecodeStatus(msg, type) {
+            type = type || 'ready';
+            decodeStatusText.textContent = msg;
+            decodeDot.className = 'status-dot ' + type;
+        }
+
+        /* ── Base64 类型检测 ── */
+        function detectType(b64) {
+            var sigs = {
+                '/9j/': 'jpeg',
+                'iVBORw0KGgo': 'png',
+                'R0lGODlh': 'gif',
+                'UklGR': 'webp',
+                'Qk': 'bmp',
+                'PHN2Zy': 'svg+xml'
+            };
+            var keys = Object.keys(sigs);
+            for (var i = 0; i < keys.length; i++) {
+                if (b64.indexOf(keys[i]) === 0) {
+                    return sigs[keys[i]];
+                }
+            }
+            return 'png';
+        }
+
+        /* ── 文件大小格式化 ── */
+        function formatSize(bytes) {
+            if (!bytes) {
+                return '0 B';
+            }
+            var k = 1024;
+            var units = ['B', 'KB', 'MB', 'GB'];
+            var i = Math.floor(Math.log(bytes) / Math.log(k));
+            if (i >= units.length) {
+                i = units.length - 1;
+            }
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + units[i];
+        }
+
+        /* ── 显示预览 ── */
+        function showBase64Preview(src, img) {
+            var previewImg = document.createElement('img');
+            previewImg.src = src;
+            previewImg.className = 'preview-image';
+            previewImg.alt = '解码预览';
+
+            var info = document.createElement('div');
+            info.className = 'file-info';
+            info.innerHTML =
+                '<div class="file-info-item">' +
+                '<span class="file-info-label">图片尺寸</span>' +
+                '<span class="file-info-value">' + img.naturalWidth + ' × ' + img.naturalHeight + '</span>' +
+                '</div>' +
+                '<div class="file-info-item">' +
+                '<span class="file-info-label">Base64 长度</span>' +
+                '<span class="file-info-value">' + base64Input.value.length.toLocaleString() + ' 字符</span>' +
+                '</div>';
+
+            base64Preview.innerHTML = '';
+            base64Preview.appendChild(previewImg);
+            base64Preview.appendChild(info);
+        }
+
+        /* ── 输入框监听：控制解码按钮状态 ── */
+        base64Input.addEventListener('input', function() {
+            var hasContent = base64Input.value.trim().length > 0;
+            convertFromBase64Btn.disabled = !hasContent;
+            if (!hasContent) {
+                setDecodeStatus('就绪 — 请粘贴 Base64 编码', 'ready');
+            } else {
+                setDecodeStatus('编码已输入，点击「解码为图片」开始转换', 'ready');
+            }
+        });
+
+        /* ── 解码按钮点击 ── */
+        convertFromBase64Btn.addEventListener('click', function() {
+            var raw = base64Input.value.trim();
+            if (!raw) {
+                setDecodeStatus('请先粘贴 Base64 编码', 'error');
+                return;
+            }
+
+            setDecodeStatus('正在解码 Base64…', 'loading');
+            convertFromBase64Btn.disabled = true;
+            downloadImageBtn.disabled = true;
+
+            var src = raw;
+            if (src.indexOf('data:') !== 0) {
+                var detectedType = detectType(src);
+                src = 'data:image/' + detectedType + ';base64,' + src;
+            }
+
+            var img = new Image();
+            img.onload = function() {
+                showBase64Preview(src, img);
+                fetch(src)
+                    .then(function(response) {
+                        return response.blob();
+                    })
+                    .then(function(blob) {
+                        decodedImageBlob = blob;
+                        downloadImageBtn.disabled = false;
+                        setDecodeStatus('解码成功！图片已生成，可点击下载', 'ok');
+                        convertFromBase64Btn.disabled = false;
+                    })
+                    .catch(function() {
+                        setDecodeStatus('生成下载文件失败，请检查编码', 'error');
+                        convertFromBase64Btn.disabled = false;
+                    });
+            };
+            img.onerror = function() {
+                setDecodeStatus('Base64 编码无效或图片格式不支持', 'error');
+                convertFromBase64Btn.disabled = false;
+                downloadImageBtn.disabled = true;
+            };
+            img.src = src;
+        });
+
+        /* ── 下载图片按钮 ── */
+        downloadImageBtn.addEventListener('click', function() {
+            if (!decodedImageBlob) {
+                setDecodeStatus('没有可下载的图片，请先解码', 'error');
+                return;
+            }
+            var now = new Date();
+            var ts = now.getFullYear() +
+                '-' + String(now.getMonth() + 1).padStart(2, '0') +
+                '-' + String(now.getDate()).padStart(2, '0') +
+                '-' + String(now.getHours()).padStart(2, '0') +
+                '-' + String(now.getMinutes()).padStart(2, '0') +
+                '-' + String(now.getSeconds()).padStart(2, '0');
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(decodedImageBlob);
+            a.download = 'decoded_' + ts + '.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(function() {
+                URL.revokeObjectURL(a.href);
+            }, 100);
+            setDecodeStatus('图片下载中… 📥', 'ok');
+        });
+
+        /* ── 清空按钮 ── */
+        clearBase64Btn.addEventListener('click', function() {
+            decodedImageBlob = null;
+            base64Input.value = '';
+            base64Preview.innerHTML = '<span class="preview-placeholder">🖼️ 解码预览区</span>';
+            convertFromBase64Btn.disabled = true;
+            downloadImageBtn.disabled = true;
+            setDecodeStatus('就绪 — 请粘贴 Base64 编码', 'ready');
+        });
+
+        /* ── 初始化 ── */
+        setDecodeStatus('就绪 — 请粘贴 Base64 编码', 'ready');
+    })();
+</script>
+</body>
+</html>

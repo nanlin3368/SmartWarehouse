@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>网页源码获取</title>
+  <style>
+    :root {
+      --bg-primary: #e0e5ec;
+      --shadow-light: #ffffff;
+      --shadow-dark: #a3b1c6;
+      --text-primary: #2c3e50;
+      --text-secondary: #5a6c7d;
+      --text-muted: #8b9dc3;
+      --accent-primary: #667eea;
+      --accent-secondary: #764ba2;
+      --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --success: #4ecdc4;
+      --danger: #fc5c65;
+      --warning: #f7b731;
+      --border-radius: 20px;
+      --border-radius-sm: 14px;
+      --border-radius-xs: 10px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: pageLoad 0.8s ease;
+    }
+
+    @keyframes pageLoad {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      max-width: 680px;
+      text-align: center;
+      padding: 28px 24px 22px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      animation: headerSlide 0.8s ease 0.2s both;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      animation: headerShine 4s ease-in-out infinite;
+    }
+
+    @keyframes headerSlide {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes headerShine {
+      0%   { left: -100%; }
+      50%  { left: 100%; }
+      100% { left: 100%; }
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      animation: titleGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      from { filter: brightness(1); }
+      to   { filter: brightness(1.15); }
+    }
+
+    .subtitle {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* ── 主内容 ── */
+    .main {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: contentSlide 0.8s ease 0.4s both;
+    }
+
+    @keyframes contentSlide {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── 通用卡片 ── */
+    .card {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+      padding: 22px 20px;
+    }
+
+    .card-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── 输入区 ── */
+    .url-input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .url-input {
+      width: 100%;
+      padding: 13px 42px 13px 16px;
+      border: none;
+      border-radius: var(--border-radius-xs);
+      background: var(--bg-primary);
+      box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .url-input::placeholder { color: var(--text-muted); }
+
+    .clear-input-btn {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px;
+      transition: var(--transition);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clear-input-btn:active { transform: scale(0.9); color: var(--danger); }
+
+    /* 获取按钮：全宽大按钮 */
+    .fetch-btn {
+      width: 100%;
+      padding: 14px 24px;
+      border: none;
+      border-radius: var(--border-radius-xs);
+      background: var(--accent-gradient);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      box-shadow: 5px 5px 10px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
+      margin-bottom: 14px;
+    }
+
+    .fetch-btn:active {
+      transform: scale(0.98);
+      box-shadow: inset 3px 3px 6px rgba(0,0,0,0.2);
+    }
+
+    .fetch-btn.loading {
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    .proxy-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .proxy-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent-primary);
+      cursor: pointer;
+    }
+
+    .proxy-row label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .proxy-row .proxy-note {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    #statusMsg {
+      font-size: 0.72rem;
+      color: var(--warning);
+      margin-top: 10px;
+      min-height: 1.2em;
+      font-weight: 600;
+    }
+
+    /* ── 源码显示区 ── */
+    .code-info-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .code-info-text {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* 搜索高亮工具栏 */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 8px 14px;
+      border: none;
+      border-radius: var(--border-radius-xs);
+      background: var(--bg-primary);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      font-size: 0.78rem;
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .search-input::placeholder { color: var(--text-muted); }
+
+    .search-count {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .search-nav-btn {
+      padding: 6px 10px;
+      border: none;
+      border-radius: var(--border-radius-xs);
+      background: var(--bg-primary);
+      box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+      font-size: 0.75rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: var(--transition);
+    }
+
+    .search-nav-btn:active {
+      box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+    }
+
+    /* 代码容器 */
+    .code-container {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      padding: 14px;
+      min-height: 200px;
+      max-height: 420px;
+      overflow: auto;
+      margin-bottom: 16px;
+    }
+
+    pre {
+      font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .empty-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      gap: 10px;
+      text-align: center;
+    }
+
+    .empty-placeholder .placeholder-icon {
+      font-size: 2.5rem;
+      opacity: 0.5;
+    }
+
+    /* 高亮 */
+    mark.hl {
+      background: rgba(247, 183, 49, 0.5);
+      color: inherit;
+      border-radius: 2px;
+    }
+
+    mark.hl-current {
+      background: rgba(102, 126, 234, 0.6);
+      color: inherit;
+      border-radius: 2px;
+    }
+
+    /* ── 底部操作按钮（2×2网格，参考图二） ── */
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 10px;
+      border: none;
+      border-radius: var(--border-radius-sm);
+      background: var(--bg-primary);
+      box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .action-btn:active {
+      transform: scale(0.96);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+    }
+
+    .action-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .action-btn .btn-icon { font-size: 1.15rem; }
+
+    /* 各按钮独立配色 */
+    #clearAllBtn  { color: #fc5c65; }
+    #clearAllBtn  .btn-icon { filter: none; }
+
+    #extractLinksBtn { color: #667eea; }
+
+    #copyCodeBtn  { color: #4ecdc4; }
+
+    #downloadCodeBtn { color: #f7b731; }
+
+    /* ── 链接提取弹窗 ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 100;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 680px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius) var(--border-radius) var(--border-radius-xs) var(--border-radius-xs);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+      padding: 22px 20px;
+      max-height: 70vh;
+      display: flex;
+      flex-direction: column;
+      animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0);   opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .modal-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: var(--bg-primary);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .modal-close:active { transform: scale(0.9); }
+
+    .modal-link-list {
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .modal-link-item {
+      padding: 10px 14px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      font-size: 0.72rem;
+      color: var(--accent-primary);
+      word-break: break-all;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .modal-link-item:active { opacity: 0.7; }
+
+    .modal-footer {
+      margin-top: 14px;
+      flex-shrink: 0;
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-action-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: var(--border-radius-xs);
+      background: var(--bg-primary);
+      box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .modal-action-btn.primary {
+      background: var(--accent-gradient);
+      color: white;
+      box-shadow: 4px 4px 8px var(--shadow-dark);
+    }
+
+    .modal-action-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* ── 使用说明 ── */
+    .instr-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .instr-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+    }
+
+    .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    .instr-text {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+    /* ── 进度条 ── */
+    .progress-wrap {
+      display: none;
+      height: 3px;
+      background: var(--bg-primary);
+      border-radius: 3px;
+      box-shadow: inset 1px 1px 3px var(--shadow-dark);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: var(--accent-gradient);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    @media (max-width: 550px) {
+      .card { padding: 18px 16px; }
+      h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>网页源码获取</h1>
+  <p class="subtitle">查看 · 搜索 · 复制 · 下载 · 提取链接</p>
+</header>
+
+<div class="main">
+
+  <!-- ① 输入卡片 -->
+  <div class="card">
+    <div class="card-label">🌐 目标网址</div>
+    <div class="url-input-group">
+      <input type="url" id="urlInput" class="url-input" placeholder="https://example.com" autocomplete="url" />
+      <button class="clear-input-btn" id="clearUrlBtn" title="清空输入框">✖</button>
+    </div>
+    <button id="fetchBtn" class="fetch-btn">📥 获取源码</button>
+    <div class="proxy-row">
+      <input type="checkbox" id="useProxy">
+      <label for="useProxy">使用 CORS 代理（解决跨域问题）</label>
+      <span class="proxy-note">基于 allorigins</span>
+    </div>
+    <div id="statusMsg"></div>
+  </div>
+
+  <!-- ② 源码展示卡片 -->
+  <div class="card">
+    <div class="card-label">📄 网页源代码</div>
+
+    <!-- 信息栏 -->
+    <div class="code-info-bar">
+      <span class="code-info-text" id="infoLabel">等待获取</span>
+    </div>
+
+    <!-- 搜索栏（默认隐藏，获取成功后显示） -->
+    <div class="search-bar" id="searchBar" style="display:none;">
+      <input type="text" class="search-input" id="searchInput" placeholder="🔍 搜索关键词…" />
+      <span class="search-count" id="searchCount"></span>
+      <button class="search-nav-btn" id="prevMatchBtn" title="上一个">▲</button>
+      <button class="search-nav-btn" id="nextMatchBtn" title="下一个">▼</button>
+    </div>
+
+    <!-- 进度条 -->
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- 代码显示 -->
+    <div class="code-container" id="codeContainer">
+      <div class="empty-placeholder">
+        <span class="placeholder-icon">📋</span>
+        <span>输入网址后点击"获取源码"</span>
+      </div>
+    </div>
+
+    <!-- 底部操作按钮 2×2 网格（对应图二布局） -->
+    <div class="action-grid">
+      <button class="action-btn" id="clearAllBtn">
+        <span class="btn-icon">🗑️</span> 清空全部
+      </button>
+      <button class="action-btn" id="extractLinksBtn">
+        <span class="btn-icon">🔗</span> 提取链接
+      </button>
+      <button class="action-btn" id="copyCodeBtn">
+        <span class="btn-icon">📋</span> 复制源码
+      </button>
+      <button class="action-btn" id="downloadCodeBtn">
+        <span class="btn-icon">💾</span> 下载文件
+      </button>
+    </div>
+  </div>
+
+  <!-- ③ 使用说明卡片 -->
+  <div class="card">
+    <div class="card-label">📖 使用说明</div>
+    <div class="instr-list">
+      <div class="instr-item">
+        <span class="instr-icon">🔗</span>
+        <div class="instr-text"><strong>输入网址</strong>：完整URL（含 http:// 或 https://），按 Enter 或点击按钮获取。</div>
+      </div>
+      <div class="instr-item">
+        <span class="instr-icon">🔄</span>
+        <div class="instr-text"><strong>CORS代理</strong>：默认关闭，若遇到跨域错误可手动开启（基于 allorigins）。</div>
+      </div>
+      <div class="instr-item">
+        <span class="instr-icon">🔍</span>
+        <div class="instr-text"><strong>关键词搜索</strong>：获取源码后可在源码内搜索关键词，支持上下导航高亮。</div>
+      </div>
+      <div class="instr-item">
+        <span class="instr-icon">🗑️</span>
+        <div class="instr-text"><strong>清空全部</strong>：一键清空网址和源码显示区域。</div>
+      </div>
+      <div class="instr-item">
+        <span class="instr-icon">🔗</span>
+        <div class="instr-text"><strong>提取链接</strong>：从已获取的源码中提取所有超链接，支持一键复制全部链接。</div>
+      </div>
+      <div class="instr-item">
+        <span class="instr-icon">📋</span>
+        <div class="instr-text"><strong>复制源码</strong>：一键复制全部源代码到剪贴板。</div>
+      </div>
+      <div class="instr-item">
+        <span class="instr-icon">💾</span>
+        <div class="instr-text"><strong>下载文件</strong>：将源码保存为以目标域名命名的 .html 文件。</div>
+      </div>
+      <div class="instr-item">
+        <span class="instr-icon">🔒</span>
+        <div class="instr-text"><strong>数据安全</strong>：所有处理在浏览器本地完成，不收集任何信息。</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 提取链接弹窗 -->
+<div class="modal-overlay" id="linksModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">提取到的链接</span>
+      <button class="modal-close" id="closeModal">✕</button>
+    </div>
+    <div class="modal-link-list" id="linkList"></div>
+    <div class="modal-footer">
+      <button class="modal-action-btn" id="copyAllLinksBtn">📋 复制全部链接</button>
+      <button class="modal-action-btn primary" id="closeModalBtn">完成</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  /* ── 元素引用 ── */
+  const urlInput        = document.getElementById('urlInput');
+  const clearUrlBtn     = document.getElementById('clearUrlBtn');
+  const fetchBtn        = document.getElementById('fetchBtn');
+  const useProxyCheck   = document.getElementById('useProxy');
+  const statusMsgDiv    = document.getElementById('statusMsg');
+  const infoLabel       = document.getElementById('infoLabel');
+  const codeContainer   = document.getElementById('codeContainer');
+  const progressWrap    = document.getElementById('progressWrap');
+  const progressFill    = document.getElementById('progressFill');
+  const searchBar       = document.getElementById('searchBar');
+  const searchInput     = document.getElementById('searchInput');
+  const searchCount     = document.getElementById('searchCount');
+  const prevMatchBtn    = document.getElementById('prevMatchBtn');
+  const nextMatchBtn    = document.getElementById('nextMatchBtn');
+  const clearAllBtn     = document.getElementById('clearAllBtn');
+  const extractLinksBtn = document.getElementById('extractLinksBtn');
+  const copyCodeBtn     = document.getElementById('copyCodeBtn');
+  const downloadCodeBtn = document.getElementById('downloadCodeBtn');
+  const linksModal      = document.getElementById('linksModal');
+  const closeModal      = document.getElementById('closeModal');
+  const closeModalBtn   = document.getElementById('closeModalBtn');
+  const linkList        = document.getElementById('linkList');
+  const modalTitle      = document.getElementById('modalTitle');
+  const copyAllLinksBtn = document.getElementById('copyAllLinksBtn');
+
+  let currentSourceCode  = '';
+  let currentUrl         = '';
+  let searchMatches      = [];
+  let currentMatchIndex  = -1;
+  let extractedLinks     = [];
+
+  /* ── 状态提示 ── */
+  let statusTimer = null;
+  function showStatus(msg, isError = false) {
+    statusMsgDiv.textContent = msg;
+    statusMsgDiv.style.color = isError ? 'var(--danger)' : 'var(--success)';
+    clearTimeout(statusTimer);
+    statusTimer = setTimeout(() => { statusMsgDiv.textContent = ''; }, 4000);
+  }
+
+  /* ── 进度条 ── */
+  function showProgress() {
+    progressWrap.style.display = 'block';
+    progressFill.style.width = '0';
+    let w = 0;
+    const iv = setInterval(() => {
+      w = Math.min(w + Math.random() * 15, 88);
+      progressFill.style.width = w + '%';
+    }, 200);
+    return iv;
+  }
+
+  function finishProgress(iv) {
+    clearInterval(iv);
+    progressFill.style.width = '100%';
+    setTimeout(() => {
+      progressWrap.style.display = 'none';
+      progressFill.style.width = '0';
+    }, 600);
+  }
+
+  /* ── HTML 转义 ── */
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* ── 渲染源码（支持搜索高亮）── */
+  function renderSourceCode(keyword) {
+    if (!currentSourceCode) return;
+    const escaped = escapeHtml(currentSourceCode);
+    if (!keyword || keyword.trim() === '') {
+      codeContainer.innerHTML = `<pre>${escaped}</pre>`;
+      searchMatches = [];
+      currentMatchIndex = -1;
+      searchCount.textContent = '';
+      return;
+    }
+    // 不区分大小写高亮
+    const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${safeKeyword})`, 'gi');
+    let matchIdx = 0;
+    const highlighted = escaped.replace(regex, (m) => {
+      const cls = matchIdx === currentMatchIndex ? 'hl hl-current' : 'hl';
+      matchIdx++;
+      return `<mark class="${cls}">${m}</mark>`;
+    });
+    searchMatches = [...escaped.matchAll(regex)];
+    searchCount.textContent = searchMatches.length > 0
+      ? `${Math.min(currentMatchIndex + 1, searchMatches.length)} / ${searchMatches.length}`
+      : '无匹配';
+    codeContainer.innerHTML = `<pre>${highlighted}</pre>`;
+    // 滚动到当前高亮
+    const current = codeContainer.querySelector('mark.hl-current');
+    if (current) current.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+
+  /* ── 搜索逻辑 ── */
+  let searchDebounce = null;
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchDebounce);
+    currentMatchIndex = 0;
+    searchDebounce = setTimeout(() => {
+      countMatches();
+      renderSourceCode(searchInput.value);
+    }, 200);
+  });
+
+  function countMatches() {
+    if (!searchInput.value.trim()) {
+      searchMatches = [];
+      currentMatchIndex = -1;
+      searchCount.textContent = '';
+      return;
+    }
+    const safeKeyword = searchInput.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(safeKeyword, 'gi');
+    searchMatches = [...escapeHtml(currentSourceCode).matchAll(regex)];
+    if (currentMatchIndex < 0) currentMatchIndex = 0;
+  }
+
+  prevMatchBtn.addEventListener('click', () => {
+    if (!searchMatches.length) return;
+    currentMatchIndex = (currentMatchIndex - 1 + searchMatches.length) % searchMatches.length;
+    renderSourceCode(searchInput.value);
+  });
+
+  nextMatchBtn.addEventListener('click', () => {
+    if (!searchMatches.length) return;
+    currentMatchIndex = (currentMatchIndex + 1) % searchMatches.length;
+    renderSourceCode(searchInput.value);
+  });
+
+  /* ── 清空输入 ── */
+  clearUrlBtn.addEventListener('click', () => {
+    urlInput.value = '';
+    urlInput.focus();
+  });
+
+  /* ── 清空全部 ── */
+  clearAllBtn.addEventListener('click', () => {
+    urlInput.value = '';
+    currentSourceCode = '';
+    currentUrl = '';
+    searchInput.value = '';
+    searchBar.style.display = 'none';
+    codeContainer.innerHTML = `
+      <div class="empty-placeholder">
+        <span class="placeholder-icon">📋</span>
+        <span>输入网址后点击"获取源码"</span>
+      </div>`;
+    infoLabel.textContent = '等待获取';
+    showStatus('✅ 已清空', false);
+  });
+
+  /* ── 获取源码 ── */
+  async function fetchSourceCode() {
+    let url = urlInput.value.trim();
+    if (!url) { showStatus('❗ 请输入网址', true); return; }
+    if (!/^https?:\/\//i.test(url)) {
+      url = 'https://' + url;
+      urlInput.value = url;
+    }
+    currentUrl = url;
+    const useProxy = useProxyCheck.checked;
+    const requestUrl = useProxy
+      ? `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+      : url;
+
+    fetchBtn.disabled = true;
+    fetchBtn.classList.add('loading');
+    fetchBtn.textContent = '⏳ 获取中…';
+    codeContainer.innerHTML = `
+      <div class="empty-placeholder">
+        <span class="placeholder-icon">⏳</span>
+        <span>正在获取…</span>
+      </div>`;
+    infoLabel.textContent = '请求中…';
+    searchBar.style.display = 'none';
+
+    const iv = showProgress();
+
+    try {
+      const resp = await fetch(requestUrl);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
+      const html = await resp.text();
+      if (!html || html.length < 10) throw new Error('响应内容为空或过短');
+
+      currentSourceCode = html;
+      const sizeKB = (html.length / 1024).toFixed(2);
+      const lineCount = html.split('\n').length;
+      infoLabel.textContent = `${sizeKB} KB · ${html.length.toLocaleString()} 字符 · ${lineCount.toLocaleString()} 行`;
+
+      searchInput.value = '';
+      currentMatchIndex = -1;
+      searchMatches = [];
+      renderSourceCode('');
+      searchBar.style.display = 'flex';
+      finishProgress(iv);
+      showStatus('✅ 获取成功', false);
+    } catch (err) {
+      finishProgress(iv);
+      currentSourceCode = '';
+      codeContainer.innerHTML = `
+        <div class="empty-placeholder">
+          <span class="placeholder-icon">❌</span>
+          <span>获取失败：${escapeHtml(err.message)}<br><small>请检查网址，或尝试开启 CORS 代理</small></span>
+        </div>`;
+      infoLabel.textContent = '获取失败';
+      showStatus('❌ ' + err.message, true);
+    } finally {
+      fetchBtn.disabled = false;
+      fetchBtn.classList.remove('loading');
+      fetchBtn.textContent = '📥 获取源码';
+    }
+  }
+
+  fetchBtn.addEventListener('click', fetchSourceCode);
+  urlInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') fetchSourceCode(); });
+
+  /* ── 复制源码 ── */
+  copyCodeBtn.addEventListener('click', async () => {
+    if (!currentSourceCode) { showStatus('❗ 请先获取源码', true); return; }
+    try {
+      await navigator.clipboard.writeText(currentSourceCode);
+      const orig = copyCodeBtn.innerHTML;
+      copyCodeBtn.innerHTML = '<span class="btn-icon">✅</span> 已复制';
+      setTimeout(() => { copyCodeBtn.innerHTML = orig; }, 1500);
+    } catch {
+      showStatus('❌ 复制失败，请手动选择', true);
+    }
+  });
+
+  /* ── 下载文件 ── */
+  downloadCodeBtn.addEventListener('click', () => {
+    if (!currentSourceCode) { showStatus('❗ 请先获取源码', true); return; }
+    const blob = new Blob([currentSourceCode], { type: 'text/html;charset=utf-8' });
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    let filename = 'source.html';
+    try {
+      const u = new URL(currentUrl);
+      filename = u.hostname.replace(/\./g, '_') + '_source.html';
+    } catch {}
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(blobUrl);
+    showStatus('📥 下载已开始', false);
+  });
+
+  /* ── 提取链接 ── */
+  extractLinksBtn.addEventListener('click', () => {
+    if (!currentSourceCode) { showStatus('❗ 请先获取源码', true); return; }
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(currentSourceCode, 'text/html');
+    const anchors = doc.querySelectorAll('a[href]');
+    const hrefs = new Set();
+    anchors.forEach(a => {
+      const href = a.getAttribute('href').trim();
+      if (href && !href.startsWith('javascript:') && !href.startsWith('#')) {
+        // 尝试转为绝对路径
+        try {
+          hrefs.add(new URL(href, currentUrl).href);
+        } catch {
+          hrefs.add(href);
+        }
+      }
+    });
+
+    extractedLinks = Array.from(hrefs);
+    if (extractedLinks.length === 0) {
+      showStatus('❗ 未找到任何超链接', true);
+      return;
+    }
+
+    modalTitle.textContent = `提取到 ${extractedLinks.length} 个链接`;
+    linkList.innerHTML = extractedLinks.map((href, i) =>
+      `<div class="modal-link-item" data-href="${escapeHtml(href)}" title="点击复制">${i + 1}. ${escapeHtml(href)}</div>`
+    ).join('');
+
+    // 点击单条链接复制
+    linkList.querySelectorAll('.modal-link-item').forEach(item => {
+      item.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(item.dataset.href);
+          const orig = item.textContent;
+          item.textContent = '✅ 已复制';
+          setTimeout(() => { item.textContent = orig; }, 1200);
+        } catch {}
+      });
+    });
+
+    linksModal.classList.add('show');
+  });
+
+  /* ── 复制全部链接 ── */
+  copyAllLinksBtn.addEventListener('click', async () => {
+    if (!extractedLinks.length) return;
+    try {
+      await navigator.clipboard.writeText(extractedLinks.join('\n'));
+      const orig = copyAllLinksBtn.textContent;
+      copyAllLinksBtn.textContent = '✅ 已复制全部';
+      setTimeout(() => { copyAllLinksBtn.textContent = orig; }, 1500);
+    } catch {
+      showStatus('❌ 复制失败', true);
+    }
+  });
+
+  /* ── 关闭弹窗 ── */
+  function closeLinksModal() { linksModal.classList.remove('show'); }
+  closeModal.addEventListener('click', closeLinksModal);
+  closeModalBtn.addEventListener('click', closeLinksModal);
+  linksModal.addEventListener('click', (e) => {
+    if (e.target === linksModal) closeLinksModal();
+  });
+
+  // Android 返回键关闭弹窗
+  window.addEventListener('popstate', () => {
+    if (linksModal.classList.contains('show')) closeLinksModal();
+  });
+  linksModal.addEventListener('transitionstart', () => {
+    if (linksModal.classList.contains('show')) history.pushState({ modal: true }, '');
+  });
+
+})();
+</script>
+</body>
+</html>

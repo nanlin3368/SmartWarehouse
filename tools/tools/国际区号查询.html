@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>国际区号查询</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ── 主内容 ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── 通用卡片 ── */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ── 搜索区域 ── */
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 44px 14px 42px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .search-input:focus {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light),
+                0 0 0 2px rgba(102, 126, 234, 0.15);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: none;
+            padding: 4px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .search-clear.visible {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-clear:active {
+            color: var(--accent-primary);
+        }
+
+        /* ── 统计数字区 ── */
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            flex: 1;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            padding: 12px 8px;
+            text-align: center;
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .stats-divider {
+            border: none;
+            border-top: 1px solid rgba(163, 177, 198, 0.3);
+            margin: 0 0 16px 0;
+        }
+
+        /* ── 大洲手风琴 ── */
+        .categories-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .category-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+            overflow: hidden;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 16px;
+            cursor: pointer;
+            background: var(--bg-primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .category-header:active {
+            background: rgba(102, 126, 234, 0.06);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            color: var(--accent-primary);
+        }
+
+        .category-count {
+            background: var(--bg-primary);
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+        }
+
+        .countries-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.38s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: var(--bg-primary);
+        }
+
+        .category-item.expanded .countries-container {
+            max-height: 480px;
+        }
+
+        .countries-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 14px 16px;
+            border-top: 1px solid rgba(163, 177, 198, 0.25);
+            max-height: 420px;
+            overflow-y: auto;
+        }
+
+        /* ── 国家卡片 ── */
+        .country-card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .country-card:active {
+            transform: scale(0.98);
+            box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
+        }
+
+        .country-flag {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .country-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .country-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .country-iso {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-family: monospace;
+            background: var(--bg-primary);
+            padding: 1px 5px;
+            border-radius: 4px;
+            box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+        }
+
+        .country-dial {
+            font-size: 0.95rem;
+            font-weight: 800;
+            font-family: monospace;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .copy-btn {
+            background: var(--bg-primary);
+            border: none;
+            font-size: 0.72rem;
+            cursor: pointer;
+            padding: 7px 12px;
+            border-radius: 30px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            transition: var(--transition);
+            color: var(--accent-primary);
+            font-weight: 600;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.92);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        }
+
+        /* ── 随机查询功能 ── */
+        .random-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .random-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.98);
+        }
+
+        .random-result {
+            display: none;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 16px;
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        .random-result.visible {
+            display: block;
+        }
+
+        .random-country-name {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .random-country-info {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .random-dial {
+            font-size: 2rem;
+            font-weight: 900;
+            font-family: monospace;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        /* ── 格式化拨号功能 ── */
+        .dial-row {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+        }
+
+        .dial-country-select {
+            flex: 1;
+            padding: 12px 14px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .phone-input-wrap {
+            flex: 2;
+            position: relative;
+        }
+
+        .phone-input {
+            width: 100%;
+            height: 100%;
+            padding: 12px 14px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .phone-input::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+            font-size: 0.8rem;
+        }
+
+        .phone-input:focus {
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light),
+                0 0 0 2px rgba(102, 126, 234, 0.15);
+        }
+
+        .dial-result-box {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 14px 16px;
+            margin-top: 10px;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .dial-number-display {
+            font-size: 1.1rem;
+            font-weight: 800;
+            font-family: monospace;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            word-break: break-all;
+        }
+
+        .dial-placeholder {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* ── 无结果 ── */
+        .no-result {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .reset-search-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 18px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: 30px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            cursor: pointer;
+        }
+
+        /* ── 操作提示 ── */
+        .action-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 14px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* ── 说明卡片 ── */
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .instr-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .instr-text strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* ── Toast提示 ── */
+        #toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(44, 62, 80, 0.92);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+            opacity: 0;
+            white-space: nowrap;
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 550px) {
+            .card {
+                padding: 18px 14px;
+            }
+            h1 {
+                font-size: 1.9rem;
+            }
+            .stat-number {
+                font-size: 1.3rem;
+            }
+            .dial-row {
+                flex-direction: column;
+            }
+            .dial-country-select {
+                flex: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>国际区号查询</h1>
+        <p class="subtitle">真实数据 · 严格对应联合国/ITU标准 · 总数224</p>
+    </header>
+
+    <div class="main">
+
+        <!-- 🔍 搜索卡片（独立放置于最上方） -->
+        <div class="card">
+            <div class="card-label">🔍 全球区号检索</div>
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="输入国家名称、区号或ISO代码" autocomplete="off">
+                <button class="search-clear" id="searchClear" title="清空">✕</button>
+            </div>
+        </div>
+
+        <!-- 📊 数据概览 + 🌎 按大洲浏览（合并为一个卡片） -->
+        <div class="card">
+            <div class="card-label">📊 区号总览</div>
+            <!-- 统计面板 -->
+            <div class="stats-grid" id="statsPanel"></div>
+            <hr class="stats-divider">
+            <!-- 大洲手风琴列表 -->
+            <div id="categoriesContainer" class="categories-stack"></div>
+            <div class="action-sub">⚡ 点击洲名展开/收起 · 每次仅展开一个分类 · 列表内部可滚动</div>
+        </div>
+
+        <!-- 随机查询 -->
+        <div class="card">
+            <div class="card-label">🎲 随机探索</div>
+            <button class="random-btn" id="randomBtn">
+                <span>🎲</span> 随机查询一个国家区号
+            </button>
+            <div class="random-result" id="randomResult">
+                <div class="random-country-name" id="randomCountryName">—</div>
+                <div class="random-country-info" id="randomCountryInfo">—</div>
+                <div class="random-dial" id="randomDial">—</div>
+                <button class="copy-btn" id="randomCopyBtn" style="margin: 0 auto; display: block;">📋 复制区号</button>
+            </div>
+        </div>
+
+        <!-- 格式化拨号 -->
+        <div class="card">
+            <div class="card-label">📞 格式化拨号号码</div>
+            <div class="dial-row">
+                <select class="dial-country-select" id="dialCountrySelect">
+                    <option value="">选择国家…</option>
+                </select>
+                <div class="phone-input-wrap">
+                    <input type="tel" class="phone-input" id="phoneInput" placeholder="输入本地号码" autocomplete="off">
+                </div>
+            </div>
+            <div class="dial-result-box" id="dialResultBox">
+                <span class="dial-placeholder">选择国家并输入号码后，完整拨号格式将显示在这里</span>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">🗺️</span>
+                    <div class="instr-text"><strong>数据来源</strong>：联合国地理方案 + 国际电联(ITU) E.164，共收录 <strong>224个</strong> 国家/地区区号</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔎</span>
+                    <div class="instr-text"><strong>智能搜索</strong>：支持中文名、区号（+86 或 86）、ISO代码（CN），实时筛选全库</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📋</span>
+                    <div class="instr-text"><strong>一键复制</strong>：点击区号卡片或右侧按钮，立即复制到剪贴板，底部弹出提示</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📞</span>
+                    <div class="instr-text"><strong>格式化拨号</strong>：选择目标国家，输入本地号码，自动生成国际拨号格式</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🎲</span>
+                    <div class="instr-text"><strong>随机探索</strong>：点击随机按钮，发现你可能不熟悉的国家区号</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="toast">✅ 已复制到剪贴板</div>
+
+    <script>
+        const categoriesData = [
+            {
+                id: "asia", name: "🌏 亚洲", expectedCount: 47,
+                countries: [
+                    "中国+86+CN", "中国香港+852+HK", "中国澳门+853+MO", "中国台湾+886+TW",
+                    "日本+81+JP", "韩国+82+KR", "朝鲜+850+KP", "蒙古+976+MN",
+                    "印度+91+IN", "巴基斯坦+92+PK", "孟加拉国+880+BD", "斯里兰卡+94+LK",
+                    "尼泊尔+977+NP", "不丹+975+BT", "马尔代夫+960+MV", "印度尼西亚+62+ID",
+                    "马来西亚+60+MY", "新加坡+65+SG", "菲律宾+63+PH", "越南+84+VN",
+                    "泰国+66+TH", "缅甸+95+MM", "老挝+856+LA", "柬埔寨+855+KH",
+                    "文莱+673+BN", "东帝汶+670+TL", "土耳其+90+TR", "沙特阿拉伯+966+SA",
+                    "阿联酋+971+AE", "卡塔尔+974+QA", "阿曼+968+OM", "也门+967+YE",
+                    "科威特+965+KW", "巴林+973+BH", "伊拉克+964+IQ", "伊朗+98+IR",
+                    "阿富汗+93+AF", "以色列+972+IL", "约旦+962+JO", "黎巴嫩+961+LB",
+                    "叙利亚+963+SY", "塞浦路斯+357+CY", "哈萨克斯坦+7+KZ", "乌兹别克斯坦+998+UZ",
+                    "土库曼斯坦+993+TM", "吉尔吉斯斯坦+996+KG", "塔吉克斯坦+992+TJ"
+                ]
+            },
+            {
+                id: "europe", name: "🌍 欧洲", expectedCount: 50,
+                countries: [
+                    "英国+44+GB", "法国+33+FR", "德国+49+DE", "意大利+39+IT",
+                    "西班牙+34+ES", "葡萄牙+351+PT", "荷兰+31+NL", "比利时+32+BE",
+                    "瑞士+41+CH", "奥地利+43+AT", "瑞典+46+SE", "挪威+47+NO",
+                    "丹麦+45+DK", "芬兰+358+FI", "冰岛+354+IS", "爱尔兰+353+IE",
+                    "俄罗斯+7+RU", "乌克兰+380+UA", "波兰+48+PL", "捷克+420+CZ",
+                    "斯洛伐克+421+SK", "匈牙利+36+HU", "罗马尼亚+40+RO", "保加利亚+359+BG",
+                    "塞尔维亚+381+RS", "克罗地亚+385+HR", "斯洛文尼亚+386+SI", "爱沙尼亚+372+EE",
+                    "拉脱维亚+371+LV", "立陶宛+370+LT", "希腊+30+GR", "马耳他+356+MT",
+                    "卢森堡+352+LU", "摩纳哥+377+MC", "安道尔+376+AD", "圣马力诺+378+SM",
+                    "梵蒂冈+379+VA", "黑山+382+ME", "北马其顿+389+MK", "阿尔巴尼亚+355+AL",
+                    "波斯尼亚和黑塞哥维那+387+BA", "白俄罗斯+375+BY", "摩尔多瓦+373+MD", "列支敦士登+423+LI",
+                    "直布罗陀+350+GI", "法罗群岛+298+FO", "马恩岛+44+IM",
+                    "格鲁吉亚+995+GE", "亚美尼亚+374+AM", "阿塞拜疆+994+AZ"
+                ]
+            },
+            {
+                id: "africa", name: "🌍 非洲", expectedCount: 52,
+                countries: [
+                    "埃及+20+EG", "南非+27+ZA", "尼日利亚+234+NG", "摩洛哥+212+MA",
+                    "阿尔及利亚+213+DZ", "突尼斯+216+TN", "利比亚+218+LY", "苏丹+249+SD",
+                    "埃塞俄比亚+251+ET", "肯尼亚+254+KE", "坦桑尼亚+255+TZ", "乌干达+256+UG",
+                    "加纳+233+GH", "科特迪瓦+225+CI", "喀麦隆+237+CM", "刚果(金)+243+CD",
+                    "刚果(布)+242+CG", "安哥拉+244+AO", "莫桑比克+258+MZ", "马达加斯加+261+MG",
+                    "津巴布韦+263+ZW", "赞比亚+260+ZM", "博茨瓦纳+267+BW", "纳米比亚+264+NA",
+                    "塞内加尔+221+SN", "马里+223+ML", "布基纳法索+226+BF", "几内亚+224+GN",
+                    "贝宁+229+BJ", "卢旺达+250+RW", "索马里+252+SO", "吉布提+253+DJ",
+                    "厄立特里亚+291+ER", "马拉维+265+MW", "毛里求斯+230+MU", "塞舌尔+248+SC",
+                    "佛得角+238+CV", "圣多美和普林西比+239+ST", "赤道几内亚+240+GQ", "加蓬+241+GA",
+                    "中非共和国+236+CF", "乍得+235+TD", "尼日尔+227+NE", "毛里塔尼亚+222+MR",
+                    "斯威士兰+268+SZ", "莱索托+266+LS", "利比里亚+231+LR", "塞拉利昂+232+SL",
+                    "多哥+228+TG", "布隆迪+257+BI", "南苏丹+211+SS", "西撒哈拉+212+EH"
+                ]
+            },
+            {
+                id: "north_america", name: "🌎 北美洲", expectedCount: 36,
+                countries: [
+                    "美国+1+US", "加拿大+1+CA", "墨西哥+52+MX", "古巴+53+CU",
+                    "牙买加+1+JM", "海地+509+HT", "多米尼加共和国+1+DO", "波多黎各+1+PR",
+                    "巴哈马+1+BS", "巴拿马+507+PA", "哥斯达黎加+506+CR", "危地马拉+502+GT",
+                    "洪都拉斯+504+HN", "萨尔瓦多+503+SV", "尼加拉瓜+505+NI", "伯利兹+501+BZ",
+                    "特立尼达和多巴哥+1+TT", "巴巴多斯+1+BB", "圣卢西亚+1+LC", "格林纳达+1+GD",
+                    "圣文森特和格林纳丁斯+1+VC", "安提瓜和巴布达+1+AG", "多米尼克+1+DM", "圣基茨和尼维斯+1+KN",
+                    "开曼群岛+1+KY", "百慕大+1+BM", "阿鲁巴+297+AW", "库拉索+599+CW",
+                    "荷属圣马丁+1+SX", "法属圣马丁+590+MF", "格陵兰+299+GL", "英属维尔京群岛+1+VG",
+                    "美属维尔京群岛+1+VI", "安圭拉+1+AI", "蒙特塞拉特+1+MS", "圣皮埃尔和密克隆+508+PM"
+                ]
+            },
+            {
+                id: "south_america", name: "🌎 南美洲", expectedCount: 14,
+                countries: [
+                    "巴西+55+BR", "阿根廷+54+AR", "智利+56+CL", "秘鲁+51+PE",
+                    "哥伦比亚+57+CO", "委内瑞拉+58+VE", "厄瓜多尔+593+EC", "玻利维亚+591+BO",
+                    "巴拉圭+595+PY", "乌拉圭+598+UY", "圭亚那+592+GY", "苏里南+597+SR",
+                    "法属圭亚那+594+GF", "福克兰群岛+500+FK"
+                ]
+            },
+            {
+                id: "oceania", name: "🌏 大洋洲", expectedCount: 25,
+                countries: [
+                    "澳大利亚+61+AU", "新西兰+64+NZ", "巴布亚新几内亚+675+PG", "斐济+679+FJ",
+                    "所罗门群岛+677+SB", "瓦努阿图+678+VU", "萨摩亚+685+WS", "汤加+676+TO",
+                    "密克罗尼西亚联邦+691+FM", "马绍尔群岛+692+MH", "帕劳+680+PW", "瑙鲁+674+NR",
+                    "基里巴斯+686+KI", "图瓦卢+688+TV", "库克群岛+682+CK", "纽埃+683+NU",
+                    "法属波利尼西亚+689+PF", "新喀里多尼亚+687+NC", "关岛+1+GU", "北马里亚纳群岛+1+MP",
+                    "美属萨摩亚+1+AS", "瓦利斯和富图纳+681+WF", "托克劳+690+TK", "圣诞岛+61+CX",
+                    "诺福克岛+672+NF"
+                ]
+            }
+        ];
+
+        function isoToFlag(iso) {
+            if (!iso || iso.length !== 2) return '🏳️';
+            const offset = 127397;
+            return String.fromCodePoint(iso.toUpperCase().charCodeAt(0) + offset) +
+                String.fromCodePoint(iso.toUpperCase().charCodeAt(1) + offset);
+        }
+
+        const processedCategories = categoriesData.map(cat => {
+            const parsed = cat.countries.map(entry => {
+                const parts = entry.split('+');
+                const name = parts[0];
+                const dial = '+' + parts[1];
+                const code = parts[2] || '';
+                return { name, dial_code: dial, code, flag: isoToFlag(code) };
+            });
+            return {
+                id: cat.id,
+                displayName: cat.name,
+                countries: parsed,
+                actualCount: parsed.length
+            };
+        });
+
+        const allCountries = processedCategories.flatMap(c => c.countries);
+        const totalCountries = processedCategories.reduce((s, c) => s + c.actualCount, 0);
+        const uniqueDialCodes = new Set(allCountries.map(c => c.dial_code)).size;
+
+        function showToast(msg = '✅ 已复制到剪贴板') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+        }
+
+        async function copyText(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('✅ 已复制：' + text);
+            } catch {
+                showToast('❌ 复制失败，请手动复制');
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+        }
+
+        function updateStats() {
+            document.getElementById('statsPanel').innerHTML = `
+            <div class="stat-item">
+                <div class="stat-number">${totalCountries}</div>
+                <div class="stat-label">🌐 国家/地区</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${processedCategories.length}</div>
+                <div class="stat-label">🗺️ 大洲</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${uniqueDialCodes}</div>
+                <div class="stat-label">📞 唯一区号</div>
+            </div>`;
+        }
+
+        let currentFilterText = '';
+        let currentExpandedId = null;
+
+        function updateSearchClear() {
+            const btn = document.getElementById('searchClear');
+            btn.classList.toggle('visible', currentFilterText.length > 0);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', e => {
+            currentFilterText = e.target.value;
+            updateSearchClear();
+            if (currentFilterText) currentExpandedId = null;
+            renderCategories();
+        });
+
+        document.getElementById('searchClear').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            currentFilterText = '';
+            currentExpandedId = null;
+            updateSearchClear();
+            renderCategories();
+        });
+
+        function renderCategories() {
+            const filter = currentFilterText.trim().toLowerCase();
+            let visible = [];
+
+            processedCategories.forEach(cat => {
+                let filtered = cat.countries;
+                if (filter) {
+                    filtered = cat.countries.filter(c =>
+                        c.name.toLowerCase().includes(filter) ||
+                        c.dial_code.includes(filter) ||
+                        ('+' + filter === c.dial_code) ||
+                        c.code.toLowerCase().includes(filter)
+                    );
+                }
+                if (filtered.length) visible.push({ ...cat, filteredCountries: filtered });
+            });
+
+            const container = document.getElementById('categoriesContainer');
+
+            if (!visible.length) {
+                container.innerHTML = `
+                <div class="no-result">
+                    😢 没有找到匹配的国家或区号
+                    <br>
+                    <button class="reset-search-btn" id="resetSearchBtn">清空搜索</button>
+                </div>`;
+                document.getElementById('resetSearchBtn')?.addEventListener('click', () => {
+                    document.getElementById('searchInput').value = '';
+                    currentFilterText = '';
+                    currentExpandedId = null;
+                    updateSearchClear();
+                    renderCategories();
+                });
+                return;
+            }
+
+            let activeId = filter ? null : currentExpandedId;
+            if (!filter && activeId !== null) {
+                const activeExists = visible.some(v => v.id === activeId);
+                if (!activeExists) {
+                    activeId = visible[0]?.id;
+                    currentExpandedId = activeId;
+                }
+            }
+
+            let html = '';
+            for (let cat of visible) {
+                const expanded = filter ? true : (activeId === cat.id);
+                const countDisplay = filter ? `${cat.filteredCountries.length}/${cat.actualCount}` : cat
+                .actualCount;
+                html += `
+                <div class="category-item ${expanded ? 'expanded' : ''}" data-category-id="${cat.id}">
+                    <div class="category-header">
+                        <div class="category-title">
+                            <span class="toggle-icon" style="transform:${expanded ? 'rotate(180deg)' : 'rotate(0deg)'}">▼</span>
+                            <span>${escapeHtml(cat.displayName)} (${cat.actualCount}个)</span>
+                        </div>
+                        <span class="category-count">${countDisplay}</span>
+                    </div>
+                    <div class="countries-container">
+                        <div class="countries-grid">`;
+                cat.filteredCountries.forEach(c => {
+                    html += `
+                        <div class="country-card" data-dial="${escapeHtml(c.dial_code)}">
+                            <span class="country-flag">${c.flag}</span>
+                            <div class="country-info">
+                                <div class="country-name">
+                                    ${escapeHtml(c.name)}
+                                    <span class="country-iso">${escapeHtml(c.code)}</span>
+                                </div>
+                                <div class="country-dial">${escapeHtml(c.dial_code)}</div>
+                            </div>
+                            <button class="copy-btn" data-dial="${escapeHtml(c.dial_code)}">📋 复制</button>
+                        </div>`;
+                });
+                html += `
+                    </div>
+                </div>
+            </div>`;
+            }
+            container.innerHTML = html;
+
+            container.querySelectorAll('.category-item').forEach(item => {
+                item.querySelector('.category-header')?.addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (filter) return;
+                    const cid = item.dataset.categoryId;
+                    const isExpanded = item.classList.contains('expanded');
+                    container.querySelectorAll('.category-item').forEach(other => {
+                        other.classList.remove('expanded');
+                        const arr = other.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(0deg)';
+                    });
+                    if (!isExpanded) {
+                        item.classList.add('expanded');
+                        const arr = item.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(180deg)';
+                        currentExpandedId = cid;
+                    } else {
+                        currentExpandedId = null;
+                    }
+                });
+            });
+
+            container.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    copyText(btn.dataset.dial);
+                });
+            });
+
+            container.querySelectorAll('.country-card').forEach(card => {
+                card.addEventListener('click', e => {
+                    if (e.target.classList.contains('copy-btn')) return;
+                    copyText(card.dataset.dial);
+                });
+            });
+        }
+
+        document.getElementById('randomBtn').addEventListener('click', () => {
+            const c = allCountries[Math.floor(Math.random() * allCountries.length)];
+            const continent = processedCategories.find(cat => cat.countries.includes(c));
+            document.getElementById('randomCountryName').textContent = c.flag + ' ' + c.name;
+            document.getElementById('randomCountryInfo').textContent =
+                `ISO: ${c.code} · 所属: ${continent ? continent.displayName : '—'}`;
+            document.getElementById('randomDial').textContent = c.dial_code;
+            document.getElementById('randomResult').classList.add('visible');
+            document.getElementById('randomCopyBtn').dataset.dial = c.dial_code;
+        });
+
+        document.getElementById('randomCopyBtn').addEventListener('click', function() {
+            copyText(this.dataset.dial || '');
+        });
+
+        function buildDialSelect() {
+            const sel = document.getElementById('dialCountrySelect');
+            processedCategories.forEach(cat => {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = cat.displayName;
+                cat.countries.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.dial_code;
+                    opt.textContent = `${c.flag} ${c.name} (${c.dial_code})`;
+                    optgroup.appendChild(opt);
+                });
+                sel.appendChild(optgroup);
+            });
+        }
+
+        function updateDialResult() {
+            const sel = document.getElementById('dialCountrySelect');
+            const phone = document.getElementById('phoneInput').value.trim().replace(/^0+/, '');
+            const dial = sel.value;
+            const box = document.getElementById('dialResultBox');
+
+            if (!dial || !phone) {
+                box.innerHTML = '<span class="dial-placeholder">选择国家并输入号码后，完整拨号格式将显示在这里</span>';
+                return;
+            }
+
+            const formatted = `${dial} ${phone}`;
+            box.innerHTML = `
+            <span class="dial-number-display">${escapeHtml(formatted)}</span>
+            <button class="copy-btn" id="dialCopyBtn">📋 复制</button>`;
+            document.getElementById('dialCopyBtn')?.addEventListener('click', () => copyText(formatted));
+        }
+
+        document.getElementById('dialCountrySelect').addEventListener('change', updateDialResult);
+        document.getElementById('phoneInput').addEventListener('input', updateDialResult);
+
+        updateStats();
+        buildDialSelect();
+        renderCategories();
+    </script>
+</body>
+</html>

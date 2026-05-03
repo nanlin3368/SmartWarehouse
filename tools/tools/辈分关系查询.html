@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>辈分关系查询</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes headerShine {
+            0%   { left: -100%; }
+            50%  { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to   { filter: brightness(1.15); }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            flex: 1;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            padding: 12px 8px;
+            text-align: center;
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .stats-divider {
+            border: none;
+            border-top: 1px solid rgba(163, 177, 198, 0.3);
+            margin: 0 0 16px 0;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 44px 14px 42px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .search-input:focus {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light),
+                        0 0 0 2px rgba(102,126,234,0.15);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: none;
+            padding: 4px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .search-clear.visible { display: flex; align-items: center; justify-content: center; }
+        .search-clear:active { color: var(--accent-primary); }
+
+        .categories-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .category-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+            overflow: hidden;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 16px;
+            cursor: pointer;
+            background: var(--bg-primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .category-header:active {
+            background: rgba(102, 126, 234, 0.06);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            color: var(--accent-primary);
+        }
+
+        .category-count {
+            background: var(--bg-primary);
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+        }
+
+        .emojis-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.38s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: var(--bg-primary);
+        }
+
+        .category-item.expanded .emojis-container {
+            max-height: 500px;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 10px;
+            padding: 14px 16px;
+            border-top: 1px solid rgba(163, 177, 198, 0.25);
+            max-height: 440px;
+            overflow-y: auto;
+        }
+
+        .emoji-grid::-webkit-scrollbar { width: 4px; }
+        .emoji-grid::-webkit-scrollbar-track { background: transparent; }
+        .emoji-grid::-webkit-scrollbar-thumb {
+            background: var(--shadow-dark);
+            border-radius: 4px;
+        }
+
+        .emoji-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            text-align: center;
+            padding: 10px 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .emoji-item:active {
+            transform: scale(0.92);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .emoji-item.fav-item {
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light),
+                        0 0 0 2px rgba(247, 183, 49, 0.4);
+        }
+
+        .emoji-symbol {
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.2;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            word-break: break-word;
+        }
+
+        .emoji-name {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        .emoji-fav-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 0.55rem;
+            line-height: 1;
+        }
+
+        .recent-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .recent-emoji-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            text-align: center;
+            padding: 10px 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 80px;
+        }
+
+        .recent-emoji-item:active {
+            transform: scale(0.92);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .recent-empty {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 10px 0;
+        }
+
+        .no-result {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .reset-search-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 18px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: 30px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            cursor: pointer;
+        }
+
+        .action-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 14px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .instr-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(44, 62, 80, 0.92);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 550px) {
+            .card { padding: 18px 16px; }
+            h1 { font-size: 1.8rem; }
+            .emoji-grid { grid-template-columns: repeat(2, 1fr); }
+            .emoji-symbol { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>辈分关系查询</h1>
+        <p class="subtitle">亲戚称呼 · 点击复制 · 长按收藏</p>
+    </header>
+
+    <div class="main">
+
+        <!-- 🔍 搜索卡片（独立放置于最上方） -->
+        <div class="card">
+            <div class="card-label">🔍 搜索亲戚称呼</div>
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input"
+                placeholder="搜索称呼（如：爷爷、舅舅、堂哥）" autocomplete="off">
+                <button class="search-clear" id="searchClear">✕</button>
+            </div>
+        </div>
+
+        <!-- 📊 数据概览 + 📂 分类浏览（合并为一个卡片） -->
+        <div class="card">
+            <div class="card-label">📊 辈分总览</div>
+            <!-- 统计面板 -->
+            <div class="stats-grid" id="statsPanel"></div>
+            <hr class="stats-divider">
+            <!-- 分类手风琴列表 -->
+            <div class="categories-stack" id="categoriesContainer"></div>
+            <div class="action-sub">点击任意称呼卡片复制称呼 · 长按可收藏⭐常用称呼</div>
+        </div>
+
+        <!-- 最近复制 -->
+        <div class="card">
+            <div class="card-label">🕐 最近复制</div>
+            <div id="recentGrid" class="recent-grid"></div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">🔍</span>
+                    <div class="instr-text"><strong>搜索过滤</strong>：输入称呼关键词（如“表姐”“外公”），实时筛选</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📂</span>
+                    <div class="instr-text"><strong>互斥展开</strong>：点击分类标题展开该分类，自动收起其他分类；固定高度滚动查看</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">⭐</span>
+                    <div class="instr-text"><strong>收藏称呼</strong>：长按卡片即可收藏，收藏分类自动置顶，方便快速查阅</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📋</span>
+                    <div class="instr-text"><strong>一键复制</strong>：点击任意卡片复制称呼文本，最近10条记录自动保存</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔒</span>
+                    <div class="instr-text"><strong>隐私安全</strong>：所有操作及收藏数据本地完成，不联网上传任何数据</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        // ── 亲戚称呼数据库 ────────────
+        const categoriesData = [
+            {
+                id: "grandparents",
+                name: "👴 祖辈",
+                emojis: [
+                    { e: "爷爷", n: "父亲的父亲" },
+                    { e: "奶奶", n: "父亲的母亲" },
+                    { e: "外公", n: "母亲的父亲" },
+                    { e: "外婆", n: "母亲的母亲" }
+                ]
+            },
+            {
+                id: "parents",
+                name: "👨‍👩 父母辈 & 长亲",
+                emojis: [
+                    { e: "爸爸", n: "父亲" },
+                    { e: "妈妈", n: "母亲" },
+                    { e: "伯父", n: "父亲的哥哥" },
+                    { e: "叔父", n: "父亲的弟弟" },
+                    { e: "姑妈", n: "父亲的姐妹" },
+                    { e: "舅舅", n: "母亲的兄弟" },
+                    { e: "姨妈", n: "母亲的姐妹" },
+                    { e: "伯母", n: "伯父的妻子" },
+                    { e: "婶婶", n: "叔父的妻子" },
+                    { e: "姑父", n: "姑妈的丈夫" },
+                    { e: "舅妈", n: "舅舅的妻子" },
+                    { e: "姨父", n: "姨妈的丈夫" }
+                ]
+            },
+            {
+                id: "siblings",
+                name: "👫 平辈 / 同辈",
+                emojis: [
+                    { e: "哥哥", n: "兄长" },
+                    { e: "弟弟", n: "弟弟" },
+                    { e: "姐姐", n: "姐姐" },
+                    { e: "妹妹", n: "妹妹" },
+                    { e: "堂哥", n: "父亲兄弟的儿子（年长）" },
+                    { e: "堂弟", n: "父亲兄弟的儿子（年幼）" },
+                    { e: "堂姐", n: "父亲兄弟的女儿（年长）" },
+                    { e: "堂妹", n: "父亲兄弟的女儿（年幼）" },
+                    { e: "表哥", n: "父亲姐妹或母亲兄弟的儿子（年长）" },
+                    { e: "表弟", n: "父亲姐妹或母亲兄弟的儿子（年幼）" },
+                    { e: "表姐", n: "父亲姐妹或母亲兄弟的女儿（年长）" },
+                    { e: "表妹", n: "父亲姐妹或母亲兄弟的女儿（年幼）" }
+                ]
+            },
+            {
+                id: "spouse",
+                name: "💍 配偶 / 姻亲",
+                emojis: [
+                    { e: "丈夫", n: "女性的配偶" },
+                    { e: "妻子", n: "男性的配偶" },
+                    { e: "公公", n: "丈夫的父亲" },
+                    { e: "婆婆", n: "丈夫的母亲" },
+                    { e: "岳父", n: "妻子的父亲" },
+                    { e: "岳母", n: "妻子的母亲" },
+                    { e: "儿媳", n: "儿子的妻子" },
+                    { e: "女婿", n: "女儿的丈夫" }
+                ]
+            },
+            {
+                id: "children",
+                name: "👶 晚辈",
+                emojis: [
+                    { e: "儿子", n: "男性子辈" },
+                    { e: "女儿", n: "女性子辈" },
+                    { e: "孙子", n: "儿子的儿子" },
+                    { e: "孙女", n: "儿子的女儿" },
+                    { e: "外孙", n: "女儿的儿子" },
+                    { e: "外孙女", n: "女儿的女儿" },
+                    { e: "侄子", n: "兄弟的儿子" },
+                    { e: "侄女", n: "兄弟的女儿" },
+                    { e: "外甥", n: "姐妹的儿子" },
+                    { e: "外甥女", n: "姐妹的女儿" }
+                ]
+            }
+        ];
+
+        // ── 状态管理 ─────────────────────────────────────────────
+        let currentFilterText = '';
+        // 默认收起所有分类
+        let currentExpandedId = null;
+        let favorites = JSON.parse(localStorage.getItem('relationFavorites') || '[]');
+        let recentCopies = JSON.parse(localStorage.getItem('relationRecent') || '[]');
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+        }
+
+        async function copyRelation(relation, desc) {
+            try {
+                await navigator.clipboard.writeText(relation);
+                showToast('✅ 已复制 ' + relation + ' ' + desc);
+                addRecent(relation, desc);
+            } catch {
+                showToast('❌ 复制失败，请手动复制');
+            }
+        }
+
+        function isFav(relation) {
+            return favorites.some(f => f.e === relation);
+        }
+
+        function toggleFav(relation, desc) {
+            if (isFav(relation)) {
+                favorites = favorites.filter(f => f.e !== relation);
+                showToast('💔 已取消收藏 ' + relation);
+            } else {
+                favorites.unshift({ e: relation, n: desc });
+                showToast('⭐ 已收藏 ' + relation + ' ' + desc);
+            }
+            localStorage.setItem('relationFavorites', JSON.stringify(favorites));
+            updateStats();
+            renderCategories();
+        }
+
+        function addRecent(relation, desc) {
+            recentCopies = recentCopies.filter(r => r.e !== relation);
+            recentCopies.unshift({ e: relation, n: desc });
+            if (recentCopies.length > 10) recentCopies = recentCopies.slice(0, 10);
+            localStorage.setItem('relationRecent', JSON.stringify(recentCopies));
+            renderRecent();
+        }
+
+        let longPressTimer = null;
+
+        function attachEvents(el, relation, desc) {
+            el.addEventListener('click', e => {
+                e.stopPropagation();
+                copyRelation(relation, desc);
+            });
+            el.addEventListener('touchstart', () => {
+                longPressTimer = setTimeout(() => {
+                    longPressTimer = null;
+                    toggleFav(relation, desc);
+                }, 600);
+            }, { passive: true });
+            el.addEventListener('touchend', () => clearTimeout(longPressTimer));
+            el.addEventListener('touchmove', () => clearTimeout(longPressTimer), { passive: true });
+            el.addEventListener('contextmenu', e => {
+                e.preventDefault();
+                toggleFav(relation, desc);
+            });
+        }
+
+        function updateStats() {
+            const total = categoriesData.reduce((s, c) => s + c.emojis.length, 0);
+            document.getElementById('statsPanel').innerHTML = `
+            <div class="stat-item">
+                <div class="stat-number">${total}</div>
+                <div class="stat-label">👪 称呼总数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${categoriesData.length}</div>
+                <div class="stat-label">📂 分类数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${favorites.length}</div>
+                <div class="stat-label">⭐ 已收藏</div>
+            </div>`;
+        }
+
+        function updateSearchClear() {
+            document.getElementById('searchClear').classList.toggle('visible', currentFilterText.length > 0);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', e => {
+            currentFilterText = e.target.value;
+            updateSearchClear();
+            if (currentFilterText) currentExpandedId = null;
+            renderCategories();
+        });
+
+        document.getElementById('searchClear').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            currentFilterText = '';
+            currentExpandedId = null;
+            updateSearchClear();
+            renderCategories();
+        });
+
+        function buildRelationGrid(relations) {
+            return relations.map(item => {
+                const favMark = isFav(item.e) ? '<span class="emoji-fav-dot">⭐</span>' : '';
+                const favClass = isFav(item.e) ? ' fav-item' : '';
+                return `<div class="emoji-item${favClass}" data-relation="${escapeHtml(item.e)}" data-desc="${escapeHtml(item.n)}">
+            ${favMark}
+            <div class="emoji-symbol">${escapeHtml(item.e)}</div>
+            <div class="emoji-name">${escapeHtml(item.n)}</div>
+          </div>`;
+            }).join('');
+        }
+
+        function renderCategories() {
+            const filter = currentFilterText.trim().toLowerCase();
+            const container = document.getElementById('categoriesContainer');
+
+            let allCats = [];
+            if (favorites.length && !filter) {
+                allCats.push({ id: '__fav__', name: '⭐ 我的收藏', emojis: favorites, actualCount: favorites.length });
+            }
+
+            categoriesData.forEach(cat => {
+                let items = cat.emojis;
+                if (filter) {
+                    items = cat.emojis.filter(item =>
+                        item.n.toLowerCase().includes(filter) ||
+                        item.e.toLowerCase().includes(filter) ||
+                        cat.name.toLowerCase().includes(filter)
+                    );
+                }
+                if (items.length) allCats.push({ ...cat, emojis: items, actualCount: cat.emojis.length });
+            });
+
+            if (!allCats.length) {
+                container.innerHTML = `
+            <div class="no-result">
+              😢 没有找到匹配的称呼<br>
+              <button class="reset-search-btn" id="resetSearchBtn">清空搜索</button>
+            </div>`;
+                document.getElementById('resetSearchBtn')?.addEventListener('click', () => {
+                    document.getElementById('searchInput').value = '';
+                    currentFilterText = '';
+                    currentExpandedId = null;
+                    updateSearchClear();
+                    renderCategories();
+                });
+                return;
+            }
+
+            let activeId = filter ? null : currentExpandedId;
+            if (!filter && activeId !== null) {
+                const activeExists = allCats.some(c => c.id === activeId);
+                if (!activeExists) {
+                    activeId = allCats[0]?.id;
+                    currentExpandedId = activeId;
+                }
+            }
+
+            let html = '';
+            for (const cat of allCats) {
+                const expanded = filter ? true : (activeId === cat.id);
+                const countLabel = filter ? `${cat.emojis.length}/${cat.actualCount}` : cat.emojis.length;
+                html += `
+            <div class="category-item ${expanded ? 'expanded' : ''}" data-category-id="${cat.id}">
+              <div class="category-header">
+                <div class="category-title">
+                  <span class="toggle-icon" style="transform:${expanded ? 'rotate(180deg)' : 'rotate(0deg)'}">▼</span>
+                  <span>${cat.name}</span>
+                </div>
+                <span class="category-count">${countLabel}</span>
+              </div>
+              <div class="emojis-container">
+                <div class="emoji-grid">
+                  ${buildRelationGrid(cat.emojis)}
+                </div>
+              </div>
+            </div>`;
+            }
+            container.innerHTML = html;
+
+            // 手风琴互斥点击
+            container.querySelectorAll('.category-item').forEach(item => {
+                item.querySelector('.category-header')?.addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (filter) return;
+                    const cid = item.dataset.categoryId;
+                    const isExpanded = item.classList.contains('expanded');
+                    container.querySelectorAll('.category-item').forEach(other => {
+                        other.classList.remove('expanded');
+                        const arr = other.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(0deg)';
+                    });
+                    if (!isExpanded) {
+                        item.classList.add('expanded');
+                        const arr = item.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(180deg)';
+                        currentExpandedId = cid;
+                    } else {
+                        currentExpandedId = null;
+                    }
+                });
+            });
+
+            // 绑定事件
+            container.querySelectorAll('.emoji-item').forEach(el => {
+                const relation = el.dataset.relation;
+                const desc = el.dataset.desc;
+                attachEvents(el, relation, desc);
+            });
+        }
+
+        function renderRecent() {
+            const el = document.getElementById('recentGrid');
+            if (!recentCopies.length) {
+                el.innerHTML = '<div class="recent-empty">暂无复制记录</div>';
+                return;
+            }
+            el.innerHTML = recentCopies.map(r => `
+            <div class="recent-emoji-item" data-relation="${escapeHtml(r.e)}" data-desc="${escapeHtml(r.n)}">
+                <div class="emoji-symbol">${escapeHtml(r.e)}</div>
+                <div class="emoji-name">${escapeHtml(r.n)}</div>
+            </div>`).join('');
+            el.querySelectorAll('.recent-emoji-item').forEach(el => {
+                const relation = el.dataset.relation;
+                const desc = el.dataset.desc;
+                attachEvents(el, relation, desc);
+            });
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // 初始化
+        updateStats();
+        renderCategories();
+        renderRecent();
+    </script>
+</body>
+</html>

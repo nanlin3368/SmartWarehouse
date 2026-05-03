@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>每日一言</title>
+  <style>
+    :root {
+      --bg-primary: #e0e5ec;
+      --shadow-light: #ffffff;
+      --shadow-dark: #a3b1c6;
+      --text-primary: #2c3e50;
+      --text-secondary: #5a6c7d;
+      --text-muted: #8b9dc3;
+      --accent-primary: #667eea;
+      --accent-secondary: #764ba2;
+      --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --success: #4ecdc4;
+      --danger: #fc5c65;
+      --warning: #f7b731;
+      --border-radius: 20px;
+      --border-radius-sm: 14px;
+      --border-radius-xs: 10px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: pageLoad 0.8s ease;
+    }
+    @keyframes pageLoad { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      max-width: 680px;
+      text-align: center;
+      padding: 28px 24px 22px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      animation: headerSlide 0.8s ease 0.2s both;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      animation: headerShine 4s ease-in-out infinite;
+    }
+    @keyframes headerSlide { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes headerShine { 0% { left: -100%; } 50% { left: 100%; } 100% { left: 100%; } }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      animation: titleGlow 3s ease-in-out infinite alternate;
+    }
+    @keyframes titleGlow { from { filter: brightness(1); } to { filter: brightness(1.15); } }
+    .subtitle { font-size: 0.92rem; color: var(--text-secondary); font-weight: 500; }
+
+    /* ── 主内容 ── */
+    .main {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: contentSlide 0.8s ease 0.4s both;
+    }
+    @keyframes contentSlide { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── 通用卡片 ── */
+    .card {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+      padding: 22px 20px;
+    }
+    .card-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── 分类选择器 ── */
+    .category-selector {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .cat-btn {
+      padding: 5px 14px;
+      border: none;
+      border-radius: 30px;
+      background: var(--bg-primary);
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .cat-btn.active {
+      background: var(--accent-gradient);
+      color: white;
+      box-shadow: 3px 3px 8px rgba(102,126,234,0.35), -3px -3px 6px var(--shadow-light);
+    }
+    .cat-btn:active { transform: scale(0.95); }
+
+    /* ── 一言展示区 ── */
+    .quote-display {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-sm);
+      box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+      padding: 20px 18px;
+      text-align: center;
+      min-height: 120px;
+      transition: opacity 0.25s ease;
+      position: relative;
+    }
+    .quote-tag {
+      display: inline-block;
+      background: var(--accent-gradient);
+      color: white;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 4px 16px;
+      border-radius: 30px;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+    .quote-image-wrap {
+      width: 100%;
+      border-radius: var(--border-radius-xs);
+      overflow: hidden;
+      margin: 10px 0 14px;
+      box-shadow: 4px 4px 12px var(--shadow-dark), -2px -2px 8px var(--shadow-light);
+      position: relative;
+    }
+    .quote-image {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.3s ease;
+    }
+    .img-loading-mask {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      transition: opacity 0.3s;
+    }
+    .quote-text {
+      font-size: 1.3rem;
+      font-weight: 600;
+      line-height: 1.65;
+      color: var(--text-primary);
+      margin: 4px 0 10px;
+      padding: 0 4px;
+      word-break: break-all;
+    }
+    .quote-author {
+      font-size: 0.88rem;
+      color: var(--accent-primary);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .quote-meta {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+    .quote-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 0;
+      gap: 10px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid var(--shadow-dark);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── 操作按钮栏 ── */
+    .action-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .action-btn {
+      padding: 9px 6px;
+      border: none;
+      border-radius: var(--border-radius-xs);
+      background: var(--bg-primary);
+      box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      line-height: 1.2;
+    }
+    .action-btn .btn-icon { font-size: 1.1rem; }
+    .action-btn:active {
+      transform: scale(0.95);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+    }
+    .action-btn.primary {
+      background: var(--accent-gradient);
+      color: white;
+      box-shadow: 4px 4px 10px rgba(102,126,234,0.4), -2px -2px 6px var(--shadow-light);
+    }
+    .action-btn.fav-active {
+      background: linear-gradient(135deg, #fc5c65, #ff8a80);
+      color: white;
+      box-shadow: 4px 4px 10px rgba(252,92,101,0.4), -2px -2px 6px var(--shadow-light);
+    }
+    .action-btn.speaking {
+      background: linear-gradient(135deg, #4ecdc4, #44b3aa);
+      color: white;
+    }
+
+    /* ── 随机大按钮 ── */
+    .random-btn-wrap {
+      margin-top: 16px;
+    }
+    .random-main-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--border-radius-sm);
+      background: var(--accent-gradient);
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 5px 5px 12px rgba(102,126,234,0.4), -3px -3px 8px var(--shadow-light);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+    }
+    .random-main-btn:active { transform: scale(0.97); box-shadow: inset 3px 3px 8px rgba(0,0,0,0.2); }
+    .random-main-btn.loading { opacity: 0.75; pointer-events: none; }
+
+    /* ── 切换图片按钮 ── */
+    .img-refresh-btn {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(255,255,255,0.85);
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .img-refresh-btn:active { transform: rotate(180deg) scale(0.9); }
+
+    /* ── 分享卡片预览 ── */
+    .share-preview {
+      display: none;
+      margin-top: 12px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      padding: 14px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+    .share-preview.visible { display: block; }
+    .share-text-box {
+      background: white;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 8px 0;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      text-align: left;
+      word-break: break-all;
+    }
+
+    /* ── 列表通用 ── */
+    .list-wrap {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      padding: 9px 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .list-item:last-child { margin-bottom: 0; }
+    .list-item:active { transform: scale(0.98); }
+    .list-item-text {
+      flex: 1;
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+    }
+    .list-item-meta {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .delete-btn {
+      background: transparent;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      color: var(--danger);
+      padding: 2px 6px;
+      border-radius: 20px;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .empty-tip {
+      text-align: center;
+      padding: 22px 10px;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    /* ── 清空按钮 ── */
+    .clear-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 9px;
+      border: none;
+      border-radius: var(--border-radius-xs);
+      background: var(--bg-primary);
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--danger);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .clear-btn:active { transform: scale(0.97); }
+
+    /* ── 使用说明 ── */
+    .instr-list { display: flex; flex-direction: column; gap: 8px; }
+    .instr-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+    }
+    .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .instr-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+    .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+    /* ── 统计徽章 ── */
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .stat-badge {
+      flex: 1;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: block;
+    }
+    .stat-label { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; }
+
+    /* ── 滚动条 ── */
+    .list-wrap::-webkit-scrollbar { width: 4px; }
+    .list-wrap::-webkit-scrollbar-track { background: transparent; }
+    .list-wrap::-webkit-scrollbar-thumb { background: var(--shadow-dark); border-radius: 4px; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(44,62,80,0.92);
+      color: white;
+      padding: 9px 22px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      z-index: 999;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 400px) {
+      .card { padding: 18px 14px; }
+      .quote-text { font-size: 1.15rem; }
+      .action-btn { font-size: 0.68rem; padding: 8px 4px; }
+      .action-btn .btn-icon { font-size: 1rem; }
+      h1 { font-size: 1.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>每日一言</h1>
+  <p class="subtitle">灵感收藏 · 语音朗读 · 随心品味</p>
+</header>
+
+<div class="main">
+
+  <!-- ── 一言展示卡片 ── -->
+  <div class="card">
+    <div class="card-label">✨ 一言空间</div>
+
+    <!-- 分类选择 -->
+    <div class="category-selector" id="categorySelector"></div>
+
+    <!-- 展示区 -->
+    <div class="quote-display" id="quoteDisplay">
+      <div class="quote-loading">
+        <div class="spinner"></div>
+        <span>正在寻找佳句…</span>
+      </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="action-bar" style="margin-top:14px;">
+      <button class="action-btn" id="copyBtn"><span class="btn-icon">📋</span>复制</button>
+      <button class="action-btn" id="speakBtn"><span class="btn-icon">🔊</span>朗读</button>
+      <button class="action-btn" id="shareBtn"><span class="btn-icon">🔗</span>分享</button>
+      <button class="action-btn" id="favoriteBtn"><span class="btn-icon">❤️</span>收藏</button>
+    </div>
+
+    <!-- 分享预览 -->
+    <div class="share-preview" id="sharePreview">
+      <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:6px;">已生成分享文本，点击复制</div>
+      <div class="share-text-box" id="shareTextBox"></div>
+      <button class="action-btn" id="copyShareBtn" style="width:100%;border-radius:var(--border-radius-xs);flex-direction:row;gap:6px;margin-top:2px;padding:9px 12px;">
+        <span>📋</span> 复制分享文本
+      </button>
+    </div>
+
+    <!-- 随机按钮 -->
+    <div class="random-btn-wrap">
+      <button class="random-main-btn" id="randomBtn">
+        <span id="randomBtnIcon">🎲</span>
+        <span id="randomBtnText">随机一言</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── 统计 + 收藏卡片 ── -->
+  <div class="card">
+    <div class="card-label">⭐ 我的收藏</div>
+    <div class="stats-row">
+      <div class="stat-badge">
+        <span class="stat-num" id="statFav">0</span>
+        <span class="stat-label">已收藏</span>
+      </div>
+      <div class="stat-badge">
+        <span class="stat-num" id="statHistory">0</span>
+        <span class="stat-label">已浏览</span>
+      </div>
+      <div class="stat-badge">
+        <span class="stat-num" id="statTotal">0</span>
+        <span class="stat-label">今日获取</span>
+      </div>
+    </div>
+    <div class="list-wrap" id="favoritesList">
+      <div class="empty-tip">暂无收藏<br>点击 ❤️ 收藏喜欢的句子</div>
+    </div>
+  </div>
+
+  <!-- ── 历史记录卡片 ── -->
+  <div class="card">
+    <div class="card-label">🕒 最近浏览</div>
+    <div class="list-wrap" id="historyList">
+      <div class="empty-tip">暂无历史记录</div>
+    </div>
+    <button class="clear-btn" id="clearHistoryBtn">🗑️ 清空历史记录</button>
+  </div>
+
+  <!-- ── 使用说明卡片 ── -->
+  <div class="card">
+    <div class="card-label">📖 使用说明</div>
+    <div class="instr-list">
+      <div class="instr-item"><span class="instr-icon">🎲</span><div class="instr-text"><strong>随机一言</strong>：点击底部大按钮获取新句子，支持按分类筛选。</div></div>
+      <div class="instr-item"><span class="instr-icon">🖼️</span><div class="instr-text"><strong>切换配图</strong>：点击图片右下角 🔄 按钮，随机更换不重复配图。</div></div>
+      <div class="instr-item"><span class="instr-icon">🔊</span><div class="instr-text"><strong>语音朗读</strong>：使用浏览器语音合成朗读句子，再次点击停止。</div></div>
+      <div class="instr-item"><span class="instr-icon">❤️</span><div class="instr-text"><strong>收藏管理</strong>：收藏喜欢的句子，点击列表条目可重新展示，支持单条删除。</div></div>
+      <div class="instr-item"><span class="instr-icon">🔗</span><div class="instr-text"><strong>一键分享</strong>：生成带出处的分享文本，复制后发送给好友。</div></div>
+      <div class="instr-item"><span class="instr-icon">🕒</span><div class="instr-text"><strong>历史记录</strong>：自动保存最近浏览的 15 条记录，点击快速回看。</div></div>
+      <div class="instr-item"><span class="instr-icon">🔒</span><div class="instr-text"><strong>隐私安全</strong>：所有数据仅存储在本地浏览器，不上传任何服务器。</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // =====================================================
+  // 配置
+  // =====================================================
+  const CATEGORIES = [
+    { code: '', name: '全部' },
+    { code: 'a', name: '动漫' },
+    { code: 'b', name: '文学' },
+    { code: 'c', name: '影视' },
+    { code: 'd', name: '诗词' },
+    { code: 'e', name: '原创' },
+    { code: 'f', name: '经典' },
+    { code: 'i', name: '励志' },
+    { code: 'j', name: '网易云' }
+  ];
+
+  // 多备份 API 列表（按优先级顺序尝试）
+  const API_SOURCES = [
+    { name: 'hitokoto', url: (cat) => `https://v1.hitokoto.cn/${cat ? '?c=' + cat : ''}`, parse: (d) => ({ text: d.hitokoto, author: d.from_who || d.from || '佚名', source: d.from || '', type: d.type }) },
+    { name: 'gushi', url: () => 'https://api.gushi.ci/all.json', parse: (d) => ({ text: d.content, author: d.origin?.author || '佚名', source: d.origin?.title || '', type: 'd' }) },
+    { name: 'btstu', url: () => 'https://api.btstu.cn/yan/api.php?charset=utf-8&encode=json', parse: (d) => ({ text: d.text || d.content, author: d.source || '格言网', source: '', type: 'f' }) },
+    { name: 'yiyan_v2', url: () => 'https://yiyan.us.kg/', parse: (d) => ({ text: d.hitokoto, author: d.from_who || d.from || '佚名', source: d.from || '', type: d.type }) }
+  ];
+
+  // 海量配图池 —— picsum id 50张 + 多关键词 Unsplash
+  const IMAGE_POOL = [
+    // picsum 精选
+    ...[ 10,15,20,25,27,29,36,39,42,43,48,57,64,65,67,73,74,82,83,84,85,87,91,93,94,99,
+         100,106,110,112,116,119,120,127,130,137,139,143,145,147,152,155,160,166,168,172,
+         175,181,190,193,196,200,201,202,203,204,205,210,214,217,219,220,222,225,228,229,
+         230,232,237,239,244,247,250,256,257,260,266,267,271,274,277,280,284,287,290,292,
+         293,295,299,301,303,306,308,311,312,315,316,317,318,319,320,321 ].map(id => `https://picsum.photos/id/${id}/700/350`),
+    // Unsplash 关键词（多样化主题）
+    'https://source.unsplash.com/700x350/?nature,forest',
+    'https://source.unsplash.com/700x350/?mountain,sunrise',
+    'https://source.unsplash.com/700x350/?ocean,calm',
+    'https://source.unsplash.com/700x350/?flower,spring',
+    'https://source.unsplash.com/700x350/?city,night',
+    'https://source.unsplash.com/700x350/?lake,reflection',
+    'https://source.unsplash.com/700x350/?desert,dunes',
+    'https://source.unsplash.com/700x350/?architecture,minimal',
+    'https://source.unsplash.com/700x350/?fog,misty',
+    'https://source.unsplash.com/700x350/?autumn,leaves',
+    'https://source.unsplash.com/700x350/?snow,winter',
+    'https://source.unsplash.com/700x350/?sunset,golden',
+    'https://source.unsplash.com/700x350/?cherry,blossom',
+    'https://source.unsplash.com/700x350/?zen,garden',
+    'https://source.unsplash.com/700x350/?waterfall,green',
+    'https://source.unsplash.com/700x350/?meadow,blue,sky',
+    'https://source.unsplash.com/700x350/?starry,night',
+    'https://source.unsplash.com/700x350/?rainy,window',
+    'https://source.unsplash.com/700x350/?beach,sand',
+    'https://source.unsplash.com/700x350/?books,reading'
+  ];
+
+  // 本地备用名言库（API全挂时使用）
+  const LOCAL_QUOTES = [
+    { text: '生命中最困难的阶段不是没有人懂你，而是你不懂自己。', author: '尼采', source: '《悲剧的诞生》', type: 'f' },
+    { text: '如果你长时间凝视深渊，深渊也会凝视你。', author: '尼采', source: '《善恶的彼岸》', type: 'f' },
+    { text: '我慢慢明白了为什么我不快乐，因为我总是期待一个结果。', author: '村上春树', source: '《挪威的森林》', type: 'b' },
+    { text: '不管全世界所有人怎么说，我都认为自己的感受才是正确的。', author: '宫崎骏', source: '《龙猫》', type: 'a' },
+    { text: '你若不勇敢，谁替你坚强。', author: '佚名', source: '', type: 'e' },
+    { text: '世界上只有一种真正的英雄主义，就是认清生活的真相后依然热爱生活。', author: '罗曼·罗兰', source: '《约翰·克里斯朵夫》', type: 'f' },
+    { text: '愿你出走半生，归来仍是少年。', author: '佚名', source: '', type: 'e' },
+    { text: '生如夏花之绚烂，死如秋叶之静美。', author: '泰戈尔', source: '《飞鸟集》', type: 'b' },
+    { text: '有些人三十岁就死了，只不过到了八十岁才被埋葬。', author: '本杰明·富兰克林', source: '', type: 'i' },
+    { text: '时间是一个伟大的作者，它总能给出完美的结局。', author: '卓别林', source: '', type: 'f' },
+    { text: '我们用了两年时间学会说话，却要用几十年时间学会闭嘴。', author: '卡内基', source: '', type: 'i' },
+    { text: '每一个不曾起舞的日子，都是对生命的辜负。', author: '尼采', source: '', type: 'i' },
+    { text: '千山鸟飞绝，万径人踪灭。孤舟蓑笠翁，独钓寒江雪。', author: '柳宗元', source: '《江雪》', type: 'd' },
+    { text: '此情可待成追忆，只是当时已惘然。', author: '李商隐', source: '《锦瑟》', type: 'd' },
+    { text: '人生若只如初见，何事秋风悲画扇。', author: '纳兰性德', source: '《木兰词》', type: 'd' },
+    { text: '你的时间有限，所以不要浪费时间去过别人的生活。', author: '乔布斯', source: '', type: 'i' },
+    { text: '一个人的成熟，不是看他的年龄，而是看他对待事情的方式。', author: '佚名', source: '', type: 'e' },
+    { text: '所谓绝望，不过是还没有遇到奇迹。', author: '宫崎骏', source: '', type: 'a' },
+    { text: '有的路看起来很近，走去却很远的，缺少耐心永远走不到头。', author: '佚名', source: '', type: 'i' },
+    { text: '人生最遗憾的，莫过于，轻易地放弃了不该放弃的，固执地坚持了不该坚持的。', author: '佚名', source: '', type: 'e' }
+  ];
+
+  // =====================================================
+  // 状态
+  // =====================================================
+  const STORAGE_HISTORY   = 'dyq_history_v2';
+  const STORAGE_FAVORITES = 'dyq_favorites_v2';
+  const STORAGE_TODAY     = 'dyq_today_v2';
+
+  let currentQuote   = null;
+  let currentCategory = '';
+  let historyList    = [];
+  let favoritesList  = [];
+  let isSpeaking     = false;
+  let todayCount     = 0;
+  let usedImgIndices = [];
+  let shareVisible   = false;
+
+  // =====================================================
+  // 工具
+  // =====================================================
+  function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  }
+
+  function toast(msg, duration = 1800) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), duration);
+  }
+
+  function getCatName(type) {
+    const map = { a:'动漫', b:'文学', c:'影视', d:'诗词', e:'原创', f:'经典', i:'励志', j:'网易云', g:'名言' };
+    return map[type] || '名言';
+  }
+
+  // 随机配图，低重复
+  function getRandomImage() {
+    if (usedImgIndices.length >= IMAGE_POOL.length) usedImgIndices = [];
+    let idx;
+    do { idx = Math.floor(Math.random() * IMAGE_POOL.length); } while (usedImgIndices.includes(idx));
+    usedImgIndices.push(idx);
+    return IMAGE_POOL[idx];
+  }
+
+  // =====================================================
+  // 存储
+  // =====================================================
+  function loadStorage() {
+    try { historyList = JSON.parse(localStorage.getItem(STORAGE_HISTORY)) || []; if (!Array.isArray(historyList)) historyList = []; } catch { historyList = []; }
+    try { favoritesList = JSON.parse(localStorage.getItem(STORAGE_FAVORITES)) || []; if (!Array.isArray(favoritesList)) favoritesList = []; } catch { favoritesList = []; }
+    const todayKey = new Date().toDateString();
+    try {
+      const td = JSON.parse(localStorage.getItem(STORAGE_TODAY));
+      todayCount = (td && td.date === todayKey) ? (td.count || 0) : 0;
+    } catch { todayCount = 0; }
+  }
+
+  function saveHistory() { localStorage.setItem(STORAGE_HISTORY, JSON.stringify(historyList.slice(0, 15))); }
+  function saveFavorites() { localStorage.setItem(STORAGE_FAVORITES, JSON.stringify(favoritesList)); }
+  function saveTodayCount() {
+    localStorage.setItem(STORAGE_TODAY, JSON.stringify({ date: new Date().toDateString(), count: todayCount }));
+  }
+
+  function updateStats() {
+    document.getElementById('statFav').textContent     = favoritesList.length;
+    document.getElementById('statHistory').textContent = historyList.length;
+    document.getElementById('statTotal').textContent   = todayCount;
+  }
+
+  // =====================================================
+  // 渲染
+  // =====================================================
+  function renderHistory() {
+    const el = document.getElementById('historyList');
+    if (!historyList.length) { el.innerHTML = '<div class="empty-tip">暂无历史记录</div>'; return; }
+    el.innerHTML = historyList.map((item, i) => `
+      <div class="list-item" data-idx="${i}">
+        <div class="list-item-text">"${escapeHtml(item.text)}" — ${escapeHtml(item.author)}</div>
+        <div class="list-item-meta">${getCatName(item.type)}</div>
+      </div>`).join('');
+    el.querySelectorAll('.list-item').forEach(it => {
+      it.addEventListener('click', () => {
+        const d = historyList[+it.dataset.idx];
+        if (d) displayFromData(d);
+      });
+    });
+  }
+
+  function renderFavorites() {
+    const el = document.getElementById('favoritesList');
+    if (!favoritesList.length) { el.innerHTML = '<div class="empty-tip">暂无收藏<br>点击 ❤️ 收藏喜欢的句子</div>'; return; }
+    el.innerHTML = favoritesList.map((fav, i) => `
+      <div class="list-item" data-idx="${i}">
+        <div class="list-item-text">"${escapeHtml(fav.text)}" — ${escapeHtml(fav.author)}</div>
+        <button class="delete-btn" data-fav="${i}" title="删除">🗑️</button>
+      </div>`).join('');
+    el.querySelectorAll('.list-item').forEach(it => {
+      it.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) return;
+        const d = favoritesList[+it.dataset.idx];
+        if (d) displayFromData(d);
+      });
+    });
+    el.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        favoritesList.splice(+btn.dataset.fav, 1);
+        saveFavorites(); renderFavorites(); updateStats();
+        toast('已删除收藏');
+      });
+    });
+  }
+
+  // =====================================================
+  // 展示一言
+  // =====================================================
+  function renderQuote(quote, imgUrl) {
+    const catName = getCatName(quote.type);
+    const dateStr = new Date().toLocaleDateString('zh-CN');
+    const authorLine = quote.author ? `—— ${escapeHtml(quote.author)}` : '';
+    const sourceLine = quote.source ? `《${escapeHtml(quote.source)}》` : '';
+
+    document.getElementById('quoteDisplay').innerHTML = `
+      <div class="quote-tag">${catName}</div>
+      <div class="quote-image-wrap">
+        <img class="quote-image" src="${escapeHtml(imgUrl)}" alt="配图" loading="lazy"
+             onerror="this.src='https://picsum.photos/id/100/700/350'">
+        <button class="img-refresh-btn" id="imgRefreshBtn" title="换一张图">🔄</button>
+        <div class="img-loading-mask" id="imgMask">图片加载中…</div>
+      </div>
+      <div class="quote-text">"${escapeHtml(quote.text)}"</div>
+      ${authorLine ? `<div class="quote-author">${authorLine}${sourceLine ? ' · ' + sourceLine : ''}</div>` : ''}
+      <div class="quote-meta">📅 ${dateStr} &nbsp;·&nbsp; 💡 ${catName}</div>`;
+
+    // 图片加载完隐藏蒙层
+    const img = document.querySelector('.quote-image');
+    const mask = document.getElementById('imgMask');
+    img.addEventListener('load', () => { mask.style.opacity = '0'; setTimeout(() => mask.style.display = 'none', 300); });
+    if (img.complete) { mask.style.display = 'none'; }
+
+    // 换图按钮
+    document.getElementById('imgRefreshBtn').addEventListener('click', () => {
+      const newImg = getRandomImage();
+      mask.style.display = 'flex'; mask.style.opacity = '1';
+      img.src = newImg;
+      toast('已更换配图 🖼️');
+    });
+
+    updateFavBtn();
+  }
+
+  function displayFromData(data) {
+    currentQuote = data;
+    const el = document.getElementById('quoteDisplay');
+    el.style.opacity = '0';
+    setTimeout(() => {
+      renderQuote(data, getRandomImage());
+      el.style.opacity = '1';
+      updateFavBtn();
+    }, 150);
+    hideShare();
+  }
+
+  // =====================================================
+  // 获取一言
+  // =====================================================
+  function setLoading(on) {
+    const btn = document.getElementById('randomBtn');
+    const icon = document.getElementById('randomBtnIcon');
+    const text = document.getElementById('randomBtnText');
+    if (on) {
+      btn.classList.add('loading');
+      icon.textContent = '⏳'; text.textContent = '加载中…';
+      document.getElementById('quoteDisplay').innerHTML = `<div class="quote-loading"><div class="spinner"></div><span>正在寻找佳句…</span></div>`;
+    } else {
+      btn.classList.remove('loading');
+      icon.textContent = '🎲'; text.textContent = '随机一言';
+    }
+  }
+
+  async function tryFetchFromSource(src, cat) {
+    const resp = await fetch(src.url(cat), { signal: AbortSignal.timeout(4000) });
+    if (!resp.ok) throw new Error('non-200');
+    const data = await resp.json();
+    const parsed = src.parse(data);
+    if (!parsed || !parsed.text) throw new Error('empty');
+    return parsed;
+  }
+
+  async function fetchQuote() {
+    for (const src of API_SOURCES) {
+      try {
+        return await tryFetchFromSource(src, currentCategory);
+      } catch {}
+    }
+    // 全挂了，从本地库随机
+    const pool = currentCategory
+      ? LOCAL_QUOTES.filter(q => q.type === currentCategory)
+      : LOCAL_QUOTES;
+    const candidates = pool.length ? pool : LOCAL_QUOTES;
+    return candidates[Math.floor(Math.random() * candidates.length)];
+  }
+
+  async function getNewQuote() {
+    setLoading(true);
+    hideShare();
+    try {
+      const quote = await fetchQuote();
+      currentQuote = quote;
+      todayCount++;
+      saveTodayCount();
+      renderQuote(quote, getRandomImage());
+      addToHistory(quote);
+      updateFavBtn();
+      updateStats();
+    } catch {
+      document.getElementById('quoteDisplay').innerHTML = `
+        <div class="quote-loading">
+          <span style="font-size:1.4rem">⚠️</span>
+          <span style="color:var(--danger);font-size:0.82rem">加载失败，已使用本地名言</span>
+        </div>`;
+      // 使用本地
+      const q = LOCAL_QUOTES[Math.floor(Math.random() * LOCAL_QUOTES.length)];
+      currentQuote = q;
+      renderQuote(q, getRandomImage());
+      addToHistory(q);
+      updateStats();
+    }
+    setLoading(false);
+  }
+
+  // =====================================================
+  // 历史 & 收藏
+  // =====================================================
+  function addToHistory(quote) {
+    if (!quote?.text) return;
+    const exists = historyList.some(h => h.text === quote.text && h.author === quote.author);
+    if (!exists) {
+      historyList.unshift({ ...quote, timestamp: Date.now() });
+      if (historyList.length > 15) historyList.pop();
+      saveHistory(); renderHistory(); updateStats();
+    }
+  }
+
+  function isFavorite() {
+    if (!currentQuote) return false;
+    return favoritesList.some(f => f.text === currentQuote.text && f.author === currentQuote.author);
+  }
+
+  function updateFavBtn() {
+    const btn = document.getElementById('favoriteBtn');
+    if (isFavorite()) {
+      btn.classList.add('fav-active');
+      btn.innerHTML = '<span class="btn-icon">❤️</span>已收藏';
+    } else {
+      btn.classList.remove('fav-active');
+      btn.innerHTML = '<span class="btn-icon">❤️</span>收藏';
+    }
+  }
+
+  function toggleFavorite() {
+    if (!currentQuote) return;
+    if (isFavorite()) {
+      favoritesList = favoritesList.filter(f => !(f.text === currentQuote.text && f.author === currentQuote.author));
+      toast('已取消收藏');
+    } else {
+      favoritesList.unshift({ ...currentQuote, timestamp: Date.now() });
+      toast('✅ 已加入收藏');
+    }
+    saveFavorites(); renderFavorites(); updateFavBtn(); updateStats();
+  }
+
+  // =====================================================
+  // 朗读
+  // =====================================================
+  function toggleSpeak() {
+    const btn = document.getElementById('speakBtn');
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      isSpeaking = false;
+      btn.classList.remove('speaking');
+      btn.innerHTML = '<span class="btn-icon">🔊</span>朗读';
+      return;
+    }
+    if (!currentQuote) return;
+    const utter = new SpeechSynthesisUtterance(currentQuote.text);
+    utter.lang = 'zh-CN'; utter.rate = 0.9;
+    utter.onend = () => { isSpeaking = false; btn.classList.remove('speaking'); btn.innerHTML = '<span class="btn-icon">🔊</span>朗读'; };
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
+    isSpeaking = true;
+    btn.classList.add('speaking');
+    btn.innerHTML = '<span class="btn-icon">⏹️</span>停止';
+  }
+
+  // =====================================================
+  // 复制
+  // =====================================================
+  function copyQuote() {
+    if (!currentQuote) return;
+    const authorPart = currentQuote.author ? ` — ${currentQuote.author}` : '';
+    const srcPart    = currentQuote.source ? `《${currentQuote.source}》` : '';
+    const text = `"${currentQuote.text}"${authorPart}${srcPart ? ' · ' + srcPart : ''}`;
+    navigator.clipboard.writeText(text).then(() => toast('✅ 已复制')).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      toast('✅ 已复制');
+    });
+  }
+
+  // =====================================================
+  // 分享
+  // =====================================================
+  function hideShare() {
+    shareVisible = false;
+    document.getElementById('sharePreview').classList.remove('visible');
+  }
+
+  function toggleShare() {
+    if (!currentQuote) return;
+    shareVisible = !shareVisible;
+    const preview = document.getElementById('sharePreview');
+    if (shareVisible) {
+      const authorPart = currentQuote.author ? ` — ${currentQuote.author}` : '';
+      const srcPart    = currentQuote.source ? `《${currentQuote.source}》` : '';
+      const dateStr    = new Date().toLocaleDateString('zh-CN');
+      document.getElementById('shareTextBox').textContent =
+        `"${currentQuote.text}"${authorPart}${srcPart ? '\n' + srcPart : ''}\n\n📅 ${dateStr} · 来自「每日一言」`;
+      preview.classList.add('visible');
+    } else {
+      preview.classList.remove('visible');
+    }
+  }
+
+  // =====================================================
+  // 分类选择器
+  // =====================================================
+  function renderCategorySelector() {
+    const el = document.getElementById('categorySelector');
+    el.innerHTML = CATEGORIES.map(cat => `
+      <button class="cat-btn${cat.code === currentCategory ? ' active' : ''}" data-code="${cat.code}">${cat.name}</button>`
+    ).join('');
+    el.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentCategory = btn.dataset.code;
+        el.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        getNewQuote();
+      });
+    });
+  }
+
+  // =====================================================
+  // 初始化
+  // =====================================================
+  function init() {
+    loadStorage();
+    renderCategorySelector();
+    renderFavorites();
+    renderHistory();
+    updateStats();
+
+    document.getElementById('randomBtn').addEventListener('click', getNewQuote);
+    document.getElementById('copyBtn').addEventListener('click', copyQuote);
+    document.getElementById('speakBtn').addEventListener('click', toggleSpeak);
+    document.getElementById('favoriteBtn').addEventListener('click', toggleFavorite);
+    document.getElementById('shareBtn').addEventListener('click', toggleShare);
+    document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+      if (confirm('确定清空所有历史记录吗？')) { historyList = []; saveHistory(); renderHistory(); updateStats(); toast('历史记录已清空'); }
+    });
+    document.getElementById('copyShareBtn').addEventListener('click', () => {
+      const text = document.getElementById('shareTextBox').textContent;
+      navigator.clipboard.writeText(text).then(() => toast('✅ 分享文本已复制')).catch(() => toast('复制失败，请手动复制'));
+    });
+
+    getNewQuote();
+  }
+
+  init();
+</script>
+</body>
+</html>

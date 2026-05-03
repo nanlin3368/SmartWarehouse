@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>科学计算器</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 显示屏 ── */
+      .display-wrap {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-sm);
+        box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+        padding: 16px 20px 14px;
+      }
+
+      .display-expr {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        min-height: 20px;
+        text-align: right;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-bottom: 6px;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+      }
+
+      .display-main {
+        font-size: 2.4rem;
+        font-weight: 700;
+        text-align: right;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-height: 2.7rem;
+        word-break: break-all;
+      }
+
+      .display-main.small { font-size: 1.6rem; }
+      .display-main.xsmall { font-size: 1.1rem; }
+
+      /* ── 角度模式切换 ── */
+      .mode-toggle {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .mode-btn {
+        flex: 1;
+        padding: 8px 0;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-family: inherit;
+        transition: var(--transition);
+        letter-spacing: 0.5px;
+      }
+
+      .mode-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 3px 3px 8px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+      }
+
+      /* ── 按键网格 ── */
+      .btn-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .btn-grid-sci {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .btn-grid-main {
+        grid-template-columns: repeat(4, 1fr);
+        margin-top: 10px;
+      }
+
+      /* ── 计算器按钮 ── */
+      .calc-btn {
+        padding: 0;
+        height: 54px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .calc-btn:active {
+        box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+        transform: scale(0.96);
+      }
+
+      /* 科学函数按钮 */
+      .calc-btn.sci {
+        height: 46px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        letter-spacing: 0.2px;
+      }
+
+      /* 运算符按钮 */
+      .calc-btn.op {
+        color: var(--accent-primary);
+        font-size: 1.2rem;
+      }
+
+      /* 等号按钮 */
+      .calc-btn.eq {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        font-size: 1.4rem;
+      }
+
+      .calc-btn.eq:active {
+        box-shadow: inset 3px 3px 7px rgba(80,60,160,0.3);
+      }
+
+      /* 清除/退格按钮 */
+      .calc-btn.clear {
+        color: var(--danger);
+        font-size: 0.9rem;
+      }
+
+      /* 跨两列 */
+      .span2 { grid-column: span 2; }
+
+      /* 数字按钮 */
+      .calc-btn.num {
+        font-size: 1.15rem;
+        color: var(--text-primary);
+      }
+
+      /* ── 历史记录 ── */
+      .history-wrap {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        max-height: 160px;
+        overflow-y: auto;
+        padding: 8px;
+      }
+
+      .history-empty {
+        text-align: center;
+        padding: 16px;
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      .history-item {
+        padding: 8px 12px;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        margin-bottom: 6px;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .history-item:last-child { margin-bottom: 0; }
+
+      .history-item:active { transform: scale(0.98); }
+
+      .history-expr {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .history-result {
+        font-size: 0.88rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* ── 使用说明 ── */
+      .instr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+      .instr-text {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── 科学函数折叠区 ── */
+      .sci-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        padding: 2px 0;
+        margin-bottom: 0;
+      }
+
+      .sci-toggle-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.65rem;
+        color: var(--accent-primary);
+        font-weight: 900;
+        transition: var(--transition);
+        flex-shrink: 0;
+        line-height: 1;
+      }
+
+      .sci-toggle-icon.open {
+        transform: rotate(180deg);
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 2px 2px 8px rgba(102,126,234,0.4);
+      }
+
+      /* 折叠：用 visibility+height 组合，保留 padding 让阴影不被裁 */
+      .sci-panel {
+        visibility: hidden;
+        height: 0;
+        overflow: visible;       /* 不裁阴影 */
+        opacity: 0;
+        margin-top: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease, margin-top 0.3s ease;
+      }
+
+      .sci-panel > .btn-grid {
+        padding: 6px 3px 10px;  /* 给阴影留空间 */
+        margin: -6px -3px -10px;
+      }
+
+      .sci-panel.open {
+        visibility: visible;
+        height: auto;
+        opacity: 1;
+        margin-top: 12px;
+        pointer-events: auto;
+      }
+
+      /* ── 响应式 ── */
+      @media (max-width: 380px) {
+        .calc-btn { height: 48px; font-size: 0.9rem; }
+        .calc-btn.sci { height: 40px; font-size: 0.72rem; }
+        .display-main { font-size: 2rem; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>科学计算器</h1>
+      <p class="subtitle">三角函数 · 对数 · 幂运算 · 常数</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 显示屏 -->
+      <div class="card">
+        <div class="card-label">显示</div>
+        <div class="display-wrap">
+          <div class="display-expr" id="displayExpr">&nbsp;</div>
+          <div class="display-main" id="displayMain">0</div>
+        </div>
+      </div>
+
+      <!-- 按键区 -->
+      <div class="card">
+        <div class="card-label">角度模式</div>
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="btnDeg" onclick="setAngleMode('deg')">DEG 角度</button>
+          <button class="mode-btn" id="btnRad" onclick="setAngleMode('rad')">RAD 弧度</button>
+        </div>
+
+        <!-- 科学函数区（默认收起）-->
+        <div class="sci-header" onclick="toggleSci()" id="sciHeader">
+          <div class="card-label" style="margin-bottom:0">科学函数</div>
+          <div class="sci-toggle-icon" id="sciIcon">▼</div>
+        </div>
+        <div class="sci-panel" id="sciPanel">
+          <div class="btn-grid btn-grid-sci">
+          <button class="calc-btn sci" onclick="inputFn('sin(')">sin</button>
+          <button class="calc-btn sci" onclick="inputFn('cos(')">cos</button>
+          <button class="calc-btn sci" onclick="inputFn('tan(')">tan</button>
+          <button class="calc-btn sci" onclick="inputFn('log(')">log</button>
+
+          <button class="calc-btn sci" onclick="inputFn('asin(')">sin⁻¹</button>
+          <button class="calc-btn sci" onclick="inputFn('acos(')">cos⁻¹</button>
+          <button class="calc-btn sci" onclick="inputFn('atan(')">tan⁻¹</button>
+          <button class="calc-btn sci" onclick="inputFn('ln(')">ln</button>
+
+          <button class="calc-btn sci" onclick="inputFn('sqrt(')">√</button>
+          <button class="calc-btn sci" onclick="inputFn('cbrt(')">∛</button>
+          <button class="calc-btn sci" onclick="inputStr('^')">xʸ</button>
+          <button class="calc-btn sci" onclick="inputFn('abs(')">|x|</button>
+
+          <button class="calc-btn sci" onclick="inputStr('π')">π</button>
+          <button class="calc-btn sci" onclick="inputStr('e')">e</button>
+          <button class="calc-btn sci" onclick="inputStr('(')"> ( </button>
+          <button class="calc-btn sci" onclick="inputStr(')')"> ) </button>
+        </div>
+        </div><!-- /sci-panel -->
+
+        <!-- 主键盘区 -->
+        <div class="card-label" style="margin-top:14px">键盘</div>
+        <div class="btn-grid btn-grid-main">
+          <button class="calc-btn clear" onclick="clearAll()">AC</button>
+          <button class="calc-btn clear" onclick="backspace()">⌫</button>
+          <button class="calc-btn op"   onclick="inputStr('%')">%</button>
+          <button class="calc-btn op"   onclick="inputStr('÷')">÷</button>
+
+          <button class="calc-btn num"  onclick="inputStr('7')">7</button>
+          <button class="calc-btn num"  onclick="inputStr('8')">8</button>
+          <button class="calc-btn num"  onclick="inputStr('9')">9</button>
+          <button class="calc-btn op"   onclick="inputStr('×')">×</button>
+
+          <button class="calc-btn num"  onclick="inputStr('4')">4</button>
+          <button class="calc-btn num"  onclick="inputStr('5')">5</button>
+          <button class="calc-btn num"  onclick="inputStr('6')">6</button>
+          <button class="calc-btn op"   onclick="inputStr('-')">−</button>
+
+          <button class="calc-btn num"  onclick="inputStr('1')">1</button>
+          <button class="calc-btn num"  onclick="inputStr('2')">2</button>
+          <button class="calc-btn num"  onclick="inputStr('3')">3</button>
+          <button class="calc-btn op"   onclick="inputStr('+')">+</button>
+
+          <button class="calc-btn num"  onclick="toggleSign()">+/−</button>
+          <button class="calc-btn num"  onclick="inputStr('0')">0</button>
+          <button class="calc-btn num"  onclick="inputStr('.')">.</button>
+          <button class="calc-btn eq"   onclick="calculate()">=</button>
+        </div>
+      </div>
+
+      <!-- 历史记录 -->
+      <div class="card">
+        <div class="card-label">历史记录
+          <span style="float:right; cursor:pointer; font-size:0.7rem; color:var(--danger);" onclick="clearHistory()">清空</span>
+        </div>
+        <div class="history-wrap" id="historyWrap">
+          <div class="history-empty" id="historyEmpty">暂无计算记录</div>
+        </div>
+      </div>
+
+      <!-- 使用说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+          <div class="instr-item">
+            <span class="instr-icon">🔢</span>
+            <div class="instr-text"><strong>基础运算</strong>：支持加减乘除、取余、括号嵌套，按 = 或回车键计算结果</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">📐</span>
+            <div class="instr-text"><strong>三角函数</strong>：sin / cos / tan 及其反函数，顶部切换 DEG（角度）或 RAD（弧度）模式</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">📊</span>
+            <div class="instr-text"><strong>科学函数</strong>：log（以10为底）、ln（自然对数）、√（平方根）、∛（立方根）、|x|（绝对值）、xʸ（幂运算）</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">✨</span>
+            <div class="instr-text"><strong>常数</strong>：π = 3.14159…，e = 2.71828…，可直接参与运算，如 2×π</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🕘</span>
+            <div class="instr-text"><strong>历史记录</strong>：点击历史条目可将结果填入计算区继续使用，最多保留 20 条</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      // ── 科学函数区展开/收起 ──
+      function toggleSci() {
+        const panel = document.getElementById('sciPanel')
+        const icon  = document.getElementById('sciIcon')
+        const open  = panel.classList.toggle('open')
+        icon.classList.toggle('open', open)
+      }
+
+      // ── 状态 ──
+      let expr      = ''       // 当前显示的表达式字符串
+      let angleMode = 'deg'    // 'deg' | 'rad'
+      let justCalc  = false    // 刚算完，下次输入数字时清空
+      let history   = []       // [{expr, result}, ...]
+
+      const displayExpr = document.getElementById('displayExpr')
+      const displayMain = document.getElementById('displayMain')
+      const historyWrap = document.getElementById('historyWrap')
+      const historyEmpty= document.getElementById('historyEmpty')
+
+      // ── 显示更新 ──
+      function updateDisplay() {
+        displayExpr.textContent = expr || '\u00a0'
+        const len = displayMain.textContent.length
+        displayMain.classList.toggle('small',  len > 12)
+        displayMain.classList.toggle('xsmall', len > 18)
+      }
+
+      function showResult(val) {
+        const s = formatNum(val)
+        displayMain.textContent = s
+        const len = s.length
+        displayMain.classList.toggle('small',  len > 12)
+        displayMain.classList.toggle('xsmall', len > 18)
+      }
+
+      function formatNum(n) {
+        if (!isFinite(n)) return isNaN(n) ? '错误' : (n > 0 ? '+∞' : '-∞')
+        // 避免浮点尾数噪声
+        const s = parseFloat(n.toPrecision(12)).toString()
+        return s
+      }
+
+      // ── 输入处理 ──
+      function inputStr(ch) {
+        // 刚算完结果，再按数字则清空重输；按运算符则接着用结果
+        if (justCalc) {
+          const result = displayMain.textContent
+          if (/[\d.]/.test(ch)) {
+            expr = ch
+          } else if (/[+\-×÷^%]/.test(ch)) {
+            expr = result + ch
+          } else {
+            expr = ch
+          }
+          justCalc = false
+        } else {
+          expr += ch
+        }
+        displayMain.textContent = expr
+        updateDisplay()
+      }
+
+      function inputFn(fn) {
+        if (justCalc) { expr = ''; justCalc = false }
+        expr += fn
+        displayMain.textContent = expr
+        updateDisplay()
+      }
+
+      function toggleSign() {
+        if (!expr) return
+        if (expr.startsWith('-')) expr = expr.slice(1)
+        else expr = '-' + expr
+        displayMain.textContent = expr
+        updateDisplay()
+      }
+
+      function backspace() {
+        if (justCalc) { clearAll(); return }
+        expr = expr.slice(0, -1)
+        displayMain.textContent = expr || '0'
+        updateDisplay()
+      }
+
+      function clearAll() {
+        expr = ''
+        justCalc = false
+        displayMain.textContent = '0'
+        displayExpr.textContent = '\u00a0'
+      }
+
+      // ── 角度模式 ──
+      function setAngleMode(m) {
+        angleMode = m
+        document.getElementById('btnDeg').classList.toggle('active', m === 'deg')
+        document.getElementById('btnRad').classList.toggle('active', m === 'rad')
+      }
+
+      // ── 计算核心 ──
+      function calculate() {
+        if (!expr.trim()) return
+        const raw = expr
+        try {
+          const result = evalExpr(raw)
+          displayExpr.textContent = raw + ' ='
+          showResult(result)
+          addHistory(raw, formatNum(result))
+          expr = formatNum(result)
+          justCalc = true
+        } catch(e) {
+          displayExpr.textContent = raw
+          displayMain.textContent = '错误'
+          displayMain.classList.remove('small','xsmall')
+          justCalc = true
+          expr = ''
+        }
+      }
+
+      // 把用户友好表达式转成可求值的 JS
+      function evalExpr(s) {
+        // 替换常数
+        s = s.replace(/π/g, '(' + Math.PI + ')')
+        s = s.replace(/\be\b/g, '(' + Math.E + ')')
+        // 替换运算符
+        s = s.replace(/×/g, '*').replace(/÷/g, '/')
+        s = s.replace(/−/g, '-')
+        // 幂运算
+        s = s.replace(/\^/g, '**')
+        // 百分号：把 n% 换成 n/100
+        s = s.replace(/(\d+\.?\d*)\s*%/g, '($1/100)')
+        // 包装三角/对数/根号函数（注入角度转换）
+        s = parseFunctions(s)
+        // eslint-disable-next-line no-new-func
+        const result = Function('"use strict"; return (' + s + ')')()
+        if (typeof result !== 'number') throw new Error('非数字结果')
+        return result
+      }
+
+      function parseFunctions(s) {
+        // 替换自定义函数名为带角度转换的 Math 调用
+        const toRad = angleMode === 'deg'
+          ? v => `(${v}*Math.PI/180)`
+          : v => v
+        const fromRad = angleMode === 'deg'
+          ? v => `(${v}*180/Math.PI)`
+          : v => v
+
+        // sin/cos/tan: 输入需转弧度
+        s = s.replace(/\bsin\(/g,  `Math.sin(${toRad('')}`.replace('()', '(') )
+        // 重新来，逐个替换
+        s = s
+          .replace(/\bsin\(([^)]*)\)/g,  (_, a) => `Math.sin(${toRad(a)})`)
+          .replace(/\bcos\(([^)]*)\)/g,  (_, a) => `Math.cos(${toRad(a)})`)
+          .replace(/\btan\(([^)]*)\)/g,  (_, a) => `Math.tan(${toRad(a)})`)
+          .replace(/\basin\(([^)]*)\)/g, (_, a) => fromRad(`Math.asin(${a})`))
+          .replace(/\bacos\(([^)]*)\)/g, (_, a) => fromRad(`Math.acos(${a})`))
+          .replace(/\batan\(([^)]*)\)/g, (_, a) => fromRad(`Math.atan(${a})`))
+          .replace(/\bsqrt\(([^)]*)\)/g, (_, a) => `Math.sqrt(${a})`)
+          .replace(/\bcbrt\(([^)]*)\)/g, (_, a) => `Math.cbrt(${a})`)
+          .replace(/\bln\(([^)]*)\)/g,   (_, a) => `Math.log(${a})`)
+          .replace(/\blog\(([^)]*)\)/g,  (_, a) => `Math.log10(${a})`)
+          .replace(/\babs\(([^)]*)\)/g,  (_, a) => `Math.abs(${a})`)
+        return s
+      }
+
+      // ── 历史记录 ──
+      function addHistory(expr, result) {
+        history.unshift({ expr, result })
+        if (history.length > 20) history.pop()
+        renderHistory()
+      }
+
+      function renderHistory() {
+        if (history.length === 0) {
+          historyEmpty.style.display = 'block'
+          // remove all items
+          Array.from(historyWrap.querySelectorAll('.history-item')).forEach(el => el.remove())
+          return
+        }
+        historyEmpty.style.display = 'none'
+        Array.from(historyWrap.querySelectorAll('.history-item')).forEach(el => el.remove())
+        history.forEach(item => {
+          const div = document.createElement('div')
+          div.className = 'history-item'
+          div.innerHTML = `
+            <div class="history-expr">${item.expr} =</div>
+            <div class="history-result">${item.result}</div>
+          `
+          div.addEventListener('click', () => {
+            expr = item.result
+            displayMain.textContent = item.result
+            displayExpr.textContent = '\u00a0'
+            justCalc = true
+          })
+          historyWrap.appendChild(div)
+        })
+      }
+
+      function clearHistory() {
+        history = []
+        renderHistory()
+      }
+
+      // ── 键盘支持 ──
+      document.addEventListener('keydown', e => {
+        if (e.key >= '0' && e.key <= '9') { inputStr(e.key); return }
+        if (e.key === '.') { inputStr('.'); return }
+        if (e.key === '+') { inputStr('+'); return }
+        if (e.key === '-') { inputStr('-'); return }
+        if (e.key === '*') { inputStr('×'); return }
+        if (e.key === '/') { e.preventDefault(); inputStr('÷'); return }
+        if (e.key === '%') { inputStr('%'); return }
+        if (e.key === '^') { inputStr('^'); return }
+        if (e.key === '(') { inputStr('('); return }
+        if (e.key === ')') { inputStr(')'); return }
+        if (e.key === 'Enter' || e.key === '=') { calculate(); return }
+        if (e.key === 'Backspace') { backspace(); return }
+        if (e.key === 'Escape') { clearAll(); return }
+      })
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>简体转繁体</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 220px;
+            padding: 14px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--border-radius-xs);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-family: 'SF Mono', 'Menlo', 'Consolas', 'PingFang SC', 'Microsoft YaHei', monospace;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            outline: none;
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.7;
+        }
+
+        .textarea:focus {
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .textarea::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .textarea.output-area {
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            border-radius: var(--border-radius-xs);
+            min-height: 330px;
+        }
+
+        .file-drop-zone {
+            border: 2px dashed var(--text-muted);
+            border-radius: var(--border-radius-sm);
+            padding: 20px 16px;
+            text-align: center;
+            cursor: pointer;
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            transition: var(--transition);
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .file-drop-zone:hover,
+        .file-drop-zone.dragover {
+            border-color: var(--accent-primary);
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102, 126, 234, 0.15);
+        }
+
+        .file-drop-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .file-drop-icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .file-drop-text {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .file-drop-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            margin-top: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-height: 42px;
+            flex-wrap: wrap;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+
+        .status-dot.ready {
+            background: var(--text-muted);
+        }
+
+        .status-dot.ok {
+            background: var(--success);
+            animation: dotPulse 2s infinite;
+        }
+
+        .status-dot.loading {
+            background: var(--warning);
+            animation: dotPulse 1s infinite;
+        }
+
+        .status-dot.error {
+            background: var(--danger);
+        }
+
+        @keyframes dotPulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 0;
+            padding: 11px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(102, 126, 234, 0.35), -2px -2px 6px var(--shadow-light);
+            font-size: 0.88rem;
+            padding: 13px 12px;
+        }
+
+        .btn.primary:hover {
+            box-shadow: 5px 5px 14px rgba(102, 126, 234, 0.45);
+        }
+
+        .btn.primary:active {
+            box-shadow: inset 3px 3px 8px rgba(50, 50, 150, 0.4), inset -2px -2px 6px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(78, 205, 196, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.warning {
+            background: linear-gradient(135deg, #f7b731 0%, #e68a00 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(247, 183, 49, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.danger {
+            color: var(--danger);
+        }
+
+        .btn.outline {
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            color: var(--text-primary);
+        }
+
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .instr-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .instr-text strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        @media (max-width: 420px) {
+            h1 {
+                font-size: 1.7rem;
+            }
+            .btn {
+                font-size: 0.74rem;
+                padding: 10px 8px;
+            }
+            .btn.primary {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>简体转繁体</h1>
+        <p class="subtitle">简体转繁体 · 支持导入文本 · 一键下载结果</p>
+    </header>
+
+    <div class="main">
+        <!-- 转换卡片 -->
+        <div class="card">
+            <div class="card-label">📝 输入简体中文</div>
+
+            <!-- 文件拖拽导入区 -->
+            <div class="file-drop-zone" id="fileDropZone">
+                <span class="file-drop-icon">📂</span>
+                <div class="file-drop-text">拖放文本文件到此处导入</div>
+                <div class="file-drop-sub">或点击选择 .txt 文件 · 也支持直接粘贴文本</div>
+                <input type="file" id="fileInput" accept=".txt,.text,text/plain" />
+            </div>
+
+            <textarea class="textarea" id="inputText" placeholder="在此输入或粘贴简体中文文本…&#10;&#10;例如：中国汉字博大精深，源远流长。"></textarea>
+
+            <div class="status-bar" id="convertStatus">
+                <div class="status-dot ready" id="convertDot"></div>
+                <span id="convertStatusText">就绪，输入文本后点击转换</span>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn primary" id="convertBtn">🔄 转换为繁体</button>
+            </div>
+
+            <div class="btn-row" style="margin-top: 8px;">
+                <button class="btn danger" id="clearBtn">🗑️ 清空全部</button>
+                <button class="btn outline" id="sampleBtn">💡 示例文本</button>
+            </div>
+        </div>
+
+        <!-- 输出卡片 -->
+        <div class="card" id="outputCard" style="display:none;">
+            <div class="card-label">📄 繁体中文结果</div>
+            <textarea class="textarea output-area" id="outputText" placeholder="转换后的繁体中文将显示在这里…" readonly></textarea>
+
+            <div class="btn-row">
+                <button class="btn success" id="copyBtn2" disabled>📋 复制繁体结果</button>
+                <button class="btn warning" id="downloadBtn2" disabled>💾 下载繁体文本</button>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">📥</span>
+                    <div class="instr-text"><strong>导入文本</strong>：支持拖放 .txt 文件到虚线区域、点击选择文件，或直接在输入框中粘贴简体中文文本</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔄</span>
+                    <div class="instr-text"><strong>一键转换</strong>：点击「转换为繁体」按钮，工具将自动将简体中文转为繁体中文，涵盖 2000+ 常用汉字</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">💾</span>
+                    <div class="instr-text"><strong>下载结果</strong>：转换完成后，点击「下载文本」可将繁体中文保存为 .txt 文件到本地设备</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📋</span>
+                    <div class="instr-text"><strong>复制使用</strong>：支持一键复制转换结果到剪贴板，方便粘贴到其他应用</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔒</span>
+                    <div class="instr-text"><strong>隐私安全</strong>：所有转换完全在浏览器本地完成，不会向服务器发送任何数据</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ── 简繁转换映射表（常用汉字） ──
+            const S2T_MAP = {
+              
+'一':'一','丁':'丁','七':'七','万':'萬','三':'三','上':'上','下':'下','不':'不','与':'與','丑':'醜',
+'专':'專','且':'且','世':'世','丘':'丘','业':'業','丛':'叢','东':'東','丝':'絲','丢':'丟','两':'兩',
+'严':'嚴','丧':'喪','个':'個','中':'中','丰':'豐','串':'串','临':'臨','为':'為','丽':'麗','举':'舉',
+'么':'麼','义':'義','之':'之','乌':'烏','乐':'樂','乔':'喬','乖':'乖','乘':'乘','乙':'乙','九':'九',
+'也':'也','习':'習','乡':'鄉','书':'書','买':'買','乱':'亂','了':'了','予':'予','争':'爭','事':'事',
+'二':'二','于':'於','亏':'虧','云':'雲','互':'互','五':'五','井':'井','亚':'亞','些':'些','亡':'亡',
+'交':'交','产':'產','亩':'畝','亲':'親','人':'人','亿':'億','仅':'僅','仆':'僕','仇':'仇','今':'今',
+'介':'介','从':'從','仑':'侖','仓':'倉','仔':'仔','他':'他','付':'付','仙':'仙','代':'代','以':'以',
+'仪':'儀','们':'們','件':'件','价':'價','任':'任','份':'份','仿':'仿','企':'企','优':'優','伙':'夥',
+'会':'會','传':'傳','伤':'傷','伦':'倫','伪':'偽','伴':'伴','体':'體','何':'何','余':'餘','佛':'佛',
+'你':'你','使':'使','例':'例','供':'供','依':'依','侠':'俠','侣':'侶','侥':'僥','侦':'偵','侧':'側',
+'侮':'侮','侯':'侯','便':'便','促':'促','俄':'俄','俊':'俊','俗':'俗','保':'保','信':'信','俩':'倆',
+'修':'修','倍':'倍','倒':'倒','倘':'倘','候':'候','借':'借','倡':'倡','值':'值','假':'假','伟':'偉',
+'偏':'偏','做':'做','停':'停','健':'健','偶':'偶','偷':'偷','偿':'償','储':'儲','催':'催','傲':'傲',
+'傻':'傻','倾':'傾','侨':'僑','像':'像','儿':'兒','允':'允','元':'元','兄':'兄','充':'充','兆':'兆',
+'先':'先','光':'光','克':'克','免':'免','兑':'兌','兔':'兔','党':'黨','入':'入','全':'全','八':'八',
+'公':'公','六':'六','关':'關','兴':'興','兵':'兵','其':'其','具':'具','典':'典','养':'養','内':'內',
+'再':'再','军':'軍','农':'農','冠':'冠','冬':'冬','冰':'冰','冲':'沖','决':'決','况':'況','冷':'冷',
+'净':'淨','准':'準','凉':'涼','减':'減','凑':'湊','几':'幾','凡':'凡','凤':'鳳','凭':'憑','出':'出',
+'击':'擊','凿':'鑿','分':'分','划':'劃','列':'列','刘':'劉','则':'則','刚':'剛','创':'創','初':'初',
+'删':'刪','判':'判','别':'別','利':'利','到':'到','制':'制','刷':'刷','剂':'劑','前':'前','剑':'劍',
+'剧':'劇','剩':'剩','剪':'剪','副':'副','割':'割','力':'力','办':'辦','功':'功','加':'加','务':'務',
+'动':'動','助':'助','努':'努','励':'勵','劲':'勁','劳':'勞','势':'勢','勤':'勤','包':'包','化':'化',
+'北':'北','区':'區','医':'醫','十':'十','千':'千','升':'升','午':'午','半':'半','华':'華','协':'協',
+'单':'單','卖':'賣','南':'南','博':'博','卜':'卜','占':'佔','卡':'卡','卫':'衛','印':'印','危':'危',
+'即':'即','却':'卻','卷':'卷','厂':'廠','历':'歷','厉':'厲','压':'壓','厌':'厭','原':'原','县':'縣',
+'参':'參','又':'又','及':'及','友':'友','双':'雙','反':'反','发':'發','取':'取','受':'受','变':'變',
+'口':'口','古':'古','句':'句','另':'另','只':'只','叫':'叫','召':'召','可':'可','台':'臺','右':'右',
+'叶':'葉','号':'號','叹':'嘆','吃':'吃','各':'各','合':'合','同':'同','名':'名','后':'後','向':'向',
+'吓':'嚇','吗':'嗎','员':'員','听':'聽','呢':'呢','吧':'吧','呀':'呀','吨':'噸','含':'含','启':'啟',
+'吴':'吳','吵':'吵','吸':'吸','吹':'吹','吻':'吻','呈':'呈','告':'告','周':'周','味':'味','呼':'呼',
+'命':'命','和':'和','咬':'咬','咱':'咱','哀':'哀','品':'品','哇':'哇','哈':'哈','响':'響','哎':'哎',
+'哑':'啞','哗':'嘩','哟':'喲','哥':'哥','哦':'哦','哨':'哨','哩':'哩','哪':'哪','哭':'哭','哲':'哲',
+'哼':'哼','唤':'喚','啊':'啊','善':'善','喜':'喜','喝':'喝','喂':'喂','喷':'噴','四':'四','回':'回',
+'因':'因','团':'團','园':'園','困':'困','围':'圍','国':'國','图':'圖','圆':'圓','圈':'圈','土':'土',
+'圣':'聖','在':'在','地':'地','场':'場','坏':'壞','坚':'堅','坛':'壇','块':'塊','型':'型','城':'城',
+'堆':'堆','塔':'塔','填':'填','境':'境','墙':'牆','增':'增','处':'處','备':'備','复':'複','夏':'夏',
+'外':'外','多':'多','夜':'夜','够':'夠','大':'大','天':'天','太':'太','夫':'夫','失':'失','头':'頭',
+'夸':'誇','夹':'夾','夺':'奪','奋':'奮','奖':'獎','套':'套','女':'女','奴':'奴','好':'好','如':'如',
+'妇':'婦','妈':'媽','妖':'妖','妙':'妙','妥':'妥','妨':'妨','妹':'妹','妻':'妻','姐':'姐','姑':'姑',
+'姓':'姓','威':'威','娃':'娃','娘':'娘','娱':'娛','娶':'娶','她':'她','妆':'妝','子':'子','孔':'孔',
+'字':'字','存':'存','孙':'孫','学':'學','宁':'寧','它':'它','宅':'宅','安':'安','完':'完','定':'定',
+'宝':'寶','实':'實','宠':'寵','审':'審','客':'客','宣':'宣','室':'室','宫':'宮','害':'害','家':'家',
+'容':'容','宽':'寬','宿':'宿','寂':'寂','密':'密','富':'富','寒':'寒','对':'對','寻':'尋','导':'導',
+'寿':'壽','将':'將','尊':'尊','小':'小','少':'少','尔':'爾','尖':'尖','尘':'塵','尚':'尚','尝':'嘗',
+'尤':'尤','就':'就','尺':'尺','尽':'盡','尾':'尾','局':'局','层':'層','居':'居','展':'展','属':'屬',
+'山':'山','岛':'島','岁':'歲','岂':'豈','岗':'崗','岩':'岩','岭':'嶺','岸':'岸','峡':'峽','峰':'峰',
+'崖':'崖','崇':'崇','川':'川','州':'州','工':'工','左':'左','巧':'巧','巨':'巨','差':'差','己':'己',
+'已':'已','巴':'巴','巷':'巷','市':'市','布':'布','师':'師','希':'希','帐':'帳','带':'帶','常':'常',
+'帽':'帽','幅':'幅','币':'幣','帮':'幫','干':'幹','平':'平','年':'年','幸':'幸','幻':'幻','幼':'幼',
+'广':'廣','庆':'慶','库':'庫','应':'應','店':'店','庙':'廟','府':'府','度':'度','座':'座','庭':'庭',
+'康':'康','废':'廢','开':'開','异':'異','弃':'棄','弄':'弄','张':'張','强':'強','弹':'彈','归':'歸',
+'当':'當','录':'錄','形':'形','彩':'彩','影':'影','彻':'徹','往':'往','待':'待','很':'很','律':'律',
+'徐':'徐','得':'得','微':'微','德':'德','征':'徵','冲':'衝','复':'復','术':'術','心':'心','必':'必',
+'忆':'憶','志':'志','忙':'忙','快':'快','念':'念','思':'思','急':'急','性':'性','怨':'怨','怪':'怪',
+'总':'總','恋':'戀','恐':'恐','恒':'恆','恩':'恩','息':'息','您':'您','悬':'懸','情':'情','惠':'惠',
+'惑':'惑','惩':'懲','想':'想','感':'感','愿':'願','忧':'憂','恳':'懇','态':'態','惧':'懼','户':'戶',
+'房':'房','所':'所','手':'手','才':'才','打':'打','托':'托','扫':'掃','扶':'扶','批':'批','找':'找',
+'承':'承','技':'技','把':'把','投':'投','折':'折','抓':'抓','护':'護','报':'報','抱':'抱','抵':'抵',
+'拉':'拉','拜':'拜','挂':'掛','指':'指','按':'按','挑':'挑','挖':'挖','换':'換','据':'據','探':'探',
+'接':'接','推':'推','提':'提','握':'握','挥':'揮','损':'損','摇':'搖','摘':'摘','摩':'摩','摸':'摸',
+'撒':'撒','撑':'撐','扑':'撲','扩':'擴','支':'支','收':'收','改':'改','攻':'攻','放':'放','政':'政',
+'故':'故','效':'效','敌':'敵','教':'教','救':'救','败':'敗','散':'散','敬':'敬','数':'數','整':'整',
+'文':'文','齐':'齊','斋':'齋','斗':'鬥','料':'料','断':'斷','新':'新','方':'方','施':'施','旅':'旅',
+'旋':'旋','族':'族','旗':'旗','无':'無','日':'日','旧':'舊','时':'時','明':'明','易':'易','星':'星',
+'春':'春','昨':'昨','是':'是','显':'顯','晒':'曬','月':'月','有':'有','服':'服','朗':'朗','望':'望',
+'期':'期','木':'木','未':'未','本':'本','机':'機','杀':'殺','杂':'雜','权':'權','来':'來','极':'極',
+'构':'構','果':'果','标':'標','树':'樹','桥':'橋','样':'樣','核':'核','根':'根','格':'格','检':'檢',
+'梦':'夢','梯':'梯','械':'械','棉':'棉','棋':'棋','棒':'棒','棕':'棕','棚':'棚','森':'森','椅':'椅',
+'植':'植','概':'概','模':'模','横':'橫','欢':'歡','止':'止','正':'正','此':'此','步':'步','武':'武',
+'歪':'歪','段':'段','母':'母','每':'每','毒':'毒','比':'比','毛':'毛','毫':'毫','气':'氣','水':'水',
+'永':'永','汁':'汁','求':'求','汇':'匯','汉':'漢','汗':'汗','江':'江','污':'污','汤':'湯','汽':'汽',
+'沟':'溝','没':'沒','油':'油','法':'法','泡':'泡','波':'波','泥':'泥','注':'注','泪':'淚','泰':'泰',
+'泳':'泳','泵':'泵','泼':'潑','洁':'潔','洋':'洋','洗':'洗','洛':'洛','洞':'洞','津':'津','洪':'洪',
+'洲':'洲','活':'活','流':'流','浅':'淺','浆':'漿','测':'測','济':'濟','浓':'濃','涛':'濤','润':'潤',
+'涨':'漲','液':'液','深':'深','混':'混','清':'清','渐':'漸','渔':'漁','温':'溫','港':'港','游':'遊',
+'湖':'湖','湾':'灣','湿':'濕','溃':'潰','满':'滿','源':'源','滤':'濾','滥':'濫','滑':'滑','滴':'滴',
+'演':'演','漏':'漏','潜':'潛','潮':'潮','澳':'澳','激':'激','灌':'灌','火':'火','灯':'燈','灰':'灰',
+'灵':'靈','灾':'災','炉':'爐','点':'點','热':'熱','烧':'燒','烟':'煙','烦':'煩','煮':'煮','照':'照',
+'熟':'熟','燃':'燃','爱':'愛','爷':'爺','爸':'爸','爹':'爹','片':'片','牌':'牌','牙':'牙','牛':'牛',
+'牧':'牧','物':'物','牵':'牽','特':'特','牺':'犧','犬':'犬','犯':'犯','状':'狀','犹':'猶','独':'獨',
+'获':'獲','献':'獻','率':'率','玉':'玉','王':'王','玩':'玩','环':'環','现':'現','球':'球','理':'理',
+'琴':'琴','班':'班','甚':'甚','生':'生','用':'用','田':'田','由':'由','电':'電','画':'畫','畅':'暢',
+'界':'界','留':'留','畜':'畜','略':'略','番':'番','疗':'療','疯':'瘋','痒':'癢','痕':'痕','痛':'痛',
+'登':'登','白':'白','百':'百','的':'的','皮':'皮','益':'益','监':'監','盘':'盤','盖':'蓋','目':'目',
+'直':'直','相':'相','省':'省','看':'看','真':'真','眠':'眠','眼':'眼','着':'著','睛':'睛','睡':'睡',
+'瞧':'瞧','短':'短','石':'石','矿':'礦','码':'碼','研':'研','破':'破','硬':'硬','确':'確','碍':'礙',
+'礼':'禮','社':'社','祖':'祖','神':'神','祝':'祝','祥':'祥','票':'票','祸':'禍','禁':'禁','福':'福',
+'离':'離','种':'種','科':'科','秒':'秒','秘':'秘','租':'租','程':'程','税':'稅','称':'稱','稳':'穩',
+'空':'空','穿':'穿','突':'突','窗':'窗','穷':'窮','立':'立','章':'章','童':'童','竞':'競','竹':'竹',
+'笔':'筆','笑':'笑','第':'第','等':'等','答':'答','策':'策','筛':'篩','简':'簡','签':'簽','算':'算',
+'管':'管','箭':'箭','箱':'箱','篇':'篇','篮':'籃','籍':'籍','米':'米','类':'類','粉':'粉','粒':'粒',
+'粗':'粗','粮':'糧','糖':'糖','系':'系','纪':'紀','约':'約','红':'紅','级':'級','纯':'純','纸':'紙',
+'线':'線','组':'組','细':'細','终':'終','经':'經','结':'結','给':'給','络':'絡','绝':'絕','统':'統',
+'继':'繼','续':'續','维':'維','综':'綜','绿':'綠','编':'編','缘':'緣','练':'練','网':'網','罪':'罪',
+'美':'美','群':'群','羽':'羽','翻':'翻','老':'老','考':'考','者':'者','而':'而','耳':'耳','闻':'聞',
+'联':'聯','聪':'聰','声':'聲','职':'職','肉':'肉','肌':'肌','肚':'肚','肝':'肝','肠':'腸','股':'股',
+'肤':'膚','肩':'肩','肥':'肥','背':'背','胡':'胡','胸':'胸','能':'能','脏':'臟','脚':'腳','脸':'臉',
+'脱':'脫','腊':'臘','自':'自','至':'至','致':'致','舍':'舍','舒':'舒','航':'航','般':'般','船':'船',
+'良':'良','艰':'艱','色':'色','花':'花','芳':'芳','苦':'苦','英':'英','草':'草','茶':'茶','药':'藥',
+'荣':'榮','菜':'菜','营':'營','落':'落','著':'著','蒙':'蒙','蓝':'藍','藏':'藏','艺':'藝','虫':'蟲',
+'蛇':'蛇','蛋':'蛋','蜂':'蜂','蜜':'蜜','蜡':'蠟','融':'融','血':'血','行':'行','衣':'衣','表':'表',
+'袋':'袋','被':'被','袭':'襲','装':'裝','裙':'裙','西':'西','要':'要','见':'見','观':'觀','规':'規',
+'视':'視','觉':'覺','解':'解','言':'言','计':'計','认':'認','讨':'討','让':'讓','训':'訓','记':'記',
+'讲':'講','设':'設','许':'許','论':'論','诉':'訴','词':'詞','译':'譯','试':'試','诗':'詩','诚':'誠',
+'话':'話','该':'該','详':'詳','语':'語','误':'誤','说':'說','请':'請','诸':'諸','读':'讀','谁':'誰',
+'调':'調','谈':'談','谢':'謝','证':'證','评':'評','识':'識','诈':'詐','议':'議','讯':'訊','谷':'谷',
+'豆':'豆','象':'象','贝':'貝','负':'負','财':'財','责':'責','货':'貨','质':'質','购':'購','费':'費',
+'资':'資','赋':'賦','赌':'賭','赏':'賞','赔':'賠','赤':'赤','走':'走','起':'起','超':'超','越':'越',
+'趣':'趣','足':'足','跑':'跑','距':'距','跟':'跟','路':'路','跳':'跳','践':'踐','踢':'踢','踪':'蹤',
+'车':'車','转':'轉','轮':'輪','软':'軟','轻':'輕','载':'載','辆':'輛','输':'輸','辛':'辛','辞':'辭',
+'辨':'辨','辩':'辯','达':'達','迁':'遷','过':'過','迈':'邁','运':'運','还':'還','这':'這','进':'進',
+'远':'遠','连':'連','迟':'遲','迫':'迫','选':'選','适':'適','追':'追','逃':'逃','逆':'逆','送':'送',
+'通':'通','速':'速','造':'造','逢':'逢','逻':'邏','逼':'逼','遇':'遇','遍':'遍','道':'道','遭':'遭',
+'遮':'遮','遵':'遵','违':'違','遗':'遺','辽':'遼','部':'部','都':'都','邮':'郵','邻':'鄰','郑':'鄭',
+'金':'金','针':'針','钓':'釣','钟':'鐘','钢':'鋼','钥':'鑰','钱':'錢','铁':'鐵','铃':'鈴','铜':'銅',
+'银':'銀','锐':'銳','错':'錯','键':'鍵','镇':'鎮','镜':'鏡','长':'長','门':'門','闪':'閃','闭':'閉',
+'问':'問','闯':'闖','闲':'閒','间':'間','闹':'鬧','阅':'閱','队':'隊','阵':'陣','阳':'陽','阴':'陰',
+'防':'防','际':'際','陆':'陸','陈':'陳','陌':'陌','降':'降','限':'限','院':'院','除':'除','险':'險',
+'陪':'陪','随':'隨','隐':'隱','隔':'隔','障':'障','难':'難','雨':'雨','雪':'雪','雷':'雷','雾':'霧',
+'震':'震','静':'靜','非':'非','面':'面','革':'革','鞋':'鞋','音':'音','页':'頁','顶':'頂','项':'項',
+'顺':'順','须':'須','顾':'顧','领':'領','颈':'頸','频':'頻','题':'題','颜':'顏','额':'額','风':'風',
+'飘':'飄','飞':'飛','食':'食','饭':'飯','饮':'飲','饱':'飽','饿':'餓','馆':'館','马':'馬','骑':'騎',
+'骗':'騙','骚':'騷','鱼':'魚','鸟':'鳥','鸡':'雞','鸭':'鴨','鹅':'鵝','鸽':'鴿','鸣':'鳴','麦':'麥',
+'黄':'黃','黑':'黑','龙':'龍','龟':'龜','里':'裡','面':'麵','斗':'鬥','只':'隻','系':'繫','历':'曆',
+'占':'佔','御':'禦','松':'鬆','曲':'麯','谷':'穀','范':'範','筑':'築','辟':'闢','表':'錶','困':'睏',
+              
+};
+
+            function buildS2TMap() {
+                const map = {};
+                for (const [s, t] of Object.entries(S2T_MAP)) {
+                    map[s] = t;
+                }
+                return map;
+            }
+
+            const s2tMap = buildS2TMap();
+
+            function simplifyToTraditional(text) {
+                let result = '';
+                let convertedCount = 0;
+                for (const char of text) {
+                    if (s2tMap[char]) {
+                        result += s2tMap[char];
+                        if (s2tMap[char] !== char) {
+                            convertedCount++;
+                        }
+                    } else {
+                        result += char;
+                    }
+                }
+                return { result, convertedCount };
+            }
+
+            // ── DOM 引用 ──
+            const inputText = document.getElementById('inputText');
+            const outputText = document.getElementById('outputText');
+            const convertBtn = document.getElementById('convertBtn');
+            const copyBtn2 = document.getElementById('copyBtn2');
+            const downloadBtn2 = document.getElementById('downloadBtn2');
+            const clearBtn = document.getElementById('clearBtn');
+            const sampleBtn = document.getElementById('sampleBtn');
+            const fileInput = document.getElementById('fileInput');
+            const fileDropZone = document.getElementById('fileDropZone');
+            const outputCard = document.getElementById('outputCard');
+            const convertDot = document.getElementById('convertDot');
+            const convertStatusText = document.getElementById('convertStatusText');
+
+            let currentConvertedText = '';
+
+            function setStatus(dot, textEl, msg, type) {
+                textEl.textContent = msg;
+                dot.className = 'status-dot ' + (type || 'ready');
+            }
+
+            // 转换
+            convertBtn.addEventListener('click', () => {
+                const raw = inputText.value;
+                if (raw.trim().length === 0) {
+                    setStatus(convertDot, convertStatusText, '请先输入需要转换的简体中文文本', 'error');
+                    return;
+                }
+                setStatus(convertDot, convertStatusText, '正在转换中…', 'loading');
+                try {
+                    const { result, convertedCount: convCount } = simplifyToTraditional(raw);
+                    outputText.value = result;
+                    currentConvertedText = result;
+                    copyBtn2.disabled = false;
+                    downloadBtn2.disabled = false;
+                    outputCard.style.display = 'block';
+                    if (convCount > 0) {
+                        setStatus(convertDot, convertStatusText, '转换完成！共转换 ' + convCount.toLocaleString() + ' 个字符', 'ok');
+                    } else {
+                        setStatus(convertDot, convertStatusText, '转换完成，未发现需要转换的简体字', 'ok');
+                    }
+                    outputCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } catch (e) {
+                    setStatus(convertDot, convertStatusText, '转换失败：' + e.message, 'error');
+                }
+            });
+
+            // 复制
+            copyBtn2.addEventListener('click', async () => {
+                if (!outputText.value) return;
+                try {
+                    await navigator.clipboard.writeText(outputText.value);
+                    setStatus(convertDot, convertStatusText, '繁体结果已复制到剪贴板 📋', 'ok');
+                } catch (err) {
+                    const ta = document.createElement('textarea');
+                    ta.value = outputText.value;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    setStatus(convertDot, convertStatusText, '已复制（备用方式）', 'ok');
+                }
+            });
+
+            // 下载
+            function downloadText(text, filename) {
+                if (!text) return;
+                const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+            }
+
+            downloadBtn2.addEventListener('click', () => {
+                const ts = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                downloadText(outputText.value, '繁体转换结果_' + ts + '.txt');
+                setStatus(convertDot, convertStatusText, '文件下载中… 💾', 'ok');
+            });
+
+            // 文件导入
+            function handleFile(file) {
+                if (!file) return;
+                if (file.type && !file.type.match(/text\//) && !file.name.endsWith('.txt')) {
+                    setStatus(convertDot, convertStatusText, '请选择 .txt 文本文件', 'error');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    inputText.value = e.target.result;
+                    setStatus(convertDot, convertStatusText, '文件已导入：' + file.name + ' ✅', 'ok');
+                };
+                reader.onerror = () => {
+                    setStatus(convertDot, convertStatusText, '文件读取失败，请重试', 'error');
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files[0]) handleFile(e.target.files[0]);
+                fileInput.value = '';
+            });
+
+            fileDropZone.addEventListener('click', () => fileInput.click());
+
+            // 拖拽导入
+            fileDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileDropZone.classList.add('dragover');
+            });
+            fileDropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                fileDropZone.classList.remove('dragover');
+            });
+            fileDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileDropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) handleFile(files[0]);
+            });
+
+            // 示例文本
+            sampleBtn.addEventListener('click', () => {
+                inputText.value = '中国汉字博大精深，源远流长。从甲骨文到现代简体字，经历了数千年的演变。\n\n简体中文的推广让更多人能够轻松学习和使用汉字，而繁体字则保留了更多古代文化的痕迹。\n\n"学而时习之，不亦说乎？有朋自远方来，不亦乐乎？"\n\n在这个信息时代，我们既需要高效便捷的简体字，也不应忘记繁体字所承载的深厚文化底蕴。';
+                setStatus(convertDot, convertStatusText, '示例文本已填充，点击转换按钮开始', 'ready');
+                inputText.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+
+            // 清空
+            clearBtn.addEventListener('click', () => {
+                inputText.value = '';
+                outputText.value = '';
+                currentConvertedText = '';
+                copyBtn2.disabled = true;
+                downloadBtn2.disabled = true;
+                outputCard.style.display = 'none';
+                setStatus(convertDot, convertStatusText, '已清空，输入文本后点击转换', 'ready');
+            });
+
+            // 初始化
+            setStatus(convertDot, convertStatusText, '就绪，输入文本后点击转换', 'ready');
+        })();
+    </script>
+</body>
+</html>

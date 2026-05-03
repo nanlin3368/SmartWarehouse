@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>二维码生成</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent; /* 全局禁用点击高亮 */
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 模式标签切换 ── */
+      .mode-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+        padding: 6px;
+      }
+
+      .mode-tab {
+        flex: 1;
+        padding: 9px 6px;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      .mode-tab.active {
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        color: var(--accent-primary);
+      }
+
+      .mode-tab .tab-icon {
+        font-size: 1rem;
+      }
+
+      /* ── 输入区 ── */
+      textarea, input[type="text"], input[type="password"] {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        border-radius: var(--border-radius-xs);
+        padding: 14px 16px;
+        font-size: 0.95rem;
+        color: var(--text-primary);
+        resize: none;
+        transition: var(--transition);
+        font-family: inherit;
+      }
+
+      textarea { height: 100px; }
+
+      textarea::placeholder, input::placeholder {
+        color: var(--text-muted);
+      }
+
+      /* ── WiFi 输入组 ── */
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .input-row {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .input-mini-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        padding-left: 4px;
+      }
+
+      /* ── 加密类型选择 ── */
+      .encrypt-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .encrypt-opt {
+        flex: 1;
+        padding: 9px 4px;
+        border: none;
+        background: var(--bg-primary);
+        border-radius: 8px;
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        text-align: center;
+      }
+
+      .encrypt-opt.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 3px 3px 8px rgba(102,126,234,0.35);
+      }
+
+      /* ── 二维码展示区 ── */
+      .qr-display {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 28px 20px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);
+        min-height: 220px;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .qr-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-muted);
+      }
+
+      .qr-placeholder-icon {
+        font-size: 3rem;
+        opacity: 0.4;
+      }
+
+      .qr-placeholder-text {
+        font-size: 0.85rem;
+        font-weight: 500;
+        opacity: 0.7;
+      }
+
+      #qrcode-wrap {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        animation: qrReveal 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      @keyframes qrReveal {
+        from { opacity: 0; transform: scale(0.85); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+
+      #qrcode img, #qrcode canvas {
+        border-radius: 12px;
+        border: 10px solid #fff;
+        box-shadow: 0 4px 20px rgba(44,62,80,0.15);
+        display: block;
+      }
+
+      .qr-size-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      /* ── 颜色自定义 ── */
+      .color-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .color-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+      }
+
+      .color-swatch-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        padding: 10px 14px;
+        cursor: pointer;
+        gap: 10px;
+        transition: var(--transition);
+      }
+
+      .color-swatch {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        border: 2px solid rgba(255,255,255,0.6);
+        box-shadow: 2px 2px 4px var(--shadow-dark);
+        flex-shrink: 0;
+      }
+
+      .color-hex {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        letter-spacing: 0.5px;
+        font-family: 'SF Mono', 'Menlo', monospace;
+      }
+
+      input[type="color"] {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        cursor: pointer;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+        background: transparent;
+      }
+
+      /* ── 尺寸滑块 ── */
+      .size-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 10px;
+      }
+
+      .size-val {
+        font-size: 1.4rem;
+        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .size-unit {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-left: 2px;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light);
+        outline: none;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      input[type="range"]::-webkit-slider-thumb:active {
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light);
+      }
+
+      /* ── 容错级别 ── */
+      .level-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .level-btn {
+        flex: 1;
+        padding: 9px 4px;
+        border: none;
+        background: var(--bg-primary);
+        border-radius: 8px;
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .level-btn .level-code {
+        font-size: 0.9rem;
+        font-weight: 800;
+      }
+
+      .level-btn .level-pct {
+        font-size: 0.62rem;
+        opacity: 0.7;
+      }
+
+      .level-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 3px 3px 8px rgba(102,126,234,0.35);
+      }
+
+      /* ── 操作按钮 ── */
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 4px;
+      }
+
+      .action-btn {
+        padding: 14px;
+        background: var(--accent-gradient);
+        color: #fff;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        letter-spacing: 0.3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .action-btn:hover  { transform: translateY(-2px); box-shadow: 6px 6px 16px rgba(102,126,234,0.4); }
+      .action-btn:active { transform: scale(0.97); }
+
+      .action-btn.secondary-btn {
+        background: var(--bg-primary);
+        color: var(--text-secondary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+      }
+
+      .action-btn.secondary-btn:hover { transform: translateY(-2px); }
+      .action-btn.secondary-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      /* ── 下载 / 复制按钮 (结果区) ── */
+      .result-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .dl-btn {
+        padding: 13px;
+        background: var(--accent-gradient);
+        color: #fff;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .dl-btn:hover  { transform: translateY(-2px); }
+      .dl-btn:active { transform: scale(0.97); }
+
+      .dl-btn.copied {
+        background: linear-gradient(135deg, #4ecdc4, #26a69a);
+        box-shadow: 4px 4px 12px rgba(78,205,196,0.35);
+      }
+
+      .dl-btn.secondary {
+        background: var(--bg-primary);
+        color: var(--text-secondary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+      }
+
+      .dl-btn.secondary:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      }
+
+      /* ── 历史记录 ── */
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .history-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        cursor: pointer;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .history-item:active {
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .history-icon {
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        width: 28px;
+        text-align: center;
+      }
+
+      .history-content {
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .history-text {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .history-time {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      .history-del {
+        padding: 5px 8px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        flex-shrink: 0;
+      }
+
+      .history-del:hover { color: var(--danger); }
+
+      .history-empty {
+        text-align: center;
+        padding: 16px;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      /* ── 清空历史按钮 ── */
+      .clear-history-btn {
+        width: 100%;
+        margin-top: 12px;
+        padding: 11px;
+        background: var(--bg-primary);
+        color: var(--danger);
+        border: none;
+        border-radius: var(--border-radius-xs);
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        display: none;
+      }
+
+      .clear-history-btn:active {
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      /* ── Toast 提示 ── */
+      .toast {
+        position: fixed;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        background: #2c3e50;
+        color: #fff;
+        padding: 11px 22px;
+        border-radius: 30px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        box-shadow: 0 6px 24px rgba(44,62,80,0.3);
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+        z-index: 999;
+        opacity: 0;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+
+
+      /* ── 使用说明 ── */
+      .guide-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .guide-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .guide-icon {
+        font-size: 1rem;
+        flex-shrink: 0;
+        width: unset;
+        text-align: unset;
+        margin-top: 1px;
+      }
+
+      .guide-body {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .guide-title {
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      kbd {
+        display: inline-block;
+        padding: 1px 6px;
+        font-size: 0.75rem;
+        font-family: 'SF Mono', 'Menlo', monospace;
+        background: var(--bg-primary);
+        border-radius: 5px;
+        box-shadow: 2px 2px 4px var(--shadow-dark), -1px -1px 3px var(--shadow-light);
+        color: var(--text-secondary);
+        font-weight: 700;
+        vertical-align: middle;
+      }
+
+      /* ── 字符计数 ── */
+      .char-count {
+        text-align: right;
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        margin-top: 6px;
+        font-weight: 600;
+      }
+
+      .char-count.warn { color: var(--warning); }
+      .char-count.over { color: var(--danger); }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>二维码生成</h1>
+      <p class="subtitle">输入链接或文字即刻转换，支持多种格式</p>
+    </header>
+
+    <div class="main">
+
+      <!-- ── 内容输入卡片 ── -->
+      <div class="card">
+        <div class="card-label">输入模式</div>
+
+        <!-- 模式切换 -->
+        <div class="mode-tabs">
+          <button class="mode-tab active" data-mode="url" onclick="switchMode('url', this)">
+            <span class="tab-icon">🔗</span>网址
+          </button>
+          <button class="mode-tab" data-mode="text" onclick="switchMode('text', this)">
+            <span class="tab-icon">📝</span>文本
+          </button>
+          <button class="mode-tab" data-mode="wifi" onclick="switchMode('wifi', this)">
+            <span class="tab-icon">📶</span>Wi-Fi
+          </button>
+          <button class="mode-tab" data-mode="vcard" onclick="switchMode('vcard', this)">
+            <span class="tab-icon">👤</span>名片
+          </button>
+        </div>
+
+        <!-- URL / 文本模式 -->
+        <div id="mode-url" class="input-group">
+          <textarea id="url-input" placeholder="在此输入网址，如 https://example.com …" oninput="updateCharCount()"></textarea>
+          <div class="char-count" id="char-count">0 字符</div>
+        </div>
+
+        <div id="mode-text" class="input-group" style="display:none">
+          <textarea id="text-input" placeholder="在此输入纯文本内容…" oninput="updateCharCount()"></textarea>
+          <div class="char-count" id="char-count-text">0 字符</div>
+        </div>
+
+        <!-- Wi-Fi 模式 -->
+        <div id="mode-wifi" class="input-group" style="display:none">
+          <div class="input-row">
+            <span class="input-mini-label">网络名称 (SSID)</span>
+            <input type="text" id="wifi-ssid" placeholder="输入 Wi-Fi 名称" />
+          </div>
+          <div class="input-row">
+            <span class="input-mini-label">密码</span>
+            <input type="password" id="wifi-pass" placeholder="输入 Wi-Fi 密码（无密码留空）" />
+          </div>
+          <div class="input-row">
+            <span class="input-mini-label">加密类型</span>
+            <div class="encrypt-row">
+              <button class="encrypt-opt active" data-enc="WPA" onclick="setEnc('WPA', this)">WPA/WPA2</button>
+              <button class="encrypt-opt" data-enc="WEP" onclick="setEnc('WEP', this)">WEP</button>
+              <button class="encrypt-opt" data-enc="nopass" onclick="setEnc('nopass', this)">无密码</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 名片 vCard 模式 -->
+        <div id="mode-vcard" class="input-group" style="display:none">
+          <div class="input-row">
+            <span class="input-mini-label">姓名</span>
+            <input type="text" id="vc-name" placeholder="张三" />
+          </div>
+          <div class="input-row">
+            <span class="input-mini-label">电话</span>
+            <input type="text" id="vc-tel" placeholder="+86 138 0000 0000" />
+          </div>
+          <div class="input-row">
+            <span class="input-mini-label">邮箱</span>
+            <input type="text" id="vc-email" placeholder="example@email.com" />
+          </div>
+          <div class="input-row">
+            <span class="input-mini-label">公司</span>
+            <input type="text" id="vc-org" placeholder="公司名称（选填）" />
+          </div>
+          <div class="input-row">
+            <span class="input-mini-label">网站</span>
+            <input type="text" id="vc-url" placeholder="https://（选填）" />
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="controls" style="margin-top:16px">
+          <button class="action-btn" onclick="generateQR()">
+            <span>⚡</span>生成二维码
+          </button>
+          <button class="action-btn secondary-btn" onclick="clearAll()">
+            <span>🗑</span>清空
+          </button>
+        </div>
+      </div>
+
+      <!-- ── 生成结果卡片 ── -->
+      <div class="card">
+        <div class="card-label">生成结果</div>
+
+        <div class="qr-display" id="qr-display">
+          <div class="qr-placeholder" id="qr-placeholder">
+            <div class="qr-placeholder-icon">▦</div>
+            <div class="qr-placeholder-text">二维码将显示在此处</div>
+          </div>
+          <div id="qrcode-wrap">
+            <div id="qrcode"></div>
+            <div class="qr-size-label" id="qr-size-label"></div>
+          </div>
+        </div>
+
+        <div class="result-actions" id="result-actions" style="display:none">
+          <button class="dl-btn" onclick="downloadQR()">
+            <span>💾</span>保存图片
+          </button>
+          <button class="dl-btn secondary" id="share-btn" onclick="shareQR()">
+            <span>📋</span>复制内容
+          </button>
+        </div>
+      </div>
+
+      <!-- ── 外观设置卡片 ── -->
+      <div class="card">
+        <div class="card-label">外观设置</div>
+
+        <!-- 尺寸滑块 -->
+        <div style="margin-bottom:18px">
+          <div class="size-row">
+            <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">尺寸</span>
+            <span>
+              <span class="size-val" id="size-val">200</span>
+              <span class="size-unit">px</span>
+            </span>
+          </div>
+          <input type="range" id="size-slider" min="120" max="400" step="20" value="200"
+            oninput="document.getElementById('size-val').textContent=this.value" />
+        </div>
+
+        <!-- 颜色 -->
+        <div style="margin-bottom:18px">
+          <div class="card-label" style="margin-bottom:10px">颜色</div>
+          <div class="color-row">
+            <div class="color-item">
+              <span class="input-mini-label">前景色</span>
+              <div class="color-swatch-wrap" onclick="document.getElementById('color-dark').click()">
+                <div class="color-swatch" id="swatch-dark" style="background:#2c3e50"></div>
+                <span class="color-hex" id="hex-dark">#2C3E50</span>
+                <input type="color" id="color-dark" value="#2c3e50"
+                  oninput="updateSwatch('dark', this.value)" />
+              </div>
+            </div>
+            <div class="color-item">
+              <span class="input-mini-label">背景色</span>
+              <div class="color-swatch-wrap" onclick="document.getElementById('color-light').click()">
+                <div class="color-swatch" id="swatch-light" style="background:#ffffff"></div>
+                <span class="color-hex" id="hex-light">#FFFFFF</span>
+                <input type="color" id="color-light" value="#ffffff"
+                  oninput="updateSwatch('light', this.value)" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 容错级别 -->
+        <div>
+          <div class="card-label" style="margin-bottom:10px">容错级别</div>
+          <div class="level-row">
+            <button class="level-btn" data-level="L" onclick="setLevel('L', this)">
+              <span class="level-code">L</span>
+              <span class="level-pct">7%</span>
+            </button>
+            <button class="level-btn active" data-level="M" onclick="setLevel('M', this)">
+              <span class="level-code">M</span>
+              <span class="level-pct">15%</span>
+            </button>
+            <button class="level-btn" data-level="Q" onclick="setLevel('Q', this)">
+              <span class="level-code">Q</span>
+              <span class="level-pct">25%</span>
+            </button>
+            <button class="level-btn" data-level="H" onclick="setLevel('H', this)">
+              <span class="level-code">H</span>
+              <span class="level-pct">30%</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 历史记录卡片 ── -->
+      <div class="card">
+        <div class="card-label">生成历史</div>
+        <div class="history-list" id="history-list">
+          <div class="history-empty">暂无记录，生成后将自动保存</div>
+        </div>
+        <button class="clear-history-btn" id="clear-hist-btn" onclick="clearHistory()">🗑 清空所有历史</button>
+      </div>
+
+      <!-- ── 使用说明卡片 ── -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="guide-list">
+          <div class="guide-item">
+            <span class="guide-icon">🔗</span>
+            <div class="guide-body">
+              <span class="guide-title">输入模式</span>：支持网址、纯文本、Wi-Fi 配置、名片四种格式，切换标签即可
+            </div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">⚡</span>
+            <div class="guide-body">
+              <span class="guide-title">快速生成</span>：填写内容后点击「生成二维码」，或按 <kbd>Ctrl</kbd> + <kbd>Enter</kbd>
+            </div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">🎨</span>
+            <div class="guide-body">
+              <span class="guide-title">外观设置</span>：可自定义前景色、背景色、尺寸大小及容错级别（H 级最强）
+            </div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">💾</span>
+            <div class="guide-body">
+              <span class="guide-title">保存与复制</span>：生成后可直接保存为 PNG 图片，或复制原始内容文字
+            </div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">🔒</span>
+            <div class="guide-body">
+              <span class="guide-title">数据安全</span>：所有处理完全在本地完成，内容不会上传至任何服务器
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // ────────────────────────────────────────────
+      //  状态
+      // ────────────────────────────────────────────
+      let currentMode = 'url'
+      let currentLevel = 'M'
+      let currentEnc   = 'WPA'
+      let hasQR = false
+      let history = JSON.parse(localStorage.getItem('qr_history') || '[]')
+
+      // ────────────────────────────────────────────
+      //  模式切换
+      // ────────────────────────────────────────────
+      function switchMode(mode, btn) {
+        currentMode = mode
+        document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'))
+        btn.classList.add('active')
+        const ids = ['mode-url','mode-text','mode-wifi','mode-vcard']
+        ids.forEach(id => document.getElementById(id).style.display = 'none')
+        document.getElementById('mode-' + mode).style.display = 'flex'
+      }
+
+      // ────────────────────────────────────────────
+      //  字符计数
+      // ────────────────────────────────────────────
+      function updateCharCount() {
+        const activeTA = currentMode === 'url'
+          ? document.getElementById('url-input')
+          : document.getElementById('text-input')
+        const el = currentMode === 'url'
+          ? document.getElementById('char-count')
+          : document.getElementById('char-count-text')
+        if (!activeTA || !el) return
+        const len = activeTA.value.length
+        el.textContent = len + ' 字符'
+        el.className = 'char-count'
+        if (len > 500) el.classList.add('warn')
+        if (len > 900) el.classList.remove('warn'), el.classList.add('over')
+      }
+
+      // ────────────────────────────────────────────
+      //  收集内容
+      // ────────────────────────────────────────────
+      function getContent() {
+        if (currentMode === 'url') {
+          return document.getElementById('url-input').value.trim()
+        }
+        if (currentMode === 'text') {
+          return document.getElementById('text-input').value.trim()
+        }
+        if (currentMode === 'wifi') {
+          const ssid = document.getElementById('wifi-ssid').value.trim()
+          const pass = document.getElementById('wifi-pass').value
+          if (!ssid) return null
+          const enc = currentEnc === 'nopass' ? 'nopass' : currentEnc
+          const passStr = currentEnc === 'nopass' ? '' : `;P:${pass}`
+          return `WIFI:T:${enc};S:${ssid}${passStr};;`
+        }
+        if (currentMode === 'vcard') {
+          const name  = document.getElementById('vc-name').value.trim()
+          const tel   = document.getElementById('vc-tel').value.trim()
+          const email = document.getElementById('vc-email').value.trim()
+          const org   = document.getElementById('vc-org').value.trim()
+          const url   = document.getElementById('vc-url').value.trim()
+          if (!name && !tel) return null
+          let vc = 'BEGIN:VCARD\nVERSION:3.0\n'
+          if (name)  vc += `FN:${name}\n`
+          if (tel)   vc += `TEL:${tel}\n`
+          if (email) vc += `EMAIL:${email}\n`
+          if (org)   vc += `ORG:${org}\n`
+          if (url)   vc += `URL:${url}\n`
+          vc += 'END:VCARD'
+          return vc
+        }
+        return null
+      }
+
+      // ────────────────────────────────────────────
+      //  生成二维码
+      // ────────────────────────────────────────────
+      function generateQR() {
+        const content = getContent()
+        if (!content) {
+          showToast('⚠️ 请先输入内容')
+          return
+        }
+        if (content.length > 900) {
+          showToast('⚠️ 内容过长，请精简后再试')
+          return
+        }
+
+        const size     = parseInt(document.getElementById('size-slider').value)
+        const darkCol  = document.getElementById('color-dark').value
+        const lightCol = document.getElementById('color-light').value
+
+        const levelMap = { L: QRCode.CorrectLevel.L, M: QRCode.CorrectLevel.M,
+                           Q: QRCode.CorrectLevel.Q, H: QRCode.CorrectLevel.H }
+
+        const container = document.getElementById('qrcode')
+        container.innerHTML = ''
+
+        new QRCode(container, {
+          text: content,
+          width:  size,
+          height: size,
+          colorDark:  darkCol,
+          colorLight: lightCol,
+          correctLevel: levelMap[currentLevel]
+        })
+
+        document.getElementById('qr-placeholder').style.display = 'none'
+        document.getElementById('qrcode-wrap').style.display = 'flex'
+        document.getElementById('qr-size-label').textContent = `${size} × ${size} px`
+        document.getElementById('result-actions').style.display = 'grid'
+        hasQR = true
+
+        // 加入历史
+        addHistory(content)
+        showToast('✅ 二维码生成成功')
+      }
+
+      // ────────────────────────────────────────────
+      //  清空
+      // ────────────────────────────────────────────
+      function clearAll() {
+        ['url-input','text-input','wifi-ssid','wifi-pass',
+         'vc-name','vc-tel','vc-email','vc-org','vc-url'].forEach(id => {
+          const el = document.getElementById(id)
+          if (el) el.value = ''
+        })
+        document.getElementById('qrcode').innerHTML = ''
+        document.getElementById('qr-placeholder').style.display = 'flex'
+        document.getElementById('qrcode-wrap').style.display = 'none'
+        document.getElementById('result-actions').style.display = 'none'
+        document.getElementById('char-count').textContent = '0 字符'
+        document.getElementById('char-count-text').textContent = '0 字符'
+        hasQR = false
+        showToast('🗑 已清空')
+      }
+
+      // ────────────────────────────────────────────
+      //  下载
+      // ────────────────────────────────────────────
+      function downloadQR() {
+        if (!hasQR) return
+        const canvas = document.querySelector('#qrcode canvas')
+        const img    = document.querySelector('#qrcode img')
+        const link = document.createElement('a')
+        link.download = 'qrcode.png'
+        if (canvas) {
+          link.href = canvas.toDataURL('image/png')
+        } else if (img) {
+          link.href = img.src
+        } else return
+        link.click()
+        showToast('💾 图片已保存')
+      }
+
+      // ────────────────────────────────────────────
+      //  复制内容文字
+      // ────────────────────────────────────────────
+      function shareQR() {
+        const content = getContent()
+        if (!content) return
+        const btn = document.getElementById('share-btn')
+        const write = () => {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(content).catch(fallback)
+          } else fallback()
+        }
+        const fallback = () => {
+          const el = document.createElement('textarea')
+          el.value = content
+          el.style.cssText = 'position:fixed;opacity:0;pointer-events:none'
+          document.body.appendChild(el)
+          el.focus(); el.select()
+          try { document.execCommand('copy') } catch(e) {}
+          document.body.removeChild(el)
+        }
+        write()
+        btn.classList.add('copied')
+        btn.innerHTML = '<span>✓</span>已复制'
+        setTimeout(() => {
+          btn.classList.remove('copied')
+          btn.innerHTML = '<span>📋</span>复制内容'
+        }, 1800)
+        showToast('📋 内容已复制到剪贴板')
+      }
+
+      // ────────────────────────────────────────────
+      //  颜色更新
+      // ────────────────────────────────────────────
+      function updateSwatch(which, val) {
+        document.getElementById('swatch-' + which).style.background = val
+        document.getElementById('hex-' + which).textContent = val.toUpperCase()
+      }
+
+      // ────────────────────────────────────────────
+      //  容错级别
+      // ────────────────────────────────────────────
+      function setLevel(lv, btn) {
+        currentLevel = lv
+        document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+      }
+
+      // ────────────────────────────────────────────
+      //  加密类型
+      // ────────────────────────────────────────────
+      function setEnc(enc, btn) {
+        currentEnc = enc
+        document.querySelectorAll('.encrypt-opt').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        document.getElementById('wifi-pass').disabled = (enc === 'nopass')
+        if (enc === 'nopass') document.getElementById('wifi-pass').value = ''
+      }
+
+      // ────────────────────────────────────────────
+      //  历史记录
+      // ────────────────────────────────────────────
+      const MODE_ICONS = { url: '🔗', text: '📝', wifi: '📶', vcard: '👤' }
+
+      function addHistory(content) {
+        const item = {
+          id:      Date.now(),
+          mode:    currentMode,
+          content: content,
+          time:    new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+        }
+        history = history.filter(h => h.content !== content)
+        history.unshift(item)
+        if (history.length > 10) history = history.slice(0, 10)
+        localStorage.setItem('qr_history', JSON.stringify(history))
+        renderHistory()
+      }
+
+      function renderHistory() {
+        const list = document.getElementById('history-list')
+        const clearBtn = document.getElementById('clear-hist-btn')
+        if (!history.length) {
+          list.innerHTML = '<div class="history-empty">暂无记录，生成后将自动保存</div>'
+          clearBtn.style.display = 'none'
+          return
+        }
+        clearBtn.style.display = 'block'
+        list.innerHTML = history.map(h => {
+          const icon = MODE_ICONS[h.mode] || '📄'
+          const display = h.content.length > 42 ? h.content.slice(0, 42) + '…' : h.content
+          return `
+            <div class="history-item" onclick="loadHistory(${h.id})">
+              <span class="history-icon">${icon}</span>
+              <div class="history-content">
+                <div class="history-text">${escHtml(display)}</div>
+                <div class="history-time">${h.time}</div>
+              </div>
+              <button class="history-del" onclick="deleteHistory(event, ${h.id})">✕</button>
+            </div>`
+        }).join('')
+      }
+
+      function loadHistory(id) {
+        const item = history.find(h => h.id === id)
+        if (!item) return
+        // 切换到对应模式
+        const tabBtn = document.querySelector(`.mode-tab[data-mode="${item.mode}"]`)
+        if (tabBtn) switchMode(item.mode, tabBtn)
+        // 填入内容（仅 url / text 可直接回填）
+        if (item.mode === 'url') {
+          document.getElementById('url-input').value = item.content
+          updateCharCount()
+        } else if (item.mode === 'text') {
+          document.getElementById('text-input').value = item.content
+          updateCharCount()
+        }
+        // 自动重新生成
+        setTimeout(generateQR, 50)
+      }
+
+      function deleteHistory(e, id) {
+        e.stopPropagation()
+        history = history.filter(h => h.id !== id)
+        localStorage.setItem('qr_history', JSON.stringify(history))
+        renderHistory()
+      }
+
+      function clearHistory() {
+        history = []
+        localStorage.removeItem('qr_history')
+        renderHistory()
+        showToast('🗑 历史记录已清空')
+      }
+
+      function escHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      }
+
+      // ────────────────────────────────────────────
+      //  Toast
+      // ────────────────────────────────────────────
+      let toastTimer = null
+      function showToast(msg) {
+        const el = document.getElementById('toast')
+        el.textContent = msg
+        el.classList.add('show')
+        clearTimeout(toastTimer)
+        toastTimer = setTimeout(() => el.classList.remove('show'), 2000)
+      }
+
+      // ────────────────────────────────────────────
+      //  快捷键
+      // ────────────────────────────────────────────
+      document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault()
+          generateQR()
+        }
+      })
+
+      // ────────────────────────────────────────────
+      //  初始化
+      // ────────────────────────────────────────────
+      renderHistory()
+    </script>
+  </body>
+</html>

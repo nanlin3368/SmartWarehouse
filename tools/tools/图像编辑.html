@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图像编辑</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0;
+          font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif; }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex; flex-direction: column; align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%; max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative; overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute; top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%  { left: -100%; } 50% { left: 100%; } 100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem; font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); } to { filter: brightness(1.15); }
+      }
+
+      .subtitle { font-size: 0.92rem; color: var(--text-secondary); font-weight: 500; }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%; max-width: 680px;
+        display: flex; flex-direction: column; gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem; font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px; text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 上传区 ── */
+      .upload-area {
+        width: 100%; min-height: 150px;
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 10px;
+        cursor: pointer; transition: var(--transition);
+        color: var(--text-muted);
+        -webkit-tap-highlight-color: transparent;
+        position: relative;
+      }
+
+      .upload-area:hover { color: var(--accent-primary); }
+      .upload-area.dragover {
+        color: var(--accent-primary);
+        box-shadow: inset 4px 4px 10px rgba(102,126,234,0.2), inset -4px -4px 10px var(--shadow-light);
+      }
+
+      .upload-area.has-image { cursor: default; min-height: auto; padding: 0; overflow: hidden; }
+
+      .upload-icon { font-size: 2.4rem; }
+      .upload-text { font-size: 0.9rem; font-weight: 600; }
+      .upload-sub  { font-size: 0.75rem; color: var(--text-muted); }
+
+      /* ── 图片预览（上传后替换上传区）── */
+      .upload-preview {
+        width: 100%; display: none;
+        flex-direction: column; gap: 14px;
+      }
+
+      .upload-preview.visible { display: flex; }
+
+      /* 文件信息条 */
+      .file-info-bar {
+        display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      }
+
+      .info-chip {
+        padding: 5px 12px;
+        background: var(--bg-primary);
+        border-radius: 20px;
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.75rem; font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .info-chip span { color: var(--accent-primary); font-weight: 700; }
+
+      .info-chip.name-chip {
+        max-width: 200px; overflow: hidden;
+        text-overflow: ellipsis; white-space: nowrap;
+      }
+
+      /* 操作按钮行 */
+      .upload-action-row {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      }
+
+      /* ── Tab 切换 ── */
+      .func-tabs {
+        display: flex; gap: 8px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+        padding: 6px;
+        margin-bottom: 20px;
+      }
+
+      .func-tab {
+        flex: 1; padding: 9px 4px;
+        border: none; background: transparent;
+        border-radius: 8px;
+        font-size: 0.78rem; font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer; transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        display: flex; align-items: center; justify-content: center; gap: 4px;
+      }
+
+      .func-tab.active {
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        color: var(--accent-primary);
+      }
+
+      /* ── 面板占位符（未上传时）── */
+      .panel-placeholder {
+        min-height: 200px;
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 8px var(--shadow-dark), inset -3px -3px 8px var(--shadow-light);
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 10px;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .panel-placeholder:hover { color: var(--accent-primary); }
+      .panel-placeholder .ph-icon { font-size: 2rem; }
+      .panel-placeholder .ph-text { font-size: 0.85rem; font-weight: 600; }
+      .panel-placeholder .ph-sub  { font-size: 0.72rem; }
+
+      /* ── 裁剪容器 ── */
+      .cropper-wrapper {
+        width: 100%; max-height: 460px;
+        background: transparent;
+        border-radius: var(--border-radius-xs);
+        overflow: hidden;
+      }
+
+      .cropper-wrapper img { max-width: 100%; display: block; }
+
+      .cropper-wrapper.has-image {
+        background: #cdd4e0;
+        box-shadow: inset 3px 3px 8px var(--shadow-dark), inset -2px -2px 6px var(--shadow-light);
+      }
+
+      /* ── 比例标签 ── */
+      .ratio-tabs {
+        display: flex; gap: 8px;
+        background: var(--bg-primary); padding: 6px;
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        margin-bottom: 14px; flex-wrap: wrap;
+      }
+
+      .ratio-tab {
+        flex: 1; min-width: 44px;
+        padding: 8px 4px; border: none;
+        background: transparent; font-size: 0.76rem; font-weight: 600;
+        border-radius: 6px; cursor: pointer;
+        color: var(--text-muted); transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        text-align: center;
+      }
+
+      .ratio-tab.active {
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        color: var(--accent-primary); background: var(--bg-primary);
+      }
+
+      /* ── 调整面板 ── */
+      .adjust-panel { display: flex; flex-direction: column; gap: 14px; }
+
+      .adjust-row { display: flex; align-items: center; gap: 12px; }
+
+      .adjust-label {
+        font-size: 0.78rem; font-weight: 700;
+        color: var(--text-secondary);
+        width: 52px; flex-shrink: 0; text-align: right;
+      }
+
+      .adjust-slider {
+        flex: 1;
+        -webkit-appearance: none;
+        height: 6px; border-radius: 3px;
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light);
+        outline: none; cursor: pointer;
+      }
+
+      .adjust-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 22px; height: 22px; border-radius: 50%;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        cursor: pointer; transition: var(--transition);
+      }
+
+      .adjust-slider::-webkit-slider-thumb:active {
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light);
+      }
+
+      .adjust-val {
+        font-size: 0.78rem; font-weight: 700;
+        color: var(--accent-primary);
+        width: 34px; text-align: center; flex-shrink: 0;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ── 预览画布 ── */
+      .preview-wrap {
+        width: 100%;
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 8px var(--shadow-dark), inset -2px -2px 6px var(--shadow-light);
+        overflow: hidden; background: #cdd4e0;
+        display: flex; align-items: center; justify-content: center;
+        min-height: 200px;
+      }
+
+      #adjustCanvas { max-width: 100%; max-height: 380px; display: block; border-radius: 4px; }
+
+      /* ── 格式按钮 ── */
+      .format-row { display: flex; gap: 8px; }
+
+      .format-btn {
+        flex: 1; padding: 10px 6px;
+        border: none; background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 0.8rem; font-weight: 700;
+        color: var(--text-muted); cursor: pointer;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .format-btn.active {
+        background: var(--accent-gradient); color: #fff;
+        box-shadow: 3px 3px 8px rgba(102,126,234,0.35);
+      }
+
+      /* ── 尺寸调整 ── */
+      .size-inputs {
+        display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px;
+        align-items: center; margin-bottom: 14px;
+      }
+
+      .size-input-wrap { display: flex; flex-direction: column; gap: 6px; }
+
+      .size-input-label {
+        font-size: 0.7rem; font-weight: 700;
+        color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+      }
+
+      .size-input {
+        width: 100%; padding: 10px 12px;
+        border: none; outline: none;
+        background: var(--bg-primary);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        border-radius: var(--border-radius-xs);
+        font-size: 1rem; font-weight: 700;
+        color: var(--text-primary); text-align: center;
+      }
+
+      .size-link-btn {
+        width: 34px; height: 34px;
+        border: none; background: var(--bg-primary);
+        border-radius: 50%;
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        cursor: pointer; font-size: 0.9rem;
+        color: var(--text-muted); transition: var(--transition);
+        display: flex; align-items: center; justify-content: center;
+        -webkit-tap-highlight-color: transparent;
+        margin-top: 22px;
+      }
+
+      .size-link-btn.linked { color: var(--accent-primary); }
+
+      .size-presets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+
+      .size-preset-btn {
+        padding: 9px 4px;
+        border: none; background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 0.72rem; font-weight: 700;
+        color: var(--text-secondary); cursor: pointer;
+        transition: var(--transition); text-align: center;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .size-preset-btn:active {
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      /* ── 旋转/翻转 ── */
+      .transform-grid {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .t-btn {
+        padding: 12px 6px; border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 0.78rem; font-weight: 700;
+        color: var(--text-secondary); cursor: pointer;
+        transition: var(--transition); text-align: center;
+        display: flex; flex-direction: column; align-items: center; gap: 4px;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .t-btn .t-icon { font-size: 1.1rem; }
+      .t-btn:active {
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      /* ── 通用按钮 ── */
+      .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+
+      .btn {
+        padding: 13px 10px; border: none;
+        border-radius: var(--border-radius-xs);
+        font-size: 0.9rem; font-weight: 700;
+        cursor: pointer; transition: var(--transition);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        color: var(--text-secondary);
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .btn:hover { transform: translateY(-1px); }
+      .btn:active {
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .btn.primary {
+        background: var(--accent-gradient); color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+      }
+
+      .btn.primary:hover { box-shadow: 6px 6px 16px rgba(102,126,234,0.4); }
+      .btn.primary:active { box-shadow: inset 3px 3px 8px rgba(0,0,0,0.15); }
+
+      .btn.danger { color: var(--danger); }
+
+      /* ── 导出选项 ── */
+      .export-row {
+        display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+      }
+
+      .export-row-label {
+        font-size: 0.78rem; font-weight: 700;
+        color: var(--text-secondary); width: 52px; flex-shrink: 0; text-align: right;
+      }
+
+      /* ── 压缩预估 ── */
+      .compress-est {
+        padding: 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        margin-bottom: 4px;
+      }
+
+      .compress-est-label {
+        font-size: 0.75rem; color: var(--text-muted);
+        font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        margin-bottom: 8px;
+      }
+
+      .compress-est-val {
+        font-size: 0.82rem; color: var(--text-secondary);
+      }
+
+      /* ── 使用说明 ── */
+      .guide-list { display: flex; flex-direction: column; gap: 8px; }
+
+      .guide-item {
+        display: flex; align-items: flex-start; gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary); border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .guide-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+      .guide-body { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+      .guide-title { font-weight: 700; color: var(--text-primary); }
+
+      /* ── Toast ── */
+      .toast {
+        position: fixed; bottom: 32px; left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        background: #2c3e50; color: #fff;
+        padding: 11px 22px; border-radius: 30px;
+        font-size: 0.88rem; font-weight: 600;
+        box-shadow: 0 6px 24px rgba(44,62,80,0.3);
+        transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease;
+        z-index: 999; opacity: 0; pointer-events: none; white-space: nowrap;
+      }
+
+      .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+      /* 隐藏 cropper 用的原始 img */
+      #imgEl { max-width: 100%; display: block; }
+
+      /* 禁用态按钮视觉提示 */
+      .btn.disabled-look { opacity: 0.45; cursor: not-allowed; }
+      .btn.disabled-look:hover { transform: none; }
+      .btn.disabled-look:active { box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light); transform: none; }
+
+      /* ── 裁剪区内嵌上传 ── */
+      .crop-inner-upload {
+        display: flex; flex-direction: column;
+        width: 100%; padding: 0; cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        color: var(--text-muted);
+      }
+
+      .crop-inner-upload:hover { color: var(--accent-primary); }
+
+      .crop-inner-drop {
+        width: 100%;
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        gap: 10px; padding: 40px 16px;
+        min-height: 200px;
+      }
+
+      .crop-inner-upload:hover .crop-inner-drop {
+        box-shadow: inset 4px 4px 10px rgba(102,126,234,0.2), inset -4px -4px 10px var(--shadow-light);
+      }
+    </style>
+  </head>
+  <body>
+
+    <input type="file" id="fileInput" hidden accept="image/*">
+
+    <header>
+      <h1>图像编辑</h1>
+      <p class="subtitle">裁剪、调色、缩放、压缩，全本地处理更安全</p>
+    </header>
+
+    <div class="main">
+
+      <!-- ── 图片信息卡片（上传后显示）── -->
+      <div class="card" id="infoCard" style="display:none">
+        <div class="card-label">图片信息</div>
+        <div class="file-info-bar" style="margin-bottom:14px">
+          <div class="info-chip name-chip">文件名：<span id="infoName">—</span></div>
+          <div class="info-chip">尺寸：<span id="infoSize">—</span></div>
+          <div class="info-chip">大小：<span id="infoFileSize">—</span></div>
+          <div class="info-chip">格式：<span id="infoType">—</span></div>
+        </div>
+        <div class="upload-action-row">
+          <button class="btn" onclick="triggerReupload()">📂 重新上传</button>
+          <button class="btn danger" onclick="confirmReset()">🗑 清空重置</button>
+        </div>
+      </div>
+
+      <!-- ── 功能 Tab 卡片（始终显示）── -->
+      <div class="card">
+        <div class="func-tabs">
+          <button class="func-tab active" onclick="switchTab('crop', this)">✂️ 裁剪</button>
+          <button class="func-tab"        onclick="switchTab('adjust', this)">🎨 调色</button>
+          <button class="func-tab"        onclick="switchTab('resize', this)">📐 缩放</button>
+          <button class="func-tab"        onclick="switchTab('compress', this)">🗜 压缩</button>
+        </div>
+
+        <!-- ─ 裁剪面板 ─ -->
+        <div id="tab-crop">
+          <div class="card-label">裁剪比例</div>
+          <div class="ratio-tabs">
+            <button class="ratio-tab active" onclick="setRatio(NaN, this)">自由</button>
+            <button class="ratio-tab" onclick="setRatio(1, this)">1:1</button>
+            <button class="ratio-tab" onclick="setRatio(4/3, this)">4:3</button>
+            <button class="ratio-tab" onclick="setRatio(3/4, this)">3:4</button>
+            <button class="ratio-tab" onclick="setRatio(16/9, this)">16:9</button>
+            <button class="ratio-tab" onclick="setRatio(9/16, this)">9:16</button>
+          </div>
+
+          <!-- 裁剪画布区域 -->
+          <div class="cropper-wrapper" id="crop-wrapper">
+            <!-- 未上传：内嵌上传区 -->
+            <div id="crop-empty" class="crop-inner-upload" onclick="document.getElementById('fileInput').click()">
+              <div class="crop-inner-drop">
+                <span style="font-size:2.2rem">📂</span>
+                <span class="upload-text">点击或拖拽图片到此处</span>
+                <span class="upload-sub">支持 JPG · PNG · WebP · GIF · BMP</span>
+              </div>
+            </div>
+            <img id="imgEl" style="display:none">
+          </div>
+
+          <div class="card-label" style="margin-top:16px">旋转 / 翻转</div>
+          <div class="transform-grid">
+            <button class="t-btn" onclick="rotate(-90)"><span class="t-icon">↺</span>左转90°</button>
+            <button class="t-btn" onclick="rotate(90)"><span class="t-icon">↻</span>右转90°</button>
+            <button class="t-btn" onclick="flip('h')"><span class="t-icon">↔</span>水平翻转</button>
+            <button class="t-btn" onclick="flip('v')"><span class="t-icon">↕</span>垂直翻转</button>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn" id="btn-cropReset" onclick="cropReset()">↺ 重置裁剪框</button>
+            <button class="btn primary" id="btn-applyCrop" onclick="applyCrop()">✂️ 应用裁剪</button>
+          </div>
+        </div>
+
+        <!-- ─ 调色面板 ─ -->
+        <div id="tab-adjust" style="display:none">
+          <!-- 预览画布 -->
+          <div class="preview-wrap" id="adjust-preview" style="margin-bottom:16px">
+            <div id="adjust-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:160px;color:var(--text-muted);gap:8px">
+              <span style="font-size:1.8rem">🎨</span>
+              <span style="font-size:0.85rem;font-weight:600">上传图片后在此调色</span>
+            </div>
+            <canvas id="adjustCanvas" style="display:none"></canvas>
+          </div>
+
+          <div class="adjust-panel">
+            <div class="adjust-row">
+              <span class="adjust-label">亮度</span>
+              <input type="range" class="adjust-slider" id="sl-brightness" min="-100" max="100" value="0" oninput="applyAdjust()">
+              <span class="adjust-val" id="vl-brightness">0</span>
+            </div>
+            <div class="adjust-row">
+              <span class="adjust-label">对比度</span>
+              <input type="range" class="adjust-slider" id="sl-contrast" min="-100" max="100" value="0" oninput="applyAdjust()">
+              <span class="adjust-val" id="vl-contrast">0</span>
+            </div>
+            <div class="adjust-row">
+              <span class="adjust-label">饱和度</span>
+              <input type="range" class="adjust-slider" id="sl-saturation" min="-100" max="100" value="0" oninput="applyAdjust()">
+              <span class="adjust-val" id="vl-saturation">0</span>
+            </div>
+            <div class="adjust-row">
+              <span class="adjust-label">色温</span>
+              <input type="range" class="adjust-slider" id="sl-temperature" min="-100" max="100" value="0" oninput="applyAdjust()">
+              <span class="adjust-val" id="vl-temperature">0</span>
+            </div>
+            <div class="adjust-row">
+              <span class="adjust-label">锐化</span>
+              <input type="range" class="adjust-slider" id="sl-sharpen" min="0" max="100" value="0" oninput="applyAdjust()">
+              <span class="adjust-val" id="vl-sharpen">0</span>
+            </div>
+            <div class="adjust-row">
+              <span class="adjust-label">模糊</span>
+              <input type="range" class="adjust-slider" id="sl-blur" min="0" max="20" value="0" oninput="applyAdjust()">
+              <span class="adjust-val" id="vl-blur">0</span>
+            </div>
+          </div>
+          <div class="btn-row" style="margin-top:16px">
+            <button class="btn" onclick="resetAdjust()">↺ 重置调色</button>
+            <button class="btn primary" onclick="applyAdjustToMain()">✓ 应用效果</button>
+          </div>
+        </div>
+
+        <!-- ─ 缩放面板 ─ -->
+        <div id="tab-resize" style="display:none">
+          <div id="resize-content">
+            <div class="size-inputs">
+              <div class="size-input-wrap">
+                <span class="size-input-label">宽度 (px)</span>
+                <input type="number" class="size-input" id="resizeW" min="1" placeholder="—" oninput="syncResize('w')">
+              </div>
+              <button class="size-link-btn linked" id="linkBtn" onclick="toggleLink()">🔗</button>
+              <div class="size-input-wrap">
+                <span class="size-input-label">高度 (px)</span>
+                <input type="number" class="size-input" id="resizeH" min="1" placeholder="—" oninput="syncResize('h')">
+              </div>
+            </div>
+          </div>
+
+          <div class="card-label" style="margin-bottom:10px">常用尺寸预设</div>
+          <div class="size-presets">
+            <button class="size-preset-btn" onclick="applyPreset(1920,1080)">1920×1080<br><span style="font-size:0.65rem;color:var(--text-muted)">1080p</span></button>
+            <button class="size-preset-btn" onclick="applyPreset(1280,720)">1280×720<br><span style="font-size:0.65rem;color:var(--text-muted)">720p</span></button>
+            <button class="size-preset-btn" onclick="applyPreset(1080,1080)">1080×1080<br><span style="font-size:0.65rem;color:var(--text-muted)">方图</span></button>
+            <button class="size-preset-btn" onclick="applyPreset(800,600)">800×600<br><span style="font-size:0.65rem;color:var(--text-muted)">4:3</span></button>
+            <button class="size-preset-btn" onclick="applyPreset(750,1334)">750×1334<br><span style="font-size:0.65rem;color:var(--text-muted)">iPhone</span></button>
+            <button class="size-preset-btn" onclick="applyPreset(512,512)">512×512<br><span style="font-size:0.65rem;color:var(--text-muted)">头像</span></button>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn" onclick="resetResize()">↺ 恢复原始</button>
+            <button class="btn primary" onclick="applyResize()">📐 应用缩放</button>
+          </div>
+        </div>
+
+        <!-- ─ 压缩面板 ─ -->
+        <div id="tab-compress" style="display:none">
+          <div class="card-label" style="margin-bottom:10px">输出格式</div>
+          <div class="format-row" style="margin-bottom:14px">
+            <button class="format-btn active" data-fmt="image/jpeg" onclick="setFormat(this)">JPEG</button>
+            <button class="format-btn" data-fmt="image/png" onclick="setFormat(this)">PNG</button>
+            <button class="format-btn" data-fmt="image/webp" onclick="setFormat(this)">WebP</button>
+          </div>
+
+          <div id="qualityWrap">
+            <div class="adjust-row" style="margin-bottom:14px">
+              <span class="adjust-label">质量</span>
+              <input type="range" class="adjust-slider" id="sl-quality" min="1" max="100" value="85" oninput="updateQualityLabel()">
+              <span class="adjust-val" id="vl-quality">85%</span>
+            </div>
+          </div>
+
+          <div class="compress-est">
+            <div class="compress-est-label">压缩预估</div>
+            <div class="compress-est-val">
+              原始大小：<strong id="origSizeLabel" style="color:var(--text-primary)">上传图片后显示</strong>
+              &nbsp;→&nbsp;
+              预估输出：<strong id="estSizeLabel" style="color:var(--accent-primary)">—</strong>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /功能 Tab 卡片 -->
+
+      <!-- ── 导出卡片（始终显示）── -->
+      <div class="card">
+        <div class="card-label">导出图片</div>
+        <div class="export-row">
+          <span class="export-row-label">格式</span>
+          <div class="format-row" style="flex:1">
+            <button class="format-btn active" data-efmt="image/jpeg" onclick="setExportFormat(this)">JPEG</button>
+            <button class="format-btn" data-efmt="image/png" onclick="setExportFormat(this)">PNG</button>
+            <button class="format-btn" data-efmt="image/webp" onclick="setExportFormat(this)">WebP</button>
+          </div>
+        </div>
+        <div class="export-row" id="exportQualityRow">
+          <span class="export-row-label">质量</span>
+          <input type="range" class="adjust-slider" id="sl-exportQ" min="1" max="100" value="92" oninput="document.getElementById('vl-exportQ').textContent=this.value+'%'" style="flex:1">
+          <span class="adjust-val" id="vl-exportQ">92%</span>
+        </div>
+        <button class="btn primary" style="width:100%;font-size:1rem;margin-top:4px" onclick="exportImage()">
+          💾 保存图片
+        </button>
+      </div>
+
+      <!-- ── 使用说明 ── -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="guide-list">
+          <div class="guide-item">
+            <span class="guide-icon">✂️</span>
+            <div class="guide-body"><span class="guide-title">裁剪</span>：拖动裁剪框选取区域，支持自由/1:1/4:3/16:9 等比例，可旋转翻转后应用</div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">🎨</span>
+            <div class="guide-body"><span class="guide-title">调色</span>：实时调整亮度、对比度、饱和度、色温、锐化、模糊，满意后点击应用效果</div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">📐</span>
+            <div class="guide-body"><span class="guide-title">缩放</span>：手动输入宽高或选择预设尺寸，🔗 图标控制是否锁定比例</div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">🗜</span>
+            <div class="guide-body"><span class="guide-title">压缩</span>：选择输出格式和质量，WebP 格式体积最小，PNG 无损保留透明度</div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">🔒</span>
+            <div class="guide-body"><span class="guide-title">数据安全</span>：所有处理完全在本地完成，图片不会上传至任何服务器</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // ─── 全局状态 ───
+      let cropper      = null
+      let scaleX       = 1, scaleY = 1
+      let origImg      = null
+      let workingImg   = null
+      let currentFile  = null
+      let linkedResize = true
+      let origW = 0, origH = 0
+      let exportFmt    = 'image/jpeg'
+      let compressFmt  = 'image/jpeg'
+      let hasImage     = false
+
+      // ─── 上传 ───
+      const fileInput  = document.getElementById('fileInput')
+      const cropEmpty  = document.getElementById('crop-empty')
+
+      fileInput.onchange = e => { if (e.target.files[0]) loadFile(e.target.files[0]) }
+
+      // 拖拽绑定到裁剪区内嵌上传区
+      cropEmpty.ondragover  = e => { e.preventDefault(); cropEmpty.querySelector('.crop-inner-drop').style.boxShadow = 'inset 4px 4px 10px rgba(102,126,234,0.2), inset -4px -4px 10px var(--shadow-light)' }
+      cropEmpty.ondragleave = () => { cropEmpty.querySelector('.crop-inner-drop').style.boxShadow = '' }
+      cropEmpty.ondrop = e => {
+        e.preventDefault(); cropEmpty.querySelector('.crop-inner-drop').style.boxShadow = ''
+        const f = e.dataTransfer.files[0]
+        if (f && f.type.startsWith('image/')) loadFile(f)
+      }
+
+      function triggerReupload() { fileInput.value = ''; fileInput.click() }
+
+      function loadFile(file) {
+        currentFile = file
+        const reader = new FileReader()
+        reader.onload = e => {
+          const img = new Image()
+          img.onload = () => {
+            origImg = img; workingImg = img
+            origW = img.naturalWidth; origH = img.naturalHeight
+            hasImage = true
+
+            // 填充信息
+            document.getElementById('infoName').textContent = file.name
+            document.getElementById('infoSize').textContent = `${origW} × ${origH}`
+            document.getElementById('infoFileSize').textContent = formatBytes(file.size)
+            document.getElementById('infoType').textContent = file.type.replace('image/', '').toUpperCase()
+            document.getElementById('origSizeLabel').textContent = formatBytes(file.size)
+
+            // 缩放面板默认值
+            document.getElementById('resizeW').value = origW
+            document.getElementById('resizeH').value = origH
+
+            // 显示图片信息卡片
+            document.getElementById('infoCard').style.display = ''
+
+            // 显示各面板真实内容
+            showImagePanels()
+
+            // 初始化裁剪与调色
+            initCropper(e.target.result)
+            initAdjustCanvas(img)
+            updateEstSize()
+          }
+          img.src = e.target.result
+        }
+        reader.readAsDataURL(file)
+      }
+
+      function showImagePanels() {
+        // 裁剪：隐藏 empty，显示真实 img
+        document.getElementById('crop-empty').style.display = 'none'
+        document.getElementById('imgEl').style.display = ''
+        document.getElementById('crop-wrapper').classList.add('has-image')
+        // 调色：隐藏 empty，显示 canvas
+        document.getElementById('adjust-empty').style.display = 'none'
+        document.getElementById('adjustCanvas').style.display = ''
+      }
+
+      // ─── Tab 切换 ───
+      function switchTab(tab, btn) {
+        document.querySelectorAll('.func-tab').forEach(t => t.classList.remove('active'))
+        btn.classList.add('active')
+        ;['crop','adjust','resize','compress'].forEach(t => {
+          document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none'
+        })
+        if (tab === 'adjust' && hasImage) initAdjustCanvas(workingImg)
+        if (tab === 'compress' && hasImage) updateEstSize()
+      }
+
+      // ─── 裁剪 ───
+      function initCropper(src) {
+        const imgEl = document.getElementById('imgEl')
+        if (cropper) { cropper.destroy(); cropper = null }
+        imgEl.src = src
+        scaleX = 1; scaleY = 1
+        cropper = new Cropper(imgEl, {
+          viewMode: 1, dragMode: 'move',
+          autoCropArea: 0.85, restore: false,
+          guides: true, center: true, highlight: false,
+          cropBoxMovable: true, cropBoxResizable: true,
+          toggleDragModeOnDblclick: false,
+        })
+      }
+
+      function setRatio(ratio, btn) {
+        if (!cropper) return
+        cropper.setAspectRatio(ratio)
+        document.querySelectorAll('.ratio-tab').forEach(t => t.classList.remove('active'))
+        btn.classList.add('active')
+      }
+
+      function rotate(deg) { if (cropper) cropper.rotate(deg) }
+
+      function flip(dir) {
+        if (!cropper) return
+        if (dir === 'h') { scaleX = -scaleX; cropper.scaleX(scaleX) }
+        else             { scaleY = -scaleY; cropper.scaleY(scaleY) }
+      }
+
+      function cropReset() { if (cropper) cropper.reset() }
+
+      function applyCrop() {
+        if (!cropper) { showToast('⚠️ 请先上传图片'); return }
+        const canvas = cropper.getCroppedCanvas({
+          maxWidth: 4096, maxHeight: 4096,
+          fillColor: '#fff', imageSmoothingEnabled: true, imageSmoothingQuality: 'high'
+        })
+        const newImg = new Image()
+        newImg.onload = () => {
+          workingImg = newImg
+          origW = newImg.naturalWidth; origH = newImg.naturalHeight
+          document.getElementById('infoSize').textContent = `${origW} × ${origH}`
+          document.getElementById('resizeW').value = origW
+          document.getElementById('resizeH').value = origH
+          initCropper(canvas.toDataURL())
+          showToast('✅ 裁剪已应用')
+        }
+        newImg.src = canvas.toDataURL()
+      }
+
+      // ─── 调色 ───
+      let adjustCtx = null
+
+      function initAdjustCanvas(img) {
+        const canvas = document.getElementById('adjustCanvas')
+        canvas.style.display = ''
+        document.getElementById('adjust-empty').style.display = 'none'
+        const maxW = canvas.parentElement.clientWidth - 24
+        const scale = Math.min(1, maxW / img.naturalWidth)
+        canvas.width  = Math.round(img.naturalWidth  * scale)
+        canvas.height = Math.round(img.naturalHeight * scale)
+        adjustCtx = canvas.getContext('2d')
+        adjustCtx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        applyAdjust()
+      }
+
+      function applyAdjust() {
+        if (!adjustCtx || !workingImg) return
+        const canvas = document.getElementById('adjustCanvas')
+        adjustCtx.filter = buildFilter()
+        adjustCtx.clearRect(0, 0, canvas.width, canvas.height)
+        adjustCtx.drawImage(workingImg, 0, 0, canvas.width, canvas.height)
+        adjustCtx.filter = 'none'
+        updateSliderLabels()
+      }
+
+      function buildFilter() {
+        const b  = parseInt(document.getElementById('sl-brightness').value)
+        const c  = parseInt(document.getElementById('sl-contrast').value)
+        const s  = parseInt(document.getElementById('sl-saturation').value)
+        const t  = parseInt(document.getElementById('sl-temperature').value)
+        const bl = parseInt(document.getElementById('sl-blur').value)
+        return `brightness(${1 + b/100}) contrast(${1 + c/100}) saturate(${1 + s/100}) hue-rotate(${t * 0.3}deg) blur(${bl * 0.4}px)`
+      }
+
+      function updateSliderLabels() {
+        [['brightness','vl-brightness'],['contrast','vl-contrast'],['saturation','vl-saturation'],
+         ['temperature','vl-temperature'],['sharpen','vl-sharpen'],['blur','vl-blur']].forEach(([id, vlId]) => {
+          document.getElementById(vlId).textContent = document.getElementById('sl-' + id).value
+        })
+      }
+
+      function resetAdjust() {
+        ;['brightness','contrast','saturation','temperature','sharpen','blur'].forEach(id => {
+          document.getElementById('sl-' + id).value = 0
+        })
+        applyAdjust()
+      }
+
+      function applyAdjustToMain() {
+        if (!workingImg) { showToast('⚠️ 请先上传图片'); return }
+        const canvas = document.createElement('canvas')
+        canvas.width  = workingImg.naturalWidth
+        canvas.height = workingImg.naturalHeight
+        const ctx = canvas.getContext('2d')
+        ctx.filter = buildFilter()
+        ctx.drawImage(workingImg, 0, 0)
+        ctx.filter = 'none'
+        const newImg = new Image()
+        newImg.onload = () => {
+          workingImg = newImg
+          initAdjustCanvas(workingImg)
+          initCropper(canvas.toDataURL())
+          resetAdjust()
+          showToast('✅ 调色效果已应用')
+        }
+        newImg.src = canvas.toDataURL()
+      }
+
+      // ─── 缩放 ───
+      function syncResize(changed) {
+        if (!linkedResize || !workingImg) return
+        const ratio = workingImg.naturalWidth / workingImg.naturalHeight
+        if (changed === 'w') {
+          const w = parseInt(document.getElementById('resizeW').value) || 1
+          document.getElementById('resizeH').value = Math.round(w / ratio)
+        } else {
+          const h = parseInt(document.getElementById('resizeH').value) || 1
+          document.getElementById('resizeW').value = Math.round(h * ratio)
+        }
+      }
+
+      function toggleLink() {
+        linkedResize = !linkedResize
+        const btn = document.getElementById('linkBtn')
+        btn.classList.toggle('linked', linkedResize)
+        btn.textContent = linkedResize ? '🔗' : '🔓'
+      }
+
+      function applyPreset(w, h) {
+        if (!hasImage) { showToast('⚠️ 请先上传图片'); return }
+        document.getElementById('resizeW').value = w
+        document.getElementById('resizeH').value = h
+        linkedResize = false
+        document.getElementById('linkBtn').classList.remove('linked')
+        document.getElementById('linkBtn').textContent = '🔓'
+      }
+
+      function resetResize() {
+        if (!workingImg) return
+        document.getElementById('resizeW').value = workingImg.naturalWidth
+        document.getElementById('resizeH').value = workingImg.naturalHeight
+      }
+
+      function applyResize() {
+        if (!workingImg) { showToast('⚠️ 请先上传图片'); return }
+        const tw = parseInt(document.getElementById('resizeW').value)
+        const th = parseInt(document.getElementById('resizeH').value)
+        if (!tw || !th || tw < 1 || th < 1) { showToast('⚠️ 请输入有效的宽高'); return }
+        const canvas = document.createElement('canvas')
+        canvas.width = tw; canvas.height = th
+        const ctx = canvas.getContext('2d')
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = 'high'
+        ctx.drawImage(workingImg, 0, 0, tw, th)
+        const newImg = new Image()
+        newImg.onload = () => {
+          workingImg = newImg
+          origW = tw; origH = th
+          document.getElementById('infoSize').textContent = `${tw} × ${th}`
+          initCropper(canvas.toDataURL())
+          initAdjustCanvas(workingImg)
+          showToast(`✅ 已缩放至 ${tw} × ${th}`)
+        }
+        newImg.src = canvas.toDataURL()
+      }
+
+      // ─── 压缩 ───
+      function setFormat(btn) {
+        compressFmt = btn.dataset.fmt
+        document.querySelectorAll('#tab-compress .format-btn').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        document.getElementById('qualityWrap').style.display = compressFmt === 'image/png' ? 'none' : ''
+        updateEstSize()
+      }
+
+      function updateQualityLabel() {
+        document.getElementById('vl-quality').textContent = document.getElementById('sl-quality').value + '%'
+        updateEstSize()
+      }
+
+      function updateEstSize() {
+        if (!workingImg) return
+        const q = parseInt(document.getElementById('sl-quality').value) / 100
+        const canvas = document.createElement('canvas')
+        canvas.width  = workingImg.naturalWidth
+        canvas.height = workingImg.naturalHeight
+        canvas.getContext('2d').drawImage(workingImg, 0, 0)
+        const dataUrl = canvas.toDataURL(compressFmt, q)
+        const bytes = Math.round((dataUrl.length - 22) * 3 / 4)
+        document.getElementById('estSizeLabel').textContent = formatBytes(bytes)
+      }
+
+      // ─── 导出格式 ───
+      function setExportFormat(btn) {
+        exportFmt = btn.dataset.efmt
+        document.querySelectorAll('[data-efmt]').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        document.getElementById('exportQualityRow').style.display = exportFmt === 'image/png' ? 'none' : ''
+      }
+
+      // ─── 导出 ───
+      function exportImage() {
+        if (!workingImg) { showToast('⚠️ 请先上传图片'); return }
+        const q = parseInt(document.getElementById('sl-exportQ').value) / 100
+        let canvas
+        if (cropper) {
+          canvas = cropper.getCroppedCanvas({
+            maxWidth: 4096, maxHeight: 4096,
+            fillColor: '#fff', imageSmoothingEnabled: true, imageSmoothingQuality: 'high'
+          })
+        } else {
+          canvas = document.createElement('canvas')
+          canvas.width  = workingImg.naturalWidth
+          canvas.height = workingImg.naturalHeight
+          canvas.getContext('2d').drawImage(workingImg, 0, 0)
+        }
+        const ext = exportFmt === 'image/png' ? 'png' : exportFmt === 'image/webp' ? 'webp' : 'jpg'
+        canvas.toBlob(blob => {
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.download = `image_${Date.now()}.${ext}`
+          link.href = url; link.click()
+          URL.revokeObjectURL(url)
+          showToast(`💾 已导出为 ${ext.toUpperCase()}（${formatBytes(blob.size)}）`)
+        }, exportFmt, exportFmt === 'image/png' ? undefined : q)
+      }
+
+      // ─── 重置 ───
+      function confirmReset() {
+        if (!confirm('确定要清空当前图片并重新开始吗？')) return
+        if (cropper) { cropper.destroy(); cropper = null }
+        workingImg = null; origImg = null; currentFile = null
+        hasImage = false
+
+        // 隐藏图片信息卡片，恢复内嵌上传区
+        document.getElementById('infoCard').style.display = 'none'
+
+        // 恢复 empty 状态
+        document.getElementById('crop-empty').style.display = ''
+        document.getElementById('imgEl').style.display = 'none'
+        document.getElementById('crop-wrapper').classList.remove('has-image')
+        document.getElementById('adjust-empty').style.display = ''
+        document.getElementById('adjustCanvas').style.display = 'none'
+        document.getElementById('resizeW').value = ''
+        document.getElementById('resizeH').value = ''
+
+        // 重置压缩预估
+        document.getElementById('origSizeLabel').textContent = '上传图片后显示'
+        document.getElementById('estSizeLabel').textContent = '—'
+
+        fileInput.value = ''
+      }
+
+      // ─── 工具函数 ───
+      function formatBytes(bytes) {
+        if (bytes < 1024) return bytes + ' B'
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB'
+        return (bytes / 1048576).toFixed(2) + ' MB'
+      }
+
+      let toastTimer = null
+      function showToast(msg) {
+        const el = document.getElementById('toast')
+        el.textContent = msg; el.classList.add('show')
+        clearTimeout(toastTimer)
+        toastTimer = setTimeout(() => el.classList.remove('show'), 2500)
+      }
+    </script>
+  </body>
+</html>

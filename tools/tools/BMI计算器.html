@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BMI 计算器</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 单位切换 ── */
+      .unit-toggle {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .unit-btn {
+        padding: 12px 8px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        transition: var(--transition);
+        letter-spacing: 0.5px;
+      }
+
+      .unit-btn:hover  { transform: translateY(-1px); }
+      .unit-btn:active { transform: scale(0.96); }
+
+      .unit-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+      }
+
+      /* ── 输入区域 ── */
+      .input-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .input-grid.single {
+        grid-template-columns: 1fr;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .input-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+      }
+
+      .input-wrap {
+        display: flex;
+        align-items: center;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        padding: 0 12px;
+        gap: 6px;
+      }
+
+      .input-wrap input[type="number"] {
+        flex: 1;
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: inherit;
+        padding: 13px 0;
+        width: 100%;
+        -moz-appearance: textfield;
+      }
+
+      .input-wrap input[type="number"]::-webkit-inner-spin-button,
+      .input-wrap input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+      }
+
+      .input-unit {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        flex-shrink: 0;
+      }
+
+      /* ── 年龄性别行 ── */
+      .gender-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .gender-btn {
+        padding: 12px 8px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      .gender-btn:hover  { transform: translateY(-1px); }
+      .gender-btn:active { transform: scale(0.96); }
+
+      .gender-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+      }
+
+      /* ── 操作按钮 ── */
+      .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .action-btn {
+        padding: 13px 10px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .action-btn:hover  { transform: translateY(-1px); }
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .action-btn.primary {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        grid-column: span 2;
+      }
+
+      .action-btn.primary:hover  { box-shadow: 6px 6px 16px rgba(102,126,234,0.4); transform: translateY(-2px); }
+      .action-btn.primary:active { transform: scale(0.97); }
+      .action-btn.danger-btn     { color: var(--danger); }
+
+      /* ── 结果卡片 ── */
+      .result-wrap {
+        display: none;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .result-wrap.show { display: flex; }
+
+      .bmi-value-row {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 8px;
+        padding: 20px 0 8px;
+      }
+
+      .bmi-number {
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        transition: var(--transition);
+      }
+
+      .bmi-unit-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        padding-bottom: 10px;
+      }
+
+      .bmi-category-badge {
+        display: inline-block;
+        padding: 6px 18px;
+        border-radius: 20px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #fff;
+        text-align: center;
+        margin: 0 auto;
+        transition: var(--transition);
+      }
+
+      /* ── BMI 量表 ── */
+      .bmi-gauge-wrap {
+        padding: 4px 0 8px;
+      }
+
+      .gauge-bar {
+        position: relative;
+        height: 10px;
+        border-radius: 5px;
+        background: linear-gradient(to right,
+          #5bc0eb 0%, #5bc0eb 18.5%,
+          #4ecdc4 18.5%, #4ecdc4 25%,
+          #a8d8a8 25%, #a8d8a8 30%,
+          #f7b731 30%, #f7b731 35%,
+          #fc5c65 35%, #fc5c65 40%,
+          #c0392b 40%, #c0392b 100%
+        );
+        box-shadow: inset 2px 2px 4px rgba(0,0,0,0.12);
+        margin-bottom: 6px;
+      }
+
+      .gauge-marker {
+        position: absolute;
+        top: -5px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 8px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+        transform: translateX(-50%);
+        transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 3px solid transparent;
+        background-clip: padding-box;
+      }
+
+      .gauge-marker::after {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        border-radius: 50%;
+        background: var(--accent-gradient);
+        z-index: -1;
+      }
+
+      .gauge-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.62rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin-top: 2px;
+        padding: 0 2px;
+      }
+
+      /* ── 详细指标 ── */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .metric-item {
+        padding: 14px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        text-align: center;
+      }
+
+      .metric-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+      }
+
+      .metric-value {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: var(--text-primary);
+      }
+
+      .metric-value.accent {
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* ── 健康建议 ── */
+      .advice-box {
+        padding: 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      }
+
+      .advice-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+      }
+
+      .advice-text {
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+        line-height: 1.65;
+      }
+
+      .advice-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── 历史记录 ── */
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 260px;
+        overflow-y: auto;
+      }
+
+      .history-empty {
+        text-align: center;
+        padding: 18px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      .history-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+        gap: 10px;
+      }
+
+      .history-left { flex: 1; min-width: 0; }
+
+      .history-time {
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        margin-bottom: 2px;
+      }
+
+      .history-detail {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .history-bmi {
+        font-size: 1.1rem;
+        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        flex-shrink: 0;
+      }
+
+      .history-cat {
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 12px;
+        color: #fff;
+        flex-shrink: 0;
+      }
+
+      /* ── 说明卡片 ── */
+      .instr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+      .instr-text {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── BMI 分类表 ── */
+      .bmi-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 6px;
+      }
+
+      .bmi-table th {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+        text-align: left;
+        padding: 0 12px 6px;
+      }
+
+      .bmi-table td {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .bmi-table td:first-child {
+        border-radius: var(--border-radius-xs) 0 0 var(--border-radius-xs);
+      }
+
+      .bmi-table td:last-child {
+        border-radius: 0 var(--border-radius-xs) var(--border-radius-xs) 0;
+        text-align: right;
+      }
+
+      .cat-dot {
+        display: inline-block;
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+        vertical-align: middle;
+      }
+
+      /* ── 响应式 ── */
+      @media (max-width: 420px) {
+        h1 { font-size: 1.8rem; }
+        .bmi-number { font-size: 3.2rem; }
+        .metrics-grid { grid-template-columns: 1fr 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>BMI 计算器</h1>
+      <p class="subtitle">体重指数 · 健康评估 · 科学参考</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 单位制 -->
+      <div class="card">
+        <div class="card-label">单位制</div>
+        <div class="unit-toggle">
+          <button class="unit-btn active" data-unit="metric">公制（kg / cm）</button>
+          <button class="unit-btn" data-unit="imperial">英制（lb / ft & in）</button>
+        </div>
+      </div>
+
+      <!-- 基本信息 -->
+      <div class="card">
+        <div class="card-label">基本信息</div>
+
+        <!-- 性别 -->
+        <div style="margin-bottom:16px;">
+          <div class="input-label" style="margin-bottom:8px;">性别</div>
+          <div class="gender-grid">
+            <button class="gender-btn active" data-gender="male">♂ 男性</button>
+            <button class="gender-btn" data-gender="female">♀ 女性</button>
+            <button class="gender-btn" data-gender="other">— 不填</button>
+          </div>
+        </div>
+
+        <!-- 年龄 -->
+        <div style="margin-bottom:16px;">
+          <div class="input-label" style="margin-bottom:8px;">年龄</div>
+          <div class="input-wrap" style="max-width:160px;">
+            <input type="number" id="ageInput" placeholder="25" min="2" max="120" />
+            <span class="input-unit">岁</span>
+          </div>
+        </div>
+
+        <!-- 身高 公制 -->
+        <div id="heightMetric">
+          <div class="input-label" style="margin-bottom:8px;">身高</div>
+          <div class="input-wrap">
+            <input type="number" id="heightCm" placeholder="170" min="50" max="280" step="0.1" />
+            <span class="input-unit">cm</span>
+          </div>
+        </div>
+
+        <!-- 身高 英制 -->
+        <div id="heightImperial" style="display:none;">
+          <div class="input-label" style="margin-bottom:8px;">身高</div>
+          <div class="input-grid">
+            <div class="input-wrap">
+              <input type="number" id="heightFt" placeholder="5" min="1" max="9" />
+              <span class="input-unit">ft</span>
+            </div>
+            <div class="input-wrap">
+              <input type="number" id="heightIn" placeholder="7" min="0" max="11" step="0.1" />
+              <span class="input-unit">in</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 体重 公制 -->
+        <div id="weightMetric" style="margin-top:16px;">
+          <div class="input-label" style="margin-bottom:8px;">体重</div>
+          <div class="input-wrap">
+            <input type="number" id="weightKg" placeholder="65" min="1" max="500" step="0.1" />
+            <span class="input-unit">kg</span>
+          </div>
+        </div>
+
+        <!-- 体重 英制 -->
+        <div id="weightImperial" style="display:none; margin-top:16px;">
+          <div class="input-label" style="margin-bottom:8px;">体重</div>
+          <div class="input-wrap">
+            <input type="number" id="weightLb" placeholder="143" min="1" max="1100" step="0.1" />
+            <span class="input-unit">lb</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 操作 -->
+      <div class="card">
+        <div class="card-label">操作</div>
+        <div class="action-grid">
+          <button class="action-btn primary" id="calcBtn">📊 立即计算</button>
+          <button class="action-btn danger-btn" id="resetBtn">🗑️ 重置</button>
+        </div>
+      </div>
+
+      <!-- 计算结果 -->
+      <div class="card" id="resultCard" style="display:none;">
+        <div class="card-label">计算结果</div>
+        <div class="result-wrap show">
+
+          <!-- BMI 数值 -->
+          <div style="text-align:center;">
+            <div class="bmi-value-row">
+              <span class="bmi-number" id="bmiNumber">--</span>
+              <span class="bmi-unit-label">BMI</span>
+            </div>
+            <span class="bmi-category-badge" id="bmiCategory">--</span>
+          </div>
+
+          <!-- 量表 -->
+          <div class="bmi-gauge-wrap">
+            <div class="gauge-bar">
+              <div class="gauge-marker" id="gaugeMarker" style="left:0%;"></div>
+            </div>
+            <div class="gauge-labels">
+              <span>偏瘦</span>
+              <span>正常</span>
+              <span>偏胖</span>
+              <span>肥胖</span>
+              <span>重度</span>
+            </div>
+          </div>
+
+          <!-- 详细指标 -->
+          <div class="metrics-grid">
+            <div class="metric-item">
+              <div class="metric-label">标准体重范围</div>
+              <div class="metric-value accent" id="metricRange">--</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">距理想体重</div>
+              <div class="metric-value" id="metricDiff">--</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">理想体重（中值）</div>
+              <div class="metric-value accent" id="metricIdeal">--</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">基础代谢率 BMR</div>
+              <div class="metric-value" id="metricBmr">--</div>
+            </div>
+          </div>
+
+          <!-- 健康建议 -->
+          <div class="advice-box">
+            <div class="advice-title">💡 健康建议</div>
+            <div class="advice-text" id="adviceText">--</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 历史记录 -->
+      <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+          <span class="card-label" style="margin-bottom:0;">历史记录</span>
+          <button class="action-btn danger-btn" id="clearHistBtn"
+            style="padding:6px 14px; font-size:0.72rem; box-shadow:3px 3px 6px var(--shadow-dark),-3px -3px 6px var(--shadow-light);">
+            🗑 清空
+          </button>
+        </div>
+        <div class="history-list" id="historyList">
+          <div class="history-empty">暂无历史记录</div>
+        </div>
+      </div>
+
+      <!-- BMI 分类参考 -->
+      <div class="card">
+        <div class="card-label">📋 BMI 分类参考（WHO 标准）</div>
+        <table class="bmi-table">
+          <tr>
+            <th>分类</th>
+            <th style="text-align:right;">BMI 范围</th>
+          </tr>
+          <tr>
+            <td><span class="cat-dot" style="background:#5bc0eb;"></span>偏瘦（Underweight）</td>
+            <td>&lt; 18.5</td>
+          </tr>
+          <tr>
+            <td><span class="cat-dot" style="background:#4ecdc4;"></span>正常（Normal）</td>
+            <td>18.5 – 24.9</td>
+          </tr>
+          <tr>
+            <td><span class="cat-dot" style="background:#a8d8a8;"></span>超重（Overweight）</td>
+            <td>25.0 – 27.4</td>
+          </tr>
+          <tr>
+            <td><span class="cat-dot" style="background:#f7b731;"></span>偏胖（Pre-obese）</td>
+            <td>27.5 – 29.9</td>
+          </tr>
+          <tr>
+            <td><span class="cat-dot" style="background:#fc5c65;"></span>肥胖 I 级（Obese I）</td>
+            <td>30.0 – 34.9</td>
+          </tr>
+          <tr>
+            <td><span class="cat-dot" style="background:#c0392b;"></span>肥胖 II 级+（Obese II+）</td>
+            <td>≥ 35.0</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 使用说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+          <div class="instr-item">
+            <span class="instr-icon">⚖️</span>
+            <div class="instr-text"><strong>BMI 公式</strong>：体重(kg) ÷ 身高(m)²，英制会自动换算后计算</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔢</span>
+            <div class="instr-text"><strong>BMR 估算</strong>：基础代谢率采用 Mifflin-St Jeor 公式，需填写性别与年龄；仅填身高体重时显示通用估算</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">📏</span>
+            <div class="instr-text"><strong>标准体重</strong>：基于 WHO 正常 BMI 范围（18.5–24.9）反推，供参考</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">⚠️</span>
+            <div class="instr-text"><strong>适用范围</strong>：BMI 适用于成人（18 岁以上），儿童及孕妇请参考专项评估标准</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔒</span>
+            <div class="instr-text"><strong>隐私安全</strong>：所有计算在浏览器本地完成，数据不上传至任何服务器</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.main -->
+
+    <script>
+      /* ─────────────────────────────────────────────
+         状态
+      ───────────────────────────────────────────── */
+      let currentUnit   = 'metric'   // 'metric' | 'imperial'
+      let currentGender = 'male'
+      let history       = JSON.parse(localStorage.getItem('bmiHistory') || '[]')
+
+      /* ─────────────────────────────────────────────
+         颜色 / 分类映射
+      ───────────────────────────────────────────── */
+      function getBmiInfo(bmi) {
+        if (bmi < 18.5) return { label: '偏瘦',      color: '#5bc0eb', gaugePos: bmi / 18.5 * 18 }
+        if (bmi < 25.0) return { label: '正常',      color: '#4ecdc4', gaugePos: 18 + (bmi - 18.5) / 6.5 * 12 }
+        if (bmi < 27.5) return { label: '超重',      color: '#a8d8a8', gaugePos: 30 + (bmi - 25) / 2.5 * 5 }
+        if (bmi < 30.0) return { label: '偏胖',      color: '#f7b731', gaugePos: 35 + (bmi - 27.5) / 2.5 * 5 }
+        if (bmi < 35.0) return { label: '肥胖 I 级', color: '#fc5c65', gaugePos: 40 + (bmi - 30) / 5 * 25 }
+        return               { label: '肥胖 II 级+', color: '#c0392b', gaugePos: 65 + Math.min((bmi - 35) / 10 * 30, 30) }
+      }
+
+      function getAdvice(bmi, gender) {
+        const isFemale = gender === 'female'
+        const isMale   = gender === 'male'
+        const normalHigh = isFemale ? 24.0 : 25.0
+
+        if (bmi < 18.5) {
+          const gNote = isFemale
+            ? '女性体脂率天然高于男性，过低的 BMI 可能影响月经周期与骨密度，'
+            : isMale ? '男性肌肉量通常较多，BMI 偏低可能反映肌肉不足，' : ''
+          return `您的 BMI 低于正常范围，建议<strong>适当增加营养摄入</strong>，均衡饮食，增加优质蛋白与碳水化合物，并配合适量力量训练以增加肌肉量。${gNote}同时建议排查是否存在营养吸收或其他健康问题。`
+        }
+        if (bmi < normalHigh) {
+          const gNote = isFemale
+            ? '女性在此区间体脂率约为 21–33%，属理想范围，建议注意钙质与铁质的日常补充，'
+            : isMale ? '男性在此区间体脂率约为 8–20%，属理想范围，建议保持适量抗阻训练维持肌肉量，'
+            : ''
+          return `恭喜！您的 BMI 处于<strong>健康正常范围</strong>。${gNote}建议保持当前的饮食习惯与运动规律，定期体检，维持健康生活方式。`
+        }
+        if (bmi < 27.5) {
+          const gNote = isFemale
+            ? '女性此阶段患多囊卵巢综合征与代谢紊乱风险上升，'
+            : isMale ? '男性此阶段内脏脂肪开始积累，心血管风险逐步升高，'
+            : ''
+          return `您的 BMI 略高于正常范围，属于<strong>超重</strong>。${gNote}建议适当控制精制糖与高脂肪食物的摄入，每周保持 150 分钟以上中等强度有氧运动（如快走、游泳）。`
+        }
+        if (bmi < 30.0) {
+          const gNote = isFemale
+            ? '女性在此范围患妊娠糖尿病、乳腺癌等风险显著上升，'
+            : isMale ? '男性在此范围睾酮水平可能下降，心血管与代谢疾病风险明显增加，'
+            : ''
+          return `您的 BMI 属于<strong>偏胖</strong>范围。${gNote}建议系统性地调整饮食结构，减少高热量食物，并制定规律的运动计划，每周有氧运动不少于 200 分钟，必要时咨询营养师。`
+        }
+        if (bmi < 35.0) {
+          return `您的 BMI 达到<strong>肥胖 I 级</strong>，存在患糖尿病、高血压等慢性病的风险。建议尽快咨询医生或专业减重团队，制定个性化的干预方案，不建议自行极端节食。`
+        }
+        return '您的 BMI 属于<strong>重度肥胖</strong>，请务必尽快就医，进行全面健康评估，并在专业医疗团队指导下制定安全的减重计划。'
+      }
+
+      /* ─────────────────────────────────────────────
+         BMR 计算（Mifflin-St Jeor）
+      ───────────────────────────────────────────── */
+      function calcBmr(weightKg, heightCm, age, gender) {
+        // 通用基础估算（无年龄/性别时）
+        if (!age || (!gender || gender === 'other')) {
+          return Math.round(10 * weightKg + 6.25 * heightCm - 5 * 25) // 假设 25 岁中性
+        }
+        const base = 10 * weightKg + 6.25 * heightCm - 5 * age
+        return Math.round(gender === 'female' ? base - 161 : base + 5)
+      }
+
+      /* ─────────────────────────────────────────────
+         单位切换
+      ───────────────────────────────────────────── */
+      document.querySelectorAll('.unit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'))
+          btn.classList.add('active')
+          currentUnit = btn.dataset.unit
+          const isMetric = currentUnit === 'metric'
+          document.getElementById('heightMetric').style.display   = isMetric ? '' : 'none'
+          document.getElementById('heightImperial').style.display = isMetric ? 'none' : ''
+          document.getElementById('weightMetric').style.display   = isMetric ? '' : 'none'
+          document.getElementById('weightImperial').style.display = isMetric ? 'none' : ''
+        })
+      })
+
+      /* ─────────────────────────────────────────────
+         性别切换
+      ───────────────────────────────────────────── */
+      document.querySelectorAll('.gender-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'))
+          btn.classList.add('active')
+          currentGender = btn.dataset.gender
+        })
+      })
+
+      /* ─────────────────────────────────────────────
+         计算
+      ───────────────────────────────────────────── */
+      document.getElementById('calcBtn').addEventListener('click', calculate)
+
+      function calculate() {
+        let weightKg, heightCm
+
+        if (currentUnit === 'metric') {
+          weightKg = parseFloat(document.getElementById('weightKg').value)
+          heightCm = parseFloat(document.getElementById('heightCm').value)
+        } else {
+          const lb = parseFloat(document.getElementById('weightLb').value)
+          const ft = parseFloat(document.getElementById('heightFt').value) || 0
+          const inch = parseFloat(document.getElementById('heightIn').value) || 0
+          weightKg = lb * 0.453592
+          heightCm = (ft * 12 + inch) * 2.54
+        }
+
+        if (!weightKg || !heightCm || weightKg <= 0 || heightCm <= 0) {
+          shakeCard(); return
+        }
+
+        const heightM = heightCm / 100
+        const bmi     = weightKg / (heightM * heightM)
+        const bmiRounded = Math.round(bmi * 10) / 10
+
+        const info    = getBmiInfo(bmiRounded, currentGender)
+        const age     = parseInt(document.getElementById('ageInput').value) || null
+        const bmr     = calcBmr(weightKg, heightCm, age, currentGender)
+
+        // 标准体重范围（女性正常 BMI 18.5–24，男性 18.5–25，不填取中性值）
+        const bmiHigh = currentGender === 'female' ? 24.0 : currentGender === 'male' ? 25.0 : 24.5
+        const bmiMid  = currentGender === 'female' ? 21.5 : currentGender === 'male' ? 22.5 : 22.0
+        const idealLow  = (18.5  * heightM * heightM).toFixed(1)
+        const idealHigh = (bmiHigh * heightM * heightM).toFixed(1)
+        const idealMid  = (bmiMid  * heightM * heightM).toFixed(1)
+        const diff      = (weightKg - parseFloat(idealMid)).toFixed(1)
+
+        // 渲染
+        document.getElementById('resultCard').style.display = ''
+
+        const bmiEl = document.getElementById('bmiNumber')
+        bmiEl.textContent = bmiRounded.toFixed(1)
+
+        const catEl = document.getElementById('bmiCategory')
+        catEl.textContent = info.label
+        catEl.style.background = info.color
+
+        // 量表
+        const pos = Math.min(Math.max(info.gaugePos, 2), 96)
+        document.getElementById('gaugeMarker').style.left = pos + '%'
+
+        // 指标
+        const unit = currentUnit === 'metric' ? 'kg' : 'lb'
+        const toDisplay = (kg) => currentUnit === 'metric' ? kg : (kg / 0.453592).toFixed(1)
+        document.getElementById('metricRange').textContent  = `${toDisplay(parseFloat(idealLow))} – ${toDisplay(parseFloat(idealHigh))} ${unit}`
+        document.getElementById('metricIdeal').textContent  = `${toDisplay(parseFloat(idealMid))} ${unit}`
+
+        const diffDisplay = toDisplay(Math.abs(parseFloat(diff)))
+        const diffSign    = parseFloat(diff) > 0 ? `偏重 ${diffDisplay} ${unit}` : parseFloat(diff) < 0 ? `偏轻 ${diffDisplay} ${unit}` : '恰好达标'
+        const diffEl = document.getElementById('metricDiff')
+        diffEl.textContent = diffSign
+        diffEl.style.color = parseFloat(diff) > 0 ? 'var(--danger)' : parseFloat(diff) < 0 ? 'var(--warning)' : 'var(--success)'
+
+        document.getElementById('metricBmr').textContent   = `${bmr} kcal/天`
+        document.getElementById('adviceText').innerHTML    = getAdvice(bmiRounded, currentGender)
+
+        // 滚动到结果
+        document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+        // 保存历史
+        saveHistory(bmiRounded, info, weightKg, heightCm)
+      }
+
+      /* ─────────────────────────────────────────────
+         历史记录
+      ───────────────────────────────────────────── */
+      function saveHistory(bmi, info, weightKg, heightCm) {
+        const now = new Date()
+        const ts  = now.toLocaleDateString('zh-CN') + ' ' + now.toLocaleTimeString('zh-CN', { hour:'2-digit', minute:'2-digit' })
+        history.unshift({
+          bmi, label: info.label, color: info.color,
+          weight: weightKg.toFixed(1), height: (heightCm).toFixed(0), ts
+        })
+        if (history.length > 20) history.pop()
+        localStorage.setItem('bmiHistory', JSON.stringify(history))
+        renderHistory()
+      }
+
+      function renderHistory() {
+        const el = document.getElementById('historyList')
+        if (!history.length) {
+          el.innerHTML = '<div class="history-empty">暂无历史记录</div>'
+          return
+        }
+        el.innerHTML = history.map(h => `
+          <div class="history-item">
+            <div class="history-left">
+              <div class="history-time">${h.ts}</div>
+              <div class="history-detail">体重 ${h.weight} kg · 身高 ${h.height} cm</div>
+            </div>
+            <span class="history-bmi">${h.bmi}</span>
+            <span class="history-cat" style="background:${h.color};">${h.label}</span>
+          </div>
+        `).join('')
+      }
+
+      document.getElementById('clearHistBtn').addEventListener('click', () => {
+        history = []
+        localStorage.removeItem('bmiHistory')
+        renderHistory()
+      })
+
+      /* ─────────────────────────────────────────────
+         重置
+      ───────────────────────────────────────────── */
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        ;['weightKg','heightCm','weightLb','heightFt','heightIn','ageInput'].forEach(id => {
+          const el = document.getElementById(id)
+          if (el) el.value = ''
+        })
+        document.getElementById('resultCard').style.display = 'none'
+      })
+
+      /* ─────────────────────────────────────────────
+         抖动动画（输入有误）
+      ───────────────────────────────────────────── */
+      function shakeCard() {
+        const btn = document.getElementById('calcBtn')
+        btn.style.animation = 'none'
+        btn.style.transition = 'none'
+        let count = 0
+        const id = setInterval(() => {
+          btn.style.transform = count % 2 === 0 ? 'translateX(-6px)' : 'translateX(6px)'
+          count++
+          if (count > 6) { clearInterval(id); btn.style.transform = '' }
+        }, 60)
+      }
+
+      /* ─────────────────────────────────────────────
+         初始化
+      ───────────────────────────────────────────── */
+      renderHistory()
+    </script>
+
+  </body>
+</html>

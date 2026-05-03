@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>字数统计</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 输入区 ── */
+      .textarea-wrap {
+        position: relative;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 180px;
+        padding: 14px 14px 34px 14px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        outline: none;
+        resize: vertical;
+        font-family: inherit;
+        line-height: 1.65;
+        transition: var(--transition);
+      }
+
+      textarea::placeholder { color: var(--text-muted); }
+
+      .input-meta {
+        position: absolute;
+        bottom: 10px;
+        right: 12px;
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        pointer-events: none;
+        display: flex;
+        gap: 10px;
+      }
+
+      .input-meta span.warn  { color: var(--warning); }
+      .input-meta span.over  { color: var(--danger); }
+
+      /* ── 统计数字大卡 ── */
+      .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 4px;
+      }
+
+      .hero-card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-sm);
+        box-shadow: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+        padding: 16px 10px;
+        text-align: center;
+        transition: var(--transition);
+      }
+
+      .hero-card:active { transform: scale(0.97); }
+
+      .hero-label {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+      }
+
+      .hero-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+        transition: var(--transition);
+      }
+
+      .hero-value.updated {
+        animation: popVal 0.3s ease;
+      }
+
+      @keyframes popVal {
+        0%   { transform: scale(1); }
+        50%  { transform: scale(1.12); }
+        100% { transform: scale(1); }
+      }
+
+      /* ── 详细统计网格 ── */
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .detail-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .detail-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .detail-icon { font-size: 0.9rem; }
+
+      .detail-name {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .detail-val {
+        font-size: 1rem;
+        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        min-width: 36px;
+        text-align: right;
+      }
+
+      /* ── 进度条（占比） ── */
+      .ratio-section { margin-top: 4px; }
+
+      .ratio-bar-wrap {
+        height: 8px;
+        border-radius: 4px;
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+
+      .ratio-bar-track {
+        height: 100%;
+        display: flex;
+        border-radius: 4px;
+        overflow: hidden;
+        transition: var(--transition);
+      }
+
+      .ratio-seg {
+        height: 100%;
+        transition: width 0.4s ease;
+      }
+
+      .ratio-seg.zh  { background: #667eea; }
+      .ratio-seg.en  { background: #4ecdc4; }
+      .ratio-seg.num { background: #f7b731; }
+      .ratio-seg.pun { background: #fc5c65; }
+      .ratio-seg.sp  { background: #a3b1c6; }
+      .ratio-seg.oth { background: #c4b5fd; }
+
+      .ratio-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+      }
+
+      .legend-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .legend-dot.zh  { background: #667eea; }
+      .legend-dot.en  { background: #4ecdc4; }
+      .legend-dot.num { background: #f7b731; }
+      .legend-dot.pun { background: #fc5c65; }
+      .legend-dot.sp  { background: #a3b1c6; }
+      .legend-dot.oth { background: #c4b5fd; }
+
+      /* ── 阅读时间估算 ── */
+      .reading-row {
+        display: flex;
+        gap: 10px;
+      }
+
+      .reading-card {
+        flex: 1;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        padding: 12px 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .reading-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+      .reading-info { flex: 1; min-width: 0; }
+
+      .reading-label {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        margin-bottom: 3px;
+      }
+
+      .reading-val {
+        font-size: 1rem;
+        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* ── 操作按钮 ── */
+      .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .action-btn {
+        padding: 13px 10px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .action-btn:hover  { transform: translateY(-1px); }
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .action-btn.primary {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        grid-column: span 2;
+      }
+
+      .action-btn.primary:hover  { box-shadow: 6px 6px 16px rgba(102,126,234,0.4); transform: translateY(-2px); }
+      .action-btn.primary:active { transform: scale(0.97); }
+      .action-btn.success-btn { color: var(--success); }
+      .action-btn.danger-btn  { color: var(--danger); }
+      .action-btn.warn-btn    { color: var(--warning); }
+
+      /* ── 说明卡片 ── */
+      .instr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+      .instr-text {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── Toast ── */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        padding: 10px 22px;
+        background: var(--text-primary);
+        color: #fff;
+        border-radius: 30px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 9999;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* ── 响应式 ── */
+      @media (max-width: 420px) {
+        h1 { font-size: 1.8rem; }
+        .hero-stats { grid-template-columns: repeat(3, 1fr); }
+        .hero-value { font-size: 1.5rem; }
+        .detail-grid { grid-template-columns: 1fr; }
+        .reading-row { flex-direction: column; }
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <header>
+      <h1>字数统计</h1>
+      <p class="subtitle">实时统计 · 占比分析 · 阅读估时</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 输入卡片 -->
+      <div class="card">
+        <div class="card-label">输入文本</div>
+        <div class="textarea-wrap">
+          <textarea id="textInput" placeholder="请输入或粘贴要统计的文本..."></textarea>
+          <div class="input-meta">
+            <span id="lineCount">0 行</span>
+            <span id="charMeta">0 字符</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 核心统计 -->
+      <div class="card">
+        <div class="card-label">核心统计</div>
+        <div class="hero-stats">
+          <div class="hero-card">
+            <div class="hero-label">总字符数</div>
+            <div class="hero-value" id="totalChars">0</div>
+          </div>
+          <div class="hero-card">
+            <div class="hero-label">中文字符</div>
+            <div class="hero-value" id="chineseChars">0</div>
+          </div>
+          <div class="hero-card">
+            <div class="hero-label">英文字母</div>
+            <div class="hero-value" id="englishChars">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 详细分类 -->
+      <div class="card">
+        <div class="card-label">详细分类</div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-left"><span class="detail-icon">🔢</span><span class="detail-name">数字</span></div>
+            <span class="detail-val" id="digitChars">0</span>
+          </div>
+          <div class="detail-item">
+            <div class="detail-left"><span class="detail-icon">💬</span><span class="detail-name">标点符号</span></div>
+            <span class="detail-val" id="punctCount">0</span>
+          </div>
+          <div class="detail-item">
+            <div class="detail-left"><span class="detail-icon">␣</span><span class="detail-name">空格/换行</span></div>
+            <span class="detail-val" id="spaceCount">0</span>
+          </div>
+          <div class="detail-item">
+            <div class="detail-left"><span class="detail-icon">📝</span><span class="detail-name">段落数</span></div>
+            <span class="detail-val" id="paraCount">0</span>
+          </div>
+          <div class="detail-item">
+            <div class="detail-left"><span class="detail-icon">🔤</span><span class="detail-name">英文单词</span></div>
+            <span class="detail-val" id="wordCount">0</span>
+          </div>
+          <div class="detail-item">
+            <div class="detail-left"><span class="detail-icon">🌐</span><span class="detail-name">其他字符</span></div>
+            <span class="detail-val" id="otherChars">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 字符占比 -->
+      <div class="card">
+        <div class="card-label">字符占比</div>
+        <div class="ratio-bar-wrap">
+          <div class="ratio-bar-track" id="ratioTrack">
+            <div class="ratio-seg zh"  id="segZh"  style="width:0%"></div>
+            <div class="ratio-seg en"  id="segEn"  style="width:0%"></div>
+            <div class="ratio-seg num" id="segNum" style="width:0%"></div>
+            <div class="ratio-seg pun" id="segPun" style="width:0%"></div>
+            <div class="ratio-seg sp"  id="segSp"  style="width:0%"></div>
+            <div class="ratio-seg oth" id="segOth" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="ratio-legend">
+          <div class="legend-item"><div class="legend-dot zh"></div><span id="legZh">中文 0%</span></div>
+          <div class="legend-item"><div class="legend-dot en"></div><span id="legEn">英文 0%</span></div>
+          <div class="legend-item"><div class="legend-dot num"></div><span id="legNum">数字 0%</span></div>
+          <div class="legend-item"><div class="legend-dot pun"></div><span id="legPun">标点 0%</span></div>
+          <div class="legend-item"><div class="legend-dot sp"></div><span id="legSp">空格 0%</span></div>
+          <div class="legend-item"><div class="legend-dot oth"></div><span id="legOth">其他 0%</span></div>
+        </div>
+      </div>
+
+      <!-- 阅读时间 -->
+      <div class="card">
+        <div class="card-label">阅读估时</div>
+        <div class="reading-row">
+          <div class="reading-card">
+            <span class="reading-icon">🐌</span>
+            <div class="reading-info">
+              <div class="reading-label">慢速阅读（200字/分）</div>
+              <div class="reading-val" id="readSlow">—</div>
+            </div>
+          </div>
+          <div class="reading-card">
+            <span class="reading-icon">⚡</span>
+            <div class="reading-info">
+              <div class="reading-label">快速阅读（500字/分）</div>
+              <div class="reading-val" id="readFast">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 操作 -->
+      <div class="card">
+        <div class="card-label">操作</div>
+        <div class="action-grid">
+          <button class="action-btn success-btn" id="copyResultBtn">📋 复制统计</button>
+          <button class="action-btn warn-btn"    id="exampleBtn">✨ 示例文本</button>
+          <button class="action-btn danger-btn"  id="clearBtn">🗑️ 清空文本</button>
+          <button class="action-btn"             id="downloadBtn">💾 下载文本</button>
+        </div>
+      </div>
+
+      <!-- 使用说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+          <div class="instr-item">
+            <span class="instr-icon">⚡</span>
+            <div class="instr-text"><strong>实时统计</strong>：输入或粘贴文本后，所有数据即时更新，无需手动点击。</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">📊</span>
+            <div class="instr-text"><strong>占比分析</strong>：彩色进度条直观展示中文、英文、数字等各类字符的构成比例。</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">⏱️</span>
+            <div class="instr-text"><strong>阅读估时</strong>：根据中文字数，分别按慢速（200字/分）和快速（500字/分）估算阅读时间。</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">📋</span>
+            <div class="instr-text"><strong>复制统计</strong>：一键将完整统计结果复制到剪贴板，方便粘贴到其他地方。</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔒</span>
+            <div class="instr-text"><strong>隐私安全</strong>：所有统计均在浏览器本地完成，文本内容不上传任何服务器。</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    (function () {
+      const textarea     = document.getElementById('textInput');
+      const elTotal      = document.getElementById('totalChars');
+      const elZh         = document.getElementById('chineseChars');
+      const elEn         = document.getElementById('englishChars');
+      const elNum        = document.getElementById('digitChars');
+      const elPunct      = document.getElementById('punctCount');
+      const elSpace      = document.getElementById('spaceCount');
+      const elPara       = document.getElementById('paraCount');
+      const elWord       = document.getElementById('wordCount');
+      const elOther      = document.getElementById('otherChars');
+      const elCharMeta   = document.getElementById('charMeta');
+      const elLineMeta   = document.getElementById('lineCount');
+      const elReadSlow   = document.getElementById('readSlow');
+      const elReadFast   = document.getElementById('readFast');
+      const copyBtn      = document.getElementById('copyResultBtn');
+      const clearBtn     = document.getElementById('clearBtn');
+      const exampleBtn   = document.getElementById('exampleBtn');
+      const downloadBtn  = document.getElementById('downloadBtn');
+      const toastEl      = document.getElementById('toast');
+
+      // 占比条
+      const segZh  = document.getElementById('segZh');
+      const segEn  = document.getElementById('segEn');
+      const segNum = document.getElementById('segNum');
+      const segPun = document.getElementById('segPun');
+      const segSp  = document.getElementById('segSp');
+      const segOth = document.getElementById('segOth');
+      const legZh  = document.getElementById('legZh');
+      const legEn  = document.getElementById('legEn');
+      const legNum = document.getElementById('legNum');
+      const legPun = document.getElementById('legPun');
+      const legSp  = document.getElementById('legSp');
+      const legOth = document.getElementById('legOth');
+
+      let lastStats = null;
+
+      // ── 分析函数 ──────────────────────────────────────────
+      function analyze(text) {
+        const total   = [...text].length;
+        const zh      = (text.match(/[\u4e00-\u9fff\u3400-\u4dbf\u{20000}-\u{2a6df}]/gu) || []).length;
+        const en      = (text.match(/[a-zA-Z]/g) || []).length;
+        const num     = (text.match(/[0-9０-９]/g) || []).length;
+        const punct   = (text.match(/[，。！？；：""''「」『』【】《》〈〉、…—～·,\.!\?;:"'\(\)\[\]{}<>\/\\@#\$%\^&\*\-\+=|`~]/g) || []).length;
+        const space   = (text.match(/\s/g) || []).length;
+        const other   = Math.max(0, total - zh - en - num - punct - space);
+        // 单词（英文）
+        const words   = (text.match(/\b[a-zA-Z]+(?:[''][a-zA-Z]+)?\b/g) || []).length;
+        // 段落（非空行）
+        const paras   = text.split(/\n/).filter(l => l.trim().length > 0).length;
+        // 行数
+        const lines   = text === '' ? 0 : text.split(/\n/).length;
+        return { total, zh, en, num, punct, space, other, words, paras, lines };
+      }
+
+      // ── 格式化时间 ────────────────────────────────────────
+      function fmtTime(chars, wpm) {
+        if (chars === 0) return '—';
+        const mins = chars / wpm;
+        if (mins < 1) return '< 1 分钟';
+        if (mins < 60) return Math.ceil(mins) + ' 分钟';
+        const h = Math.floor(mins / 60);
+        const m = Math.ceil(mins % 60);
+        return m > 0 ? `${h} 时 ${m} 分` : `${h} 小时`;
+      }
+
+      // ── 数字动画跳变 ─────────────────────────────────────
+      function setVal(el, val) {
+        if (el.textContent !== String(val)) {
+          el.textContent = val;
+          el.classList.remove('updated');
+          void el.offsetWidth;
+          el.classList.add('updated');
+        }
+      }
+
+      // ── 更新UI ───────────────────────────────────────────
+      function update() {
+        const text = textarea.value;
+        const s = analyze(text);
+        lastStats = s;
+
+        setVal(elTotal, s.total);
+        setVal(elZh,    s.zh);
+        setVal(elEn,    s.en);
+        setVal(elNum,   s.num);
+        setVal(elPunct, s.punct);
+        setVal(elSpace, s.space);
+        setVal(elPara,  s.paras);
+        setVal(elWord,  s.words);
+        setVal(elOther, s.other);
+
+        // 输入框元信息
+        elCharMeta.textContent = s.total + ' 字符';
+        elCharMeta.className   = s.total > 10000 ? 'over' : s.total > 5000 ? 'warn' : '';
+        elLineMeta.textContent = s.lines + ' 行';
+
+        // 阅读时间（以中文字数为基准，加上英文单词折算）
+        const readBase = s.zh + Math.round(s.words * 0.6);
+        elReadSlow.textContent = fmtTime(readBase, 200);
+        elReadFast.textContent = fmtTime(readBase, 500);
+
+        // 占比条
+        const pct = (n) => s.total > 0 ? (n / s.total * 100).toFixed(1) : '0.0';
+        segZh.style.width  = pct(s.zh)    + '%';
+        segEn.style.width  = pct(s.en)    + '%';
+        segNum.style.width = pct(s.num)   + '%';
+        segPun.style.width = pct(s.punct) + '%';
+        segSp.style.width  = pct(s.space) + '%';
+        segOth.style.width = pct(s.other) + '%';
+
+        legZh.textContent  = '中文 '  + pct(s.zh)    + '%';
+        legEn.textContent  = '英文 '  + pct(s.en)    + '%';
+        legNum.textContent = '数字 '  + pct(s.num)   + '%';
+        legPun.textContent = '标点 '  + pct(s.punct) + '%';
+        legSp.textContent  = '空格 '  + pct(s.space) + '%';
+        legOth.textContent = '其他 '  + pct(s.other) + '%';
+      }
+
+      // ── 复制统计结果 ──────────────────────────────────────
+      async function copyResult() {
+        if (!lastStats) return;
+        const s = lastStats;
+        const txt = [
+          '📊 字数统计结果',
+          '─────────────',
+          `总字符数：${s.total}`,
+          `中文字符：${s.zh}`,
+          `英文字母：${s.en}`,
+          `数字字符：${s.num}`,
+          `标点符号：${s.punct}`,
+          `空格/换行：${s.space}`,
+          `其他字符：${s.other}`,
+          `英文单词：${s.words}`,
+          `段落数：${s.paras}`,
+          `行数：${s.lines}`,
+          '─────────────',
+          `慢速阅读：${elReadSlow.textContent}`,
+          `快速阅读：${elReadFast.textContent}`,
+        ].join('\n');
+        try {
+          await navigator.clipboard.writeText(txt);
+          showToast('✅ 统计结果已复制');
+        } catch {
+          const ta = document.createElement('textarea');
+          ta.value = txt;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('✅ 统计结果已复制');
+        }
+      }
+
+      // ── 下载文本 ──────────────────────────────────────────
+      function downloadText() {
+        const text = textarea.value;
+        if (!text.trim()) { showToast('没有可下载的内容'); return; }
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url; a.download = 'text_content.txt';
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('💾 文本已下载');
+      }
+
+      // ── 示例文本 ──────────────────────────────────────────
+      const examples = [
+        `字数统计工具是一款实用的文本分析助手。它可以快速统计中文字符、英文字母、数字、标点符号以及总字符数等。\n\nHello World! 这里是一段中英混合文本示例。123456 测试数字。\n\n欢迎使用本工具，希望对你有所帮助！`,
+        `春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。\n\n床前明月光，疑是地上霜。\n举头望明月，低头思故乡。\n\n——唐·孟浩然、李白`,
+        `The quick brown fox jumps over the lazy dog.\n\n这是一段英中混合的测试文本 Test Text，包含数字 2024，以及各种标点符号：，。！？；：""''【】《》…—\n\n共计三个段落，用于测试统计功能。`,
+      ];
+      let exIdx = 0;
+
+      function setExample() {
+        textarea.value = examples[exIdx % examples.length];
+        exIdx++;
+        update();
+      }
+
+      // ── Toast ─────────────────────────────────────────────
+      let toastTimer = null;
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000);
+      }
+
+      // ── 监听 ─────────────────────────────────────────────
+      textarea.addEventListener('input', update);
+      copyBtn.addEventListener('click', copyResult);
+      clearBtn.addEventListener('click', () => { textarea.value = ''; update(); });
+      exampleBtn.addEventListener('click', setExample);
+      downloadBtn.addEventListener('click', downloadText);
+
+      update();
+    })();
+    </script>
+
+  </body>
+</html>

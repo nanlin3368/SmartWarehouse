@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>渐变色生成器</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f857a6, #ff5858, #f7b731, #43e1f8, #667eea);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleShift 4s ease infinite alternate, titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleShift {
+            from {
+                background-position: 0% 50%;
+            }
+            to {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ── Main Layout ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Card ── */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Settings Tab Card ── */
+        .settings-tab-card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .settings-tab-nav {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+            padding: 6px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .settings-tab-nav::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+
+        .settings-tab-btn {
+            flex: 1 0 auto;
+            min-width: 64px;
+            padding: 9px 8px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .settings-tab-btn .tab-icon {
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .settings-tab-btn.active {
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .settings-tab-content {
+            display: none;
+            animation: tabFadeIn 0.25s ease;
+        }
+
+        .settings-tab-content.active {
+            display: block;
+        }
+
+        @keyframes tabFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Preset ── */
+        .preset-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .preset-btn {
+            padding: 5px 14px;
+            border: none;
+            border-radius: 30px;
+            background: var(--bg-primary);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .preset-btn.active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        /* ── Gradient Type Toggle ── */
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .type-btn {
+            padding: 10px 6px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .type-btn.active {
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        /* ── Options Grid ── */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .option-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .option-item.full {
+            grid-column: 1 / -1;
+        }
+
+        .option-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .option-label span {
+            float: right;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* ── Range ── */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        }
+
+        /* ── Color Stops ── */
+        .stops-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stop-item {
+            display: grid;
+            grid-template-columns: 44px 1fr auto 32px;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .stop-color-wrap {
+            position: relative;
+            width: 44px;
+            height: 30px;
+        }
+
+        .stop-color-wrap input[type="color"] {
+            -webkit-appearance: none;
+            appearance: none;
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 2px;
+            box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+        }
+
+        .stop-color-wrap input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 2px;
+            border-radius: 6px;
+        }
+
+        .stop-color-wrap input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+
+        .stop-pos-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stop-pos-label {
+            font-size: 0.64rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .stop-hex {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            font-family: 'SF Mono', monospace;
+            text-align: right;
+        }
+
+        .stop-del {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+            font-size: 0.8rem;
+            color: var(--danger);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .stop-del:active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        }
+
+        .add-stop-btn {
+            width: 100%;
+            padding: 9px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .add-stop-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        /* ── Preview ── */
+        .preview-stage {
+            border-radius: var(--border-radius-sm);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preview-main {
+            width: 100%;
+            height: 180px;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .preview-main::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(45deg, #ccc 25%, transparent 25%),
+                linear-gradient(-45deg, #ccc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #ccc 75%),
+                linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .preview-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            transition: background 0.2s;
+        }
+
+        .preview-label-overlay {
+            position: relative;
+            z-index: 2;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+            letter-spacing: 0.5px;
+        }
+
+        .preview-tiles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+        }
+
+        .tile {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .tile:active {
+            opacity: 0.7;
+        }
+
+        .gradient-strip-wrap {
+            padding: 14px 0 6px;
+            position: relative;
+        }
+
+        .gradient-strip {
+            width: 100%;
+            height: 20px;
+            border-radius: 10px;
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            position: relative;
+            cursor: crosshair;
+        }
+
+        /* ── Code Block ── */
+        .code-block {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 14px;
+            font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.65;
+            margin-bottom: 14px;
+        }
+
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .export-btn {
+            padding: 9px 6px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .export-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 11px 8px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .action-btn:active {
+            transform: scale(0.97);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .badge-new {
+            display: inline-block;
+            padding: 1px 6px;
+            background: var(--accent-gradient);
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: white;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .instr-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .instr-text strong {
+            color: var(--text-primary);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--text-primary);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* radial/conic extra params */
+        #radialParams,
+        #conicParams {
+            display: none;
+        }
+        #radialParams.visible,
+        #conicParams.visible {
+            display: contents;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>渐变色生成器</h1>
+        <p class="subtitle">线性 · 径向 · 锥形 · 多色节点 · 一键导出</p>
+    </header>
+
+    <div class="main">
+
+        <!-- ①②③ 三合一 Tab 导航卡片 -->
+        <div class="settings-tab-card">
+            <div class="settings-tab-nav">
+                <button class="settings-tab-btn active" id="stab-preset" onclick="switchSettingsTab('preset')">
+                    <span class="tab-icon">🎨</span>快速预设
+                </button>
+                <button class="settings-tab-btn" id="stab-type" onclick="switchSettingsTab('type')">
+                    <span class="tab-icon">🔀</span>渐变类型
+                </button>
+                <button class="settings-tab-btn" id="stab-stops" onclick="switchSettingsTab('stops')">
+                    <span class="tab-icon">🎯</span>颜色节点
+                </button>
+            </div>
+
+            <!-- Tab 内容：快速预设 -->
+            <div class="settings-tab-content active" id="stab-content-preset">
+                <div class="preset-row" id="presetRow">
+                    <button class="preset-btn active" data-preset="aurora">极光</button>
+                    <button class="preset-btn" data-preset="sunset">日落</button>
+                    <button class="preset-btn" data-preset="ocean">深海</button>
+                    <button class="preset-btn" data-preset="peach">蜜桃</button>
+                    <button class="preset-btn" data-preset="forest">丛林</button>
+                    <button class="preset-btn" data-preset="candy">糖果</button>
+                    <button class="preset-btn" data-preset="night">暗夜</button>
+                    <button class="preset-btn" data-preset="gold">流金</button>
+                </div>
+            </div>
+
+            <!-- Tab 内容：渐变类型 -->
+            <div class="settings-tab-content" id="stab-content-type">
+                <div class="type-grid">
+                    <button class="type-btn active" id="typeLinear" onclick="setType('linear')">▬ 线性渐变</button>
+                    <button class="type-btn" id="typeRadial" onclick="setType('radial')">◎ 径向渐变</button>
+                    <button class="type-btn" id="typeConic" onclick="setType('conic')">🌀 锥形渐变</button>
+                </div>
+                <div class="options-grid">
+                    <div class="option-item" id="linearAngleItem">
+                        <div class="option-label">渐变角度 <span id="angleVal">135°</span></div>
+                        <input type="range" id="angleRange" min="0" max="360" step="1" value="135">
+                    </div>
+                    <div class="option-item" id="linearRepeatItem">
+                        <div class="option-label">重复间距 <span id="repeatVal">关闭</span></div>
+                        <input type="range" id="repeatRange" min="0" max="100" step="5" value="0">
+                    </div>
+                    <div class="option-item" id="radialParams" style="display:none;">
+                        <div class="option-label">形状</div>
+                        <div style="display:flex;gap:8px;margin-top:2px;">
+                            <button class="type-btn active" id="shapeCircle" style="padding:6px;" onclick="setShape('circle')">圆形</button>
+                            <button class="type-btn" id="shapeEllipse" style="padding:6px;" onclick="setShape('ellipse')">椭圆</button>
+                        </div>
+                    </div>
+                    <div class="option-item" id="radialSizeParam" style="display:none;">
+                        <div class="option-label">辐射范围</div>
+                        <select id="radialSize" style="padding:7px 10px;border:none;border-radius:var(--border-radius-xs);background:var(--bg-primary);box-shadow:inset 4px 4px 8px var(--shadow-dark),inset -4px -4px 8px var(--shadow-light);font-size:0.82rem;color:var(--text-primary);outline:none;width:100%;">
+                            <option value="farthest-corner">最远角</option>
+                            <option value="closest-corner">最近角</option>
+                            <option value="farthest-side">最远边</option>
+                            <option value="closest-side">最近边</option>
+                        </select>
+                    </div>
+                    <div class="option-item" id="conicParams" style="display:none;">
+                        <div class="option-label">起始角度 <span id="conicAngleVal">0°</span></div>
+                        <input type="range" id="conicAngleRange" min="0" max="360" step="1" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 内容：颜色节点 -->
+            <div class="settings-tab-content" id="stab-content-stops">
+                <div class="stops-list" id="stopsList"></div>
+                <button class="add-stop-btn" id="addStopBtn">＋ 添加颜色节点</button>
+            </div>
+        </div>
+
+        <!-- ④ 实时预览 -->
+        <div class="card">
+            <div class="card-label">👁️ 实时预览</div>
+            <div class="gradient-strip-wrap">
+                <div class="gradient-strip" id="gradientStrip"></div>
+            </div>
+            <div class="preview-stage" style="margin-top:14px;">
+                <div class="preview-main" id="previewMain">
+                    <div class="preview-overlay" id="previewOverlay"></div>
+                    <span class="preview-label-overlay">渐变预览</span>
+                </div>
+            </div>
+            <div style="margin-top:12px;">
+                <div class="card-label" style="margin-bottom:10px;">📦 场景预览</div>
+                <div class="preview-tiles" id="previewTiles">
+                    <div class="tile" id="tileBtn" title="按钮">🔲 按钮</div>
+                    <div class="tile" id="tileBadge" title="标签">🏷️ 标签</div>
+                    <div class="tile" id="tileCard" title="卡片">🃏 卡片</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ⑤ CSS 代码 -->
+        <div class="card">
+            <div class="card-label">📋 CSS 代码</div>
+            <div class="code-block" id="cssCode"></div>
+            <div class="export-grid">
+                <button class="export-btn" id="copyBtn">📋 复制 CSS</button>
+                <button class="export-btn" id="copyBgBtn">🖼️ background<span class="badge-new">值</span></button>
+                <button class="export-btn" id="copyVarBtn">🔧 CSS 变量<span class="badge-new">新</span></button>
+            </div>
+            <div class="action-bar">
+                <button class="action-btn" id="resetBtn">⟳ 重置默认</button>
+                <button class="action-btn" id="randomBtn">🎲 随机渐变</button>
+                <button class="action-btn" id="reverseBtn">⇄ 反转颜色</button>
+            </div>
+        </div>
+
+        <!-- ⑥ 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item"><span class="instr-icon">🎨</span><div class="instr-text"><strong>快速预设</strong>：一键切换极光、日落、深海等精选配色，快速获取灵感</div></div>
+                <div class="instr-item"><span class="instr-icon">🔀</span><div class="instr-text"><strong>渐变类型</strong>：线性（方向角度）、径向（从中心向外扩散）、锥形（围绕圆心旋转）三种</div></div>
+                <div class="instr-item"><span class="instr-icon">🎯</span><div class="instr-text"><strong>颜色节点</strong>：最少 2 个、最多 8 个，拖动滑块调整每个颜色的位置百分比</div></div>
+                <div class="instr-item"><span class="instr-icon">🔁</span><div class="instr-text"><strong>重复渐变</strong>：线性模式下调节"重复间距"可生成 repeating-linear-gradient 条纹效果</div></div>
+                <div class="instr-item"><span class="instr-icon">⇄</span><div class="instr-text"><strong>反转颜色</strong>：一键将所有颜色节点顺序翻转，快速得到互补渐变方案</div></div>
+                <div class="instr-item"><span class="instr-icon">📋</span><div class="instr-text"><strong>多格式导出</strong>：完整 CSS 类 / 仅 background 值 / CSS 变量三种格式，按需取用</div></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ── State ─────────────────────────────────────────────
+        let gradientType = 'linear';
+        let angle = 135;
+        let conicAngle = 0;
+        let radialShape = 'circle';
+        let radialSize = 'farthest-corner';
+        let repeatSpacing = 0;
+
+        let stops = [
+            { color: '#667eea', pos: 0 },
+            { color: '#764ba2', pos: 100 },
+        ];
+
+        // ── Preset Data ───────────────────────────────────────
+        const presets = {
+            aurora: { type: 'linear', angle: 135, stops: [{ color: '#43e1f8', pos: 0 }, { color: '#667eea', pos: 50 },
+                { color: '#f857a6', pos: 100 }] },
+            sunset: { type: 'linear', angle: 160, stops: [{ color: '#fc5c65', pos: 0 }, { color: '#f7b731', pos: 50 },
+                { color: '#ff9a9e', pos: 100 }] },
+            ocean: { type: 'linear', angle: 200, stops: [{ color: '#0f3460', pos: 0 }, { color: '#16213e', pos: 50 },
+                { color: '#4ecdc4', pos: 100 }] },
+            peach: { type: 'linear', angle: 120, stops: [{ color: '#ffecd2', pos: 0 }, { color: '#fcb69f', pos: 100 }] },
+            forest: { type: 'linear', angle: 150, stops: [{ color: '#134e5e', pos: 0 }, { color: '#71b280', pos: 100 }] },
+            candy: { type: 'linear', angle: 90, stops: [{ color: '#f857a6', pos: 0 }, { color: '#ff5858', pos: 33 },
+                { color: '#f7b731', pos: 66 }, { color: '#43e1f8', pos: 100 }] },
+            night: { type: 'radial', angle: 0, stops: [{ color: '#0a0a1a', pos: 0 }, { color: '#1a1a3e', pos: 60 },
+                { color: '#2d2b6a', pos: 100 }] },
+            gold: { type: 'linear', angle: 45, stops: [{ color: '#f7971e', pos: 0 }, { color: '#ffd200', pos: 50 },
+                { color: '#f7971e', pos: 100 }] },
+        };
+
+        // ── DOM ───────────────────────────────────────────────
+        const stopsList = document.getElementById('stopsList');
+        const previewOverlay = document.getElementById('previewOverlay');
+        const gradientStrip = document.getElementById('gradientStrip');
+        const cssCode = document.getElementById('cssCode');
+        const toast = document.getElementById('toast');
+        const angleRange = document.getElementById('angleRange');
+        const angleVal = document.getElementById('angleVal');
+        const repeatRange = document.getElementById('repeatRange');
+        const repeatVal = document.getElementById('repeatVal');
+        const conicAngleRange = document.getElementById('conicAngleRange');
+        const conicAngleVal = document.getElementById('conicAngleVal');
+        const radialSizeEl = document.getElementById('radialSize');
+
+        // ── Settings Tab Switch ───────────────────────────────
+        function switchSettingsTab(name) {
+            ['preset', 'type', 'stops'].forEach(t => {
+                document.getElementById('stab-' + t).classList.toggle('active', t === name);
+                document.getElementById('stab-content-' + t).classList.toggle('active', t === name);
+            });
+            // 自动滚动到当前激活的tab按钮
+            const activeBtn = document.getElementById('stab-' + name);
+            if (activeBtn) {
+                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // ── Build gradient string ─────────────────────────────
+        function buildGradient(forDisplay = true) {
+            const sorted = [...stops].sort((a, b) => a.pos - b.pos);
+            const stopsStr = sorted.map(s => `${s.color} ${s.pos}%`).join(', ');
+
+            if (gradientType === 'linear') {
+                if (repeatSpacing > 0 && forDisplay) {
+                    const rStops = sorted.map(s => `${s.color} ${(s.pos / 100 * repeatSpacing).toFixed(1)}%`).join(', ');
+                    return `repeating-linear-gradient(${angle}deg, ${rStops}, ${sorted[sorted.length - 1].color} ${repeatSpacing}%)`;
+                }
+                return `linear-gradient(${angle}deg, ${stopsStr})`;
+            }
+            if (gradientType === 'radial') {
+                return `radial-gradient(${radialShape} ${radialSize} at center, ${stopsStr})`;
+            }
+            if (gradientType === 'conic') {
+                return `conic-gradient(from ${conicAngle}deg, ${stopsStr})`;
+            }
+            return '';
+        }
+
+        // ── Update All ────────────────────────────────────────
+        function updateAll() {
+            const grad = buildGradient();
+            previewOverlay.style.background = grad;
+            gradientStrip.style.background = buildGradient();
+            document.getElementById('tileBtn').style.background = grad;
+            document.getElementById('tileBadge').style.background = grad;
+            document.getElementById('tileCard').style.background = grad;
+
+            let repeatNote = '';
+            if (gradientType === 'linear' && repeatSpacing > 0) {
+                repeatNote = '  /* repeating-linear-gradient */\n';
+            }
+            const css = `.gradient-element {\n` + `  background: ${grad};\n` + `}`;
+            cssCode.innerText = css;
+        }
+
+        // ── Render stop list ─────────────────────────────────
+        function renderStops() {
+            stopsList.innerHTML = '';
+            stops.forEach((s, i) => {
+                const row = document.createElement('div');
+                row.className = 'stop-item';
+                row.innerHTML = `
+                    <div class="stop-color-wrap">
+                        <input type="color" value="${s.color}" data-i="${i}" class="stop-color-input">
+                    </div>
+                    <div class="stop-pos-wrap">
+                        <div class="stop-pos-label">位置 ${s.pos}%</div>
+                        <input type="range" min="0" max="100" step="1" value="${s.pos}" data-i="${i}" class="stop-pos-input">
+                    </div>
+                    <div class="stop-hex">${s.color.toUpperCase()}</div>
+                    <button class="stop-del" data-i="${i}" ${stops.length <= 2 ? 'disabled style="opacity:0.3;cursor:not-allowed"' : ''}>✕</button>
+                `;
+                stopsList.appendChild(row);
+            });
+
+            stopsList.querySelectorAll('.stop-color-input').forEach(el => {
+                el.addEventListener('input', e => {
+                    const i = parseInt(e.target.dataset.i);
+                    stops[i].color = e.target.value;
+                    e.target.closest('.stop-item').querySelector('.stop-hex').innerText = e.target.value.toUpperCase();
+                    updateAll();
+                });
+            });
+            stopsList.querySelectorAll('.stop-pos-input').forEach(el => {
+                el.addEventListener('input', e => {
+                    const i = parseInt(e.target.dataset.i);
+                    stops[i].pos = parseInt(e.target.value);
+                    e.target.closest('.stop-item').querySelector('.stop-pos-label').innerText = `位置 ${stops[i].pos}%`;
+                    updateAll();
+                });
+            });
+            stopsList.querySelectorAll('.stop-del').forEach(el => {
+                el.addEventListener('click', e => {
+                    const i = parseInt(e.target.dataset.i);
+                    if (stops.length > 2) {
+                        stops.splice(i, 1);
+                        renderStops();
+                        updateAll();
+                    }
+                });
+            });
+        }
+
+        // ── Add stop ──────────────────────────────────────────
+        document.getElementById('addStopBtn').addEventListener('click', () => {
+            if (stops.length >= 8) { showToast('⚠️ 最多支持 8 个颜色节点'); return; }
+            const sorted = [...stops].sort((a, b) => a.pos - b.pos);
+            let maxGap = 0,
+                insertPos = 50,
+                insertColor = '#ffffff';
+            for (let i = 0; i < sorted.length - 1; i++) {
+                const gap = sorted[i + 1].pos - sorted[i].pos;
+                if (gap > maxGap) {
+                    maxGap = gap;
+                    insertPos = Math.round((sorted[i].pos + sorted[i + 1].pos) / 2);
+                    insertColor = blendHex(sorted[i].color, sorted[i + 1].color, 0.5);
+                }
+            }
+            stops.push({ color: insertColor, pos: insertPos });
+            renderStops();
+            updateAll();
+        });
+
+        // ── Type toggle ───────────────────────────────────────
+        function setType(type) {
+            gradientType = type;
+            ['linear', 'radial', 'conic'].forEach(t => {
+                document.getElementById('type' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === type);
+            });
+            document.getElementById('linearAngleItem').style.display = type === 'linear' ? '' : 'none';
+            document.getElementById('linearRepeatItem').style.display = type === 'linear' ? '' : 'none';
+            document.getElementById('radialParams').style.display = type === 'radial' ? '' : 'none';
+            document.getElementById('radialSizeParam').style.display = type === 'radial' ? '' : 'none';
+            document.getElementById('conicParams').style.display = type === 'conic' ? '' : 'none';
+            updateAll();
+        }
+
+        // ── Radial shape ──────────────────────────────────────
+        function setShape(shape) {
+            radialShape = shape;
+            document.getElementById('shapeCircle').classList.toggle('active', shape === 'circle');
+            document.getElementById('shapeEllipse').classList.toggle('active', shape === 'ellipse');
+            updateAll();
+        }
+
+        // ── Sliders ───────────────────────────────────────────
+        angleRange.addEventListener('input', () => {
+            angle = parseInt(angleRange.value);
+            angleVal.innerText = angle + '°';
+            updateAll();
+        });
+        repeatRange.addEventListener('input', () => {
+            repeatSpacing = parseInt(repeatRange.value);
+            repeatVal.innerText = repeatSpacing === 0 ? '关闭' : repeatSpacing + '%';
+            updateAll();
+        });
+        conicAngleRange.addEventListener('input', () => {
+            conicAngle = parseInt(conicAngleRange.value);
+            conicAngleVal.innerText = conicAngle + '°';
+            updateAll();
+        });
+        radialSizeEl.addEventListener('change', () => {
+            radialSize = radialSizeEl.value;
+            updateAll();
+        });
+
+        // ── Presets ───────────────────────────────────────────
+        function applyPreset(name) {
+            const p = presets[name];
+            if (!p) return;
+            gradientType = p.type;
+            angle = p.angle || 135;
+            stops = p.stops.map(s => ({ ...s }));
+            repeatSpacing = 0;
+            angleRange.value = angle;
+            angleVal.innerText = angle + '°';
+            repeatRange.value = 0;
+            repeatVal.innerText = '关闭';
+            setType(p.type);
+            document.querySelectorAll('.preset-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.preset === name);
+            });
+            renderStops();
+            updateAll();
+        }
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+        });
+
+        // ── Reset ─────────────────────────────────────────────
+        document.getElementById('resetBtn').addEventListener('click', () => applyPreset('aurora'));
+
+        // ── Reverse ───────────────────────────────────────────
+        document.getElementById('reverseBtn').addEventListener('click', () => {
+            const sorted = [...stops].sort((a, b) => a.pos - b.pos);
+            const colors = sorted.map(s => s.color);
+            colors.reverse();
+            sorted.forEach((s, i) => { s.color = colors[i]; });
+            stops = sorted;
+            renderStops();
+            updateAll();
+            showToast('⇄ 颜色已反转');
+        });
+
+        // ── Random ────────────────────────────────────────────
+        function randHsl(hBase) {
+            const h = (hBase + Math.floor(Math.random() * 80) - 40 + 360) % 360;
+            const s = 55 + Math.floor(Math.random() * 35);
+            const l = 45 + Math.floor(Math.random() * 30);
+            return hslToHex(h, s, l);
+        }
+
+        function hslToHex(h, s, l) {
+            s /= 100;
+            l /= 100;
+            const a = s * Math.min(l, 1 - l);
+            const f = n => { const k = (n + h / 30) % 12;
+                const c = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); return Math.round(255 * c).toString(16).padStart(
+                    2, '0'); };
+            return `#${f(0)}${f(8)}${f(4)}`;
+        }
+
+        document.getElementById('randomBtn').addEventListener('click', () => {
+            const baseHue = Math.floor(Math.random() * 360);
+            const count = 2 + Math.floor(Math.random() * 3);
+            stops = [];
+            for (let i = 0; i < count; i++) {
+                stops.push({
+                    color: randHsl(baseHue + i * (120 / count)),
+                    pos: Math.round((i / (count - 1)) * 100)
+                });
+            }
+            angle = Math.floor(Math.random() * 360);
+            angleRange.value = angle;
+            angleVal.innerText = angle + '°';
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            renderStops();
+            updateAll();
+            showToast('🎲 随机渐变已生成');
+        });
+
+        // ── Copy ─────────────────────────────────────────────
+        async function copyText(text, msg) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast(msg || '✅ 已复制');
+            } catch {
+                showToast('❌ 复制失败，请手动复制');
+            }
+        }
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            copyText(cssCode.innerText, '✅ CSS 已复制到剪贴板');
+        });
+        document.getElementById('copyBgBtn').addEventListener('click', () => {
+            copyText(buildGradient(), '🖼️ background 值已复制');
+        });
+        document.getElementById('copyVarBtn').addEventListener('click', () => {
+            const grad = buildGradient();
+            const vars =
+                `:root {\n  --gradient: ${grad};\n}\n\n.gradient-element {\n  background: var(--gradient);\n}`;
+            copyText(vars, '🔧 CSS 变量已复制');
+        });
+
+        // ── Toast ─────────────────────────────────────────────
+        let toastTimer = null;
+
+        function showToast(msg) {
+            toast.innerText = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // ── Helpers ───────────────────────────────────────────
+        function blendHex(c1, c2, t) {
+            const a = hexToRgb(c1),
+                b = hexToRgb(c2);
+            const r = Math.round(a.r + (b.r - a.r) * t);
+            const g = Math.round(a.g + (b.g - a.g) * t);
+            const bv = Math.round(a.b + (b.b - a.b) * t);
+            return '#' + [r, g, bv].map(x => x.toString(16).padStart(2, '0')).join('');
+        }
+
+        function hexToRgb(hex) {
+            return { r: parseInt(hex.slice(1, 3), 16), g: parseInt(hex.slice(3, 5), 16), b: parseInt(hex.slice(5, 7), 16) };
+        }
+
+        // ── Init ─────────────────────────────────────────────
+        applyPreset('aurora');
+    </script>
+</body>
+</html>

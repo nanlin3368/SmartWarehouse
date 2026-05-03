@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>特殊符号大全</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ── 主内容 ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── 通用卡片 ── */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ── 统计数字区 ── */
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            flex: 1;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            padding: 12px 8px;
+            text-align: center;
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* ── 统计与分类之间的分隔 ── */
+        .stats-divider {
+            border: none;
+            border-top: 1px solid rgba(163, 177, 198, 0.3);
+            margin: 0 0 16px 0;
+        }
+
+        /* ── 搜索区域 ── */
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 44px 14px 42px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .search-input:focus {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light),
+                0 0 0 2px rgba(102, 126, 234, 0.15);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: none;
+            padding: 4px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .search-clear.visible {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-clear:active {
+            color: var(--accent-primary);
+        }
+
+        /* ── 手风琴分类 ── */
+        .categories-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .category-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+            overflow: hidden;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 16px;
+            cursor: pointer;
+            background: var(--bg-primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .category-header:active {
+            background: rgba(102, 126, 234, 0.06);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            color: var(--accent-primary);
+        }
+
+        .category-count {
+            background: var(--bg-primary);
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+        }
+
+        /* ── 内容折叠区（固定高度 + 内部滚动） ── */
+        .emojis-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.38s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: var(--bg-primary);
+        }
+
+        .category-item.expanded .emojis-container {
+            max-height: 500px;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+            gap: 10px;
+            padding: 14px 16px;
+            border-top: 1px solid rgba(163, 177, 198, 0.25);
+            max-height: 440px;
+            overflow-y: auto;
+        }
+
+        /* 自定义滚动条 */
+        .emoji-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .emoji-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .emoji-grid::-webkit-scrollbar-thumb {
+            background: var(--shadow-dark);
+            border-radius: 4px;
+        }
+
+        /* ── Emoji 卡片 ── */
+        .emoji-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            text-align: center;
+            padding: 10px 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .emoji-item:active {
+            transform: scale(0.92);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .emoji-item.fav-item {
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light),
+                0 0 0 2px rgba(247, 183, 49, 0.4);
+        }
+
+        .emoji-symbol {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .emoji-name {
+            font-size: 0.58rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .emoji-fav-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 0.55rem;
+            line-height: 1;
+        }
+
+        /* ── 最近复制区 ── */
+        .recent-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .recent-emoji-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            text-align: center;
+            padding: 10px 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 58px;
+        }
+
+        .recent-emoji-item:active {
+            transform: scale(0.92);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .recent-empty {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 10px 0;
+        }
+
+        /* ── 无结果 ── */
+        .no-result {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .reset-search-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 18px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: 30px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            cursor: pointer;
+        }
+
+        /* ── 操作提示 ── */
+        .action-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 14px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* ── 说明卡片 ── */
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .instr-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .instr-text strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* ── Toast ── */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(44, 62, 80, 0.92);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 550px) {
+            .card {
+                padding: 18px 16px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .emoji-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>特殊符号大全</h1>
+        <p class="subtitle">独立命名 · 点击复制 · 长按收藏</p>
+    </header>
+
+    <div class="main">
+
+        <!-- 🔍 搜索卡片（独立放置于最上方） -->
+        <div class="card">
+            <div class="card-label">🔍 搜索符号</div>
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input"
+                placeholder="搜索符号（如：箭头、心形、摄氏度、罗马）" autocomplete="off">
+                <button class="search-clear" id="searchClear">✕</button>
+            </div>
+        </div>
+
+        <!-- 📊 数据概览 + 📂 分类浏览（合并为一个卡片） -->
+        <div class="card">
+            <div class="card-label">📊 符号总览</div>
+            <!-- 统计面板 -->
+            <div class="stats-grid" id="statsPanel"></div>
+            <hr class="stats-divider">
+            <!-- 分类手风琴列表 -->
+            <div class="categories-stack" id="categoriesContainer"></div>
+            <div class="action-sub">点击任意符号即可复制 · 长按可收藏 ⭐ 常用符号</div>
+        </div>
+
+        <!-- 最近复制 -->
+        <div class="card">
+            <div class="card-label">🕐 最近复制</div>
+            <div id="recentGrid" class="recent-grid"></div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">🔍</span>
+                    <div class="instr-text"><strong>搜索过滤</strong>：输入关键词实时筛选全部符号，搜索时自动展开所有匹配分类</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📂</span>
+                    <div class="instr-text"><strong>互斥展开</strong>：点击分类标题展开该分类，同时自动收起其他分类；展开区域固定高度，超出可滚动查看</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">⭐</span>
+                    <div class="instr-text"><strong>收藏符号</strong>：长按符号卡片即可收藏，收藏分类自动置顶，方便快速找到常用符号</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📋</span>
+                    <div class="instr-text"><strong>一键复制</strong>：点击任意符号卡片即可复制到剪贴板，最近 10 条复制记录自动保存</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔒</span>
+                    <div class="instr-text"><strong>隐私安全</strong>：所有操作及收藏数据本地完成，不联网上传任何数据</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        // ======================= 特殊符号数据库（683个独立命名） =======================
+        // 以下数据由用户提供的 categoriesSymbols 转换而来，完全保留原始名称与数量
+
+        // 1. 箭头符号（70个）
+        const arrowNames = [
+            "向左箭头", "向右箭头", "向上箭头", "向下箭头", "左上箭头", "右上箭头", "左下箭头", "右下箭头", "左右双向", "上下双向", "逆时针圆箭头", "顺时针圆箭头", "回车箭头",
+            "双向循环箭头", "左粗箭头", "右粗箭头",
+            "上粗箭头", "下粗箭头", "长向右箭头", "粗向右箭头", "左虚线箭头", "右虚线箭头", "上虚线箭头", "下虚线箭头", "弯尖右箭头", "空心右箭头", "重线右箭头", "带槽右箭头", "实心右箭头",
+            "左弯箭头", "右弯箭头",
+            "右上折箭头", "右下折箭头", "左粗体箭头", "上粗体箭头", "下粗体箭头", "回环左箭头", "回环右箭头", "左回环箭头", "右回环箭头", "左上拐箭头", "右上拐箭头", "左下拐箭头", "右下拐箭头",
+            "带箭头回车",
+            "右钩箭头", "左空心双箭头", "右空心双箭头", "上空心双箭头", "下空心双箭头", "左双线箭头", "右双线箭头", "上双线箭头", "下双线箭头", "左拉长箭头", "右拉长箭头", "上拉长箭头",
+            "下拉长箭头", "左弯角箭头",
+            "右弯角箭头", "上弯角箭头", "下弯角箭头", "左三角箭头", "右三角箭头", "上三角箭头", "下三角箭头", "长左箭头", "长右箭头"
+        ];
+        const arrowChars = [
+            "←", "→", "↑", "↓", "↖", "↗", "↙", "↘", "↔", "↕", "↺", "↻", "↵", "⇄", "⇦", "⇨", "⇧", "⇩", "➔", "➡", "⇠", "⇢", "⇡",
+            "⇣", "➜", "➝", "➞", "➟", "➤", "↶", "↷",
+            "⤴", "⤵", "⬅", "⬆", "⬇", "↩", "↪", "↫", "↬", "↰", "↱", "↲", "↳", "↵", "⤳", "⤴", "⤵", "⇐", "⇒", "⇑", "⇓", "⇔", "⇕", "⇖",
+            "⇗", "⇘", "⇙", "⇚", "⇛", "⭅", "⭆", "⭇", "⭈", "⭉", "⭊", "⭋", "⭌", "⟵", "⟶"
+        ];
+        const arrows = arrowChars.map((ch, idx) => ({ e: ch, n: arrowNames[idx] || "箭头" }));
+
+        // 2. 数学符号（90个）
+        const mathSymbols = [
+            { e: "±", n: "正负号" }, { e: "∓", n: "负正号" }, { e: "×", n: "乘号" }, { e: "÷", n: "除号" },
+            { e: "≠", n: "不等于" }, { e: "≈", n: "约等于" }, { e: "≤", n: "小于等于" }, { e: "≥", n: "大于等于" },
+            { e: "√", n: "根号" }, { e: "∛", n: "立方根" }, { e: "∜", n: "四次根" }, { e: "∞", n: "无穷大" },
+            { e: "∑", n: "求和符号" }, { e: "∏", n: "求积符号" }, { e: "∫", n: "积分符号" }, { e: "∂", n: "偏微分" },
+            { e: "∆", n: "增量" }, { e: "∝", n: "正比于" }, { e: "°", n: "度" }, { e: "′", n: "分" }, { e: "″", n: "秒" },
+            { e: "∈", n: "属于" }, { e: "∉", n: "不属于" }, { e: "⊂", n: "子集" }, { e: "⊃", n: "超集" },
+            { e: "⊆", n: "子集或等于" }, { e: "⊇", n: "超集或等于" }, { e: "∪", n: "并集" }, { e: "∩", n: "交集" },
+            { e: "∅", n: "空集" }, { e: "∀", n: "任意" }, { e: "∃", n: "存在" }, { e: "∄", n: "不存在" },
+            { e: "∇", n: "梯度" }, { e: "⊥", n: "垂直" }, { e: "⊤", n: "顶" }, { e: "⊢", n: "推导" },
+            { e: "∧", n: "逻辑与" }, { e: "∨", n: "逻辑或" }, { e: "¬", n: "逻辑非" }, { e: "⊕", n: "异或" },
+            { e: "⊗", n: "张量积" }, { e: "∼", n: "相似" }, { e: "≃", n: "同构" }, { e: "≡", n: "恒等于" },
+            { e: "≢", n: "不恒等" }, { e: "∮", n: "环路积分" }, { e: "∬", n: "二重积分" }, { e: "∭", n: "三重积分" },
+            { e: "∠", n: "角" }, { e: "∡", n: "有向角" }, { e: "∢", n: "球面角" }, { e: "∥", n: "平行" }, { e: "∦",
+            n: "不平行" },
+            { e: "∴", n: "所以" }, { e: "∵", n: "因为" }, { e: "∶", n: "比例" }, { e: "∷", n: "比例四连" }, { e: "≅",
+            n: "全等" },
+            { e: "≈", n: "约等" }, { e: "≊", n: "近似相等" }, { e: "≌", n: "全等" }, { e: "⋮", n: "竖省略" }, { e: "⋯",
+            n: "横省略" },
+            { e: "⋰", n: "右斜省略" }, { e: "⋱", n: "左斜省略" }, { e: "⌈", n: "上取整" }, { e: "⌉", n: "下取整" },
+            { e: "⌊", n: "上取整" }, { e: "⌋", n: "下取整" },
+            { e: "〈", n: "左角括号" }, { e: "〉", n: "右角括号" }, { e: "⟪", n: "左双角" }, { e: "⟫", n: "右双角" }
+        ];
+
+        // 3. 序号/数字符号（130个）
+        const numericSeries = [];
+        for (let i = 1; i <= 50; i++) {
+            if (i <= 20) numericSeries.push({ e: String.fromCodePoint(9311 + i), n: `带圈数字${i}` });
+            else if (i <= 35) numericSeries.push({ e: String.fromCodePoint(12881 + i - 21), n: `带圈数字${i}` });
+            else if (i <= 50) numericSeries.push({ e: String.fromCodePoint(12977 + i - 36), n: `带圈数字${i}` });
+        }
+        for (let i = 1; i <= 20; i++) numericSeries.push({ e: String.fromCodePoint(9331 + i), n: `括号数字${i}` });
+        for (let i = 1; i <= 10; i++) numericSeries.push({ e: String.fromCodePoint(10101 + i), n: `黑圈数字${i}` });
+        const romanSmall = ['ⅰ', 'ⅱ', 'ⅲ', 'ⅳ', 'ⅴ', 'ⅵ', 'ⅶ', 'ⅷ', 'ⅸ', 'ⅹ', 'ⅺ', 'ⅻ', 'ⅼ', 'ⅽ', 'ⅾ', 'ⅿ'];
+        romanSmall.forEach((ch, idx) => numericSeries.push({ e: ch, n: `小写罗马数字${idx + 1}` }));
+        const romanLarge = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ', 'Ⅹ', 'Ⅺ', 'Ⅻ', 'Ⅼ', 'Ⅽ', 'Ⅾ', 'Ⅿ'];
+        romanLarge.forEach((ch, idx) => numericSeries.push({ e: ch, n: `罗马数字${idx + 1}` }));
+        const extraNums = ["⓪", "⓿", "🄋", "🄌", "⒈", "⒉", "⒊", "⒋", "⒌", "⒍", "⒎", "⒏", "⒐", "⒑", "⒒", "⒓", "⒔", "⒕",
+            "⒖", "⒗", "⒘", "⒙", "⒚", "⒛",
+            "⑴", "⑵", "⑶", "⑷", "⑸", "⑹", "⑺", "⑻", "⑼", "⑽", "⑾", "⑿", "⒀", "⒁", "⒂", "⒃", "⒄", "⒅", "⒆", "⒇", "❶",
+            "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾", "❿"
+        ];
+        extraNums.forEach((ch, idx) => numericSeries.push({ e: ch, n: `序号${idx + 1}` }));
+
+        // 4. 希腊字母（48个）
+        const greekNames = [
+            "阿尔法", "贝塔", "伽马", "德尔塔", "伊普西龙", "泽塔", "伊塔", "西塔", "约塔", "卡帕", "兰姆达", "缪", "纽", "克西", "奥米克戎", "派", "柔",
+            "西格玛", "陶", "宇普西龙", "斐", "凯", "普西", "欧米伽",
+            "大写阿尔法", "大写贝塔", "大写伽马", "大写德尔塔", "大写伊普西龙", "大写泽塔", "大写伊塔", "大写西塔", "大写约塔", "大写卡帕", "大写兰姆达", "大写缪", "大写纽",
+            "大写克西", "大写奥米克戎", "大写派", "大写柔", "大写西格玛", "大写陶", "大写宇普西龙", "大写斐", "大写凯", "大写普西", "大写欧米伽"
+        ];
+        const greekChars = "αβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ".split('');
+        const greekLetters = greekChars.map((ch, idx) => ({ e: ch, n: greekNames[idx] }));
+
+        // 5. 货币符号（32个）
+        const currencyNames = [
+            "人民币", "美元", "欧元", "英镑", "韩元", "卢布", "印度卢比", "土耳其里拉", "美分", "比特币", "尼日利亚奈拉", "泰铢", "以色列谢克尔", "越南盾", "老挝基普",
+            "蒙古图格里克",
+            "巴拉圭瓜拉尼", "乌克兰格里夫纳", "加纳塞地", "伊朗里亚尔", "通用货币", "荷兰盾", "芬尼", "欧洲货币单位", "德国马克", "中非法郎", "西班牙比塞塔", "意大利里拉", "法郎",
+            "日元", "卢比", "印度卢比"
+        ];
+        const currencies = "¥$€£₩₽₹₺¢₿₦฿₪₫₭₮₲₴₵﷼¤ƒ₰₯₠₡₢₣₤₥₧₨".split('');
+        const currencySymbols = currencies.map((ch, idx) => ({ e: ch, n: currencyNames[idx] || "货币" }));
+
+        // 6. 单位符号（24个，原数据有24个）
+        const unitSymbols = [
+            { e: "℃", n: "摄氏度" }, { e: "℉", n: "华氏度" }, { e: "㎡", n: "平方米" }, { e: "㎥", n: "立方米" },
+            { e: "㎝", n: "厘米" }, { e: "㎜", n: "毫米" }, { e: "㎏", n: "千克" }, { e: "㎐", n: "赫兹" },
+            { e: "㎑", n: "千赫兹" }, { e: "㎒", n: "兆赫兹" }, { e: "㏄", n: "毫升" }, { e: "㏎", n: "千米" },
+            { e: "㏑", n: "自然对数" }, { e: "㏒", n: "常用对数" }, { e: "‰", n: "千分号" }, { e: "‱", n: "万分号" },
+            { e: "Ω", n: "欧姆" }, { e: "Å", n: "埃格斯特朗" }, { e: "μ", n: "微米" }, { e: "dB", n: "分贝" },
+            { e: "hp", n: "马力" }, { e: "psi", n: "磅力每平方英寸" }
+        ];
+
+        // 7. 图形星星爱心（66个）
+        const graphics = [
+            { e: "★", n: "实心五角星" }, { e: "☆", n: "空心五角星" }, { e: "♥", n: "红心" }, { e: "♦", n: "菱形" },
+            { e: "♣", n: "梅花" }, { e: "♠", n: "黑桃" }, { e: "♫", n: "双八音符" }, { e: "♪", n: "单八音符" },
+            { e: "✓", n: "对勾" }, { e: "✔", n: "粗对勾" }, { e: "✗", n: "叉号" }, { e: "✘", n: "粗叉号" },
+            { e: "☀", n: "太阳" }, { e: "☁", n: "多云" }, { e: "☂", n: "雨伞" }, { e: "☎", n: "电话" },
+            { e: "❤", n: "爱心" }, { e: "💔", n: "破碎的心" }, { e: "⭐", n: "星星" }, { e: "✨", n: "闪光" },
+            { e: "✪", n: "圆框星" }, { e: "✫", n: "内圆星" }, { e: "✬", n: "四角星" }, { e: "✭", n: "轮廓星" },
+            { e: "✮", n: "实心星花" }, { e: "✯", n: "指南针星" }, { e: "❀", n: "花朵" }, { e: "❁", n: "红花" },
+            { e: "🌸", n: "樱花" }, { e: "🌿", n: "草药" }, { e: "🍀", n: "四叶草" }, { e: "☘", n: "三叶草" },
+            { e: "♩", n: "四分音符" }, { e: "🎵", n: "音乐音符" }, { e: "🎶", n: "多个音符" }, { e: "🎤", n: "麦克风" },
+            { e: "🎧", n: "耳机" }, { e: "📢", n: "喇叭" }, { e: "🔔", n: "铃铛" }, { e: "🎸", n: "吉他" },
+            { e: "🎹", n: "钢琴" }, { e: "🥁", n: "鼓" }, { e: "🎺", n: "小号" }, { e: "🎻", n: "小提琴" },
+            { e: "🪕", n: "班卓琴" }, { e: "🎷", n: "萨克斯" }, { e: "🎙", n: "录音麦克风" }, { e: "🎚", n: "滑杆" },
+            { e: "🎛", n: "旋钮" }, { e: "🖤", n: "黑心" }, { e: "💙", n: "蓝心" }, { e: "💚", n: "绿心" },
+            { e: "💛", n: "黄心" }, { e: "🧡", n: "橙心" }, { e: "💜", n: "紫心" }, { e: "🩵", n: "浅蓝心" },
+            { e: "🩷", n: "粉心" }, { e: "💎", n: "钻石" }, { e: "💠", n: "菱形花" }, { e: "🌀", n: "旋风" },
+            { e: "🌈", n: "彩虹" }, { e: "⚡", n: "闪电" }, { e: "🔥", n: "火焰" }, { e: "💧", n: "水滴" },
+            { e: "❄️", n: "雪花" }, { e: "☃️", n: "雪人" }
+        ];
+
+        // 8. 星座符号（28个）
+        const zodiacs = [
+            "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座", "天秤座", "天蝎座", "射手座", "摩羯座", "水瓶座", "双鱼座", "太阳", "月亮", "水星",
+            "金星",
+            "火星", "木星", "土星", "天王星", "海王星", "冥王星", "小行星1", "小行星2", "小行星3", "小行星4", "小行星5", "小行星6"
+        ];
+        const zodiacChars = "♈♉♊♋♌♍♎♏♐♑♒♓☉☽☿♀♂♃♄♅♆♇⚳⚴⚵⚶⚷⚸".split('');
+        const zodiacSymbols = zodiacChars.map((ch, idx) => ({ e: ch, n: zodiacs[idx] }));
+
+        // 9. 技术键盘（20个）
+        const techSymbols = [
+            { e: "⌘", n: "命令键" }, { e: "⌥", n: "选项键" }, { e: "⌃", n: "控制键" }, { e: "⇧", n: "上档键" },
+            { e: "⌦", n: "删除键" }, { e: "⌫", n: "退格键" }, { e: "⏎", n: "回车键" }, { e: "⌤", n: "输入键" },
+            { e: "⎋", n: "退出键" }, { e: "␛", n: "ESC" }, { e: "⌹", n: "清除键" }, { e: "⏏", n: "弹出键" },
+            { e: "⌨", n: "键盘" }, { e: "🖥", n: "台式电脑" }, { e: "🖱", n: "鼠标" }, { e: "💻", n: "笔记本电脑" },
+            { e: "⌧", n: "清除" }, { e: "⌅", n: "回车" }, { e: "⌆", n: "切换" }, { e: "⎀", n: "插入" }
+        ];
+
+        // 10. 扑克/象棋/骰子（23个）
+        const gamesList = [
+            "白王", "白后", "白车", "白象", "白马", "白兵", "黑王", "黑后", "黑车", "黑象", "黑马", "黑兵",
+            "骰子一点", "骰子两点", "骰子三点", "骰子四点", "骰子五点", "骰子六点", "小丑牌", "红心", "方块", "黑桃", "梅花"
+        ];
+        const gameChars = "♔♕♖♗♘♙♚♛♜♝♞♟⚀⚁⚂⚃⚄⚅🃏♡♢♤♧".split('');
+        const gameSymbols = gameChars.map((ch, idx) => ({ e: ch, n: gamesList[idx] || "游戏符号" }));
+
+        // 11. 通讯符号（18个）
+        const comms = [
+            { e: "✉", n: "信封" }, { e: "📧", n: "电子邮件" }, { e: "📠", n: "传真机" }, { e: "📱", n: "手机" },
+            { e: "☏", n: "电话" }, { e: "📞", n: "听筒" }, { e: "✆", n: "电话位置" }, { e: "💬", n: "对话气泡" },
+            { e: "🗨", n: "左对话气泡" }, { e: "🗯", n: "右对话气泡" }, { e: "📨", n: "收件" }, { e: "📩", n: "发件" },
+            { e: "📤", n: "发出" }, { e: "📥", n: "接收" }, { e: "📮", n: "邮箱" }, { e: "📪", n: "信箱" }
+        ];
+
+        // 12. 法律/宗教（16个）
+        const legal = [
+            { e: "©", n: "版权" }, { e: "®", n: "注册商标" }, { e: "™", n: "商标" }, { e: "℗", n: "录音版权" },
+            { e: "§", n: "章节号" }, { e: "¶", n: "段落标记" }, { e: "†", n: "剑标" }, { e: "‡", n: "双剑标" },
+            { e: "☮", n: "和平标志" }, { e: "✝", n: "拉丁十字" }, { e: "☦", n: "东正教十字" }, { e: "☪", n: "星月" },
+            { e: "☯", n: "太极" }, { e: "🕉", n: "唵" }, { e: "🕎", n: "烛台" }, { e: "🔯", n: "六芒星" }
+        ];
+
+        // 13. 几何形状（19个）
+        const shapes = [
+            { e: "◊", n: "菱形" }, { e: "○", n: "圆圈" }, { e: "●", n: "实心圆" }, { e: "□", n: "方框" },
+            { e: "■", n: "实心方块" }, { e: "△", n: "三角形" }, { e: "▲", n: "实心三角" }, { e: "▼", n: "实心下三角" },
+            { e: "▶", n: "右三角" }, { e: "◀", n: "左三角" }, { e: "◆", n: "实心菱形" }, { e: "◇", n: "空心菱形" },
+            { e: "◎", n: "双圆圈" }, { e: "◐", n: "左半圆" }, { e: "◑", n: "右半圆" }, { e: "◒", n: "上半圆" },
+            { e: "◓", n: "下半圆" }, { e: "◔", n: "右上四分之一圆" }, { e: "◕", n: "右下四分之一圆" }
+        ];
+
+        // 14. 装饰/花边（22个）
+        const decorations = [
+            { e: "─", n: "单横线" }, { e: "━", n: "粗横线" }, { e: "│", n: "单竖线" }, { e: "┃", n: "粗竖线" },
+            { e: "┄", n: "点横线" }, { e: "┅", n: "双点横线" }, { e: "┈", n: "虚线" }, { e: "┉", n: "粗虚线" },
+            { e: "╴", n: "左半横线" }, { e: "╵", n: "下半竖线" }, { e: "╶", n: "右半横线" }, { e: "╷", n: "上半竖线" },
+            { e: "✧", n: "星芒" }, { e: "✦", n: "实心星芒" }, { e: "❋", n: "花星" }, { e: "❉", n: "雪花" },
+            { e: "❊", n: "六瓣花" }, { e: "❅", n: "三叶花" }, { e: "❆", n: "冰晶" }, { e: "✽", n: "星花" }
+        ];
+
+        // 15. 盲文符号（26个）
+        const brailleChars = "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵".split('');
+        const brailleNames = ["盲文A", "盲文B", "盲文C", "盲文D", "盲文E", "盲文F", "盲文G", "盲文H", "盲文I", "盲文J", "盲文K",
+            "盲文L", "盲文M", "盲文N", "盲文O", "盲文P", "盲文Q", "盲文R", "盲文S", "盲文T", "盲文U", "盲文V", "盲文W", "盲文X",
+            "盲文Y", "盲文Z"
+        ];
+        const braille = brailleChars.map((ch, idx) => ({ e: ch, n: brailleNames[idx] }));
+
+        // 16. 天气与表情（16个）
+        const weather = [
+            { e: "☀", n: "晴天" }, { e: "☁", n: "多云" }, { e: "⛅", n: "阴转晴" }, { e: "🌤", n: "少云" },
+            { e: "🌥", n: "多云天" }, { e: "🌦", n: "雨转晴" }, { e: "🌧", n: "雨天" }, { e: "⛈", n: "雷雨" },
+            { e: "🌩", n: "闪电" }, { e: "🌨", n: "雪天" }, { e: "❄", n: "雪花" }, { e: "☃", n: "雪人" },
+            { e: "😀", n: "大笑" }, { e: "😍", n: "爱心眼" }, { e: "😂", n: "笑哭" }, { e: "🤣", n: "笑滚" }
+        ];
+
+        // 17. 特殊标点（12个）
+        const punctuation = [
+            { e: "·", n: "间隔点" }, { e: "…", n: "省略号" }, { e: "—", n: "破折号" }, { e: "–", n: "连接号" },
+            { e: "『", n: "左书名号" }, { e: "』", n: "右书名号" }, { e: "「", n: "左角引号" }, { e: "」", n: "右角引号" },
+            { e: "【", n: "左方括号" }, { e: "】", n: "右方括号" }, { e: "《", n: "左双书名" }, { e: "》", n: "右双书名" }
+        ];
+
+        // 18. 其他实用符号（8个）
+        const misc = [
+            { e: "⚠", n: "警告" }, { e: "🚫", n: "禁止" }, { e: "✅", n: "对勾框" }, { e: "❎", n: "叉框" },
+            { e: "💯", n: "百分百" }, { e: "🔞", n: "未成年禁止" }, { e: "♻", n: "回收" }, { e: "⚜", n: "鸢尾花" }
+        ];
+
+        // 最终分类数组
+        const categoriesData = [
+            { id: "arrow", name: "⬆️ 箭头符号", emojis: arrows },
+            { id: "math", name: "📐 数学符号", emojis: mathSymbols },
+            { id: "numeric", name: "🔢 序号/数字", emojis: numericSeries },
+            { id: "greek", name: "🔤 希腊字母", emojis: greekLetters },
+            { id: "currency", name: "💰 货币符号", emojis: currencySymbols },
+            { id: "unit", name: "📏 单位符号", emojis: unitSymbols },
+            { id: "graphic", name: "🎨 图形·星星·爱心", emojis: graphics },
+            { id: "zodiac", name: "♈ 星座符号", emojis: zodiacSymbols },
+            { id: "tech", name: "⌨️ 键盘/技术", emojis: techSymbols },
+            { id: "game", name: "🎲 扑克/象棋/骰子", emojis: gameSymbols },
+            { id: "comm", name: "✉️ 通讯符号", emojis: comms },
+            { id: "legal", name: "⚖️ 法律/宗教", emojis: legal },
+            { id: "shape", name: "📌 几何形状", emojis: shapes },
+            { id: "deco", name: "🌸 装饰/花边", emojis: decorations },
+            { id: "braille", name: "⠿ 盲文符号", emojis: braille },
+            { id: "weather", name: "🌦️ 天气与表情", emojis: weather },
+            { id: "punct", name: "🔣 特殊标点", emojis: punctuation },
+            { id: "misc", name: "🕹️ 其他实用符号", emojis: misc }
+        ];
+
+        // ======================= 应用逻辑 =======================
+        let currentFilterText = '';
+        // 默认收起所有分类，不再自动展开第一个
+        let currentExpandedId = null;
+        let favorites = JSON.parse(localStorage.getItem('symbolFavorites') || '[]');
+        let recentCopies = JSON.parse(localStorage.getItem('symbolRecent') || '[]');
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+        }
+
+        async function copyEmoji(emoji, name) {
+            try {
+                await navigator.clipboard.writeText(emoji);
+                showToast('✅ 已复制 ' + emoji + ' ' + name);
+                addRecent(emoji, name);
+            } catch {
+                showToast('❌ 复制失败，请手动复制');
+            }
+        }
+
+        function isFav(emoji) {
+            return favorites.some(f => f.e === emoji);
+        }
+
+        function toggleFav(emoji, name) {
+            if (isFav(emoji)) {
+                favorites = favorites.filter(f => f.e !== emoji);
+                showToast('💔 已取消收藏');
+            } else {
+                favorites.unshift({ e: emoji, n: name });
+                showToast('⭐ 已收藏 ' + emoji);
+            }
+            localStorage.setItem('symbolFavorites', JSON.stringify(favorites));
+            updateStats();
+            renderCategories();
+        }
+
+        function addRecent(emoji, name) {
+            recentCopies = recentCopies.filter(r => r.e !== emoji);
+            recentCopies.unshift({ e: emoji, n: name });
+            if (recentCopies.length > 10) recentCopies = recentCopies.slice(0, 10);
+            localStorage.setItem('symbolRecent', JSON.stringify(recentCopies));
+            renderRecent();
+        }
+
+        let longPressTimer = null;
+
+        function attachEmojiEvents(el, emoji, name) {
+            el.addEventListener('click', e => {
+                e.stopPropagation();
+                copyEmoji(emoji, name);
+            });
+            el.addEventListener('touchstart', () => {
+                longPressTimer = setTimeout(() => {
+                    longPressTimer = null;
+                    toggleFav(emoji, name);
+                }, 600);
+            }, { passive: true });
+            el.addEventListener('touchend', () => {
+                clearTimeout(longPressTimer);
+            });
+            el.addEventListener('touchmove', () => {
+                clearTimeout(longPressTimer);
+            }, { passive: true });
+            el.addEventListener('contextmenu', e => {
+                e.preventDefault();
+                toggleFav(emoji, name);
+            });
+        }
+
+        function updateStats() {
+            const total = categoriesData.reduce((s, c) => s + c.emojis.length, 0);
+            document.getElementById('statsPanel').innerHTML = `
+            <div class="stat-item">
+                <div class="stat-number">${total}</div>
+                <div class="stat-label">🔣 符号总数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${categoriesData.length}</div>
+                <div class="stat-label">📂 分类数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${favorites.length}</div>
+                <div class="stat-label">⭐ 已收藏</div>
+            </div>`;
+        }
+
+        function updateSearchClear() {
+            document.getElementById('searchClear').classList.toggle('visible', currentFilterText.length > 0);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', e => {
+            currentFilterText = e.target.value;
+            updateSearchClear();
+            if (currentFilterText) currentExpandedId = null;
+            renderCategories();
+        });
+
+        document.getElementById('searchClear').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            currentFilterText = '';
+            // 清空搜索后也保持默认收起
+            currentExpandedId = null;
+            updateSearchClear();
+            renderCategories();
+        });
+
+        function buildEmojiGrid(emojis) {
+            return emojis.map(item => {
+                const favMark = isFav(item.e) ? '<span class="emoji-fav-dot">⭐</span>' : '';
+                const favClass = isFav(item.e) ? ' fav-item' : '';
+                return `<div class="emoji-item${favClass}" data-emoji="${item.e}" data-name="${item.n}">
+            ${favMark}
+            <div class="emoji-symbol">${item.e}</div>
+            <div class="emoji-name">${item.n}</div>
+          </div>`;
+            }).join('');
+        }
+
+        function renderCategories() {
+            const filter = currentFilterText.trim().toLowerCase();
+            const container = document.getElementById('categoriesContainer');
+
+            let allCats = [];
+            if (favorites.length && !filter) {
+                allCats.push({ id: '__fav__', name: '⭐ 我的收藏', emojis: favorites, actualCount: favorites.length });
+            }
+            categoriesData.forEach(cat => {
+                let emojis = cat.emojis;
+                if (filter) {
+                    emojis = cat.emojis.filter(item =>
+                        item.n.includes(filter) ||
+                        item.e.includes(filter) ||
+                        cat.name.toLowerCase().includes(filter)
+                    );
+                }
+                if (emojis.length) allCats.push({ ...cat, emojis, actualCount: cat.emojis.length });
+            });
+
+            if (!allCats.length) {
+                container.innerHTML = `
+            <div class="no-result">
+              😢 没有找到匹配的符号<br>
+              <button class="reset-search-btn" id="resetSearchBtn">清空搜索</button>
+            </div>`;
+                document.getElementById('resetSearchBtn')?.addEventListener('click', () => {
+                    document.getElementById('searchInput').value = '';
+                    currentFilterText = '';
+                    currentExpandedId = null;
+                    updateSearchClear();
+                    renderCategories();
+                });
+                return;
+            }
+
+            let activeId = filter ? null : currentExpandedId;
+            // 仅在 activeId 不为 null 且对应分类不存在时才回退到第一个
+            if (!filter && activeId !== null) {
+                const activeExists = allCats.some(c => c.id === activeId);
+                if (!activeExists) {
+                    activeId = allCats[0]?.id;
+                    currentExpandedId = activeId;
+                }
+            }
+
+            let html = '';
+            for (const cat of allCats) {
+                const expanded = filter ? true : (activeId === cat.id);
+                const countLabel = filter ?
+                    `${cat.emojis.length}/${cat.actualCount}` :
+                    cat.emojis.length;
+                html += `
+            <div class="category-item ${expanded ? 'expanded' : ''}" data-category-id="${cat.id}">
+              <div class="category-header">
+                <div class="category-title">
+                  <span class="toggle-icon" style="transform:${expanded ? 'rotate(180deg)' : 'rotate(0deg)'}">▼</span>
+                  <span>${cat.name}</span>
+                </div>
+                <span class="category-count">${countLabel}</span>
+              </div>
+              <div class="emojis-container">
+                <div class="emoji-grid">
+                  ${buildEmojiGrid(cat.emojis)}
+                </div>
+              </div>
+            </div>`;
+            }
+            container.innerHTML = html;
+
+            container.querySelectorAll('.category-item').forEach(item => {
+                item.querySelector('.category-header')?.addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (filter) return;
+                    const cid = item.dataset.categoryId;
+                    const isExpanded = item.classList.contains('expanded');
+                    container.querySelectorAll('.category-item').forEach(other => {
+                        other.classList.remove('expanded');
+                        const arr = other.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(0deg)';
+                    });
+                    if (!isExpanded) {
+                        item.classList.add('expanded');
+                        const arr = item.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(180deg)';
+                        currentExpandedId = cid;
+                    } else {
+                        currentExpandedId = null;
+                    }
+                });
+            });
+
+            container.querySelectorAll('.emoji-item').forEach(el => {
+                const emoji = el.dataset.emoji;
+                const name = el.dataset.name;
+                attachEmojiEvents(el, emoji, name);
+            });
+        }
+
+        function renderRecent() {
+            const el = document.getElementById('recentGrid');
+            if (!recentCopies.length) {
+                el.innerHTML = '<div class="recent-empty">暂无复制记录</div>';
+                return;
+            }
+            el.innerHTML = recentCopies.map(r => `
+            <div class="recent-emoji-item" data-emoji="${r.e}" data-name="${r.n}">
+                <div class="emoji-symbol">${r.e}</div>
+                <div class="emoji-name">${r.n}</div>
+            </div>`).join('');
+            el.querySelectorAll('.recent-emoji-item').forEach(el => {
+                attachEmojiEvents(el, el.dataset.emoji, el.dataset.name);
+            });
+        }
+
+        // 初始化
+        updateStats();
+        renderCategories();
+        renderRecent();
+    </script>
+</body>
+</html>

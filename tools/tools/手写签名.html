@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>手写签名</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+        @keyframes pageLoad { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 26px 24px 20px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+        @keyframes headerSlide { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes headerShine { 0% { left: -100%; } 50% { left: 100%; } 100% { left: 100%; } }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        @keyframes titleGlow { from { filter: brightness(1); } to { filter: brightness(1.15); } }
+        .subtitle { font-size: 0.82rem; color: var(--text-secondary); font-weight: 500; line-height: 1.5; }
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+        @keyframes contentSlide { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ── 模式切换标签 ── */
+        .mode-tabs {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+            padding: 6px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .mode-tabs::-webkit-scrollbar { display: none; }
+        .mode-tab {
+            flex: 1;
+            padding: 12px 10px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+        .mode-tab.active {
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .tab-panel {
+            display: none;
+            animation: tabFadeIn 0.25s ease;
+        }
+        .tab-panel.active { display: block; }
+        @keyframes tabFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ── 设置行 ── */
+        .setting-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .setting-row label { display: flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer; }
+        .setting-row input[type="range"] {
+            flex: 1;
+            min-width: 80px;
+            accent-color: var(--accent-primary);
+            height: 6px;
+            cursor: pointer;
+        }
+        .setting-row input[type="color"] {
+            width: 36px; height: 30px;
+            border: none; border-radius: 6px;
+            cursor: pointer; background: transparent;
+            box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
+            padding: 2px;
+        }
+        .size-preview {
+            display: inline-block;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--text-primary);
+            flex-shrink: 0;
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3), inset -1px -1px 2px rgba(255,255,255,0.5);
+        }
+        .preset-colors { display: flex; gap: 7px; flex-wrap: wrap; }
+        .preset-color {
+            width: 26px; height: 26px;
+            border-radius: 50%; cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+            box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
+        }
+        .preset-color:hover { transform: scale(1.15); }
+        .preset-color.active { border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(102,126,234,0.3); }
+
+        .bg-toggle {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.74rem; font-weight: 600; cursor: pointer; color: var(--text-secondary);
+        }
+        .bg-toggle input[type="checkbox"] { accent-color: var(--accent-primary); width: 16px; height: 16px; cursor: pointer; }
+
+        /* ── 画布区（正方形，自适应宽度） ── */
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: var(--border-radius-xs);
+            overflow: hidden;
+            box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);
+            background-image:
+                linear-gradient(45deg, #c5ccd6 25%, transparent 25%),
+                linear-gradient(-45deg, #c5ccd6 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #c5ccd6 75%),
+                linear-gradient(-45deg, transparent 75%, #c5ccd6 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-color: #fff;
+            cursor: crosshair;
+            touch-action: none;
+            margin-bottom: 16px;
+            margin-top: 16px;
+            /* 默认高度由JS动态设置成宽度 */
+        }
+        .canvas-wrapper canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            touch-action: none;
+        }
+        .canvas-wrapper.readonly canvas {
+            cursor: default;
+            touch-action: auto;
+        }
+
+        /* ── 一键签名输入区 ── */
+        .quick-sign-input {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--border-radius-xs);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: 'PingFang SC','Microsoft YaHei',serif;
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            outline: none;
+            transition: var(--transition);
+            text-align: center;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+        .quick-sign-input:focus {
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light), 0 0 0 2px rgba(102,126,234,0.2);
+        }
+        .quick-sign-input::placeholder { color: var(--text-muted); font-style: italic; letter-spacing: 1px; }
+
+        .style-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+        .style-chip {
+            padding: 8px 14px;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.74rem; font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer; border: 2px solid transparent;
+            font-family: inherit; transition: var(--transition);
+            white-space: nowrap;
+        }
+        .style-chip:hover { transform: translateY(-1px); }
+        .style-chip.active { border-color: var(--accent-primary); color: var(--accent-primary); }
+        .style-chip:active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            transform: scale(0.96);
+        }
+
+        /* ── 状态栏 ── */
+        .status-bar {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            font-size: 0.72rem; font-weight: 600;
+            color: var(--text-secondary);
+            min-height: 36px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+        .status-dot.ok { background: var(--success); animation: dotPulse 2s infinite; }
+        .status-dot.error { background: var(--danger); }
+        @keyframes dotPulse { 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
+
+        /* ── 按钮行 ── */
+        .btn-row {
+            display: flex; gap: 12px; flex-wrap: wrap;
+        }
+        .btn {
+            flex: 1;
+            padding: 14px 12px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            font-size: 0.88rem; font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; white-space: nowrap; letter-spacing: 0.5px;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active {
+            box-shadow: inset 3px 3px 8px var(--shadow-dark), inset -3px -3px 8px var(--shadow-light);
+            transform: scale(0.97);
+        }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .btn.accent {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            font-size: 0.9rem; padding: 15px 14px;
+            margin-bottom: 6px;
+        }
+        .btn.success { background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: #fff; }
+        .btn.danger { color: var(--danger); }
+
+        @media (max-width: 420px) {
+            h1 { font-size: 1.6rem; }
+            .mode-tab { font-size: 0.78rem; padding: 10px 8px; }
+            .btn { font-size: 0.8rem; padding: 12px 10px; }
+            .btn.accent { font-size: 0.82rem; padding: 13px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>手写签名</h1>
+        <p class="subtitle">自由手写 · 一键生成艺术签名 · 支持透明背景导出PNG</p>
+    </header>
+
+    <div class="main">
+        <div class="card">
+            <div class="card-label">📝 签名画布</div>
+
+            <!-- 模式切换 -->
+            <div class="mode-tabs">
+                <button class="mode-tab active" id="tabHandwrite">✍️ 手写签名</button>
+                <button class="mode-tab" id="tabQuickSign">✨ 一键签名</button>
+            </div>
+
+            <!-- ==================== 手写签名面板 ==================== -->
+            <div class="tab-panel active" id="panelHandwrite">
+                <div class="setting-row">
+                    <span>画笔大小</span>
+                    <span class="size-preview" id="sizePreview" style="width:12px;height:12px;"></span>
+                    <input type="range" id="brushSize" min="1" max="30" value="4" step="0.5">
+                    <span id="brushSizeLabel" style="font-weight:700;min-width:28px;">4</span>
+                </div>
+                <div class="setting-row">
+                    <span>画笔颜色</span>
+                    <input type="color" id="brushColor" value="#2c3e50">
+                    <div class="preset-colors" id="presetColors">
+                        <span class="preset-color active" data-color="#2c3e50" style="background:#2c3e50;"></span>
+                        <span class="preset-color" data-color="#e74c3c" style="background:#e74c3c;"></span>
+                        <span class="preset-color" data-color="#2980b9" style="background:#2980b9;"></span>
+                        <span class="preset-color" data-color="#27ae60" style="background:#27ae60;"></span>
+                        <span class="preset-color" data-color="#8e44ad" style="background:#8e44ad;"></span>
+                        <span class="preset-color" data-color="#000000" style="background:#000000;"></span>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <label class="bg-toggle">
+                        <input type="checkbox" id="transparentBg" checked> 背景透明
+                    </label>
+                    <span id="bgColorPickerWrap" style="display:none;">
+                        画布颜色：
+                        <input type="color" id="bgColor" value="#ffffff">
+                    </span>
+                </div>
+                <div class="canvas-wrapper" id="canvasWrapperHand">
+                    <canvas id="canvasHand"></canvas>
+                </div>
+                <div class="status-bar">
+                    <div class="status-dot" id="statusDotHand"></div>
+                    <span id="statusTextHand">就绪，在画布上自由书写</span>
+                </div>
+                <div class="btn-row">
+                    <button class="btn" id="undoBtn" disabled>↩️ 撤销</button>
+                    <button class="btn danger" id="clearHandBtn">🗑️ 清空</button>
+                    <button class="btn success" id="downloadHandBtn">📥 下载PNG</button>
+                </div>
+            </div>
+
+            <!-- ==================== 一键签名面板 ==================== -->
+            <div class="tab-panel" id="panelQuickSign">
+                <input type="text" class="quick-sign-input" id="quickSignInput" placeholder="输入您的姓名，例如：张三" maxlength="30">
+                <div style="font-size:0.7rem;color:var(--text-muted);font-weight:500;margin-bottom:6px;">选择签名风格：</div>
+                <div class="style-chips" id="styleChips">
+                    <span class="style-chip active" data-style="kaiti">🖋️ 端庄楷体</span>
+                    <span class="style-chip" data-style="xingkai">💫 潇洒行书</span>
+                    <span class="style-chip" data-style="lishu">📜 典雅隶书</span>
+                    <span class="style-chip" data-style="fangsong">🪶 清秀仿宋</span>
+                </div>
+                <div class="setting-row">
+                    <span>文字颜色</span>
+                    <input type="color" id="quickTextColor" value="#2c3e50">
+                    <div class="preset-colors" id="presetColorsQuick">
+                        <span class="preset-color active" data-color="#2c3e50" style="background:#2c3e50;"></span>
+                        <span class="preset-color" data-color="#e74c3c" style="background:#e74c3c;"></span>
+                        <span class="preset-color" data-color="#2980b9" style="background:#2980b9;"></span>
+                        <span class="preset-color" data-color="#27ae60" style="background:#27ae60;"></span>
+                        <span class="preset-color" data-color="#8e44ad" style="background:#8e44ad;"></span>
+                        <span class="preset-color" data-color="#000000" style="background:#000000;"></span>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <label class="bg-toggle">
+                        <input type="checkbox" id="transparentBgQuick" checked> 背景透明
+                    </label>
+                    <span id="bgColorPickerWrapQuick" style="display:none;">
+                        画布颜色：
+                        <input type="color" id="bgColorQuick" value="#ffffff">
+                    </span>
+                </div>
+                <button class="btn accent" id="generateQuickSign" style="width:100%;margin-bottom:16px;">✨ 生成签名到画布</button>
+                <div class="canvas-wrapper readonly" id="canvasWrapperQuick">
+                    <canvas id="canvasQuick"></canvas>
+                </div>
+                <div class="status-bar">
+                    <div class="status-dot" id="statusDotQuick"></div>
+                    <span id="statusTextQuick">就绪，输入姓名并生成签名</span>
+                </div>
+                <!-- 按钮顺序：清空 在左，下载 在右 -->
+                <div class="btn-row">
+                    <button class="btn danger" id="clearQuickBtn">🗑️ 清空</button>
+                    <button class="btn success" id="downloadQuickBtn" disabled>📥 下载PNG</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 10px;background:var(--bg-primary);border-radius:var(--border-radius-xs);box-shadow:inset 2px 2px 4px var(--shadow-dark),inset -2px -2px 4px var(--shadow-light);">
+                    <span style="font-size:0.95rem;">✍️</span>
+                    <span style="font-size:0.74rem;color:var(--text-secondary);line-height:1.5;"><strong>手写签名</strong>：在正方形画布上直接书写，支持调节画笔大小和颜色，背景可设透明。</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 10px;background:var(--bg-primary);border-radius:var(--border-radius-xs);box-shadow:inset 2px 2px 4px var(--shadow-dark),inset -2px -2px 4px var(--shadow-light);">
+                    <span style="font-size:0.95rem;">✨</span>
+                    <span style="font-size:0.74rem;color:var(--text-secondary);line-height:1.5;"><strong>一键签名</strong>：输入姓名，选择书法风格（楷体/行书/隶书/仿宋），文字自动适配正方形画布。</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 10px;background:var(--bg-primary);border-radius:var(--border-radius-xs);box-shadow:inset 2px 2px 4px var(--shadow-dark),inset -2px -2px 4px var(--shadow-light);">
+                    <span style="font-size:0.95rem;">📥</span>
+                    <span style="font-size:0.74rem;color:var(--text-secondary);line-height:1.5;"><strong>导出1:1 PNG</strong>：下载的图片均为正方形，透明背景下导出的图片无底色。</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 10px;background:var(--bg-primary);border-radius:var(--border-radius-xs);box-shadow:inset 2px 2px 4px var(--shadow-dark),inset -2px -2px 4px var(--shadow-light);">
+                    <span style="font-size:0.95rem;">🔒</span>
+                    <span style="font-size:0.74rem;color:var(--text-secondary);line-height:1.5;"><strong>隐私安全</strong>：所有操作在浏览器本地完成，不上传任何数据。</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ── 手写签名 DOM ──
+            const canvasHand = document.getElementById('canvasHand');
+            const ctxHand = canvasHand.getContext('2d');
+            const canvasWrapperHand = document.getElementById('canvasWrapperHand');
+            const brushSizeInput = document.getElementById('brushSize');
+            const brushSizeLabel = document.getElementById('brushSizeLabel');
+            const sizePreview = document.getElementById('sizePreview');
+            const brushColorInput = document.getElementById('brushColor');
+            const transparentBgCheck = document.getElementById('transparentBg');
+            const bgColorInput = document.getElementById('bgColor');
+            const bgColorPickerWrap = document.getElementById('bgColorPickerWrap');
+            const presetColors = document.getElementById('presetColors');
+            const undoBtn = document.getElementById('undoBtn');
+            const clearHandBtn = document.getElementById('clearHandBtn');
+            const downloadHandBtn = document.getElementById('downloadHandBtn');
+            const statusDotHand = document.getElementById('statusDotHand');
+            const statusTextHand = document.getElementById('statusTextHand');
+
+            // ── 一键签名 DOM ──
+            const canvasQuick = document.getElementById('canvasQuick');
+            const ctxQuick = canvasQuick.getContext('2d');
+            const canvasWrapperQuick = document.getElementById('canvasWrapperQuick');
+            const quickSignInput = document.getElementById('quickSignInput');
+            const styleChips = document.getElementById('styleChips');
+            const generateQuickSignBtn = document.getElementById('generateQuickSign');
+            const quickTextColorInput = document.getElementById('quickTextColor');
+            const transparentBgQuickCheck = document.getElementById('transparentBgQuick');
+            const bgColorQuickInput = document.getElementById('bgColorQuick');
+            const bgColorPickerWrapQuick = document.getElementById('bgColorPickerWrapQuick');
+            const presetColorsQuick = document.getElementById('presetColorsQuick');
+            const downloadQuickBtn = document.getElementById('downloadQuickBtn');
+            const clearQuickBtn = document.getElementById('clearQuickBtn');
+            const statusDotQuick = document.getElementById('statusDotQuick');
+            const statusTextQuick = document.getElementById('statusTextQuick');
+
+            // ── 选项卡切换 ──
+            const panelHandwrite = document.getElementById('panelHandwrite');
+            const panelQuickSign = document.getElementById('panelQuickSign');
+            const tabHandwrite = document.getElementById('tabHandwrite');
+            const tabQuickSign = document.getElementById('tabQuickSign');
+
+            let currentMode = 'handwrite';
+
+            function switchTab(mode) {
+                currentMode = mode;
+                if (mode === 'handwrite') {
+                    tabHandwrite.classList.add('active');
+                    tabQuickSign.classList.remove('active');
+                    panelHandwrite.classList.add('active');
+                    panelQuickSign.classList.remove('active');
+                    resizeSquareCanvas(canvasWrapperHand, canvasHand, initCanvasHand);
+                    redrawHandCanvas();
+                } else {
+                    tabQuickSign.classList.add('active');
+                    tabHandwrite.classList.remove('active');
+                    panelQuickSign.classList.add('active');
+                    panelHandwrite.classList.remove('active');
+                    resizeSquareCanvas(canvasWrapperQuick, canvasQuick, initCanvasQuick);
+                    redrawQuickCanvas();
+                }
+            }
+            tabHandwrite.addEventListener('click', () => switchTab('handwrite'));
+            tabQuickSign.addEventListener('click', () => switchTab('quicksign'));
+
+            // ── 正方形画布尺寸调整 ──
+            function resizeSquareCanvas(wrapper, canvas, initFn) {
+                const width = wrapper.clientWidth;
+                wrapper.style.height = width + 'px';
+                if (initFn) initFn();
+            }
+
+            // ── 状态提示 ──
+            function setHandStatus(msg, type) {
+                statusTextHand.textContent = msg;
+                statusDotHand.className = 'status-dot ' + (type || '');
+            }
+            function setQuickStatus(msg, type) {
+                statusTextQuick.textContent = msg;
+                statusDotQuick.className = 'status-dot ' + (type || '');
+            }
+
+            // ── 手写状态 ──
+            let brushSize = parseFloat(brushSizeInput.value);
+            let brushColor = brushColorInput.value;
+            let isTransparentBg = transparentBgCheck.checked;
+            let bgColor = bgColorInput.value;
+            let isDrawing = false;
+            let lastX = 0, lastY = 0;
+            let handHistory = [];
+            const MAX_HISTORY = 30;
+
+            let quickTextColor = quickTextColorInput.value;
+            let isTransparentBgQuick = transparentBgQuickCheck.checked;
+            let bgColorQuick = bgColorQuickInput.value;
+            let selectedStyle = 'kaiti';
+            let quickCanvasHasContent = false;
+
+            // ── 手写画布初始化 ──
+            function initCanvasHand() {
+                const width = canvasWrapperHand.clientWidth;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                canvasHand.width = width * dpr;
+                canvasHand.height = width * dpr;
+                canvasHand.style.width = width + 'px';
+                canvasHand.style.height = width + 'px';
+                ctxHand.setTransform(1, 0, 0, 1, 0, 0);
+                ctxHand.scale(dpr, dpr);
+                ctxHand.lineCap = 'round';
+                ctxHand.lineJoin = 'round';
+                ctxHand.strokeStyle = brushColor;
+                ctxHand.lineWidth = brushSize;
+                ctxHand.fillStyle = brushColor;
+                applyHandBackground();
+            }
+
+            function applyHandBackground() {
+                const w = canvasHand.width / (Math.min(window.devicePixelRatio || 1, 2));
+                const h = canvasHand.height / (Math.min(window.devicePixelRatio || 1, 2));
+                if (isTransparentBg) {
+                    ctxHand.clearRect(0, 0, w, h);
+                } else {
+                    ctxHand.fillStyle = bgColor;
+                    ctxHand.fillRect(0, 0, w, h);
+                }
+                ctxHand.strokeStyle = brushColor;
+                ctxHand.lineWidth = brushSize;
+                ctxHand.fillStyle = brushColor;
+                ctxHand.lineCap = 'round';
+                ctxHand.lineJoin = 'round';
+            }
+
+            function saveHandHistory() {
+                const w = canvasHand.width, h = canvasHand.height;
+                const data = ctxHand.getImageData(0, 0, w, h);
+                handHistory.push(data);
+                if (handHistory.length > MAX_HISTORY) handHistory.shift();
+                undoBtn.disabled = handHistory.length <= 1;
+            }
+
+            function redrawHandCanvas() {
+                if (handHistory.length > 0) {
+                    const data = handHistory[handHistory.length - 1];
+                    ctxHand.putImageData(data, 0, 0);
+                } else {
+                    applyHandBackground();
+                    saveHandHistory();
+                }
+            }
+
+            function undoHand() {
+                if (handHistory.length <= 1) return;
+                handHistory.pop();
+                const data = handHistory[handHistory.length - 1];
+                ctxHand.putImageData(data, 0, 0);
+                undoBtn.disabled = handHistory.length <= 1;
+                setHandStatus('已撤销上一步操作', 'ok');
+            }
+
+            function clearHandCanvas() {
+                handHistory = [];
+                applyHandBackground();
+                saveHandHistory();
+                setHandStatus('画布已清空', 'ok');
+                undoBtn.disabled = true;
+            }
+
+            function downloadHand() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const displayW = canvasHand.width / dpr;
+                const displayH = canvasHand.height / dpr;
+                const exportCanvas = document.createElement('canvas');
+                exportCanvas.width = displayW * 2;
+                exportCanvas.height = displayH * 2;
+                const exportCtx = exportCanvas.getContext('2d');
+                exportCtx.scale(2, 2);
+                if (!isTransparentBg) {
+                    exportCtx.fillStyle = bgColor;
+                    exportCtx.fillRect(0, 0, displayW, displayH);
+                }
+                exportCtx.drawImage(canvasHand, 0, 0, displayW, displayH);
+                const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+                exportCanvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '手写签名_' + ts + '.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 100);
+                    setHandStatus('PNG文件下载中… 📥', 'ok');
+                }, 'image/png');
+            }
+
+            // ── 手写事件 ──
+            function getHandPos(e) {
+                const rect = canvasHand.getBoundingClientRect();
+                const scaleX = (canvasHand.width / (Math.min(window.devicePixelRatio || 1, 2))) / rect.width;
+                const scaleY = (canvasHand.height / (Math.min(window.devicePixelRatio || 1, 2))) / rect.height;
+                let clientX, clientY;
+                if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+                else if (e.changedTouches && e.changedTouches.length > 0) { clientX = e.changedTouches[0].clientX; clientY = e.changedTouches[0].clientY; }
+                else { clientX = e.clientX; clientY = e.clientY; }
+                return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+            }
+
+            function startDraw(e) {
+                if (currentMode !== 'handwrite') return;
+                e.preventDefault();
+                isDrawing = true;
+                const pos = getHandPos(e);
+                lastX = pos.x; lastY = pos.y;
+                ctxHand.beginPath();
+                ctxHand.moveTo(lastX, lastY);
+                ctxHand.strokeStyle = brushColor;
+                ctxHand.lineWidth = brushSize;
+                ctxHand.lineCap = 'round';
+                ctxHand.lineJoin = 'round';
+            }
+            function draw(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                const pos = getHandPos(e);
+                const midX = (lastX + pos.x) / 2;
+                const midY = (lastY + pos.y) / 2;
+                ctxHand.quadraticCurveTo(lastX, lastY, midX, midY);
+                ctxHand.stroke();
+                ctxHand.beginPath();
+                ctxHand.moveTo(midX, midY);
+                lastX = pos.x; lastY = pos.y;
+            }
+            function endDraw(e) {
+                if (!isDrawing) return;
+                isDrawing = false;
+                ctxHand.lineTo(lastX, lastY);
+                ctxHand.stroke();
+                ctxHand.beginPath();
+                saveHandHistory();
+                setHandStatus('笔画已完成', 'ok');
+            }
+
+            canvasHand.addEventListener('mousedown', startDraw);
+            canvasHand.addEventListener('mousemove', draw);
+            canvasHand.addEventListener('mouseup', endDraw);
+            canvasHand.addEventListener('mouseleave', endDraw);
+            canvasHand.addEventListener('touchstart', startDraw, { passive: false });
+            canvasHand.addEventListener('touchmove', draw, { passive: false });
+            canvasHand.addEventListener('touchend', endDraw);
+            canvasHand.addEventListener('touchcancel', endDraw);
+
+            // ── 手写设置事件 ──
+            brushSizeInput.addEventListener('input', () => {
+                brushSize = parseFloat(brushSizeInput.value);
+                brushSizeLabel.textContent = brushSize;
+                sizePreview.style.width = Math.max(4, brushSize * 2.5) + 'px';
+                sizePreview.style.height = Math.max(4, brushSize * 2.5) + 'px';
+                sizePreview.style.background = brushColor;
+                if (!isDrawing) ctxHand.lineWidth = brushSize;
+            });
+            brushColorInput.addEventListener('input', () => {
+                brushColor = brushColorInput.value;
+                sizePreview.style.background = brushColor;
+                updatePresetActive(presetColors, brushColor);
+                if (!isDrawing) { ctxHand.strokeStyle = brushColor; ctxHand.fillStyle = brushColor; }
+            });
+
+            function updatePresetActive(container, color) {
+                const chips = container.querySelectorAll('.preset-color');
+                chips.forEach(chip => {
+                    chip.classList.toggle('active', chip.getAttribute('data-color').toLowerCase() === color.toLowerCase());
+                });
+            }
+            presetColors.addEventListener('click', (e) => {
+                const chip = e.target.closest('.preset-color');
+                if (!chip) return;
+                const color = chip.getAttribute('data-color');
+                brushColor = color;
+                brushColorInput.value = color;
+                sizePreview.style.background = color;
+                updatePresetActive(presetColors, color);
+                if (!isDrawing) { ctxHand.strokeStyle = brushColor; ctxHand.fillStyle = brushColor; }
+            });
+            transparentBgCheck.addEventListener('change', () => {
+                isTransparentBg = transparentBgCheck.checked;
+                bgColorPickerWrap.style.display = isTransparentBg ? 'none' : 'inline';
+                applyHandBackground();
+                saveHandHistory();
+                setHandStatus(isTransparentBg ? '已切换为透明背景' : '已设置画布背景色', 'ok');
+            });
+            bgColorInput.addEventListener('input', () => {
+                bgColor = bgColorInput.value;
+                if (!isTransparentBg) { applyHandBackground(); saveHandHistory(); }
+            });
+            undoBtn.addEventListener('click', undoHand);
+            clearHandBtn.addEventListener('click', clearHandCanvas);
+            downloadHandBtn.addEventListener('click', downloadHand);
+
+            // ── 一键签名画布初始化 ──
+            function initCanvasQuick() {
+                const width = canvasWrapperQuick.clientWidth;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                canvasQuick.width = width * dpr;
+                canvasQuick.height = width * dpr;
+                canvasQuick.style.width = width + 'px';
+                canvasQuick.style.height = width + 'px';
+                ctxQuick.setTransform(1, 0, 0, 1, 0, 0);
+                ctxQuick.scale(dpr, dpr);
+                applyQuickBackground();
+            }
+
+            function applyQuickBackground() {
+                const w = canvasQuick.width / (Math.min(window.devicePixelRatio || 1, 2));
+                const h = canvasQuick.height / (Math.min(window.devicePixelRatio || 1, 2));
+                if (isTransparentBgQuick) {
+                    ctxQuick.clearRect(0, 0, w, h);
+                } else {
+                    ctxQuick.fillStyle = bgColorQuick;
+                    ctxQuick.fillRect(0, 0, w, h);
+                }
+            }
+
+            function redrawQuickCanvas() {
+                applyQuickBackground();
+                if (quickCanvasHasContent && quickSignInput.value.trim()) {
+                    renderQuickSign();
+                }
+            }
+
+            function renderQuickSign() {
+                const name = quickSignInput.value.trim();
+                if (!name) return;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const displayW = canvasQuick.width / dpr;
+                const displayH = canvasQuick.height / dpr;
+                applyQuickBackground();
+
+                const maxWidth = displayW * 0.88;
+                const maxHeight = displayH * 0.65;
+                let fontSize = 72;
+                ctxQuick.save();
+                ctxQuick.fillStyle = quickTextColor;
+                ctxQuick.textAlign = 'center';
+                ctxQuick.textBaseline = 'middle';
+                let fontFamily, fontWeight = 'bold', fontStyle = 'normal', letterSpacing = 0;
+                switch (selectedStyle) {
+                    case 'kaiti': fontFamily = '"KaiTi","STKaiti","楷体","Noto Serif SC",serif'; fontWeight='bold'; fontStyle='normal'; letterSpacing=0; break;
+                    case 'xingkai': fontFamily = '"STXingkai","华文行楷","KaiTi","楷体","Noto Sans SC",serif'; fontWeight='bold'; fontStyle='italic'; letterSpacing=3; break;
+                    case 'lishu': fontFamily = '"LiSu","华文隶书","STLiti","Noto Serif SC",serif'; fontWeight='normal'; fontStyle='normal'; letterSpacing=2; break;
+                    case 'fangsong': fontFamily = '"FangSong","STFangsong","仿宋","Noto Serif SC",serif'; fontWeight='normal'; fontStyle='italic'; letterSpacing=1; break;
+                    default: fontFamily = '"KaiTi","STKaiti","楷体",serif'; fontWeight='bold'; fontStyle='normal'; letterSpacing=0;
+                }
+                ctxQuick.font = fontWeight + ' ' + fontStyle + ' ' + fontSize + 'px ' + fontFamily;
+                let metrics = ctxQuick.measureText(name);
+                let actualWidth = metrics.width + (name.length - 1) * letterSpacing;
+                while (actualWidth > maxWidth && fontSize > 16) {
+                    fontSize -= 2;
+                    ctxQuick.font = fontWeight + ' ' + fontStyle + ' ' + fontSize + 'px ' + fontFamily;
+                    metrics = ctxQuick.measureText(name);
+                    actualWidth = metrics.width + (name.length - 1) * letterSpacing;
+                }
+                while (fontSize > maxHeight && fontSize > 16) {
+                    fontSize -= 2;
+                    ctxQuick.font = fontWeight + ' ' + fontStyle + ' ' + fontSize + 'px ' + fontFamily;
+                }
+                const centerX = displayW / 2;
+                const centerY = displayH / 2;
+                const totalWidth = metrics.width + (name.length - 1) * letterSpacing;
+                let startX = centerX - totalWidth / 2;
+                for (let i = 0; i < name.length; i++) {
+                    const char = name[i];
+                    const charMetrics = ctxQuick.measureText(char);
+                    const charWidth = charMetrics.width;
+                    const charX = startX + charWidth / 2;
+                    ctxQuick.fillText(char, charX, centerY);
+                    startX += charWidth + letterSpacing;
+                }
+                ctxQuick.restore();
+                quickCanvasHasContent = true;
+                downloadQuickBtn.disabled = false;
+            }
+
+            function clearQuickCanvas() {
+                quickCanvasHasContent = false;
+                applyQuickBackground();
+                downloadQuickBtn.disabled = true;
+                setQuickStatus('已清空，输入姓名后点击生成', '');
+            }
+
+            function downloadQuick() {
+                if (!quickCanvasHasContent) return;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const displayW = canvasQuick.width / dpr;
+                const displayH = canvasQuick.height / dpr;
+                const exportCanvas = document.createElement('canvas');
+                exportCanvas.width = displayW * 2;
+                exportCanvas.height = displayH * 2;
+                const exportCtx = exportCanvas.getContext('2d');
+                exportCtx.scale(2, 2);
+                if (!isTransparentBgQuick) {
+                    exportCtx.fillStyle = bgColorQuick;
+                    exportCtx.fillRect(0, 0, displayW, displayH);
+                }
+                exportCtx.drawImage(canvasQuick, 0, 0, displayW, displayH);
+                const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+                exportCanvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '签名_' + ts + '.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 100);
+                    setQuickStatus('PNG文件下载中… 📥', 'ok');
+                }, 'image/png');
+            }
+
+            // ── 一键签名事件 ──
+            styleChips.addEventListener('click', (e) => {
+                const chip = e.target.closest('.style-chip');
+                if (!chip) return;
+                styleChips.querySelectorAll('.style-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                selectedStyle = chip.getAttribute('data-style');
+            });
+            generateQuickSignBtn.addEventListener('click', () => {
+                const name = quickSignInput.value.trim();
+                if (!name) { setQuickStatus('请先输入您的姓名', 'error'); return; }
+                resizeSquareCanvas(canvasWrapperQuick, canvasQuick, initCanvasQuick);
+                renderQuickSign();
+                setQuickStatus('签名已生成！可下载或修改后重新生成', 'ok');
+            });
+            quickSignInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); generateQuickSignBtn.click(); }
+            });
+            quickTextColorInput.addEventListener('input', () => {
+                quickTextColor = quickTextColorInput.value;
+                updatePresetActive(presetColorsQuick, quickTextColor);
+                if (quickCanvasHasContent) renderQuickSign();
+            });
+            presetColorsQuick.addEventListener('click', (e) => {
+                const chip = e.target.closest('.preset-color');
+                if (!chip) return;
+                const color = chip.getAttribute('data-color');
+                quickTextColor = color;
+                quickTextColorInput.value = color;
+                updatePresetActive(presetColorsQuick, color);
+                if (quickCanvasHasContent) renderQuickSign();
+            });
+            transparentBgQuickCheck.addEventListener('change', () => {
+                isTransparentBgQuick = transparentBgQuickCheck.checked;
+                bgColorPickerWrapQuick.style.display = isTransparentBgQuick ? 'none' : 'inline';
+                if (quickCanvasHasContent) renderQuickSign();
+                else applyQuickBackground();
+                setQuickStatus(isTransparentBgQuick ? '已切换为透明背景' : '已设置画布背景色', 'ok');
+            });
+            bgColorQuickInput.addEventListener('input', () => {
+                bgColorQuick = bgColorQuickInput.value;
+                if (!isTransparentBgQuick && quickCanvasHasContent) renderQuickSign();
+                else if (!isTransparentBgQuick) applyQuickBackground();
+            });
+            clearQuickBtn.addEventListener('click', clearQuickCanvas);
+            downloadQuickBtn.addEventListener('click', downloadQuick);
+
+            // ── 初始化与窗口大小监听 ──
+            window.addEventListener('resize', () => {
+                if (currentMode === 'handwrite') {
+                    resizeSquareCanvas(canvasWrapperHand, canvasHand, initCanvasHand);
+                    redrawHandCanvas();
+                } else {
+                    resizeSquareCanvas(canvasWrapperQuick, canvasQuick, initCanvasQuick);
+                    redrawQuickCanvas();
+                }
+            });
+
+            // 首次初始化
+            resizeSquareCanvas(canvasWrapperHand, canvasHand, initCanvasHand);
+            saveHandHistory();
+            resizeSquareCanvas(canvasWrapperQuick, canvasQuick, initCanvasQuick);
+            applyQuickBackground();
+            updatePresetActive(presetColors, brushColor);
+            updatePresetActive(presetColorsQuick, quickTextColor);
+            sizePreview.style.width = Math.max(4, brushSize * 2.5) + 'px';
+            sizePreview.style.height = Math.max(4, brushSize * 2.5) + 'px';
+            sizePreview.style.background = brushColor;
+            bgColorPickerWrap.style.display = isTransparentBg ? 'none' : 'inline';
+            bgColorPickerWrapQuick.style.display = isTransparentBgQuick ? 'none' : 'inline';
+            setHandStatus('就绪，在正方形画布上自由书写', '');
+            setQuickStatus('就绪，输入姓名并生成签名', '');
+            downloadQuickBtn.disabled = true;
+        })();
+    </script>
+</body>
+</html>

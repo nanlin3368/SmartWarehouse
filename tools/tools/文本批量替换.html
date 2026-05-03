@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文本批量替换工具</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ── 主内容 ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── 通用卡片 ── */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ── 文件上传区 ── */
+        .file-drop {
+            border: 2px dashed var(--text-muted);
+            border-radius: var(--border-radius-sm);
+            padding: 26px 20px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            transition: var(--transition);
+            margin-bottom: 12px;
+        }
+
+        .file-drop:hover,
+        .file-drop.dragover {
+            border-color: var(--accent-primary);
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                0 0 0 2px rgba(102, 126, 234, 0.15);
+        }
+
+        .file-drop.dragover {
+            border-style: solid;
+            border-color: var(--success);
+        }
+
+        .file-drop input[type="file"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .file-drop-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .file-drop-text {
+            font-size: 0.92rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .file-drop-sub {
+            font-size: 0.74rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .file-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        /* ── 源文本 textarea ── */
+        .source-textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 14px 16px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 5px 5px 12px var(--shadow-dark), inset -5px -5px 12px var(--shadow-light);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            resize: vertical;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .source-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* ── 统计栏 ── */
+        .stat-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-val {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        /* ── 搜索选项 ── */
+        .options-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        /* ── 规则双栏 ── */
+        .rule-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .rule-col-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .rule-textarea {
+            width: 100%;
+            min-height: 160px;
+            padding: 12px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 3px 3px 8px var(--shadow-dark), inset -3px -3px 8px var(--shadow-light);
+            font-size: 0.84rem;
+            line-height: 1.6;
+            resize: vertical;
+            font-family: 'SF Mono', 'Menlo', monospace;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .rule-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .hint-text {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* ── 规则行列表（精细模式） ── */
+        .rule-rows-wrap {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .rule-row-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .rule-row-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .rule-row-num {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            width: 18px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .rule-row-input {
+            flex: 1;
+            padding: 7px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            font-size: 0.82rem;
+            color: var(--text-primary);
+            font-family: 'SF Mono', 'Menlo', monospace;
+            outline: none;
+        }
+
+        .rule-row-arrow {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .rule-row-del {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--danger);
+            font-size: 0.85rem;
+            padding: 4px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+        }
+
+        .rule-row-del:hover {
+            opacity: 1;
+        }
+
+        .add-rule-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        /* ── 模式切换 tab ── */
+        .mode-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .mode-tab {
+            flex: 1;
+            padding: 9px 8px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .mode-tab.active {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 3px 3px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .mode-tab:active {
+            transform: scale(0.97);
+        }
+
+        /* ── 操作按钮 ── */
+        .action-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .action-btn {
+            padding: 13px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex: 1 1 auto;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+        .action-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .action-btn.primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 4px 4px 12px rgba(102, 126, 234, 0.35), -2px -2px 6px var(--shadow-light);
+            flex: 2 1 auto;
+        }
+
+        .action-btn.primary:hover {
+            box-shadow: 6px 6px 16px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+        .action-btn.primary:active {
+            transform: scale(0.97);
+        }
+        .action-btn.success-btn {
+            color: var(--success);
+        }
+        .action-btn.danger-btn {
+            color: var(--danger);
+        }
+        .action-btn.warning-btn {
+            color: var(--warning);
+        }
+
+        /* ── 进度条 ── */
+        .progress-bar-wrap {
+            height: 4px;
+            border-radius: 2px;
+            background: var(--bg-primary);
+            box-shadow: inset 1px 1px 3px var(--shadow-dark);
+            overflow: hidden;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--accent-gradient);
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        /* ── 结果区域 ── */
+        .result-area {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            padding: 16px;
+            min-height: 120px;
+            max-height: 360px;
+            overflow-y: auto;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: var(--text-primary);
+        }
+
+        .result-placeholder {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+
+        /* ── 高亮样式 ── */
+        .hl-replaced {
+            background: #f7b731;
+            color: #2c3e50;
+            border-radius: 4px;
+            padding: 0 3px;
+            font-weight: 700;
+        }
+
+        .hl-found {
+            background: rgba(102, 126, 234, 0.25);
+            color: var(--accent-primary);
+            border-radius: 4px;
+            padding: 0 3px;
+            font-weight: 700;
+            outline: 2px solid rgba(102, 126, 234, 0.4);
+        }
+
+        /* ── 统计徽章 ── */
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--bg-primary);
+            box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .badge.success {
+            color: var(--success);
+        }
+        .badge.accent {
+            color: var(--accent-primary);
+        }
+
+        /* ── 搜索栏（查找高亮） ── */
+        .search-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            cursor: pointer;
+            font-family: inherit;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .search-btn:active {
+            box-shadow: inset 2px 2px 5px var(--shadow-dark);
+        }
+
+        .search-nav {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .search-nav-btn {
+            padding: 5px 14px;
+            border: none;
+            border-radius: 20px;
+            background: var(--bg-primary);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .search-nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        .search-count {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
+        }
+
+        /* ── 说明 ── */
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .instr-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .instr-text strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* ── 响应式 ── */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            .rule-cols {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>文本批量替换</h1>
+        <p class="subtitle">支持导入 · 批量替换 · 高亮预览 · 导出</p>
+    </header>
+
+    <div class="main">
+
+        <!-- ① 导入文本 -->
+        <div class="card">
+            <div class="card-label">导入文本</div>
+            <div class="file-drop" id="fileDrop">
+                <span class="file-drop-icon">📂</span>
+                <div class="file-drop-text">拖放文件到此处</div>
+                <div class="file-drop-sub">或点击选择文件（仅支持 TXT、HTML）</div>
+                <span class="file-badge">TXT · HTML</span>
+                <input type="file" id="fileInput" accept=".txt,.html,.htm,text/plain,text/html" />
+            </div>
+            <textarea id="sourceText" class="source-textarea" placeholder="请输入或粘贴要处理的文本内容…"></textarea>
+            <div class="stat-bar">
+                <span class="stat-item">字符 <span class="stat-val" id="charCount">0</span></span>
+                <span class="stat-item">行数 <span class="stat-val" id="lineCount">0</span></span>
+                <span class="stat-item">词数 <span class="stat-val" id="wordCount">0</span></span>
+                <button id="clearSourceBtn" style="background:none;border:none;cursor:pointer;font-size:0.72rem;font-weight:700;color:var(--danger);font-family:inherit;">🗑️ 清空</button>
+            </div>
+        </div>
+
+        <!-- ② 文本搜索（查找高亮） -->
+        <div class="card">
+            <div class="card-label">文本搜索</div>
+            <div class="search-row">
+                <input type="text" class="search-input" id="searchInput" placeholder="输入关键词，在原文中高亮查找…" />
+                <button class="search-btn" id="searchBtn">🔍 查找</button>
+            </div>
+            <div class="search-nav" id="searchNav" style="display:none;">
+                <button class="search-nav-btn" id="prevMatchBtn">◀ 上一个</button>
+                <span class="search-count" id="searchCount">第 1 / 1 个</span>
+                <button class="search-nav-btn" id="nextMatchBtn">下一个 ▶</button>
+                <button class="search-nav-btn" id="clearSearchBtn" style="color:var(--danger);">✕ 清除</button>
+            </div>
+        </div>
+
+        <!-- ③ 替换规则 -->
+        <div class="card">
+            <div class="card-label">替换规则</div>
+
+            <!-- 模式切换 -->
+            <div class="mode-tabs">
+                <button class="mode-tab active" data-mode="batch" id="tabBatch">📋 批量文本模式</button>
+                <button class="mode-tab" data-mode="rows" id="tabRows">➕ 逐行添加模式</button>
+            </div>
+
+            <!-- 批量文本模式 -->
+            <div id="panelBatch">
+                <div class="rule-cols">
+                    <div>
+                        <div class="rule-col-label">🔍 查找词（每行一个）</div>
+                        <textarea id="findList" class="rule-textarea" placeholder="输入要查找的词，每行一个"></textarea>
+                        <div class="hint-text">每行一个关键词</div>
+                    </div>
+                    <div>
+                        <div class="rule-col-label">✏️ 替换为（对应行）</div>                       
+                        <textarea id="replaceList" class="rule-textarea" placeholder="输入要替换成的词，每行一个"></textarea>
+                        <div class="hint-text">留空行 = 删除该词</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 逐行添加模式 -->
+            <div id="panelRows" style="display:none;">
+                <div class="rule-rows-wrap" id="ruleRowsWrap">
+                    <div class="rule-row-item" data-idx="0">
+                        <span class="rule-row-num">1</span>
+                        <input type="text" class="rule-row-input" placeholder="查找词…" data-type="find" />
+                        <span class="rule-row-arrow">→</span>
+                        <input type="text" class="rule-row-input" placeholder="替换为…（留空=删除）" data-type="replace" />
+                        <button class="rule-row-del" title="删除此行">✕</button>
+                    </div>
+                </div>
+                <div class="add-rule-row">
+                    <button class="action-btn warning-btn" id="addRuleRowBtn" style="grid-column:unset;padding:8px 20px;font-size:0.8rem;">＋ 添加一行</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ④ 替换结果 + 操作 + 导出（合并卡片） -->
+        <div class="card">
+            <div class="card-label">替换结果</div>
+            <div class="result-area" id="resultArea">
+                <span class="result-placeholder">尚未执行替换，点击下方按钮开始</span>
+            </div>
+            <div class="badge-row" id="badgeRow" style="display:none;">
+                <span class="badge accent" id="badgeReplaceCount"></span>
+                <span class="badge success" id="badgeCharCount"></span>
+                <span class="badge" id="badgeRuleCount"></span>
+            </div>
+            <div class="progress-bar-wrap" id="progressWrap">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+            <div class="action-grid">
+                <button class="action-btn primary" id="replaceBtn">🔄 开始替换</button>
+                <button class="action-btn success-btn" id="copyResultBtn" disabled>📋 复制纯文本</button>
+                <button class="action-btn danger-btn" id="clearAllBtn">🗑️ 清空全部</button>
+                <button class="action-btn" id="downloadTxtBtn" disabled>💾 保存下载</button>
+            </div>
+        </div>
+
+        <!-- ⑤ 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">📂</span>
+                    <div class="instr-text"><strong>导入文本</strong>：支持拖入 TXT、HTML 文件，也可直接粘贴任意文本</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔍</span>
+                    <div class="instr-text"><strong>文本搜索</strong>：在原文中快速查找关键词并蓝色高亮，可逐个跳转匹配位置</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔂</span>
+                    <div class="instr-text"><strong>批量替换</strong>：批量文本模式下左侧填查找词（每行一个），右侧填替换词；逐行模式可精细管理每条规则</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">✨</span>
+                    <div class="instr-text"><strong>高亮预览</strong>：替换后结果中所有变更词会被黄色高亮标记，便于核查</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">💾</span>
+                    <div class="instr-text"><strong>导出结果</strong>：支持复制纯文本或下载为 .txt 文件，所有处理均在本地完成</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        (function() {
+
+            // ── DOM ──────────────────────────────────────────────────
+            const sourceTextarea = document.getElementById('sourceText');
+            const fileInput = document.getElementById('fileInput');
+            const fileDrop = document.getElementById('fileDrop');
+            const clearSourceBtn = document.getElementById('clearSourceBtn');
+
+            const charCountEl = document.getElementById('charCount');
+            const lineCountEl = document.getElementById('lineCount');
+            const wordCountEl = document.getElementById('wordCount');
+
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const searchNav = document.getElementById('searchNav');
+            const prevMatchBtn = document.getElementById('prevMatchBtn');
+            const nextMatchBtn = document.getElementById('nextMatchBtn');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            const searchCountEl = document.getElementById('searchCount');
+
+            const tabBatch = document.getElementById('tabBatch');
+            const tabRows = document.getElementById('tabRows');
+            const panelBatch = document.getElementById('panelBatch');
+            const panelRows = document.getElementById('panelRows');
+
+            const findList = document.getElementById('findList');
+            const replaceList = document.getElementById('replaceList');
+
+            const ruleRowsWrap = document.getElementById('ruleRowsWrap');
+            const addRuleRowBtn = document.getElementById('addRuleRowBtn');
+
+            const replaceBtn = document.getElementById('replaceBtn');
+            const clearAllBtn = document.getElementById('clearAllBtn');
+
+            const progressWrap = document.getElementById('progressWrap');
+            const progressFill = document.getElementById('progressFill');
+
+            const resultArea = document.getElementById('resultArea');
+            const badgeRow = document.getElementById('badgeRow');
+            const badgeReplaceCount = document.getElementById('badgeReplaceCount');
+            const badgeCharCount = document.getElementById('badgeCharCount');
+            const badgeRuleCount = document.getElementById('badgeRuleCount');
+
+            const downloadTxtBtn = document.getElementById('downloadTxtBtn');
+            const copyResultBtn = document.getElementById('copyResultBtn');
+
+            let currentPlainText = '';
+            let currentMode = 'batch'; // 'batch' | 'rows'
+
+            // ── 统计更新 ──────────────────────────────────────────────
+            function updateStats() {
+                const t = sourceTextarea.value;
+                charCountEl.textContent = t.length;
+                lineCountEl.textContent = t ? t.split(/\r?\n/).filter(l => l.trim()).length : 0;
+                wordCountEl.textContent = t ? t.trim().split(/\s+/).filter(Boolean).length : 0;
+            }
+
+            sourceTextarea.addEventListener('input', updateStats);
+
+            clearSourceBtn.addEventListener('click', () => {
+                sourceTextarea.value = '';
+                updateStats();
+                resetResult();
+            });
+
+            // ── 模式 Tab 切换 ─────────────────────────────────────────
+            [tabBatch, tabRows].forEach(tab => {
+                tab.addEventListener('click', () => {
+                    currentMode = tab.dataset.mode;
+                    tabBatch.classList.toggle('active', currentMode === 'batch');
+                    tabRows.classList.toggle('active', currentMode === 'rows');
+                    panelBatch.style.display = currentMode === 'batch' ? '' : 'none';
+                    panelRows.style.display = currentMode === 'rows' ? '' : 'none';
+                });
+            });
+
+            // ── 逐行规则管理 ──────────────────────────────────────────
+            function addRuleRow(findVal = '', replaceVal = '') {
+                const idx = ruleRowsWrap.querySelectorAll('.rule-row-item').length + 1;
+                const div = document.createElement('div');
+                div.className = 'rule-row-item';
+                div.innerHTML = `
+                        <span class="rule-row-num">${idx}</span>
+                        <input type="text" class="rule-row-input" placeholder="查找词…" data-type="find" value="${escHtml(findVal)}" />
+                        <span class="rule-row-arrow">→</span>
+                        <input type="text" class="rule-row-input" placeholder="替换为…（留空=删除）" data-type="replace" value="${escHtml(replaceVal)}" />
+                        <button class="rule-row-del" title="删除此行">✕</button>
+                    `;
+                div.querySelector('.rule-row-del').addEventListener('click', () => {
+                    div.remove();
+                    renumberRows();
+                });
+                ruleRowsWrap.appendChild(div);
+            }
+
+            function renumberRows() {
+                ruleRowsWrap.querySelectorAll('.rule-row-item').forEach((row, i) => {
+                    row.querySelector('.rule-row-num').textContent = i + 1;
+                });
+            }
+
+            addRuleRowBtn.addEventListener('click', () => addRuleRow());
+
+            // 初始第一行绑定删除
+            ruleRowsWrap.querySelector('.rule-row-del').addEventListener('click', function() {
+                this.closest('.rule-row-item').remove();
+                renumberRows();
+            });
+
+            // ── 获取当前规则列表 ──────────────────────────────────────
+            function getRules() {
+                if (currentMode === 'batch') {
+                    const finds = findList.value.split(/\r?\n/);
+                    const replaces = replaceList.value.split(/\r?\n/);
+                    const rules = [];
+                    for (let i = 0; i < finds.length; i++) {
+                        const f = finds[i];
+                        if (!f) continue;
+                        rules.push({ find: f, replace: replaces[i] ?? '' });
+                    }
+                    return rules;
+                } else {
+                    const rows = ruleRowsWrap.querySelectorAll('.rule-row-item');
+                    const rules = [];
+                    rows.forEach(row => {
+                        const inputs = row.querySelectorAll('.rule-row-input');
+                        const f = inputs[0].value;
+                        const r = inputs[1].value;
+                        if (f) rules.push({ find: f, replace: r });
+                    });
+                    return rules;
+                }
+            }
+
+            // ── 正则构建（固定不使用正则、全词匹配，仅文本替换） ─────
+            function buildRegex(term, flags) {
+                // 始终作为普通文本匹配
+                let pattern = escRegex(term);
+                return new RegExp(pattern, flags);
+            }
+
+            function escRegex(s) {
+                return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+            function escHtml(s) {
+                return String(s).replace(/[&<>"']/g, m =>
+                    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+            }
+
+            // ── 搜索高亮功能（在原文 textarea 中跳转） ──────────────
+            let searchMatches = [];
+            let searchIdx = 0;
+
+            searchBtn.addEventListener('click', doSearch);
+            searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+            function doSearch() {
+                const term = searchInput.value.trim();
+                if (!term || !sourceTextarea.value) return;
+                // 搜索固定不区分大小写
+                const flags = 'gi';
+                const re = buildRegex(term, flags);
+                if (!re) { alert('正则表达式格式错误'); return; }
+
+                searchMatches = [];
+                let m;
+                const src = sourceTextarea.value;
+                while ((m = re.exec(src)) !== null) {
+                    searchMatches.push(m.index);
+                    if (!re.global) break;
+                }
+
+                if (searchMatches.length === 0) {
+                    searchCountEl.textContent = '未找到匹配';
+                    searchNav.style.display = 'flex';
+                    prevMatchBtn.disabled = true;
+                    nextMatchBtn.disabled = true;
+                    return;
+                }
+
+                searchIdx = 0;
+                updateSearchNav();
+                jumpToMatch(searchIdx);
+            }
+
+            function updateSearchNav() {
+                searchNav.style.display = 'flex';
+                prevMatchBtn.disabled = searchMatches.length <= 1;
+                nextMatchBtn.disabled = searchMatches.length <= 1;
+                searchCountEl.textContent = `第 ${searchIdx + 1} / ${searchMatches.length} 个`;
+            }
+
+            function jumpToMatch(idx) {
+                const pos = searchMatches[idx];
+                if (pos == null) return;
+                sourceTextarea.focus();
+                sourceTextarea.setSelectionRange(pos, pos + searchInput.value.length);
+                sourceTextarea.scrollTop = Math.max(0, sourceTextarea.scrollTop - 40);
+            }
+
+            prevMatchBtn.addEventListener('click', () => {
+                searchIdx = (searchIdx - 1 + searchMatches.length) % searchMatches.length;
+                updateSearchNav();
+                jumpToMatch(searchIdx);
+            });
+
+            nextMatchBtn.addEventListener('click', () => {
+                searchIdx = (searchIdx + 1) % searchMatches.length;
+                updateSearchNav();
+                jumpToMatch(searchIdx);
+            });
+
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                searchMatches = [];
+                searchNav.style.display = 'none';
+            });
+
+            // ── 清空全部（源文本+结果） ──────────────────────────────
+            clearAllBtn.addEventListener('click', () => {
+                sourceTextarea.value = '';
+                updateStats();
+                resetResult();
+              
+                // 同时清除搜索状态
+                searchInput.value = '';
+                searchMatches = [];
+                searchNav.style.display = 'none';
+              
+                // 清空替换规则（批量文本模式）
+                findList.value = '';
+                replaceList.value = '';
+              
+                // 清空逐行添加模式的规则，并保留一个空行
+                ruleRowsWrap.innerHTML = '';
+                addRuleRow();
+            });
+
+            // ── 核心替换（固定选项：不区分大小写，启用高亮） ─────
+            replaceBtn.addEventListener('click', async () => {
+                const source = sourceTextarea.value;
+                if (!source.trim()) {
+                    resultArea.innerHTML = '<span class="result-placeholder">请先在上方输入或导入文本内容</span>';
+                    return;
+                }
+
+                const rules = getRules();
+                if (rules.length === 0) {
+                    resultArea.innerHTML = '<span class="result-placeholder">请先填写替换规则</span>';
+                    return;
+                }
+
+                // 进度条
+                progressWrap.style.display = 'block';
+                progressFill.style.width = '20%';
+
+                let replacedText = source;
+                let totalHits = 0;
+                const caseSensitive = false; // 固定不区分大小写
+                const doHighlight = true; // 固定高亮替换词
+                const replacedTerms = new Set();
+
+                for (let i = 0; i < rules.length; i++) {
+                    const { find, replace } = rules[i];
+                    const flags = caseSensitive ? 'g' : 'gi';
+                    const re = buildRegex(find, flags);
+                    if (!re) continue;
+
+                    let count = 0;
+                    replacedText = replacedText.replace(re, () => { count++; return replace; });
+                    totalHits += count;
+                    if (count > 0 && replace) replacedTerms.add(replace);
+                    progressFill.style.width = (20 + (i / rules.length) * 60) + '%';
+                    await new Promise(r => setTimeout(r, 0));
+                }
+
+                currentPlainText = replacedText;
+                progressFill.style.width = '90%';
+
+                // 生成高亮 HTML
+                let displayHtml = escHtml(replacedText);
+                if (doHighlight && replacedTerms.size > 0) {
+                    const hlTerms = [...replacedTerms]
+                        .map(t => escRegex(t))
+                        .sort((a, b) => b.length - a.length)
+                        .join('|');
+                    const hlFlags = caseSensitive ? 'g' : 'gi';
+                    try {
+                        const hlRe = new RegExp(`(${hlTerms})`, hlFlags);
+                        displayHtml = displayHtml.replace(hlRe, `<mark class="hl-replaced">$1</mark>`);
+                    } catch (_) {}
+                }
+
+                resultArea.innerHTML = displayHtml;
+
+                // 徽章
+                badgeReplaceCount.textContent = `🔄 共替换 ${totalHits} 处`;
+                badgeCharCount.textContent = `✅ 结果 ${replacedText.length} 字符`;
+                badgeRuleCount.textContent = `📋 ${rules.length} 条规则`;
+                badgeRow.style.display = 'flex';
+
+                progressFill.style.width = '100%';
+                setTimeout(() => {
+                    progressWrap.style.display = 'none';
+                    progressFill.style.width = '0';
+                }, 600);
+
+                downloadTxtBtn.disabled = false;
+                copyResultBtn.disabled = false;
+            });
+
+            function resetResult() {
+                resultArea.innerHTML = '<span class="result-placeholder">尚未执行替换，点击下方按钮开始</span>';
+                badgeRow.style.display = 'none';
+                currentPlainText = '';
+                downloadTxtBtn.disabled = true;
+                copyResultBtn.disabled = true;
+            }
+
+            // ── 复制 ─────────────────────────────────────────────────
+            copyResultBtn.addEventListener('click', async () => {
+                if (!currentPlainText) return;
+                try {
+                    await navigator.clipboard.writeText(currentPlainText);
+                    const orig = copyResultBtn.textContent;
+                    copyResultBtn.textContent = '✅ 已复制';
+                    setTimeout(() => copyResultBtn.textContent = orig, 1500);
+                } catch (_) {
+                    alert('复制失败，请手动选取');
+                }
+            });
+
+            // ── 下载 TXT ──────────────────────────────────────────────
+            downloadTxtBtn.addEventListener('click', () => {
+                if (!currentPlainText) return;
+                triggerDownload(new Blob([currentPlainText], { type: 'text/plain;charset=utf-8' }),
+                    `replaced_${Date.now()}.txt`);
+            });
+
+            // ── 文件导入（仅支持 TXT 和 HTML） ────────────────────────
+            function handleFile(file) {
+                const name = file.name.toLowerCase();
+                if (!name.endsWith('.txt') && !name.endsWith('.html') && !name.endsWith('.htm')) {
+                    alert('仅支持导入 TXT、HTML 文件');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    sourceTextarea.value = ev.target.result;
+                    updateStats();
+                    resetResult();
+                };
+                reader.onerror = () => alert('文件读取失败');
+                reader.readAsText(file, 'UTF-8');
+            }
+
+            fileInput.addEventListener('change', e => {
+                if (e.target.files.length) handleFile(e.target.files[0]);
+                fileInput.value = '';
+            });
+
+            fileDrop.addEventListener('dragover', e => { e.preventDefault();
+                fileDrop.classList.add('dragover'); });
+            fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
+            fileDrop.addEventListener('drop', e => {
+                e.preventDefault();
+                fileDrop.classList.remove('dragover');
+                if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+            });
+
+            // ── 工具函数 ─────────────────────────────────────────────
+            function triggerDownload(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            }
+
+            // ── 初始化 ───────────────────────────────────────────────
+            updateStats();
+            downloadTxtBtn.disabled = true;
+            copyResultBtn.disabled = true;
+
+        })();
+    </script>
+
+</body>
+</html>

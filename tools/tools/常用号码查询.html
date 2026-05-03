@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>常用号码查询</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ── 主内容 ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── 通用卡片 ── */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ── 统计数字区 ── */
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            flex: 1;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            padding: 12px 8px;
+            text-align: center;
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* 统计与分类之间的分隔 */
+        .stats-divider {
+            border: none;
+            border-top: 1px solid rgba(163, 177, 198, 0.3);
+            margin: 0 0 16px 0;
+        }
+
+        /* ── 搜索区域 ── */
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 44px 14px 42px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .search-input:focus {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light),
+                0 0 0 2px rgba(102, 126, 234, 0.15);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: none;
+            padding: 4px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .search-clear.visible {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-clear:active {
+            color: var(--accent-primary);
+        }
+
+        /* ── 手风琴分类 ── */
+        .categories-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .category-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+            overflow: hidden;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 16px;
+            cursor: pointer;
+            background: var(--bg-primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .category-header:active {
+            background: rgba(102, 126, 234, 0.06);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            color: var(--accent-primary);
+        }
+
+        .category-count {
+            background: var(--bg-primary);
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+        }
+
+        /* ── 内容折叠区（固定高度 + 内部滚动） ── */
+        .numbers-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.38s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: var(--bg-primary);
+        }
+
+        .category-item.expanded .numbers-container {
+            max-height: 480px;
+        }
+
+        .numbers-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 14px 16px;
+            border-top: 1px solid rgba(163, 177, 198, 0.25);
+            max-height: 420px;
+            overflow-y: auto;
+        }
+
+        /* 自定义滚动条 */
+        .numbers-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .numbers-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .numbers-grid::-webkit-scrollbar-thumb {
+            background: var(--shadow-dark);
+            border-radius: 4px;
+        }
+
+        /* ── 号码卡片 ── */
+        .number-card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .number-card:active {
+            transform: scale(0.98);
+            box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
+        }
+
+        .number-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .number-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .fav-badge {
+            font-size: 0.65rem;
+            color: var(--warning);
+        }
+
+        .number-desc {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+        }
+
+        .number-value {
+            font-size: 0.95rem;
+            font-weight: 800;
+            font-family: monospace;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .number-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .copy-btn,
+        .fav-btn {
+            background: var(--bg-primary);
+            border: none;
+            font-size: 0.72rem;
+            cursor: pointer;
+            padding: 7px 12px;
+            border-radius: 30px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            transition: var(--transition);
+            color: var(--accent-primary);
+            font-weight: 600;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .fav-btn {
+            color: var(--text-muted);
+            padding: 7px 10px;
+        }
+
+        .fav-btn.active {
+            color: var(--warning);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        }
+
+        .copy-btn:active,
+        .fav-btn:active {
+            transform: scale(0.92);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        }
+
+        /* ── 最近复制记录 ── */
+        .recent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .recent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            gap: 10px;
+        }
+
+        .recent-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .recent-number {
+            font-size: 0.88rem;
+            font-weight: 800;
+            font-family: monospace;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .recent-copy-btn {
+            background: var(--bg-primary);
+            border: none;
+            font-size: 0.68rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
+            color: var(--accent-primary);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .recent-copy-btn:active {
+            transform: scale(0.92);
+            box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light);
+        }
+
+        .recent-empty {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 14px 0;
+        }
+
+        /* ── 无结果 ── */
+        .no-result {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .reset-search-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 18px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: 30px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            cursor: pointer;
+        }
+
+        /* ── 操作提示 ── */
+        .action-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 14px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* ── 说明卡片 ── */
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .instr-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .instr-text strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* ── Toast ── */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(44, 62, 80, 0.92);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 550px) {
+            .card {
+                padding: 18px 16px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>常用号码查询</h1>
+        <p class="subtitle">紧急 · 政务 · 生活 · 交通 · 银行 · 一键复制</p>
+    </header>
+
+    <div class="main">
+
+        <!-- 🔍 搜索卡片（独立放置于最上方） -->
+        <div class="card">
+            <div class="card-label">🔍 搜索号码</div>
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input"
+                placeholder="搜索机构或号码，如：社保、110、95588" autocomplete="off">
+                <button class="search-clear" id="searchClear">✕</button>
+            </div>
+        </div>
+
+        <!-- 📊 数据概览 + 📂 分类浏览（合并为一个卡片） -->
+        <div class="card">
+            <div class="card-label">📊 号码总览</div>
+            <!-- 统计面板 -->
+            <div class="stats-grid" id="statsPanel"></div>
+            <hr class="stats-divider">
+            <!-- 分类手风琴列表 -->
+            <div class="categories-stack" id="categoriesContainer"></div>
+            <div class="action-sub">点击卡片可直接复制号码 · ⭐ 收藏常用号码快速访问</div>
+        </div>
+
+        <!-- 最近复制 -->
+        <div class="card">
+            <div class="card-label">🕐 最近复制</div>
+            <div id="recentList" class="recent-list"></div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">🔍</span>
+                    <div class="instr-text"><strong>搜索过滤</strong>：输入关键词（号码或名称）实时筛选全部号码，搜索时自动展开所有匹配分类</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📂</span>
+                    <div class="instr-text"><strong>互斥展开</strong>：点击分类标题展开该分类，同时自动收起其他分类，分类内容固定高度可滚动查看</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">⭐</span>
+                    <div class="instr-text"><strong>收藏号码</strong>：点击 ⭐ 按钮收藏常用号码，收藏分类会置顶显示，方便快速查找</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📋</span>
+                    <div class="instr-text"><strong>复制号码</strong>：点击"复制"按钮或直接点击卡片，号码存入剪贴板，最近5条复制记录自动保存</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔒</span>
+                    <div class="instr-text"><strong>数据安全</strong>：所有号码与收藏记录存储在本地，不联网传输，保护您的隐私</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">⚠️</span>
+                    <div class="instr-text"><strong>以官方为准</strong>：号码源自公开信息，如有变更请以相关机构最新公布为准</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🚨</span>
+                    <div class="instr-text"><strong>谨防诈骗</strong>：任何自称客服要求转账、索要验证码或屏幕共享的，均为诈骗，请立即挂断并报警（110）</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">✅</span>
+                    <div class="instr-text"><strong>核实号码</strong>：涉及资金、个人敏感信息前，建议通过官网、官方App等渠道二次核实号码真伪</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📢</span>
+                    <div class="instr-text"><strong>更新提醒</strong>：本工具不自动更新，建议定期对照官方渠道确认关键号码是否变化</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        // ── 号码数据库 ─────────────────────────────────────────────
+        const categoriesData = [
+            {
+                name: "🚨 紧急救援",
+                id: "emergency",
+                numbers: [
+                    { name: "报警电话", number: "110", desc: "刑事、治安案件报警及紧急危难求助" },
+                    { name: "火警电话", number: "119", desc: "火灾、化学品泄漏、建筑坍塌等救援" },
+                    { name: "急救中心", number: "120", desc: "突发疾病或重伤急救" },
+                    { name: "交通事故报警", number: "122", desc: "交通事故报案，需说明地点、伤亡情况" },
+                    { name: "短信报警", number: "12110", desc: "听障人士或特殊情况下使用" },
+                    { name: "水上救援", number: "12395", desc: "全国统一水上遇险求救" }
+                ]
+            },
+            {
+                name: "🏛️ 政务服务",
+                id: "government",
+                numbers: [
+                    { name: "政务服务便民热线", number: "12345", desc: "政府综合服务，咨询、投诉、非紧急求助" },
+                    { name: "市场监督投诉", number: "12315", desc: "消费者权益保护，商品服务纠纷" },
+                    { name: "人力资源与社会保障", number: "12333", desc: "社保、劳动保障、民工维权咨询" },
+                    { name: "医疗保障服务", number: "12393", desc: "医保政策咨询" },
+                    { name: "环保投诉举报", number: "12369", desc: "环境污染投诉" },
+                    { name: "税务服务热线", number: "12366", desc: "纳税咨询、投诉" },
+                    { name: "公共卫生服务", number: "12320", desc: "卫生健康、疫情防控、医疗纠纷咨询" },
+                    { name: "法律援助", number: "12348", desc: "免费法律咨询" },
+                    { name: "公积金查询", number: "12329", desc: "住房公积金咨询" },
+                    { name: "拖欠工资举报", number: "12333", desc: "同人社热线，劳动保障维权" },
+                    { name: "互联网违法举报", number: "12377", desc: "网络违法信息举报" },
+                    { name: "烟草市场监管", number: "12313", desc: "烟草专卖投诉" }
+                ]
+            },
+            {
+                name: "✈️ 交通与旅行",
+                id: "travel",
+                numbers: [
+                    { name: "铁路客服", number: "12306", desc: "火车票查询、预订、客服" },
+                    { name: "高速公路报警救援", number: "12122", desc: "高速公路事故报警" },
+                    { name: "国航客服", number: "95583", desc: "中国国际航空（官方热线）" },
+                    { name: "东航客服", number: "95530", desc: "中国东方航空" },
+                    { name: "携程旅行网", number: "400-820-6666", desc: "机票、酒店、旅行预订" }
+                ]
+            },
+            {
+                name: "🏦 银行与保险",
+                id: "bank_insurance",
+                numbers: [
+                    { name: "工商银行", number: "95588", desc: "综合客服（信用卡转人工：95588→9→2→2）" },
+                    { name: "建设银行", number: "95533", desc: "综合客服（信用卡：400-820-0588）" },
+                    { name: "农业银行", number: "95599", desc: "综合客服（信用卡：400-669-5599）" },
+                    { name: "中国银行", number: "95566", desc: "综合客服（信用卡：400-669-5566）" },
+                    { name: "交通银行", number: "95559", desc: "综合客服（信用卡：400-800-9888）" },
+                    { name: "招商银行", number: "95555", desc: "综合客服（信用卡：400-820-5555）" },
+                    { name: "浦发银行", number: "95528", desc: "综合客服（信用卡：400-820-8788）" },
+                    { name: "民生银行", number: "95568", desc: "综合客服（信用卡：400-669-5568）" },
+                    { name: "中信银行", number: "95558", desc: "综合客服（信用卡转人工：40088-95558→2#2）" },
+                    { name: "国家开发银行", number: "95593", desc: "政策性银行客服" },
+                    { name: "中国进出口银行", number: "010-83579988", desc: "政策性银行（暂无全国短号）" },
+                    { name: "中国人保", number: "95518", desc: "财产保险" },
+                    { name: "中国人寿", number: "95519", desc: "寿险、财险" },
+                    { name: "中国平安", number: "95511", desc: "寿险、产险、综合金融" },
+                    { name: "太平洋保险", number: "95500", desc: "保险服务" },
+                    { name: "美亚保险", number: "400-820-8858", desc: "旅行保险投诉及服务" }
+                ]
+            },
+            {
+                name: "📦 快递与物流",
+                id: "express",
+                numbers: [
+                    { name: "顺丰速运", number: "95338", desc: "中国大陆客服" },
+                    { name: "邮政EMS", number: "11183", desc: "邮件查询、上门揽收" },
+                    { name: "邮政服务", number: "11185", desc: "邮政综合服务" },
+                    { name: "中通快递", number: "95311", desc: "快递查询与投诉" },
+                    { name: "圆通速递", number: "95554", desc: "快递服务" },
+                    { name: "京东物流", number: "950616", desc: "京东快递客服" }
+                ]
+            },
+            {
+                name: "📱 通讯服务",
+                id: "telecom",
+                numbers: [
+                    { name: "中国移动", number: "10086", desc: "移动业务咨询与办理" },
+                    { name: "中国电信", number: "10000", desc: "电信业务咨询与办理" },
+                    { name: "中国联通", number: "10010", desc: "联通业务咨询与办理" },
+                    { name: "中国广电", number: "10099", desc: "广电宽带、电视客服" }
+                ]
+            },
+            {
+                name: "⚙️ 其他常用",
+                id: "other",
+                numbers: [
+                    { name: "供电服务", number: "95598", desc: "国家电网/南方电网停电报修、电费查询" },
+                    { name: "天气预报", number: "12121", desc: "气象信息查询" },
+                    { name: "号码查询", number: "114", desc: "电话号码查询" },
+                    { name: "交通安全服务", number: "12123", desc: "交管业务咨询（驾照、车辆）" },
+                    { name: "能源监管热线", number: "12398", desc: "电力、天然气投诉" },
+                    { name: "联想客服", number: "800-810-8888", desc: "联想产品售后" }
+                ]
+            }
+        ];
+
+        // ── 状态 ────────────────────────────────────────────────────
+        let currentFilterText = '';
+        // 默认收起所有分类，不再自动展开第一个
+        let currentExpandedId = null;
+        let favorites = JSON.parse(localStorage.getItem('numFavorites') || '[]');
+        let recentCopies = JSON.parse(localStorage.getItem('numRecent') || '[]');
+
+        // ── 工具函数 ─────────────────────────────────────────────────
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, m =>
+                ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+        }
+
+        async function copyNumber(number, name) {
+            try {
+                await navigator.clipboard.writeText(number);
+                showToast('✅ 已复制：' + number);
+                addRecent(name, number);
+            } catch {
+                showToast('❌ 复制失败，请手动复制');
+            }
+        }
+
+        function isFav(number) {
+            return favorites.some(f => f.number === number);
+        }
+
+        function toggleFav(name, number, desc) {
+            if (isFav(number)) {
+                favorites = favorites.filter(f => f.number !== number);
+                showToast('💔 已取消收藏');
+            } else {
+                favorites.unshift({ name, number, desc });
+                showToast('⭐ 已收藏：' + name);
+            }
+            localStorage.setItem('numFavorites', JSON.stringify(favorites));
+            updateStats();
+            renderCategories();
+        }
+
+        function addRecent(name, number) {
+            recentCopies = recentCopies.filter(r => r.number !== number);
+            recentCopies.unshift({ name, number });
+            if (recentCopies.length > 5) recentCopies = recentCopies.slice(0, 5);
+            localStorage.setItem('numRecent', JSON.stringify(recentCopies));
+            renderRecent();
+        }
+
+        // ── 统计区 ──────────────────────────────────────────────────
+        function updateStats() {
+            const totalNumbers = categoriesData.reduce((s, c) => s + c.numbers.length, 0);
+            document.getElementById('statsPanel').innerHTML = `
+            <div class="stat-item">
+                <div class="stat-number">${totalNumbers}</div>
+                <div class="stat-label">📞 号码总数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${categoriesData.length}</div>
+                <div class="stat-label">📂 分类数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${favorites.length}</div>
+                <div class="stat-label">⭐ 已收藏</div>
+            </div>`;
+        }
+
+        // ── 搜索 ────────────────────────────────────────────────────
+        function updateSearchClear() {
+            document.getElementById('searchClear').classList.toggle('visible', currentFilterText.length > 0);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', e => {
+            currentFilterText = e.target.value;
+            updateSearchClear();
+            if (currentFilterText) currentExpandedId = null;
+            renderCategories();
+        });
+
+        document.getElementById('searchClear').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            currentFilterText = '';
+            // 清空搜索后也保持默认收起
+            currentExpandedId = null;
+            updateSearchClear();
+            renderCategories();
+        });
+
+        // ── 手风琴渲染 ───────────────────────────────────────────────
+        function buildNumberCard(num) {
+            const favActive = isFav(num.number) ? 'active' : '';
+            return `
+            <div class="number-card" data-number="${escapeHtml(num.number)}" data-name="${escapeHtml(num.name)}">
+                <div class="number-info">
+                    <div class="number-name">
+                        ${escapeHtml(num.name)}
+                        ${isFav(num.number) ? '<span class="fav-badge">⭐</span>' : ''}
+                    </div>
+                    <div class="number-desc">${escapeHtml(num.desc || '')}</div>
+                    <div class="number-value">${escapeHtml(num.number)}</div>
+                </div>
+                <div class="number-actions">
+                    <button class="fav-btn ${favActive}" data-number="${escapeHtml(num.number)}"
+                            data-name="${escapeHtml(num.name)}" data-desc="${escapeHtml(num.desc || '')}">
+                        ${isFav(num.number) ? '★' : '☆'}
+                    </button>
+                    <button class="copy-btn" data-number="${escapeHtml(num.number)}" data-name="${escapeHtml(num.name)}">📋 复制</button>
+                </div>
+            </div>`;
+        }
+
+        function renderCategories() {
+            const filter = currentFilterText.trim().toLowerCase();
+            const container = document.getElementById('categoriesContainer');
+
+            // 构建要渲染的分类列表（收藏置顶）
+            let allCats = [];
+
+            if (favorites.length && !filter) {
+                allCats.push({ id: '__fav__', name: '⭐ 我的收藏', numbers: favorites, actualCount: favorites
+                        .length });
+            }
+            categoriesData.forEach(cat => {
+                let nums = cat.numbers;
+                if (filter) {
+                    nums = cat.numbers.filter(n =>
+                        n.name.toLowerCase().includes(filter) ||
+                        n.number.includes(filter) ||
+                        (n.desc && n.desc.toLowerCase().includes(filter))
+                    );
+                }
+                if (nums.length) allCats.push({ ...cat, numbers: nums, actualCount: cat.numbers.length });
+            });
+
+            if (!allCats.length) {
+                container.innerHTML = `
+                <div class="no-result">
+                    😢 没有找到匹配的号码<br>
+                    <button class="reset-search-btn" id="resetSearchBtn">清空搜索</button>
+                </div>`;
+                document.getElementById('resetSearchBtn')?.addEventListener('click', () => {
+                    document.getElementById('searchInput').value = '';
+                    currentFilterText = '';
+                    currentExpandedId = null;
+                    updateSearchClear();
+                    renderCategories();
+                });
+                return;
+            }
+
+            let activeId = filter ? null : currentExpandedId;
+            // 仅在 activeId 不为 null 且对应分类不存在时才回退到第一个
+            if (!filter && activeId !== null) {
+                const activeExists = allCats.some(c => c.id === activeId);
+                if (!activeExists) {
+                    activeId = allCats[0]?.id;
+                    currentExpandedId = activeId;
+                }
+            }
+
+            let html = '';
+            for (const cat of allCats) {
+                const expanded = filter ? true : (activeId === cat.id);
+                const countLabel = filter ?
+                    `${cat.numbers.length}/${cat.actualCount}` :
+                    cat.numbers.length;
+                html += `
+                <div class="category-item ${expanded ? 'expanded' : ''}" data-category-id="${cat.id}">
+                    <div class="category-header">
+                        <div class="category-title">
+                            <span class="toggle-icon" style="transform:${expanded ? 'rotate(180deg)' : 'rotate(0deg)'}">▼</span>
+                            <span>${escapeHtml(cat.name)}</span>
+                        </div>
+                        <span class="category-count">${countLabel}</span>
+                    </div>
+                    <div class="numbers-container">
+                        <div class="numbers-grid">
+                            ${cat.numbers.map(n => buildNumberCard(n)).join('')}
+                        </div>
+                    </div>
+                </div>`;
+            }
+            container.innerHTML = html;
+
+            // 手风琴互斥点击
+            container.querySelectorAll('.category-item').forEach(item => {
+                item.querySelector('.category-header')?.addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (filter) return;
+                    const cid = item.dataset.categoryId;
+                    const isExpanded = item.classList.contains('expanded');
+                    container.querySelectorAll('.category-item').forEach(other => {
+                        other.classList.remove('expanded');
+                        const arr = other.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(0deg)';
+                    });
+                    if (!isExpanded) {
+                        item.classList.add('expanded');
+                        const arr = item.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(180deg)';
+                        currentExpandedId = cid;
+                    } else {
+                        currentExpandedId = null;
+                    }
+                });
+            });
+
+            // 复制按钮
+            container.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    copyNumber(btn.dataset.number, btn.dataset.name);
+                });
+            });
+
+            // 点卡片整体也复制
+            container.querySelectorAll('.number-card').forEach(card => {
+                card.addEventListener('click', e => {
+                    if (e.target.classList.contains('copy-btn') || e.target.classList.contains(
+                            'fav-btn')) return;
+                    copyNumber(card.dataset.number, card.dataset.name);
+                });
+            });
+
+            // 收藏按钮
+            container.querySelectorAll('.fav-btn').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    toggleFav(btn.dataset.name, btn.dataset.number, btn.dataset.desc);
+                });
+            });
+        }
+
+        // ── 最近复制渲染 ────────────────────────────────────────────
+        function renderRecent() {
+            const el = document.getElementById('recentList');
+            if (!recentCopies.length) {
+                el.innerHTML = '<div class="recent-empty">暂无复制记录</div>';
+                return;
+            }
+            el.innerHTML = recentCopies.map(r => `
+            <div class="recent-item">
+                <div>
+                    <div class="recent-name">${escapeHtml(r.name)}</div>
+                    <div class="recent-number">${escapeHtml(r.number)}</div>
+                </div>
+                <button class="recent-copy-btn" data-number="${escapeHtml(r.number)}" data-name="${escapeHtml(r.name)}">📋 复制</button>
+            </div>`).join('');
+            el.querySelectorAll('.recent-copy-btn').forEach(btn => {
+                btn.addEventListener('click', () => copyNumber(btn.dataset.number, btn.dataset.name));
+            });
+        }
+
+        // ── 初始化 ──────────────────────────────────────────────────
+        updateStats();
+        renderCategories();
+        renderRecent();
+    </script>
+</body>
+</html>

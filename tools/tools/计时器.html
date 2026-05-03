@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>倒计时 · 番茄钟</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* 番茄钟阶段颜色 */
+        --pomodoro-work:       linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --pomodoro-short:      linear-gradient(135deg, #4ecdc4 0%, #26a69a 100%);
+        --pomodoro-long:       linear-gradient(135deg, #f7b731 0%, #f0932b 100%);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent; /* 全局禁用点击高亮 */
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 模式标签切换 ── */
+      .mode-tabs {
+        display: flex;
+        gap: 8px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+        padding: 6px;
+      }
+
+      .mode-tab {
+        flex: 1;
+        padding: 10px 6px;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      .mode-tab.active {
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        color: var(--accent-primary);
+      }
+
+      /* ── 环形进度表盘 ── */
+      .clock-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 28px 20px 20px;
+      }
+
+      .ring-container {
+        position: relative;
+        width: 220px;
+        height: 220px;
+        margin-bottom: 24px;
+      }
+
+      .ring-bg {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+      }
+
+      .ring-inner {
+        position: absolute;
+        inset: 18px;
+        border-radius: 50%;
+        background: var(--bg-primary);
+        box-shadow: inset 6px 6px 14px var(--shadow-dark), inset -6px -6px 14px var(--shadow-light);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        z-index: 2;
+      }
+
+      .ring-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+        z-index: 1;
+      }
+
+      .ring-track {
+        fill: none;
+        stroke: var(--shadow-dark);
+        stroke-width: 8;
+        opacity: 0.3;
+      }
+
+      .ring-progress {
+        fill: none;
+        stroke: url(#ringGrad);
+        stroke-width: 8;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 1s linear;
+      }
+
+      .time-display {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        letter-spacing: -1px;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+      }
+
+      .phase-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      /* 脉冲动画（运行中） */
+      .ring-inner.running {
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { box-shadow: inset 6px 6px 14px var(--shadow-dark), inset -6px -6px 14px var(--shadow-light); }
+        50%       { box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light),
+                                0 0 0 3px rgba(102,126,234,0.12); }
+      }
+
+      /* ── 控制按钮 ── */
+      .ctrl-row {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .ctrl-btn {
+        width: 58px;
+        height: 58px;
+        border: none;
+        border-radius: 50%;
+        background: var(--bg-primary);
+        box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+        cursor: pointer;
+        font-size: 1.3rem;
+        color: var(--text-secondary);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .ctrl-btn:active {
+        box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+        transform: scale(0.95);
+      }
+
+      .ctrl-btn.primary {
+        width: 70px;
+        height: 70px;
+        background: var(--accent-gradient);
+        box-shadow: 6px 6px 14px rgba(102,126,234,0.4), -4px -4px 10px var(--shadow-light);
+        color: #fff;
+        font-size: 1.5rem;
+      }
+
+      .ctrl-btn.primary:active {
+        box-shadow: inset 3px 3px 8px rgba(0,0,0,0.2);
+      }
+
+      /* ── 番茄钟阶段指示 ── */
+      .phase-dots {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 18px;
+      }
+
+      .phase-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--bg-primary);
+        box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+        transition: var(--transition);
+      }
+
+      .phase-dot.done {
+        background: var(--accent-gradient);
+        box-shadow: 0 0 0 2px rgba(102,126,234,0.2);
+      }
+
+      .phase-dot.current {
+        background: var(--accent-gradient);
+        box-shadow: 0 0 0 3px rgba(102,126,234,0.25);
+        transform: scale(1.2);
+      }
+
+      /* ── 番茄钟阶段卡片 ── */
+      .pomodoro-phases {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+      }
+
+      .phase-card {
+        padding: 14px 10px;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        border: 2px solid transparent;
+      }
+
+      .phase-card.active {
+        box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+      }
+
+      .phase-card.work.active   { border-color: rgba(102,126,234,0.4); }
+      .phase-card.short.active  { border-color: rgba(78,205,196,0.4); }
+      .phase-card.long.active   { border-color: rgba(247,183,49,0.4); }
+
+      .phase-card-icon { font-size: 1.3rem; margin-bottom: 6px; }
+
+      .phase-card-name {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 3px;
+      }
+
+      .phase-card-time {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      /* ── 自定义时长卡片 ── */
+      .time-pickers {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+      }
+
+      .time-picker {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .time-picker-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .picker-controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .picker-btn {
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 50%;
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        cursor: pointer;
+        font-size: 1rem;
+        color: var(--text-secondary);
+        font-weight: 700;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+
+      .picker-btn:active {
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        transform: scale(0.95);
+      }
+
+      .picker-val {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        min-width: 48px;
+        text-align: center;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        padding: 8px 4px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ── 番茄钟循环设置 ── */
+      .count-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .count-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        flex: 1;
+      }
+
+      .count-ctrl {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .count-btn {
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 50%;
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+
+      .count-btn:active {
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .count-display {
+        font-size: 1.4rem;
+        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        min-width: 28px;
+        text-align: center;
+      }
+
+      /* ── 统计卡片 ── */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 14px 8px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+      }
+
+      .stat-val {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+      }
+
+      .stat-name {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.3px;
+        text-align: center;
+      }
+
+      /* ── 重置统计按钮 ── */
+      .reset-stat-btn {
+        width: 100%;
+        margin-top: 12px;
+        padding: 11px;
+        background: var(--bg-primary);
+        color: var(--danger);
+        border: none;
+        border-radius: var(--border-radius-xs);
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .reset-stat-btn:active {
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      /* ── 使用说明 ── */
+      .guide-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .guide-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .guide-icon {
+        font-size: 1rem;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .guide-body {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .guide-title {
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      /* ── Toast ── */
+      .toast {
+        position: fixed;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        background: #2c3e50;
+        color: #fff;
+        padding: 11px 22px;
+        border-radius: 30px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        box-shadow: 0 6px 24px rgba(44,62,80,0.3);
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+        z-index: 999;
+        opacity: 0;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+
+      /* ── 完成动画遮罩 ── */
+      .done-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(224,229,236,0.85);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+      }
+
+      .done-overlay.show {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .done-emoji {
+        font-size: 4rem;
+        margin-bottom: 16px;
+        animation: donePopIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+      }
+
+      @keyframes donePopIn {
+        from { transform: scale(0); }
+        to   { transform: scale(1); }
+      }
+
+      .done-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+      }
+
+      .done-sub {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 28px;
+      }
+
+      .done-btn {
+        padding: 14px 36px;
+        background: var(--accent-gradient);
+        color: #fff;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.4);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .done-btn:active { transform: scale(0.97); }
+    </style>
+  </head>
+  <body>
+
+    <!-- 完成遮罩 -->
+    <div class="done-overlay" id="doneOverlay">
+      <div class="done-emoji" id="doneEmoji">🎉</div>
+      <div class="done-title" id="doneTitle">专注完成！</div>
+      <div class="done-sub" id="doneSub">休息一下，你做得很棒</div>
+      <button class="done-btn" onclick="dismissDone()">继续</button>
+    </div>
+
+    <header>
+      <h1>倒计时 · 番茄钟</h1>
+      <p class="subtitle">专注工作，高效休息</p>
+    </header>
+
+    <div class="main">
+
+      <!-- ── 模式切换 ── -->
+      <div class="card">
+        <div class="mode-tabs">
+          <button class="mode-tab active" data-mode="pomodoro" onclick="switchMode('pomodoro', this)">
+            🍅 番茄钟
+          </button>
+          <button class="mode-tab" data-mode="countdown" onclick="switchMode('countdown', this)">
+            ⏳ 自定义
+          </button>
+        </div>
+      </div>
+
+      <!-- ── 表盘卡片 ── -->
+      <div class="card clock-wrap">
+
+        <!-- SVG 环 -->
+        <div class="ring-container">
+          <div class="ring-bg"></div>
+          <svg class="ring-svg" viewBox="0 0 220 220">
+            <defs>
+              <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%"   stop-color="#667eea"/>
+                <stop offset="100%" stop-color="#764ba2"/>
+              </linearGradient>
+            </defs>
+            <circle class="ring-track"    cx="110" cy="110" r="95"/>
+            <circle class="ring-progress" cx="110" cy="110" r="95"
+              id="ringProgress"
+              stroke-dasharray="597"
+              stroke-dashoffset="0"/>
+          </svg>
+          <div class="ring-inner" id="ringInner">
+            <div class="time-display" id="timeDisplay">25:00</div>
+            <div class="phase-label" id="phaseLabel">专注时间</div>
+          </div>
+        </div>
+
+        <!-- 控制按钮 -->
+        <div class="ctrl-row">
+          <button class="ctrl-btn" onclick="resetTimer()" title="重置">↺</button>
+          <button class="ctrl-btn primary" id="playBtn" onclick="toggleTimer()">▶</button>
+          <button class="ctrl-btn" onclick="skipPhase()" title="跳过">⏭</button>
+        </div>
+
+        <!-- 番茄钟阶段点 -->
+        <div class="phase-dots" id="phaseDots" style="display:none"></div>
+      </div>
+
+      <!-- ── 番茄钟配置 ── -->
+      <div id="panel-pomodoro">
+
+        <!-- 阶段选择 -->
+        <div class="card">
+          <div class="card-label">当前阶段</div>
+          <div class="pomodoro-phases">
+            <div class="phase-card work active" onclick="selectPhase('work', this)">
+              <div class="phase-card-icon">🍅</div>
+              <div class="phase-card-name">专注</div>
+              <div class="phase-card-time" id="phase-time-work">25 分钟</div>
+            </div>
+            <div class="phase-card short" onclick="selectPhase('short', this)">
+              <div class="phase-card-icon">☕</div>
+              <div class="phase-card-name">短休息</div>
+              <div class="phase-card-time" id="phase-time-short">5 分钟</div>
+            </div>
+            <div class="phase-card long" onclick="selectPhase('long', this)">
+              <div class="phase-card-icon">🌿</div>
+              <div class="phase-card-name">长休息</div>
+              <div class="phase-card-time" id="phase-time-long">15 分钟</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 时长调整 -->
+        <div class="card">
+          <div class="card-label">时长设置（分钟）</div>
+          <div class="time-pickers">
+            <div class="time-picker">
+              <span class="time-picker-label">🍅 专注</span>
+              <div class="picker-controls">
+                <button class="picker-btn" onclick="adjustPomodoro('work', 1)">＋</button>
+                <div class="picker-val" id="pv-work">25</div>
+                <button class="picker-btn" onclick="adjustPomodoro('work', -1)">－</button>
+              </div>
+            </div>
+            <div class="time-picker">
+              <span class="time-picker-label">☕ 短休</span>
+              <div class="picker-controls">
+                <button class="picker-btn" onclick="adjustPomodoro('short', 1)">＋</button>
+                <div class="picker-val" id="pv-short">5</div>
+                <button class="picker-btn" onclick="adjustPomodoro('short', -1)">－</button>
+              </div>
+            </div>
+            <div class="time-picker">
+              <span class="time-picker-label">🌿 长休</span>
+              <div class="picker-controls">
+                <button class="picker-btn" onclick="adjustPomodoro('long', 1)">＋</button>
+                <div class="picker-val" id="pv-long">15</div>
+                <button class="picker-btn" onclick="adjustPomodoro('long', -1)">－</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 循环次数 -->
+        <div class="card">
+          <div class="card-label">循环设置</div>
+          <div class="count-row">
+            <span class="count-label">几次专注后进入长休息</span>
+            <div class="count-ctrl">
+              <button class="count-btn" onclick="adjustCycles(-1)">−</button>
+              <span class="count-display" id="cycleDisplay">4</span>
+              <button class="count-btn" onclick="adjustCycles(1)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 自定义倒计时面板 ── -->
+      <div id="panel-countdown" style="display:none">
+        <div class="card">
+          <div class="card-label">设置时长</div>
+          <div class="time-pickers">
+            <div class="time-picker">
+              <span class="time-picker-label">小时</span>
+              <div class="picker-controls">
+                <button class="picker-btn" onclick="adjustCustom('h', 1)">＋</button>
+                <div class="picker-val" id="cv-h">0</div>
+                <button class="picker-btn" onclick="adjustCustom('h', -1)">－</button>
+              </div>
+            </div>
+            <div class="time-picker">
+              <span class="time-picker-label">分钟</span>
+              <div class="picker-controls">
+                <button class="picker-btn" onclick="adjustCustom('m', 1)">＋</button>
+                <div class="picker-val" id="cv-m">5</div>
+                <button class="picker-btn" onclick="adjustCustom('m', -1)">－</button>
+              </div>
+            </div>
+            <div class="time-picker">
+              <span class="time-picker-label">秒</span>
+              <div class="picker-controls">
+                <button class="picker-btn" onclick="adjustCustom('s', 1)">＋</button>
+                <div class="picker-val" id="cv-s">0</div>
+                <button class="picker-btn" onclick="adjustCustom('s', -1)">－</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 快速预设 -->
+        <div class="card">
+          <div class="card-label">快速预设</div>
+          <div class="pomodoro-phases">
+            <div class="phase-card" onclick="setCustomPreset(5,0)">
+              <div class="phase-card-icon">⚡</div>
+              <div class="phase-card-name">快速专注</div>
+              <div class="phase-card-time">5 分钟</div>
+            </div>
+            <div class="phase-card" onclick="setCustomPreset(10,0)">
+              <div class="phase-card-icon">🎯</div>
+              <div class="phase-card-name">深度专注</div>
+              <div class="phase-card-time">10 分钟</div>
+            </div>
+            <div class="phase-card" onclick="setCustomPreset(30,0)">
+              <div class="phase-card-icon">🔥</div>
+              <div class="phase-card-name">高效工作</div>
+              <div class="phase-card-time">30 分钟</div>
+            </div>
+            <div class="phase-card" onclick="setCustomPreset(45,0)">
+              <div class="phase-card-icon">💪</div>
+              <div class="phase-card-name">持续专注</div>
+              <div class="phase-card-time">45 分钟</div>
+            </div>
+            <div class="phase-card" onclick="setCustomPreset(60,0)">
+              <div class="phase-card-icon">🏆</div>
+              <div class="phase-card-name">全力冲刺</div>
+              <div class="phase-card-time">60 分钟</div>
+            </div>
+            <div class="phase-card" onclick="setCustomPreset(90,0)">
+              <div class="phase-card-icon">🌊</div>
+              <div class="phase-card-name">超长专注</div>
+              <div class="phase-card-time">90 分钟</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 今日统计 ── -->
+      <div class="card">
+        <div class="card-label">今日统计</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-val" id="stat-pomodoros">0</div>
+            <div class="stat-name">🍅 番茄数</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val" id="stat-focus">0</div>
+            <div class="stat-name">⏱ 专注分钟</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val" id="stat-sessions">0</div>
+            <div class="stat-name">✅ 完成次数</div>
+          </div>
+        </div>
+        <button class="reset-stat-btn" onclick="resetStats()">🗑 重置今日数据</button>
+      </div>
+
+      <!-- ── 使用说明 ── -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="guide-list">
+          <div class="guide-item">
+            <span class="guide-icon">🍅</span>
+            <div class="guide-body">
+              <span class="guide-title">番茄钟模式</span>：按「专注 → 短休息」循环，每 4 个番茄后进入长休息
+            </div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">⏳</span>
+            <div class="guide-body">
+              <span class="guide-title">自定义模式</span>：手动设置时/分/秒，或点击快速预设一键填入
+            </div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">⚙️</span>
+            <div class="guide-body">
+              <span class="guide-title">时长调整</span>：点击 ＋ / － 修改各阶段时长，重置后生效
+            </div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">⏭</span>
+            <div class="guide-body">
+              <span class="guide-title">跳过阶段</span>：点击跳过按钮可直接进入下一阶段
+            </div>
+          </div>
+          <div class="guide-item">
+            <span class="guide-icon">🔔</span>
+            <div class="guide-body">
+              <span class="guide-title">结束提示</span>：倒计时归零后弹出完成提示，并播放提示音
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // ─────────────────────────────────────────
+      //  常量
+      // ─────────────────────────────────────────
+      const CIRCUMFERENCE = 2 * Math.PI * 95  // ≈ 597
+
+      // ─────────────────────────────────────────
+      //  状态
+      // ─────────────────────────────────────────
+      let mode        = 'pomodoro'   // 'pomodoro' | 'countdown'
+      let running     = false
+      let intervalId  = null
+
+      // 番茄钟
+      let pomoCfg     = { work: 25, short: 5, long: 15 }
+      let pomoCycles  = 4
+      let currentPhase = 'work'     // 'work' | 'short' | 'long'
+      let completedWork = 0         // 本轮已完成的专注数
+
+      // 通用计时
+      let totalSeconds  = 0
+      let remainSeconds = 0
+
+      // 今日统计（localStorage 持久化）
+      let stats = loadStats()
+
+      // ─────────────────────────────────────────
+      //  模式切换
+      // ─────────────────────────────────────────
+      function switchMode(m, btn) {
+        pauseTimer()
+        mode = m
+        document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'))
+        btn.classList.add('active')
+        document.getElementById('panel-pomodoro').style.display  = m === 'pomodoro'  ? '' : 'none'
+        document.getElementById('panel-countdown').style.display = m === 'countdown' ? '' : 'none'
+        document.getElementById('phaseDots').style.display       = m === 'pomodoro'  ? 'flex' : 'none'
+        if (m === 'pomodoro')  initPomodoro()
+        else                   initCountdown()
+      }
+
+      // ─────────────────────────────────────────
+      //  番茄钟初始化 / 阶段管理
+      // ─────────────────────────────────────────
+      function initPomodoro() {
+        currentPhase  = 'work'
+        completedWork = 0
+        updatePhaseCards()
+        loadPhase('work')
+        renderPhaseDots()
+      }
+
+      function loadPhase(phase) {
+        currentPhase  = phase
+        const mins    = pomoCfg[phase]
+        totalSeconds  = mins * 60
+        remainSeconds = totalSeconds
+        updatePhaseCards()
+        renderRing(1)
+        renderTime()
+        renderPhaseLabel()
+        updateRingGradient()
+        document.getElementById('ringInner').classList.remove('running')
+        document.getElementById('playBtn').textContent = '▶'
+        running = false
+      }
+
+      function updatePhaseCards() {
+        document.querySelectorAll('.phase-card').forEach(el => el.classList.remove('active'))
+        const active = document.querySelector(`.phase-card.${currentPhase}`)
+        if (active) active.classList.add('active')
+      }
+
+      function selectPhase(phase, el) {
+        if (running) { showToast('⚠️ 请先暂停再切换阶段'); return }
+        loadPhase(phase)
+      }
+
+      function renderPhaseDots() {
+        const wrap = document.getElementById('phaseDots')
+        wrap.innerHTML = ''
+        for (let i = 0; i < pomoCycles; i++) {
+          const dot = document.createElement('div')
+          dot.className = 'phase-dot'
+          if (i < completedWork) dot.classList.add('done')
+          if (i === completedWork && currentPhase === 'work') dot.classList.add('current')
+          wrap.appendChild(dot)
+        }
+      }
+
+      // 番茄钟阶段自动推进
+      function advancePomodoro() {
+        if (currentPhase === 'work') {
+          completedWork++
+          stats.pomodoros++
+          stats.focusMinutes += pomoCfg.work
+          saveStats(); renderStats()
+          if (completedWork >= pomoCycles) {
+            completedWork = 0
+            showDone('🌿', '长休息时间！', `完成 ${pomoCycles} 个番茄，好好休息一下`)
+            setTimeout(() => loadPhase('long'), 400)
+          } else {
+            showDone('☕', '短休息时间！', '已完成 ' + completedWork + ' 个番茄，稍作休息')
+            setTimeout(() => loadPhase('short'), 400)
+          }
+        } else {
+          showDone('🍅', '开始专注！', '休息结束，继续加油')
+          setTimeout(() => loadPhase('work'), 400)
+        }
+        renderPhaseDots()
+      }
+
+      // ─────────────────────────────────────────
+      //  自定义倒计时
+      // ─────────────────────────────────────────
+      let customH = 0, customM = 5, customS = 0
+
+      function initCountdown() {
+        totalSeconds  = customH * 3600 + customM * 60 + customS
+        remainSeconds = totalSeconds
+        renderRing(1)
+        renderTime()
+        document.getElementById('phaseLabel').textContent = '自定义倒计时'
+        document.getElementById('ringInner').classList.remove('running')
+        document.getElementById('playBtn').textContent = '▶'
+        running = false
+        resetRingGradient()
+      }
+
+      function adjustCustom(unit, delta) {
+        if (running) return
+        if (unit === 'h') customH = Math.max(0, Math.min(23, customH + delta))
+        if (unit === 'm') customM = Math.max(0, Math.min(59, customM + delta))
+        if (unit === 's') customS = Math.max(0, Math.min(59, customS + delta))
+        document.getElementById('cv-h').textContent = pad(customH)
+        document.getElementById('cv-m').textContent = pad(customM)
+        document.getElementById('cv-s').textContent = pad(customS)
+        totalSeconds  = customH * 3600 + customM * 60 + customS
+        remainSeconds = totalSeconds
+        renderRing(1)
+        renderTime()
+      }
+
+      function setCustomPreset(m, s) {
+        if (running) return
+        customH = 0; customM = m; customS = s
+        document.getElementById('cv-h').textContent = pad(0)
+        document.getElementById('cv-m').textContent = pad(m)
+        document.getElementById('cv-s').textContent = pad(s)
+        totalSeconds  = m * 60 + s
+        remainSeconds = totalSeconds
+        renderRing(1)
+        renderTime()
+        // 高亮
+        document.querySelectorAll('#panel-countdown .phase-card').forEach(el => el.classList.remove('active'))
+      }
+
+      // ─────────────────────────────────────────
+      //  计时核心
+      // ─────────────────────────────────────────
+      function toggleTimer() {
+        if (totalSeconds === 0) { showToast('⚠️ 请先设置时长'); return }
+        running ? pauseTimer() : startTimer()
+      }
+
+      function startTimer() {
+        if (remainSeconds <= 0) {
+          remainSeconds = totalSeconds
+          renderRing(1)
+        }
+        running = true
+        document.getElementById('playBtn').textContent = '⏸'
+        document.getElementById('ringInner').classList.add('running')
+        intervalId = setInterval(tick, 1000)
+      }
+
+      function pauseTimer() {
+        running = false
+        clearInterval(intervalId)
+        document.getElementById('playBtn').textContent = '▶'
+        document.getElementById('ringInner').classList.remove('running')
+      }
+
+      function resetTimer() {
+        pauseTimer()
+        remainSeconds = totalSeconds
+        renderRing(1)
+        renderTime()
+      }
+
+      function skipPhase() {
+        pauseTimer()
+        if (mode === 'pomodoro') advancePomodoro()
+        else { remainSeconds = 0; onComplete() }
+      }
+
+      function tick() {
+        remainSeconds--
+        if (remainSeconds <= 0) {
+          remainSeconds = 0
+          renderRing(0)
+          renderTime()
+          pauseTimer()
+          onComplete()
+          return
+        }
+        renderRing(remainSeconds / totalSeconds)
+        renderTime()
+      }
+
+      function onComplete() {
+        stats.sessions++
+        saveStats(); renderStats()
+        playBeep()
+        if (mode === 'pomodoro') advancePomodoro()
+        else showDone('✅', '倒计时结束！', '时间到，任务完成')
+      }
+
+      // ─────────────────────────────────────────
+      //  渲染
+      // ─────────────────────────────────────────
+      function renderTime() {
+        const h = Math.floor(remainSeconds / 3600)
+        const m = Math.floor((remainSeconds % 3600) / 60)
+        const s = remainSeconds % 60
+        const el = document.getElementById('timeDisplay')
+        if (h > 0) {
+          el.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`
+          el.style.fontSize = '2rem'
+        } else {
+          el.textContent = `${pad(m)}:${pad(s)}`
+          el.style.fontSize = '2.8rem'
+        }
+      }
+
+      function renderRing(ratio) {
+        const offset = CIRCUMFERENCE * (1 - ratio)
+        document.getElementById('ringProgress').style.strokeDashoffset = offset
+      }
+
+      function renderPhaseLabel() {
+        const labels = { work: '专注时间', short: '短暂休息', long: '长时休息' }
+        document.getElementById('phaseLabel').textContent = labels[currentPhase] || '专注时间'
+      }
+
+      function updateRingGradient() {
+        const grad = document.getElementById('ringGrad')
+        const colors = {
+          work:  [['#667eea','#764ba2']],
+          short: [['#4ecdc4','#26a69a']],
+          long:  [['#f7b731','#f0932b']],
+        }
+        const [c0, c1] = colors[currentPhase] || colors.work
+        grad.children[0].setAttribute('stop-color', c0)
+        grad.children[1].setAttribute('stop-color', c1)
+      }
+
+      function resetRingGradient() {
+        const grad = document.getElementById('ringGrad')
+        grad.children[0].setAttribute('stop-color', '#667eea')
+        grad.children[1].setAttribute('stop-color', '#764ba2')
+      }
+
+      // ─────────────────────────────────────────
+      //  番茄钟参数调整
+      // ─────────────────────────────────────────
+      function adjustPomodoro(phase, delta) {
+        if (running) return
+        pomoCfg[phase] = Math.max(1, Math.min(99, pomoCfg[phase] + delta))
+        document.getElementById('pv-' + phase).textContent = pomoCfg[phase]
+        document.getElementById('phase-time-' + phase).textContent = pomoCfg[phase] + ' 分钟'
+        if (phase === currentPhase) {
+          totalSeconds  = pomoCfg[phase] * 60
+          remainSeconds = totalSeconds
+          renderRing(1); renderTime()
+        }
+      }
+
+      function adjustCycles(delta) {
+        pomoCycles = Math.max(1, Math.min(8, pomoCycles + delta))
+        document.getElementById('cycleDisplay').textContent = pomoCycles
+        completedWork = Math.min(completedWork, pomoCycles - 1)
+        renderPhaseDots()
+      }
+
+      // ─────────────────────────────────────────
+      //  完成提示
+      // ─────────────────────────────────────────
+      function showDone(emoji, title, sub) {
+        document.getElementById('doneEmoji').textContent = emoji
+        document.getElementById('doneTitle').textContent = title
+        document.getElementById('doneSub').textContent   = sub
+        document.getElementById('doneOverlay').classList.add('show')
+      }
+
+      function dismissDone() {
+        document.getElementById('doneOverlay').classList.remove('show')
+      }
+
+      // ─────────────────────────────────────────
+      //  提示音（Web Audio API）
+      // ─────────────────────────────────────────
+      function playBeep() {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)()
+          const freqs = [523, 659, 784]
+          freqs.forEach((freq, i) => {
+            const osc = ctx.createOscillator()
+            const gain = ctx.createGain()
+            osc.connect(gain); gain.connect(ctx.destination)
+            osc.frequency.value = freq
+            osc.type = 'sine'
+            const t = ctx.currentTime + i * 0.18
+            gain.gain.setValueAtTime(0, t)
+            gain.gain.linearRampToValueAtTime(0.25, t + 0.05)
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4)
+            osc.start(t); osc.stop(t + 0.4)
+          })
+        } catch(e) {}
+      }
+
+      // ─────────────────────────────────────────
+      //  统计
+      // ─────────────────────────────────────────
+      function loadStats() {
+        const today = new Date().toDateString()
+        const saved = JSON.parse(localStorage.getItem('timer_stats') || '{}')
+        if (saved.date !== today) return { date: today, pomodoros: 0, focusMinutes: 0, sessions: 0 }
+        return saved
+      }
+
+      function saveStats() {
+        localStorage.setItem('timer_stats', JSON.stringify(stats))
+      }
+
+      function renderStats() {
+        document.getElementById('stat-pomodoros').textContent  = stats.pomodoros
+        document.getElementById('stat-focus').textContent      = stats.focusMinutes
+        document.getElementById('stat-sessions').textContent   = stats.sessions
+      }
+
+      function resetStats() {
+        stats = { date: new Date().toDateString(), pomodoros: 0, focusMinutes: 0, sessions: 0 }
+        saveStats(); renderStats()
+        showToast('🗑 今日数据已重置')
+      }
+
+      // ─────────────────────────────────────────
+      //  Toast
+      // ─────────────────────────────────────────
+      let toastTimer = null
+      function showToast(msg) {
+        const el = document.getElementById('toast')
+        el.textContent = msg
+        el.classList.add('show')
+        clearTimeout(toastTimer)
+        toastTimer = setTimeout(() => el.classList.remove('show'), 2200)
+      }
+
+      // ─────────────────────────────────────────
+      //  工具
+      // ─────────────────────────────────────────
+      function pad(n) { return String(n).padStart(2, '0') }
+
+      // ─────────────────────────────────────────
+      //  初始化
+      // ─────────────────────────────────────────
+      initPomodoro()
+      renderStats()
+      document.getElementById('phaseDots').style.display = 'flex'
+    </script>
+  </body>
+</html>

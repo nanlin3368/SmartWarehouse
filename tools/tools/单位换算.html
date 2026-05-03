@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>单位换算</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent; /* 全局禁用点击高亮 */
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 类别选择 Tab ── */
+      .category-tabs {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      .tab-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        padding: 13px 8px;
+        background: var(--bg-primary);
+        border: none;
+        border-radius: var(--border-radius-xs);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        font-weight: 600;
+        font-family: inherit;
+      }
+
+      .tab-btn .tab-icon {
+        font-size: 1.35rem;
+        line-height: 1;
+      }
+
+      .tab-btn:hover { transform: translateY(-1px); }
+      .tab-btn:active { transform: scale(0.96); }
+
+      .tab-btn.active {
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        color: var(--accent-primary);
+      }
+
+      .tab-btn.active .tab-icon {
+        filter: drop-shadow(0 0 6px rgba(102,126,234,0.5));
+      }
+
+      /* ── 换算区 ── */
+      .converter-card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .input-row {
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
+        margin-bottom: 12px;
+      }
+
+      .num-input-wrap {
+        flex: 1;
+        position: relative;
+      }
+
+      .num-input {
+        width: 100%;
+        padding: 14px 16px;
+        background: var(--bg-primary);
+        border: none;
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-family: 'SF Mono', 'Menlo', monospace;
+        outline: none;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .num-input:focus {
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.2);
+      }
+
+      .unit-select-wrap {
+        width: 130px;
+        flex-shrink: 0;
+      }
+
+      .unit-select {
+        width: 100%;
+        height: 100%;
+        padding: 0 12px;
+        background: var(--bg-primary);
+        border: none;
+        border-radius: var(--border-radius-xs);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-family: inherit;
+        outline: none;
+        cursor: pointer;
+        -webkit-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b9dc3' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        padding-right: 28px;
+        min-height: 52px;
+      }
+
+      /* ── 互换按钮 ── */
+      .swap-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 4px 0;
+        position: relative;
+      }
+
+      .swap-line {
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--shadow-dark), transparent);
+      }
+
+      .swap-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: none;
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        margin: 0 12px;
+        color: var(--accent-primary);
+      }
+
+      .swap-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: rotate(180deg);
+      }
+
+      /* ── 结果展示 ── */
+      .result-display {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        padding: 16px;
+        margin-top: 4px;
+        min-height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .result-value {
+        font-family: 'SF Mono', 'Menlo', monospace;
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        word-break: break-all;
+        flex: 1;
+        line-height: 1.4;
+      }
+
+      .result-value.flash {
+        animation: flashVal 0.25s ease;
+      }
+
+      @keyframes flashVal {
+        0%   { opacity: 1; }
+        40%  { opacity: 0.15; }
+        100% { opacity: 1; }
+      }
+
+      .copy-result-btn {
+        flex-shrink: 0;
+        padding: 7px 14px;
+        border: none;
+        border-radius: 8px;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        color: var(--accent-primary);
+        font-size: 0.78rem;
+        font-weight: 700;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        font-family: inherit;
+      }
+
+      .copy-result-btn:active { transform: scale(0.94); }
+      .copy-result-btn.copied { color: var(--success); }
+
+      /* ── 公式提示 ── */
+      .formula-hint {
+        margin-top: 12px;
+        padding: 10px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        font-size: 0.74rem;
+        color: var(--text-muted);
+        text-align: center;
+        font-family: 'SF Mono', 'Menlo', monospace;
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        letter-spacing: 0.2px;
+      }
+
+      /* ── 快捷参考卡片 ── */
+      .ref-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .ref-item {
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+      }
+
+      .ref-item:active { transform: scale(0.97); }
+
+      .ref-from {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .ref-arrow {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin: 0 4px;
+      }
+
+      .ref-to {
+        font-size: 0.78rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .ref-label {
+        font-size: 0.67rem;
+        color: var(--text-muted);
+        margin-top: 3px;
+      }
+
+      /* ── 货币汇率状态 ── */
+      .rate-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+        font-size: 0.72rem;
+        color: var(--text-muted);
+      }
+
+      .rate-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--warning);
+        flex-shrink: 0;
+      }
+
+      .rate-dot.live { background: var(--success); animation: pulse 2s infinite; }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+
+      .refresh-btn {
+        margin-left: auto;
+        padding: 4px 10px;
+        border: none;
+        border-radius: 6px;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+      }
+
+      .refresh-btn:active { transform: scale(0.94); }
+      .refresh-btn.spinning { animation: spin 0.5s ease; }
+
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+      }
+
+      /* ── 响应式 ── */
+      @media (max-width: 420px) {
+        h1 { font-size: 1.8rem; }
+        .category-tabs { grid-template-columns: repeat(4, 1fr); gap: 7px; }
+        .tab-btn { padding: 10px 4px; font-size: 0.68rem; }
+        .tab-btn .tab-icon { font-size: 1.1rem; }
+        .unit-select-wrap { width: 110px; }
+        .result-value { font-size: 1.05rem; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>单位换算</h1>
+      <p class="subtitle">长度 · 重量 · 温度 · 货币</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 类别 Tab -->
+      <div class="card">
+        <div class="card-label">换算类型</div>
+        <div class="category-tabs">
+          <button class="tab-btn active" data-cat="length" onclick="switchCat(this)">
+            <span class="tab-icon">📏</span>长度
+          </button>
+          <button class="tab-btn" data-cat="weight" onclick="switchCat(this)">
+            <span class="tab-icon">⚖️</span>重量
+          </button>
+          <button class="tab-btn" data-cat="temp" onclick="switchCat(this)">
+            <span class="tab-icon">🌡️</span>温度
+          </button>
+          <button class="tab-btn" data-cat="currency" onclick="switchCat(this)">
+            <span class="tab-icon">💱</span>货币
+          </button>
+        </div>
+      </div>
+
+      <!-- 换算主卡 -->
+      <div class="converter-card">
+
+        <!-- 货币汇率状态（仅货币类别显示） -->
+        <div class="rate-status" id="rateStatus" style="display:none">
+          <div class="rate-dot" id="rateDot"></div>
+          <span id="rateText">汇率数据加载中…</span>
+          <button class="refresh-btn" id="refreshBtn" onclick="fetchRates()">🔄 刷新</button>
+        </div>
+
+        <!-- 输入区 -->
+        <div class="card-label" id="fromLabel">从</div>
+        <div class="input-row">
+          <div class="num-input-wrap">
+            <input class="num-input" id="fromInput" type="number" inputmode="decimal"
+                   placeholder="输入数值" oninput="convert()" />
+          </div>
+          <div class="unit-select-wrap">
+            <select class="unit-select" id="fromUnit" onchange="convert()"></select>
+          </div>
+        </div>
+
+        <!-- 互换按钮 -->
+        <div class="swap-row">
+          <div class="swap-line"></div>
+          <button class="swap-btn" onclick="swapUnits()" title="互换单位">⇅</button>
+          <div class="swap-line"></div>
+        </div>
+
+        <!-- 结果区 -->
+        <div class="card-label" id="toLabel" style="margin-top:8px">到</div>
+        <div class="input-row">
+          <div class="num-input-wrap">
+            <div class="result-display">
+              <span class="result-value" id="resultVal">—</span>
+              <button class="copy-result-btn" id="copyResultBtn" onclick="copyResult()">复制</button>
+            </div>
+          </div>
+          <div class="unit-select-wrap">
+            <select class="unit-select" id="toUnit" onchange="convert()"></select>
+          </div>
+        </div>
+
+        <!-- 公式提示 -->
+        <div class="formula-hint" id="formulaHint">请输入数值开始换算</div>
+      </div>
+
+      <!-- 快捷参考 -->
+      <div class="card" id="refCard">
+        <div class="card-label">快捷参考 <span style="font-size:0.65rem;font-weight:400;color:var(--text-muted)">（点击填入）</span></div>
+        <div class="ref-grid" id="refGrid"></div>
+      </div>
+
+    </div>
+
+    <script>
+      // ───────── 单位数据 ─────────────────────────────────
+      const CATS = {
+        length: {
+          label: '长度',
+          units: [
+            { key: 'km',   label: '千米 (km)',    factor: 1000 },
+            { key: 'm',    label: '米 (m)',        factor: 1 },
+            { key: 'dm',   label: '分米 (dm)',     factor: 0.1 },
+            { key: 'cm',   label: '厘米 (cm)',     factor: 0.01 },
+            { key: 'mm',   label: '毫米 (mm)',     factor: 0.001 },
+            { key: 'mi',   label: '英里 (mi)',     factor: 1609.344 },
+            { key: 'yd',   label: '码 (yd)',       factor: 0.9144 },
+            { key: 'ft',   label: '英尺 (ft)',     factor: 0.3048 },
+            { key: 'in',   label: '英寸 (in)',     factor: 0.0254 },
+            { key: 'nm',   label: '纳米 (nm)',     factor: 1e-9 },
+            { key: 'ly',   label: '光年 (ly)',     factor: 9.461e15 },
+          ],
+          refs: [
+            { from: '1 英里', to: '1.609 千米', fromKey: 'mi', toKey: 'km', val: 1 },
+            { from: '1 英尺', to: '30.48 厘米', fromKey: 'ft', toKey: 'cm', val: 1 },
+            { from: '1 英寸', to: '2.54 厘米',  fromKey: 'in', toKey: 'cm', val: 1 },
+            { from: '1 码',   to: '0.9144 米',  fromKey: 'yd', toKey: 'm',  val: 1 },
+          ],
+          defaultFrom: 'm',
+          defaultTo: 'cm',
+        },
+        weight: {
+          label: '重量',
+          units: [
+            { key: 't',   label: '吨 (t)',      factor: 1000 },
+            { key: 'kg',  label: '千克 (kg)',   factor: 1 },
+            { key: 'g',   label: '克 (g)',      factor: 0.001 },
+            { key: 'mg',  label: '毫克 (mg)',   factor: 1e-6 },
+            { key: 'lb',  label: '磅 (lb)',     factor: 0.453592 },
+            { key: 'oz',  label: '盎司 (oz)',   factor: 0.0283495 },
+            { key: 'jin', label: '斤 (jin)',    factor: 0.5 },
+            { key: 'liang', label: '两 (liang)', factor: 0.05 },
+            { key: 'ct',  label: '克拉 (ct)',   factor: 0.0002 },
+          ],
+          refs: [
+            { from: '1 磅',  to: '453.59 克',   fromKey: 'lb', toKey: 'g',  val: 1 },
+            { from: '1 盎司', to: '28.35 克',   fromKey: 'oz', toKey: 'g',  val: 1 },
+            { from: '1 斤',  to: '500 克',      fromKey: 'jin', toKey: 'g', val: 1 },
+            { from: '1 吨',  to: '1000 千克',   fromKey: 't', toKey: 'kg',  val: 1 },
+          ],
+          defaultFrom: 'kg',
+          defaultTo: 'lb',
+        },
+        temp: {
+          label: '温度',
+          units: [
+            { key: 'C', label: '摄氏度 (°C)' },
+            { key: 'F', label: '华氏度 (°F)' },
+            { key: 'K', label: '开尔文 (K)'  },
+          ],
+          refs: [
+            { from: '0°C',    to: '32°F',      fromKey: 'C', toKey: 'F', val: 0,   label: '水的冰点' },
+            { from: '100°C',  to: '212°F',     fromKey: 'C', toKey: 'F', val: 100, label: '水的沸点' },
+            { from: '37°C',   to: '98.6°F',    fromKey: 'C', toKey: 'F', val: 37,  label: '人体体温' },
+            { from: '-40°C',  to: '-40°F',     fromKey: 'C', toKey: 'F', val: -40, label: '两者相等点' },
+          ],
+          defaultFrom: 'C',
+          defaultTo: 'F',
+        },
+        currency: {
+          label: '货币',
+          units: [
+            { key: 'CNY', label: '人民币 (CNY) ¥' },
+            { key: 'USD', label: '美元 (USD) $' },
+            { key: 'EUR', label: '欧元 (EUR) €' },
+            { key: 'GBP', label: '英镑 (GBP) £' },
+            { key: 'JPY', label: '日元 (JPY) ¥' },
+            { key: 'KRW', label: '韩元 (KRW) ₩' },
+            { key: 'HKD', label: '港币 (HKD) $' },
+            { key: 'TWD', label: '台币 (TWD) $' },
+            { key: 'AUD', label: '澳元 (AUD) $' },
+            { key: 'CAD', label: '加元 (CAD) $' },
+            { key: 'CHF', label: '瑞郎 (CHF) Fr' },
+            { key: 'SGD', label: '新加坡元 (SGD) $' },
+            { key: 'MYR', label: '马来西亚令吉 (MYR) RM' },
+            { key: 'THB', label: '泰铢 (THB) ฿' },
+          ],
+          refs: [
+            { from: '100 USD', to: '≈ CNY', fromKey: 'USD', toKey: 'CNY', val: 100 },
+            { from: '100 EUR', to: '≈ CNY', fromKey: 'EUR', toKey: 'CNY', val: 100 },
+            { from: '100 GBP', to: '≈ CNY', fromKey: 'GBP', toKey: 'CNY', val: 100 },
+            { from: '1000 JPY', to: '≈ CNY', fromKey: 'JPY', toKey: 'CNY', val: 1000 },
+          ],
+          defaultFrom: 'USD',
+          defaultTo: 'CNY',
+        },
+      }
+
+      // ───────── 当前状态 ─────────────────────────────────
+      let currentCat = 'length'
+      let rates = {}          // currency rates relative to CNY
+      let ratesLoaded = false
+
+      // ───────── 温度换算 ─────────────────────────────────
+      function convertTemp(val, from, to) {
+        // to Celsius first
+        let c
+        if (from === 'C') c = val
+        else if (from === 'F') c = (val - 32) * 5 / 9
+        else c = val - 273.15   // K
+
+        // from Celsius to target
+        if (to === 'C') return c
+        if (to === 'F') return c * 9 / 5 + 32
+        return c + 273.15       // K
+      }
+
+      // ───────── 温度公式文字 ─────────────────────────────
+      function tempFormula(from, to) {
+        const map = {
+          'C→F': '°F = °C × 9/5 + 32',
+          'F→C': '°C = (°F − 32) × 5/9',
+          'C→K': 'K = °C + 273.15',
+          'K→C': '°C = K − 273.15',
+          'F→K': 'K = (°F − 32) × 5/9 + 273.15',
+          'K→F': '°F = (K − 273.15) × 9/5 + 32',
+        }
+        return map[`${from}→${to}`] || (from === to ? '相同单位，无需换算' : '')
+      }
+
+      // ───────── 货币汇率（以 CNY 为基准）─────────────────
+      // 内置兜底汇率（近似）
+      const FALLBACK_RATES = {
+        CNY: 1,
+        USD: 7.24, EUR: 7.87, GBP: 9.17, JPY: 0.0485,
+        KRW: 0.0052, HKD: 0.93, TWD: 0.226, AUD: 4.65,
+        CAD: 5.27, CHF: 8.02, SGD: 5.32, MYR: 1.56, THB: 0.198,
+      }
+
+      async function fetchRates() {
+        const dot = document.getElementById('rateDot')
+        const txt = document.getElementById('rateText')
+        const btn = document.getElementById('refreshBtn')
+        btn.classList.add('spinning')
+        txt.textContent = '汇率获取中…'
+        dot.className = 'rate-dot'
+
+        try {
+          const res = await fetch('https://api.exchangerate-api.com/v4/latest/CNY')
+          if (!res.ok) throw new Error('network')
+          const data = await res.json()
+          // rates[X] = how many CNY per 1 X
+          Object.keys(FALLBACK_RATES).forEach(k => {
+            const r = data.rates[k]
+            if (r && r > 0) rates[k] = 1 / r  // invert: CNY per X
+          })
+          rates.CNY = 1
+          ratesLoaded = true
+          const date = data.date || '实时'
+          txt.textContent = `汇率已更新（${date}）`
+          dot.className = 'rate-dot live'
+          updateCurrencyRefs()
+        } catch (e) {
+          rates = { ...FALLBACK_RATES }
+          ratesLoaded = true
+          txt.textContent = '使用内置参考汇率（非实时）'
+          dot.className = 'rate-dot'
+          updateCurrencyRefs()
+        } finally {
+          setTimeout(() => btn.classList.remove('spinning'), 500)
+          convert()
+        }
+      }
+
+      function updateCurrencyRefs() {
+        if (currentCat !== 'currency') return
+        renderRefs()
+      }
+
+      // ───────── 切换类别 ─────────────────────────────────
+      function switchCat(btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        currentCat = btn.dataset.cat
+        initConverter()
+      }
+
+      function initConverter() {
+        const cat = CATS[currentCat]
+        const fromSel = document.getElementById('fromUnit')
+        const toSel   = document.getElementById('toUnit')
+
+        fromSel.innerHTML = cat.units.map(u =>
+          `<option value="${u.key}">${u.label}</option>`
+        ).join('')
+        toSel.innerHTML = cat.units.map(u =>
+          `<option value="${u.key}">${u.label}</option>`
+        ).join('')
+
+        fromSel.value = cat.defaultFrom
+        toSel.value   = cat.defaultTo
+
+        document.getElementById('fromInput').value = ''
+        document.getElementById('resultVal').textContent = '—'
+        document.getElementById('formulaHint').textContent = '请输入数值开始换算'
+
+        // 货币特殊处理
+        const rateStatus = document.getElementById('rateStatus')
+        if (currentCat === 'currency') {
+          rateStatus.style.display = 'flex'
+          if (!ratesLoaded) {
+            rates = { ...FALLBACK_RATES }
+            ratesLoaded = true
+            document.getElementById('rateText').textContent = '使用内置参考汇率（非实时）'
+            fetchRates()
+          }
+        } else {
+          rateStatus.style.display = 'none'
+        }
+
+        renderRefs()
+        convert()
+      }
+
+      // ───────── 换算核心 ─────────────────────────────────
+      function convert() {
+        const raw = document.getElementById('fromInput').value
+        const fromKey = document.getElementById('fromUnit').value
+        const toKey   = document.getElementById('toUnit').value
+        const el      = document.getElementById('resultVal')
+        const hint    = document.getElementById('formulaHint')
+
+        if (raw === '' || isNaN(parseFloat(raw))) {
+          el.textContent = '—'
+          hint.textContent = '请输入数值开始换算'
+          return
+        }
+
+        const val = parseFloat(raw)
+        let result
+
+        if (currentCat === 'temp') {
+          result = convertTemp(val, fromKey, toKey)
+          hint.textContent = tempFormula(fromKey, toKey)
+        } else if (currentCat === 'currency') {
+          const rFrom = rates[fromKey] || FALLBACK_RATES[fromKey] || 1
+          const rTo   = rates[toKey]   || FALLBACK_RATES[toKey]   || 1
+          result = val * rFrom / rTo
+          const rate = rFrom / rTo
+          hint.textContent = `1 ${fromKey} ≈ ${fmtNum(rate, 6)} ${toKey}`
+        } else {
+          const cat = CATS[currentCat]
+          const fFrom = cat.units.find(u => u.key === fromKey)?.factor || 1
+          const fTo   = cat.units.find(u => u.key === toKey)?.factor   || 1
+          result = val * fFrom / fTo
+          hint.textContent = `1 ${fromKey} = ${fmtNum(fFrom / fTo, 6)} ${toKey}`
+        }
+
+        // flash
+        el.classList.remove('flash')
+        void el.offsetWidth
+        el.classList.add('flash')
+        el.textContent = fmtNum(result, 8)
+      }
+
+      function fmtNum(n, sigFigs) {
+        if (!isFinite(n)) return '无效'
+        if (n === 0) return '0'
+        const abs = Math.abs(n)
+        // very large or very small → scientific
+        if (abs >= 1e12 || (abs < 1e-6 && abs > 0)) {
+          return n.toExponential(4)
+        }
+        // determine decimal places by magnitude
+        let decimals
+        if (abs >= 1000) decimals = 2
+        else if (abs >= 1)    decimals = 4
+        else if (abs >= 0.01) decimals = 6
+        else decimals = 8
+        // strip trailing zeros
+        return parseFloat(n.toFixed(decimals)).toString()
+      }
+
+      // ───────── 互换单位 ─────────────────────────────────
+      function swapUnits() {
+        const fromSel = document.getElementById('fromUnit')
+        const toSel   = document.getElementById('toUnit')
+        const fromInput = document.getElementById('fromInput')
+        const resultVal = document.getElementById('resultVal')
+
+        const tmp = fromSel.value
+        fromSel.value = toSel.value
+        toSel.value = tmp
+
+        // swap value too if result is valid
+        const rv = resultVal.textContent
+        if (rv && rv !== '—' && rv !== '无效') {
+          fromInput.value = rv
+        }
+        convert()
+      }
+
+      // ───────── 复制结果 ─────────────────────────────────
+      function copyResult() {
+        const rv = document.getElementById('resultVal').textContent
+        if (!rv || rv === '—' || rv === '无效') return
+        const btn = document.getElementById('copyResultBtn')
+        const write = () => {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(rv).catch(fallback)
+          } else fallback()
+        }
+        const fallback = () => {
+          const el = document.createElement('textarea')
+          el.value = rv
+          el.style.cssText = 'position:fixed;opacity:0;pointer-events:none'
+          document.body.appendChild(el)
+          el.focus(); el.select()
+          try { document.execCommand('copy') } catch(e) {}
+          document.body.removeChild(el)
+        }
+        write()
+        btn.textContent = '已复制 ✓'
+        btn.classList.add('copied')
+        setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied') }, 1800)
+      }
+
+      // ───────── 快捷参考渲染 ─────────────────────────────
+      function renderRefs() {
+        const cat = CATS[currentCat]
+        const grid = document.getElementById('refGrid')
+
+        if (currentCat === 'currency' && ratesLoaded) {
+          // dynamic refs
+          const dynamicRefs = [
+            { fromKey: 'USD', toKey: 'CNY', val: 100 },
+            { fromKey: 'EUR', toKey: 'CNY', val: 100 },
+            { fromKey: 'GBP', toKey: 'CNY', val: 100 },
+            { fromKey: 'JPY', toKey: 'CNY', val: 1000 },
+          ]
+          grid.innerHTML = dynamicRefs.map(r => {
+            const rFrom = rates[r.fromKey] || FALLBACK_RATES[r.fromKey] || 1
+            const rTo   = rates[r.toKey]   || FALLBACK_RATES[r.toKey]   || 1
+            const result = r.val * rFrom / rTo
+            return `
+              <div class="ref-item" onclick="fillRef('${r.fromKey}','${r.toKey}',${r.val})">
+                <div><span class="ref-from">${r.val} ${r.fromKey}</span>
+                  <span class="ref-arrow">→</span>
+                  <span class="ref-to">${fmtNum(result, 6)} ${r.toKey}</span></div>
+                <div class="ref-label">点击填入</div>
+              </div>`
+          }).join('')
+          return
+        }
+
+        grid.innerHTML = cat.refs.map(r => `
+          <div class="ref-item" onclick="fillRef('${r.fromKey}','${r.toKey}',${r.val})">
+            <div><span class="ref-from">${r.from}</span>
+              <span class="ref-arrow">→</span>
+              <span class="ref-to">${r.to}</span></div>
+            <div class="ref-label">${r.label || '点击填入'}</div>
+          </div>
+        `).join('')
+      }
+
+      function fillRef(fromKey, toKey, val) {
+        document.getElementById('fromUnit').value = fromKey
+        document.getElementById('toUnit').value   = toKey
+        document.getElementById('fromInput').value = val
+        convert()
+        // scroll to input
+        document.getElementById('fromInput').scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+
+      // ───────── 初始化 ───────────────────────────────────
+      initConverter()
+    </script>
+
+  </body>
+</html>

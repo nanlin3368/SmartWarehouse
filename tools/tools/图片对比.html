@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片对比</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 文件上传区 ── */
+      .upload-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .file-drop {
+        border: 2px dashed var(--text-muted);
+        border-radius: var(--border-radius-sm);
+        padding: 20px 12px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        min-height: 130px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .file-drop:hover, .file-drop.dragover {
+        border-color: var(--accent-primary);
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.15);
+      }
+
+      .file-drop.dragover {
+        border-style: solid;
+        border-color: var(--success);
+      }
+
+      .file-drop.has-image {
+        border-style: solid;
+        border-color: var(--accent-primary);
+      }
+
+      .file-drop input[type="file"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .file-drop-icon { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+
+      .file-drop-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 3px;
+      }
+
+      .file-drop-sub {
+        font-size: 0.65rem;
+        color: var(--text-muted);
+      }
+
+      .file-drop-name {
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-top: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        padding: 0 4px;
+      }
+
+      /* ── 对比模式选择 ── */
+      .mode-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .mode-btn {
+        padding: 10px 8px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        letter-spacing: 0.3px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .mode-btn:hover  { transform: translateY(-1px); }
+      .mode-btn:active { transform: scale(0.96); }
+
+      .mode-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+      }
+
+      .mode-btn-icon { font-size: 1.1rem; }
+      .mode-btn-text { font-size: 0.68rem; }
+
+      /* ── 对比画布区 ── */
+      .compare-wrap {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        min-height: 260px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+        user-select: none;
+      }
+
+      .compare-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .compare-placeholder-icon { font-size: 2.2rem; }
+
+      /* ── 并排模式 ── */
+      .side-by-side {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        height: 100%;
+        min-height: 260px;
+      }
+
+      .side-panel {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+      }
+
+      .side-panel:first-child {
+        border-right: 2px solid var(--shadow-dark);
+      }
+
+      .side-panel img {
+        max-width: 100%;
+        max-height: 240px;
+        object-fit: contain;
+        border-radius: 6px;
+      }
+
+      .side-label {
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.62rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+        background: var(--bg-primary);
+        box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        white-space: nowrap;
+        z-index: 3;
+      }
+
+      /* ── 滑动拖拽模式 ── */
+      .slider-wrap {
+        position: relative;
+        width: 100%;
+        min-height: 260px;
+        overflow: hidden;
+        cursor: col-resize;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .slider-wrap img.slider-base,
+      .slider-wrap img.slider-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-height: 260px;
+        max-width: 100%;
+        object-fit: contain;
+        display: block;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+
+      .slider-clip {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .slider-clip img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-height: 260px;
+        max-width: 100%;
+        object-fit: contain;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+
+      .slider-divider {
+        position: absolute;
+        top: 0;
+        width: 2px;
+        height: 100%;
+        background: var(--accent-gradient);
+        z-index: 10;
+        pointer-events: none;
+        box-shadow: 0 0 6px rgba(102,126,234,0.5);
+      }
+
+      .slider-handle {
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--accent-gradient);
+        box-shadow: 3px 3px 8px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 11;
+        cursor: col-resize;
+        pointer-events: none;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      .slider-label-a, .slider-label-b {
+        position: absolute;
+        top: 8px;
+        font-size: 0.62rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+        background: var(--bg-primary);
+        box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        z-index: 12;
+        pointer-events: none;
+      }
+
+      .slider-label-a { left: 10px; }
+      .slider-label-b { right: 10px; }
+
+      /* ── 叠加透明度模式 ── */
+      .overlay-wrap {
+        position: relative;
+        width: 100%;
+        min-height: 260px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .overlay-wrap img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-height: 240px;
+        max-width: 100%;
+        object-fit: contain;
+        pointer-events: none;
+      }
+
+      /* ── 差异高亮模式 ── */
+      #diffCanvas {
+        max-width: 100%;
+        max-height: 260px;
+        border-radius: 6px;
+        display: block;
+      }
+
+      /* ── 透明度滑块 ── */
+      .opacity-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 10px;
+      }
+
+      .opacity-val {
+        font-size: 1.4rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--bg-primary);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        outline: none;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--accent-gradient);
+        box-shadow: 3px 3px 8px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.2); }
+
+      .range-hints {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 6px;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+      }
+
+      /* ── 图片信息 ── */
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .info-panel {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        padding: 12px;
+      }
+
+      .info-panel-label {
+        font-size: 0.62rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+
+      .info-row:last-child { margin-bottom: 0; }
+
+      .info-key {
+        font-size: 0.68rem;
+        color: var(--text-muted);
+      }
+
+      .info-val {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .info-empty {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        text-align: center;
+        padding: 8px 0;
+      }
+
+      /* ── 差异分析徽章 ── */
+      .diff-badge-wrap {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+
+      .diff-badge {
+        flex: 1;
+        min-width: 0;
+        padding: 8px 10px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        text-align: center;
+      }
+
+      .diff-badge-num {
+        font-size: 1.1rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.2;
+      }
+
+      .diff-badge-lbl {
+        font-size: 0.6rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        margin-top: 2px;
+      }
+
+      .diff-badge-num.danger { background: none; -webkit-text-fill-color: var(--danger); }
+      .diff-badge-num.success { background: none; -webkit-text-fill-color: var(--success); }
+
+      /* ── 操作按钮 ── */
+      .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .action-btn {
+        padding: 13px 10px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        outline: none;
+      }
+
+      .action-btn:hover  { transform: translateY(-1px); }
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .action-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      .action-btn.primary {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        grid-column: span 2;
+      }
+
+      .action-btn.primary:hover { box-shadow: 6px 6px 16px rgba(102,126,234,0.4); transform: translateY(-2px); }
+      .action-btn.primary:active { transform: scale(0.97); }
+
+      .action-btn.success-btn { color: var(--success); }
+      .action-btn.danger-btn  { color: var(--danger); }
+
+      /* ── 说明卡片 ── */
+      .instr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+      .instr-text {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── 隐藏控制 ── */
+      .hidden { display: none !important; }
+
+      /* ── 缩放控制 ── */
+      .zoom-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .zoom-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        outline: none;
+      }
+
+      .zoom-btn:active {
+        box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        transform: scale(0.94);
+      }
+
+      .zoom-val {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        min-width: 40px;
+        text-align: center;
+      }
+
+      /* ── 响应式 ── */
+      @media (max-width: 440px) {
+        h1 { font-size: 1.8rem; }
+        .mode-grid { grid-template-columns: repeat(3, 1fr); }
+        .upload-grid { grid-template-columns: 1fr 1fr; }
+        .info-grid { grid-template-columns: 1fr 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>图片对比</h1>
+      <p class="subtitle">本地处理 · 多模式对比 · 保护隐私</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 上传区 -->
+      <div class="card">
+        <div class="card-label">选择图片</div>
+        <div class="upload-grid">
+          <!-- 图片 A -->
+          <div class="file-drop" id="dropA">
+            <span class="file-drop-icon">📷</span>
+            <div class="file-drop-label">图片 A</div>
+            <div class="file-drop-sub">拖放或点击上传</div>
+            <div class="file-drop-name hidden" id="nameA"></div>
+            <input type="file" id="fileA" accept="image/*" />
+          </div>
+          <!-- 图片 B -->
+          <div class="file-drop" id="dropB">
+            <span class="file-drop-icon">🖼️</span>
+            <div class="file-drop-label">图片 B</div>
+            <div class="file-drop-sub">拖放或点击上传</div>
+            <div class="file-drop-name hidden" id="nameB"></div>
+            <input type="file" id="fileB" accept="image/*" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 对比模式 -->
+      <div class="card">
+        <div class="card-label">对比模式</div>
+        <div class="mode-grid">
+          <button class="mode-btn active" data-mode="slider">
+            <span class="mode-btn-icon">↔️</span>
+            <span class="mode-btn-text">滑动对比</span>
+          </button>
+          <button class="mode-btn" data-mode="sidebyside">
+            <span class="mode-btn-icon">⬜⬜</span>
+            <span class="mode-btn-text">并排对比</span>
+          </button>
+          <button class="mode-btn" data-mode="overlay">
+            <span class="mode-btn-icon">🔀</span>
+            <span class="mode-btn-text">叠加透明</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 透明度控制（叠加模式下显示） -->
+      <div class="card hidden" id="overlayControl">
+        <div class="opacity-row">
+          <span class="card-label" style="margin-bottom:0">图片 B 透明度</span>
+          <span class="opacity-val" id="opacityVal">50%</span>
+        </div>
+        <input type="range" id="opacitySlider" min="0" max="100" value="50" />
+        <div class="range-hints"><span>0%（仅 A）</span><span>100%（仅 B）</span></div>
+      </div>
+
+      <!-- 对比区 -->
+      <div class="card">
+        <div class="card-label">对比预览</div>
+        <div class="compare-wrap" id="compareWrap">
+          <div class="compare-placeholder" id="comparePlaceholder">
+            <span class="compare-placeholder-icon">🔍</span>
+            <span>请先上传两张图片</span>
+          </div>
+          <!-- 内容由 JS 动态注入 -->
+        </div>
+        <!-- 缩放控制 -->
+        <div class="zoom-row" id="zoomRow" style="display:none">
+          <button class="zoom-btn" id="zoomOut">−</button>
+          <div class="zoom-val" id="zoomVal">100%</div>
+          <button class="zoom-btn" id="zoomIn">+</button>
+          <span style="font-size:0.68rem;color:var(--text-muted);margin-left:4px;">缩放</span>
+        </div>
+      </div>
+
+      <!-- 图片信息 -->
+      <div class="card">
+        <div class="card-label">图片信息</div>
+        <div class="info-grid">
+          <div class="info-panel">
+            <div class="info-panel-label">图片 A</div>
+            <div id="infoA"><div class="info-empty">暂无数据</div></div>
+          </div>
+          <div class="info-panel">
+            <div class="info-panel-label">图片 B</div>
+            <div id="infoB"><div class="info-empty">暂无数据</div></div>
+          </div>
+        </div>
+        <!-- 差异分析徽章（两图都加载后显示） -->
+        <div class="diff-badge-wrap hidden" id="diffBadges">
+          <div class="diff-badge">
+            <div class="diff-badge-num" id="diffSize">—</div>
+            <div class="diff-badge-lbl">文件大小差异</div>
+          </div>
+          <div class="diff-badge">
+            <div class="diff-badge-num" id="diffRes">—</div>
+            <div class="diff-badge-lbl">尺寸差异</div>
+          </div>
+          <div class="diff-badge">
+            <div class="diff-badge-num" id="diffRatio">—</div>
+            <div class="diff-badge-lbl">宽高比</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 操作 -->
+      <div class="card">
+        <div class="card-label">操作</div>
+        <div class="action-grid">
+          <button class="action-btn success-btn" id="saveBtn" disabled>💾 保存截图</button>
+          <button class="action-btn danger-btn" id="resetBtn">🗑️ 重置</button>
+          <button class="action-btn primary" id="swapBtn" disabled>🔄 交换 A / B</button>
+        </div>
+      </div>
+
+      <!-- 说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+          <div class="instr-item">
+            <span class="instr-icon">📷</span>
+            <div class="instr-text"><strong>上传图片</strong>：分别将图片 A、B 拖放到对应区域，或点击选择文件</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">↔️</span>
+            <div class="instr-text"><strong>滑动对比</strong>：拖动中间分割线，左右滑动查看两张图片的对比区域</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">⬜</span>
+            <div class="instr-text"><strong>并排对比</strong>：两张图并排展示，适合整体构图和色调比较</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔀</span>
+            <div class="instr-text"><strong>叠加透明</strong>：通过透明度滑块控制两图叠加比例，适合找细节差异</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔒</span>
+            <div class="instr-text"><strong>数据安全</strong>：所有处理在浏览器本地完成，图片不上传服务器</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      // ── 状态 ──────────────────────────────────────────
+      let imgA = null, imgB = null
+      let dataA = null, dataB = null  // {file, url, img, w, h}
+      let currentMode = 'slider'
+      let overlayOpacity = 50
+      let zoomLevel = 100
+      let sliderPct = 50
+      let isDragging = false
+
+      // ── DOM 引用 ──────────────────────────────────────
+      const dropA       = document.getElementById('dropA')
+      const dropB       = document.getElementById('dropB')
+      const fileA       = document.getElementById('fileA')
+      const fileB       = document.getElementById('fileB')
+      const nameA       = document.getElementById('nameA')
+      const nameB       = document.getElementById('nameB')
+      const compareWrap = document.getElementById('compareWrap')
+      const placeholder = document.getElementById('comparePlaceholder')
+      const opSlider    = document.getElementById('opacitySlider')
+      const opVal       = document.getElementById('opacityVal')
+      const overlayCtrl = document.getElementById('overlayControl')
+      const infoAEl     = document.getElementById('infoA')
+      const infoBEl     = document.getElementById('infoB')
+      const diffBadges  = document.getElementById('diffBadges')
+      const saveBtn     = document.getElementById('saveBtn')
+      const resetBtn    = document.getElementById('resetBtn')
+      const swapBtn     = document.getElementById('swapBtn')
+      const zoomRow     = document.getElementById('zoomRow')
+      const zoomValEl   = document.getElementById('zoomVal')
+
+      // ── 模式选择 ──────────────────────────────────────
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'))
+          btn.classList.add('active')
+          currentMode = btn.dataset.mode
+          overlayCtrl.classList.toggle('hidden', currentMode !== 'overlay')
+          renderCompare()
+        })
+      })
+
+      // ── 文件上传 ──────────────────────────────────────
+      function setupDrop(dropEl, fileInput, side) {
+        fileInput.addEventListener('change', e => {
+          if (e.target.files[0]) loadImage(e.target.files[0], side)
+        })
+        dropEl.addEventListener('dragover', e => { e.preventDefault(); dropEl.classList.add('dragover') })
+        dropEl.addEventListener('dragleave', e => { e.preventDefault(); dropEl.classList.remove('dragover') })
+        dropEl.addEventListener('drop', e => {
+          e.preventDefault()
+          dropEl.classList.remove('dragover')
+          if (e.dataTransfer.files[0]) loadImage(e.dataTransfer.files[0], side)
+        })
+      }
+
+      setupDrop(dropA, fileA, 'A')
+      setupDrop(dropB, fileB, 'B')
+
+      function loadImage(file, side) {
+        if (!file.type.match('image.*')) return
+        const url = URL.createObjectURL(file)
+        const img = new Image()
+        img.onload = () => {
+          const data = { file, url, img, w: img.naturalWidth, h: img.naturalHeight }
+          if (side === 'A') {
+            if (dataA) URL.revokeObjectURL(dataA.url)
+            dataA = data
+            imgA = img
+            nameA.textContent = file.name
+            nameA.classList.remove('hidden')
+            dropA.classList.add('has-image')
+            updateInfo('A', data)
+          } else {
+            if (dataB) URL.revokeObjectURL(dataB.url)
+            dataB = data
+            imgB = img
+            nameB.textContent = file.name
+            nameB.classList.remove('hidden')
+            dropB.classList.add('has-image')
+            updateInfo('B', data)
+          }
+          if (dataA && dataB) {
+            updateDiffBadges()
+            saveBtn.disabled = false
+            swapBtn.disabled = false
+            zoomRow.style.display = 'flex'
+          }
+          renderCompare()
+        }
+        img.src = url
+      }
+
+      // ── 信息面板 ──────────────────────────────────────
+      function updateInfo(side, data) {
+        const el = side === 'A' ? infoAEl : infoBEl
+        const ext = data.file.name.split('.').pop().toUpperCase()
+        el.innerHTML = `
+          <div class="info-row"><span class="info-key">文件名</span><span class="info-val" style="max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.66rem">${data.file.name}</span></div>
+          <div class="info-row"><span class="info-key">格式</span><span class="info-val">${ext}</span></div>
+          <div class="info-row"><span class="info-key">大小</span><span class="info-val">${fmtSize(data.file.size)}</span></div>
+          <div class="info-row"><span class="info-key">分辨率</span><span class="info-val">${data.w} × ${data.h}</span></div>
+          <div class="info-row"><span class="info-key">宽高比</span><span class="info-val">${gcd2ratio(data.w, data.h)}</span></div>
+        `
+      }
+
+      function updateDiffBadges() {
+        if (!dataA || !dataB) return
+        diffBadges.classList.remove('hidden')
+
+        // 文件大小差异
+        const sizeDiff = Math.abs(dataA.file.size - dataB.file.size)
+        const sizePct  = ((sizeDiff / Math.max(dataA.file.size, dataB.file.size)) * 100).toFixed(1)
+        const sizeEl   = document.getElementById('diffSize')
+        sizeEl.textContent = fmtSize(sizeDiff)
+        sizeEl.className = 'diff-badge-num' + (sizePct > 30 ? ' danger' : sizePct < 5 ? ' success' : '')
+
+        // 分辨率差异
+        const resEl = document.getElementById('diffRes')
+        if (dataA.w === dataB.w && dataA.h === dataB.h) {
+          resEl.textContent = '完全一致'
+          resEl.className = 'diff-badge-num success'
+        } else {
+          resEl.textContent = `ΔW ${Math.abs(dataA.w - dataB.w)} · ΔH ${Math.abs(dataA.h - dataB.h)}`
+          resEl.className = 'diff-badge-num danger'
+        }
+
+        // 宽高比
+        const ratioEl = document.getElementById('diffRatio')
+        const rA = gcd2ratio(dataA.w, dataA.h)
+        const rB = gcd2ratio(dataB.w, dataB.h)
+        ratioEl.textContent = rA === rB ? '相同' : `A:${rA} / B:${rB}`
+        ratioEl.className = 'diff-badge-num' + (rA === rB ? ' success' : '')
+      }
+
+      // ── 渲染对比 ──────────────────────────────────────
+      function renderCompare() {
+        // 清理旧内容（保留 placeholder）
+        ;[...compareWrap.children].forEach(c => {
+          if (c !== placeholder) c.remove()
+        })
+
+        if (!dataA || !dataB) {
+          placeholder.style.display = ''
+          return
+        }
+        placeholder.style.display = 'none'
+
+        const scale = zoomLevel / 100
+
+        if (currentMode === 'slider')     renderSlider(scale)
+        else if (currentMode === 'sidebyside') renderSideBySide(scale)
+        else if (currentMode === 'overlay')    renderOverlay(scale)
+      }
+
+      // 滑动对比
+      function renderSlider(scale) {
+        const wrap = document.createElement('div')
+        wrap.className = 'slider-wrap'
+
+        const baseImg = document.createElement('img')
+        baseImg.className = 'slider-base'
+        baseImg.src = dataA.url
+        baseImg.style.maxHeight = (260 * scale) + 'px'
+
+        const clip = document.createElement('div')
+        clip.className = 'slider-clip'
+        clip.style.clipPath = `inset(0 ${100 - sliderPct}% 0 0)`
+
+        const topImg = document.createElement('img')
+        topImg.src = dataB.url
+        topImg.style.maxHeight = (260 * scale) + 'px'
+
+        clip.appendChild(topImg)
+
+        const divider = document.createElement('div')
+        divider.className = 'slider-divider'
+        divider.style.left = sliderPct + '%'
+
+        const handle = document.createElement('div')
+        handle.className = 'slider-handle'
+        handle.style.left = sliderPct + '%'
+        handle.innerHTML = '⟺'
+
+        const lblA = document.createElement('div')
+        lblA.className = 'slider-label-a'
+        lblA.textContent = 'A'
+
+        const lblB = document.createElement('div')
+        lblB.className = 'slider-label-b'
+        lblB.textContent = 'B'
+
+        wrap.append(baseImg, clip, divider, handle, lblA, lblB)
+        compareWrap.appendChild(wrap)
+
+        // 拖动逻辑
+        function getPct(e) {
+          const rect = wrap.getBoundingClientRect()
+          const clientX = e.touches ? e.touches[0].clientX : e.clientX
+          return Math.max(2, Math.min(98, ((clientX - rect.left) / rect.width) * 100))
+        }
+
+        function move(e) {
+          if (!isDragging) return
+          sliderPct = getPct(e)
+          divider.style.left = sliderPct + '%'
+          handle.style.left  = sliderPct + '%'
+          clip.style.clipPath = `inset(0 ${100 - sliderPct}% 0 0)`
+        }
+
+        wrap.addEventListener('mousedown',  e => { isDragging = true; move(e) })
+        wrap.addEventListener('touchstart', e => { isDragging = true; move(e) }, { passive: true })
+        document.addEventListener('mousemove',  move)
+        document.addEventListener('touchmove',  move, { passive: true })
+        document.addEventListener('mouseup',  () => { isDragging = false })
+        document.addEventListener('touchend', () => { isDragging = false })
+      }
+
+      // 并排对比
+      function renderSideBySide(scale) {
+        const wrap = document.createElement('div')
+        wrap.className = 'side-by-side'
+
+        const panelA = document.createElement('div')
+        panelA.className = 'side-panel'
+        const imgAEl = document.createElement('img')
+        imgAEl.src = dataA.url
+        imgAEl.style.maxHeight = (240 * scale) + 'px'
+        const lA = document.createElement('div')
+        lA.className = 'side-label'
+        lA.textContent = 'A'
+        panelA.append(lA, imgAEl)
+
+        const panelB = document.createElement('div')
+        panelB.className = 'side-panel'
+        const imgBEl = document.createElement('img')
+        imgBEl.src = dataB.url
+        imgBEl.style.maxHeight = (240 * scale) + 'px'
+        const lB = document.createElement('div')
+        lB.className = 'side-label'
+        lB.textContent = 'B'
+        panelB.append(lB, imgBEl)
+
+        wrap.append(panelA, panelB)
+        compareWrap.appendChild(wrap)
+      }
+
+      // 叠加透明度对比
+      function renderOverlay(scale) {
+        const wrap = document.createElement('div')
+        wrap.className = 'overlay-wrap'
+        wrap.style.minHeight = (260 * scale) + 'px'
+
+        const imgAEl = document.createElement('img')
+        imgAEl.src = dataA.url
+        imgAEl.style.maxHeight = (240 * scale) + 'px'
+        imgAEl.style.opacity = '1'
+        imgAEl.style.zIndex = '1'
+
+        const imgBEl = document.createElement('img')
+        imgBEl.src = dataB.url
+        imgBEl.style.maxHeight = (240 * scale) + 'px'
+        imgBEl.style.opacity = (overlayOpacity / 100).toString()
+        imgBEl.style.zIndex = '2'
+        imgBEl.id = 'overlayImgB'
+
+        wrap.append(imgAEl, imgBEl)
+        compareWrap.appendChild(wrap)
+      }
+
+      // ── 透明度滑块 ──────────────────────────────────────
+      opSlider.addEventListener('input', function () {
+        overlayOpacity = parseInt(this.value)
+        opVal.textContent = overlayOpacity + '%'
+        const b = document.getElementById('overlayImgB')
+        if (b) b.style.opacity = (overlayOpacity / 100).toString()
+      })
+
+      // ── 缩放 ──────────────────────────────────────────
+      document.getElementById('zoomIn').addEventListener('click', () => {
+        zoomLevel = Math.min(200, zoomLevel + 25)
+        zoomValEl.textContent = zoomLevel + '%'
+        renderCompare()
+      })
+
+      document.getElementById('zoomOut').addEventListener('click', () => {
+        zoomLevel = Math.max(50, zoomLevel - 25)
+        zoomValEl.textContent = zoomLevel + '%'
+        renderCompare()
+      })
+
+      // ── 交换 A/B ──────────────────────────────────────
+      swapBtn.addEventListener('click', () => {
+        ;[dataA, dataB] = [dataB, dataA]
+        ;[imgA,  imgB]  = [imgB,  imgA]
+        // 更新上传区显示
+        nameA.textContent = dataA.file.name
+        nameB.textContent = dataB.file.name
+        updateInfo('A', dataA)
+        updateInfo('B', dataB)
+        updateDiffBadges()
+        renderCompare()
+      })
+
+      // ── 保存截图 ──────────────────────────────────────
+      saveBtn.addEventListener('click', () => {
+        // 将当前对比状态绘制到 canvas 并保存
+        const canvas = document.createElement('canvas')
+        const maxW = 1200, maxH = 600
+
+        if (currentMode === 'sidebyside') {
+          // 两图并排
+          const scaleA = Math.min(1, maxH / dataA.h)
+          const scaleB = Math.min(1, maxH / dataB.h)
+          const wA = dataA.w * scaleA, hA = dataA.h * scaleA
+          const wB = dataB.w * scaleB, hB = dataB.h * scaleB
+          canvas.width  = wA + wB + 4
+          canvas.height = Math.max(hA, hB)
+          const ctx = canvas.getContext('2d')
+          ctx.fillStyle = '#e0e5ec'
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+          ctx.drawImage(dataA.img, 0, (canvas.height - hA) / 2, wA, hA)
+          ctx.fillStyle = '#a3b1c6'
+          ctx.fillRect(wA, 0, 4, canvas.height)
+          ctx.drawImage(dataB.img, wA + 4, (canvas.height - hB) / 2, wB, hB)
+        } else if (currentMode === 'slider') {
+          // 滑动状态截图
+          const scale = Math.min(1, maxW / Math.max(dataA.w, dataB.w), maxH / Math.max(dataA.h, dataB.h))
+          const w = Math.max(dataA.w, dataB.w) * scale
+          const h = Math.max(dataA.h, dataB.h) * scale
+          canvas.width = w; canvas.height = h
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(dataA.img, 0, 0, w, h)
+          const clipW = (sliderPct / 100) * w
+          ctx.save()
+          ctx.beginPath()
+          ctx.rect(0, 0, clipW, h)
+          ctx.clip()
+          ctx.drawImage(dataB.img, 0, 0, w, h)
+          ctx.restore()
+          // 分割线
+          ctx.strokeStyle = '#667eea'
+          ctx.lineWidth = 2
+          ctx.beginPath()
+          ctx.moveTo(clipW, 0); ctx.lineTo(clipW, h)
+          ctx.stroke()
+        } else {
+          // 叠加模式
+          const scale = Math.min(1, maxW / Math.max(dataA.w, dataB.w), maxH / Math.max(dataA.h, dataB.h))
+          const w = Math.max(dataA.w, dataB.w) * scale
+          const h = Math.max(dataA.h, dataB.h) * scale
+          canvas.width = w; canvas.height = h
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(dataA.img, 0, 0, w, h)
+          ctx.globalAlpha = overlayOpacity / 100
+          ctx.drawImage(dataB.img, 0, 0, w, h)
+        }
+
+        canvas.toBlob(blob => {
+          const a = document.createElement('a')
+          a.href = URL.createObjectURL(blob)
+          a.download = 'compare_' + Date.now() + '.png'
+          document.body.appendChild(a); a.click(); document.body.removeChild(a)
+        })
+      })
+
+      // ── 重置 ──────────────────────────────────────────
+      resetBtn.addEventListener('click', () => {
+        if (dataA) { URL.revokeObjectURL(dataA.url); dataA = null; imgA = null }
+        if (dataB) { URL.revokeObjectURL(dataB.url); dataB = null; imgB = null }
+        fileA.value = ''; fileB.value = ''
+        nameA.textContent = ''; nameA.classList.add('hidden')
+        nameB.textContent = ''; nameB.classList.add('hidden')
+        dropA.classList.remove('has-image')
+        dropB.classList.remove('has-image')
+        infoAEl.innerHTML = '<div class="info-empty">暂无数据</div>'
+        infoBEl.innerHTML = '<div class="info-empty">暂无数据</div>'
+        diffBadges.classList.add('hidden')
+        saveBtn.disabled = true
+        swapBtn.disabled = true
+        zoomRow.style.display = 'none'
+        zoomLevel = 100
+        zoomValEl.textContent = '100%'
+        sliderPct = 50
+        overlayOpacity = 50
+        opSlider.value = 50
+        opVal.textContent = '50%'
+        renderCompare()
+      })
+
+      // ── 工具函数 ──────────────────────────────────────
+      function fmtSize(bytes) {
+        if (bytes < 1024) return bytes + ' B'
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB'
+        return (bytes / 1048576).toFixed(1) + ' MB'
+      }
+
+      function gcd(a, b) { return b === 0 ? a : gcd(b, a % b) }
+
+      function gcd2ratio(w, h) {
+        const g = gcd(w, h)
+        return (w / g) + ':' + (h / g)
+      }
+    </script>
+
+  </body>
+</html>

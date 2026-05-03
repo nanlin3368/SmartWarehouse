@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片分割</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --line-color: #ff6b6b;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent; /* 全局禁用点击高亮 */
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 文件上传区 ── */
+      .file-drop {
+        border: 2px dashed var(--text-muted);
+        border-radius: var(--border-radius-sm);
+        padding: 26px 20px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .file-drop:hover, .file-drop.dragover {
+        border-color: var(--accent-primary);
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.15);
+      }
+
+      .file-drop.dragover {
+        border-style: solid;
+        border-color: var(--success);
+      }
+
+      .file-drop input[type="file"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .file-drop-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+      .file-drop-text {
+        font-size: 0.92rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 4px;
+      }
+
+      .file-drop-sub {
+        font-size: 0.74rem;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+      }
+
+      .file-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        background: var(--bg-primary);
+        border-radius: 20px;
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--accent-primary);
+      }
+
+      /* ── 预览/画布区 ── */
+      .canvas-wrap {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 16px;
+      }
+
+      .canvas-placeholder {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        text-align: center;
+      }
+
+      #imageCanvas {
+        max-width: 100%;
+        max-height: 500px;
+        border-radius: var(--border-radius-xs);
+        box-shadow: 4px 4px 10px var(--shadow-dark), -2px -2px 6px var(--shadow-light);
+        object-fit: contain;
+        cursor: crosshair;
+        display: none;
+      }
+
+      /* ── 切割模式按钮 ── */
+      .mode-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .mode-btn {
+        padding: 12px 8px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        letter-spacing: 0.5px;
+      }
+
+      .mode-btn:hover  { transform: translateY(-1px); }
+      .mode-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.96);
+      }
+
+      .mode-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+      }
+
+      .mode-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      /* ── 添加线操作按钮 ── */
+      .line-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      /* ── 操作按钮 ── */
+      .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .action-btn {
+        padding: 13px 10px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .action-btn:hover  { transform: translateY(-1px); }
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .action-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      .action-btn.primary {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        grid-column: span 2;
+      }
+
+      .action-btn.primary:hover { box-shadow: 6px 6px 16px rgba(102,126,234,0.4); transform: translateY(-2px); }
+      .action-btn.primary:active { transform: scale(0.97); }
+
+      .action-btn.danger-btn { color: var(--danger); }
+
+      /* ── 进度条 ── */
+      .progress-bar-wrap {
+        height: 4px;
+        border-radius: 2px;
+        background: var(--bg-primary);
+        box-shadow: inset 1px 1px 3px var(--shadow-dark);
+        overflow: hidden;
+        margin-top: 10px;
+        display: none;
+      }
+
+      .progress-bar-fill {
+        height: 100%;
+        border-radius: 2px;
+        background: var(--accent-gradient);
+        width: 0;
+        transition: width 0.4s ease;
+      }
+
+      .status-text {
+        text-align: center;
+        margin-top: 8px;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        display: none;
+      }
+
+      /* ── 说明卡片 ── */
+      .instr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+      .instr-text {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── 响应式 ── */
+      @media (max-width: 420px) {
+        h1 { font-size: 1.8rem; }
+        .line-grid { grid-template-columns: repeat(3, 1fr); }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>图片分割</h1>
+      <p class="subtitle">轻松分割图片 · 支持自定义切片</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 上传图片 -->
+      <div class="card">
+        <div class="card-label">上传图片</div>
+        <div class="file-drop" id="dropArea">
+          <span class="file-drop-icon">📁</span>
+          <div class="file-drop-text">点击或拖拽上传图片</div>
+          <div class="file-drop-sub">单张图片，拖拽切割线自定义分割区域</div>
+          <span class="file-badge">JPG · PNG · WEBP</span>
+          <input type="file" id="fileInput" accept="image/*" />
+        </div>
+      </div>
+
+      <!-- 预览与画布 -->
+      <div class="card">
+        <div class="card-label">图片预览</div>
+        <div class="canvas-wrap" id="canvasWrap">
+          <div class="canvas-placeholder" id="canvasPlaceholder">📷 上传图片后在此显示，可拖拽切割线调整位置</div>
+          <canvas id="imageCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- 切割模式 -->
+      <div class="card">
+        <div class="card-label">快捷切割模式</div>
+        <div class="mode-grid">
+          <button class="mode-btn" id="btnHCenter" onclick="setMode('h-center')" disabled>水平中线</button>
+          <button class="mode-btn" id="btnVCenter" onclick="setMode('v-center')" disabled>垂直中线</button>
+          <button class="mode-btn" id="btnGrid2" onclick="setMode('grid-2x2')" disabled>四宫格</button>
+          <button class="mode-btn" id="btnGrid3" onclick="setMode('grid-3x3')" disabled>九宫格</button>
+        </div>
+        <div class="card-label" style="margin-top:6px">手动添加切割线</div>
+        <div class="line-grid">
+          <button class="action-btn" id="btnAddH" onclick="addLine('h')" disabled>➕ 水平线</button>
+          <button class="action-btn" id="btnAddV" onclick="addLine('v')" disabled>➕ 垂直线</button>
+          <button class="action-btn danger-btn" id="btnClear" onclick="clearLines()" disabled>🧹 清除</button>
+        </div>
+      </div>
+
+      <!-- 执行操作 -->
+      <div class="card">
+        <div class="card-label">操作</div>
+        <div class="action-grid">
+          <button class="action-btn primary" id="sliceBtn" onclick="sliceAndDownload()" disabled>✂️ 切割并下载</button>
+        </div>
+        <div class="progress-bar-wrap" id="progressWrap">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <div class="status-text" id="statusText">准备就绪</div>
+      </div>
+
+      <!-- 使用说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+          <div class="instr-item">
+            <span class="instr-icon">📁</span>
+            <div class="instr-text"><strong>上传图片</strong>：点击上传区域或将图片拖拽到上传区，支持 JPG / PNG / WEBP 格式</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">✂️</span>
+            <div class="instr-text"><strong>选择模式</strong>：点击快捷按钮（水平中线、垂直中线、四宫格、九宫格）快速添加切割线</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">👆</span>
+            <div class="instr-text"><strong>自定义切割</strong>：点击「➕ 水平线」或「➕ 垂直线」添加切割线，在预览区拖拽切割线到任意位置（仅限桌面端）</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">💾</span>
+            <div class="instr-text"><strong>下载切片</strong>：点击「切割并下载」，所有切片将打包为 ZIP 文件自动下载，每片均为 PNG 格式</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔒</span>
+            <div class="instr-text"><strong>数据安全</strong>：所有处理在浏览器本地完成，图片不上传服务器</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      const fileInput        = document.getElementById('fileInput')
+      const dropArea         = document.getElementById('dropArea')
+      const canvas           = document.getElementById('imageCanvas')
+      const canvasWrap       = document.getElementById('canvasWrap')
+      const canvasPlaceholder= document.getElementById('canvasPlaceholder')
+      const progressWrap     = document.getElementById('progressWrap')
+      const progressFill     = document.getElementById('progressFill')
+      const statusText       = document.getElementById('statusText')
+      const sliceBtn         = document.getElementById('sliceBtn')
+
+      const modeBtns  = ['btnHCenter','btnVCenter','btnGrid2','btnGrid3'].map(id => document.getElementById(id))
+      const lineBtns  = ['btnAddH','btnAddV','btnClear'].map(id => document.getElementById(id))
+      const allCtrl   = [...modeBtns, ...lineBtns, sliceBtn]
+
+      const ctx = canvas.getContext('2d')
+      let currentImage  = null
+      let lines         = []
+      let draggingLine  = null
+      let isDragging    = false
+
+      // ── 上传区拖拽 ──
+      dropArea.addEventListener('dragover',  e => { e.preventDefault(); dropArea.classList.add('dragover') })
+      dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.classList.remove('dragover') })
+      dropArea.addEventListener('drop', e => {
+        e.preventDefault()
+        dropArea.classList.remove('dragover')
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0])
+      })
+      fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]) })
+
+      function handleFile(file) {
+        if (!file.type.startsWith('image/')) { alert('请上传图片文件'); return }
+        const reader = new FileReader()
+        reader.onload = e => {
+          const img = new Image()
+          img.onload = () => {
+            currentImage = img
+            lines = []
+            resizeCanvas()
+            canvas.style.display = 'block'
+            canvasPlaceholder.style.display = 'none'
+            allCtrl.forEach(b => b.disabled = false)
+            draw()
+          }
+          img.src = e.target.result
+        }
+        reader.readAsDataURL(file)
+      }
+
+      function resizeCanvas() {
+        if (!currentImage) return
+        const maxW = canvasWrap.clientWidth - 32
+        const maxH = 500
+        let w = currentImage.width, h = currentImage.height
+        const ratio = w / h
+        if (w > maxW) { w = maxW; h = w / ratio }
+        if (h > maxH) { h = maxH; w = h * ratio }
+        canvas.width = w
+        canvas.height = h
+      }
+
+      function draw() {
+        if (!currentImage) return
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height)
+        lines.forEach(line => {
+          ctx.beginPath()
+          ctx.strokeStyle = line === draggingLine ? '#ff4757' : '#ff6b6b'
+          ctx.lineWidth   = line === draggingLine ? 3 : 2
+          if (line.type === 'h') {
+            const y = line.pos * canvas.height
+            ctx.moveTo(0, y); ctx.lineTo(canvas.width, y)
+          } else {
+            const x = line.pos * canvas.width
+            ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height)
+          }
+          ctx.stroke()
+        })
+      }
+
+      function setMode(mode) {
+        if (!currentImage) return
+        lines = []
+        // Clear active states
+        modeBtns.forEach(b => b.classList.remove('active'))
+        // Set active
+        const modeMap = { 'h-center':'btnHCenter','v-center':'btnVCenter','grid-2x2':'btnGrid2','grid-3x3':'btnGrid3' }
+        document.getElementById(modeMap[mode]).classList.add('active')
+        switch (mode) {
+          case 'h-center': lines.push({ type:'h', pos:0.5 }); break
+          case 'v-center': lines.push({ type:'v', pos:0.5 }); break
+          case 'grid-2x2': lines.push({ type:'h', pos:0.5 },{ type:'v', pos:0.5 }); break
+          case 'grid-3x3':
+            lines.push({ type:'h', pos:1/3 },{ type:'h', pos:2/3 },{ type:'v', pos:1/3 },{ type:'v', pos:2/3 })
+            break
+        }
+        draw()
+      }
+
+      function addLine(type) {
+        if (!currentImage) return
+        modeBtns.forEach(b => b.classList.remove('active'))
+        lines.push({ type, pos: 0.5 })
+        draw()
+      }
+
+      function clearLines() {
+        lines = []
+        modeBtns.forEach(b => b.classList.remove('active'))
+        draw()
+      }
+
+      // ── 拖拽切割线 ──
+      canvas.addEventListener('mousedown', e => {
+        if (!currentImage) return
+        const rect = canvas.getBoundingClientRect()
+        const x = e.clientX - rect.left, y = e.clientY - rect.top
+        const threshold = 10
+        let closestDist = threshold, closestLine = null
+        lines.forEach(line => {
+          const dist = line.type === 'h'
+            ? Math.abs(y - line.pos * canvas.height)
+            : Math.abs(x - line.pos * canvas.width)
+          if (dist < closestDist) { closestDist = dist; closestLine = line }
+        })
+        if (closestLine) { draggingLine = closestLine; isDragging = true; draw() }
+      })
+
+      canvas.addEventListener('mousemove', e => {
+        if (!currentImage) return
+        const rect = canvas.getBoundingClientRect()
+        const x = e.clientX - rect.left, y = e.clientY - rect.top
+        if (isDragging && draggingLine) {
+          draggingLine.pos = draggingLine.type === 'h'
+            ? Math.max(0, Math.min(1, y / canvas.height))
+            : Math.max(0, Math.min(1, x / canvas.width))
+          draw()
+        } else {
+          const threshold = 10
+          let hovering = false
+          lines.forEach(line => {
+            const dist = line.type === 'h'
+              ? Math.abs(y - line.pos * canvas.height)
+              : Math.abs(x - line.pos * canvas.width)
+            if (dist < threshold) hovering = true
+          })
+          canvas.style.cursor = hovering ? 'move' : 'crosshair'
+        }
+      })
+
+      canvas.addEventListener('mouseup',    () => { isDragging = false; draggingLine = null; draw() })
+      canvas.addEventListener('mouseleave', () => { isDragging = false; draggingLine = null; draw() })
+
+      // ── 切割并下载（逐张原生下载，无需外部库）──
+      async function sliceAndDownload() {
+        if (!currentImage) return
+        if (lines.length === 0) { alert('请先添加切割线'); return }
+
+        sliceBtn.disabled = true
+        sliceBtn.textContent = '处理中…'
+        progressWrap.style.display = 'block'
+        statusText.style.display   = 'block'
+        statusText.textContent = '正在处理...'
+        progressFill.style.width = '0%'
+
+        const vCuts = [0, 1], hCuts = [0, 1]
+        lines.forEach(line => { line.type === 'v' ? vCuts.push(line.pos) : hCuts.push(line.pos) })
+        vCuts.sort((a,b)=>a-b); hCuts.sort((a,b)=>a-b)
+
+        const uniqueV = [vCuts[0]]
+        for (let i = 1; i < vCuts.length; i++)
+          if (vCuts[i] - uniqueV[uniqueV.length-1] > 0.001) uniqueV.push(vCuts[i])
+        const uniqueH = [hCuts[0]]
+        for (let i = 1; i < hCuts.length; i++)
+          if (hCuts[i] - uniqueH[uniqueH.length-1] > 0.001) uniqueH.push(hCuts[i])
+
+        const totalSlices = (uniqueV.length - 1) * (uniqueH.length - 1)
+        let processed = 0
+        const imgW = currentImage.width, imgH = currentImage.height
+
+        for (let i = 0; i < uniqueH.length - 1; i++) {
+          for (let j = 0; j < uniqueV.length - 1; j++) {
+            const y1 = uniqueH[i] * imgH, y2 = uniqueH[i+1] * imgH
+            const x1 = uniqueV[j] * imgW, x2 = uniqueV[j+1] * imgW
+            const w = x2 - x1, h = y2 - y1
+            if (w < 1 || h < 1) continue
+
+            const sc = document.createElement('canvas')
+            sc.width = w; sc.height = h
+            sc.getContext('2d').drawImage(currentImage, x1, y1, w, h, 0, 0, w, h)
+
+            // 原生下载：转为 dataURL 后用 <a> 触发
+            const dataUrl = sc.toDataURL('image/png')
+            const a = document.createElement('a')
+            a.href = dataUrl
+            a.download = `slice_${i+1}_${j+1}.png`
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+
+            processed++
+            progressFill.style.width = ((processed / totalSlices) * 100) + '%'
+            statusText.textContent = `正在下载 ${processed} / ${totalSlices}…`
+
+            // 短暂延迟，避免浏览器合并/拦截连续下载
+            await new Promise(res => setTimeout(res, 200))
+          }
+        }
+
+        progressFill.style.width = '100%'
+        statusText.textContent = `✓ 全部完成，共下载 ${processed} 张`
+        sliceBtn.disabled = false
+        sliceBtn.textContent = '✂️ 切割并下载'
+        setTimeout(() => {
+          progressWrap.style.display = 'none'
+          statusText.style.display = 'none'
+          progressFill.style.width = '0'
+        }, 3000)
+      }
+    </script>
+
+  </body>
+</html>

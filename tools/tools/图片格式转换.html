@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>图片格式转换</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+        @keyframes headerSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes headerShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.15); }
+        }
+        .subtitle { font-size: 0.92rem; color: var(--text-secondary); font-weight: 500; }
+
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+        @keyframes contentSlide {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-drop {
+            border: 2px dashed var(--text-muted);
+            border-radius: var(--border-radius-sm);
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            transition: var(--transition);
+            margin-bottom: 16px;
+        }
+        .file-drop:hover,
+        .file-drop.dragover { border-color: var(--accent-primary); }
+        .file-drop input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .file-drop-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+        .file-drop-text {
+            font-size: 0.92rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+        .file-drop-sub { font-size: 0.74rem; color: var(--text-secondary); margin-bottom: 10px; }
+        .file-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        /* 凹陷滚动容器 */
+        .preview-scroll {
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 10px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-sm);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+        }
+
+        .preview-thumb {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            padding: 6px;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .preview-thumb img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light);
+            background: #f0f0f0;
+        }
+        .preview-thumb .thumb-name {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        .preview-thumb .thumb-status {
+            font-size: 0.55rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            white-space: nowrap;
+            min-height: 14px;
+            line-height: 1;
+        }
+
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .option-item { display: flex; flex-direction: column; gap: 6px; }
+        .option-item.full { grid-column: 1 / -1; }
+        .option-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .option-label span { font-weight: 600; color: var(--text-secondary); }
+
+        .format-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .format-btn {
+            padding: 12px 8px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        .format-btn.active {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(102, 126, 234, 0.35), -2px -2px 5px var(--shadow-light);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn {
+            flex: 1;
+            padding: 13px 8px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            white-space: nowrap;
+        }
+        .btn:active {
+            transform: scale(0.97);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+        .btn.primary { background: var(--accent-gradient); color: #fff; }
+        .btn.success { background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: #fff; }
+        .btn.danger { color: var(--danger); }
+
+        .action-bar { display: flex; gap: 12px; margin-top: 16px; }
+
+        /* 隐形进度条 */
+        .progress-wrap {
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            overflow: hidden;
+            margin-bottom: 14px;
+            display: none;
+        }
+        .progress-wrap.visible { display: block; }
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--accent-gradient);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            gap: 12px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px 16px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            flex: 1;
+            min-width: 80px;
+        }
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; }
+
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--text-primary);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 999;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .instr-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); }
+
+        @media (max-width: 600px) {
+            .format-grid { grid-template-columns: repeat(3, 1fr); }
+            .preview-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>图片格式转换</h1>
+    <p class="subtitle">支持多格式互转 · 批量处理 · 本地安全</p>
+</header>
+
+<div class="main">
+    <!-- 上传卡片 -->
+    <div class="card">
+        <div class="card-label">📁 上传图片</div>
+        <div class="file-drop" id="dropArea">
+            <span class="file-drop-icon">🖼️</span>
+            <div class="file-drop-text">拖放图片到此处</div>
+            <div class="file-drop-sub">或点击选择文件（支持多选）</div>
+            <span class="file-badge">JPG · PNG · WEBP · BMP · GIF · SVG</span>
+            <input type="file" id="fileInput" accept="image/*" multiple />
+        </div>
+    </div>
+
+    <!-- 图片预览区域：外凸卡片 > 内凹滚动容器 > 凸出缩略图 -->
+    <div class="card" id="previewCard" style="display: none;">
+        <div class="card-label">🖼️ 图片预览</div>
+        <div class="preview-scroll">
+            <div class="preview-grid" id="previewGrid"></div>
+        </div>
+    </div>
+
+    <!-- 转换设置卡片 -->
+    <div class="card">
+        <div class="card-label">⚙️ 转换设置</div>
+        <div class="option-item full" style="margin-bottom:16px;">
+            <div class="option-label">目标格式</div>
+            <div class="format-grid" id="formatGrid">
+                <button class="format-btn active" data-format="jpg">JPG</button>
+                <button class="format-btn" data-format="png">PNG</button>
+                <button class="format-btn" data-format="webp">WEBP</button>
+                <button class="format-btn" data-format="bmp">BMP</button>
+                <button class="format-btn" data-format="gif">GIF</button>
+                <button class="format-btn" data-format="svg">SVG</button>
+            </div>
+        </div>
+        <div class="option-item">
+            <div class="option-label">输出质量 <span id="qualityVal">90%</span></div>
+            <input type="range" id="qualitySlider" min="10" max="100" value="90">
+            <p style="font-size:0.68rem; color:var(--text-muted); margin-top:4px;" id="qualityNote">仅 JPG / WEBP 支持质量调整，PNG / BMP / GIF / SVG 为无损格式</p>
+        </div>
+    </div>
+
+    <!-- 统计与操作卡片 -->
+    <div class="card">
+        <div class="card-label">📊 统计与操作</div>
+        <div class="stats-row">
+            <div class="stat-item"><div class="stat-value" id="totalFiles">0</div><div class="stat-label">文件数</div></div>
+            <div class="stat-item"><div class="stat-value" id="processedFiles">0</div><div class="stat-label">已处理</div></div>
+            <div class="stat-item"><div class="stat-value" id="successFiles">0</div><div class="stat-label">成功</div></div>
+            <div class="stat-item"><div class="stat-value" id="failFiles">0</div><div class="stat-label">失败</div></div>
+        </div>
+        <!-- 隐形进度条 -->
+        <div class="progress-wrap" id="progressWrap">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="action-bar">
+            <button class="btn primary" id="convertBtn" disabled>🔄 开始转换</button>
+            <button class="btn success" id="downloadAllBtn" disabled>📦 批量下载</button>
+            <button class="btn danger" id="resetBtn">🗑️ 清空全部</button>
+        </div>
+    </div>
+
+    <!-- 使用说明卡片 -->
+    <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+            <div class="instr-item"><span class="instr-icon">📁</span><div class="instr-text"><strong>上传图片</strong>：拖放或点击选择需要转换的图片，支持 JPG / PNG / WebP / BMP / GIF / SVG 等格式</div></div>
+            <div class="instr-item"><span class="instr-icon">🎯</span><div class="instr-text"><strong>选择格式</strong>：点击目标格式按钮，支持六种常见图片格式互相转换</div></div>
+            <div class="instr-item"><span class="instr-icon">🎚️</span><div class="instr-text"><strong>调节质量</strong>：仅对 JPG / WebP 有效，值越高文件越大画质越清晰，PNG / BMP 等为无损格式</div></div>
+            <div class="instr-item"><span class="instr-icon">⚠️</span><div class="instr-text"><strong>GIF 说明</strong>：GIF 转 GIF 保留动画；GIF 转其他格式仅保留第一帧</div></div>
+            <div class="instr-item"><span class="instr-icon">🔒</span><div class="instr-text"><strong>数据安全</strong>：所有处理在浏览器本地完成，图片不上传任何服务器</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    // ── 全局状态 ──────────────────────────────────
+    let files = [];
+    let isProcessing = false;
+    let currentFormat = 'jpg';
+    let currentQuality = 90;
+
+    const $ = id => document.getElementById(id);
+    const dropArea = $('dropArea');
+    const fileInput = $('fileInput');
+    const previewCard = $('previewCard');
+    const previewGrid = $('previewGrid');
+    const convertBtn = $('convertBtn');
+    const downloadAllBtn = $('downloadAllBtn');
+    const resetBtn = $('resetBtn');
+    const progressWrap = $('progressWrap');
+    const progressFill = $('progressFill');
+    const qualitySlider = $('qualitySlider');
+    const qualityValEl = $('qualityVal');
+    const qualityNote = $('qualityNote');
+    const toast = $('toast');
+
+    // ── 格式选择 ──────────────────────────────────
+    document.querySelectorAll('#formatGrid .format-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#formatGrid .format-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFormat = btn.dataset.format;
+            updateQualityNote();
+        });
+    });
+
+    function updateQualityNote() {
+        const lossless = ['png', 'svg', 'gif', 'bmp'].includes(currentFormat);
+        qualityNote.textContent = lossless
+            ? `${currentFormat.toUpperCase()} 为无损格式，质量滑块不影响输出`
+            : '数值越高，画质越好，文件越大';
+    }
+
+    // ── 质量滑块 ──────────────────────────────────
+    qualitySlider.addEventListener('input', () => {
+        currentQuality = parseInt(qualitySlider.value);
+        qualityValEl.textContent = currentQuality + '%';
+    });
+
+    // ── 上传处理 ──────────────────────────────────
+    dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('dragover'); });
+    dropArea.addEventListener('dragleave', () => dropArea.classList.remove('dragover'));
+    dropArea.addEventListener('drop', e => {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+    function handleFiles(fileList) {
+        Array.from(fileList).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                files.push({
+                    id: Date.now() + Math.random(),
+                    file,
+                    name: file.name,
+                    size: file.size,
+                    status: 'pending',
+                    converted: null,
+                });
+            }
+        });
+        renderPreviews();
+        updateStats();
+        updateButtons();
+    }
+
+    function getStatusText(status) {
+        switch (status) {
+            case 'pending': return '';
+            case 'processing': return '转换中…';
+            case 'completed': return '✓ 完成';
+            case 'error': return '失败';
+            default: return '';
+        }
+    }
+
+    function renderPreviews() {
+        if (files.length === 0) {
+            previewCard.style.display = 'none';
+            return;
+        }
+        previewCard.style.display = '';
+        previewGrid.innerHTML = files.map(f => `
+            <div class="preview-thumb" data-id="${f.id}">
+                <img src="${URL.createObjectURL(f.file)}" alt="${f.name}">
+                <span class="thumb-name">${f.name}</span>
+                <span class="thumb-status">${getStatusText(f.status)}</span>
+            </div>`).join('');
+    }
+
+    // ── 增量更新预览状态（不重建DOM，避免闪烁）──────
+    function updatePreviewStatuses() {
+        const thumbs = previewGrid.querySelectorAll('.preview-thumb');
+        thumbs.forEach(el => {
+            const id = parseFloat(el.dataset.id);
+            const f = files.find(x => x.id === id);
+            if (f) {
+                const statusEl = el.querySelector('.thumb-status');
+                if (statusEl) {
+                    statusEl.textContent = getStatusText(f.status);
+                }
+            }
+        });
+    }
+
+    // ── 进度条 ──────────────────────────────────────
+    function showProgress() {
+        progressWrap.classList.add('visible');
+        progressFill.style.width = '0%';
+    }
+
+    function updateProgress(percent) {
+        progressFill.style.width = Math.min(100, Math.max(0, percent)) + '%';
+    }
+
+    function hideProgress() {
+        progressFill.style.width = '100%';
+        setTimeout(() => {
+            progressWrap.classList.remove('visible');
+            progressFill.style.width = '0%';
+        }, 500);
+    }
+
+    // ── 核心转换函数 ──────────────────────────────
+    function convertImage(file, format, quality) {
+        return new Promise((resolve, reject) => {
+            if (file.type === 'image/gif' && format === 'gif') {
+                resolve(file);
+                return;
+            }
+            const img = new Image();
+            const reader = new FileReader();
+            reader.onload = e => {
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    if (format === 'jpg' || format === 'jpeg') {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+                    ctx.drawImage(img, 0, 0);
+
+                    if (format === 'svg') {
+                        const data = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${canvas.width}" height="${canvas.height}" viewBox="0 0 ${canvas.width} ${canvas.height}">
+  <image width="${canvas.width}" height="${canvas.height}" xlink:href="${canvas.toDataURL('image/png')}"/>
+</svg>`;
+                        resolve(new Blob([data], { type: 'image/svg+xml' }));
+                        return;
+                    }
+
+                    const mimeMap = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', bmp: 'image/bmp', gif: 'image/gif' };
+                    const mime = mimeMap[format] || 'image/jpeg';
+                    const lossless = ['png', 'bmp', 'gif'].includes(format);
+                    canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('转换失败')), mime, lossless ? undefined : quality / 100);
+                };
+                img.onerror = () => reject(new Error('图片加载失败'));
+                img.src = e.target.result;
+            };
+            reader.onerror = () => reject(new Error('文件读取失败'));
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // ── 转换流程（优化版：避免预览闪烁）───────────
+    convertBtn.addEventListener('click', async () => {
+        if (isProcessing) return;
+        isProcessing = true;
+        updateButtons();
+
+        const pending = files.filter(f => f.status === 'pending');
+        const total = pending.length;
+        if (total === 0) {
+            isProcessing = false;
+            updateButtons();
+            return;
+        }
+
+        pending.forEach(f => { f.status = 'processing'; });
+        updatePreviewStatuses();
+        showProgress();
+        updateProgress(0);
+
+        let completed = 0;
+        for (let f of pending) {
+            try {
+                const isGifToOther = f.file.type === 'image/gif' && currentFormat !== 'gif';
+                const blob = await convertImage(f.file, currentFormat, currentQuality);
+                f.converted = {
+                    blob,
+                    url: URL.createObjectURL(blob),
+                    name: f.name.replace(/\.[^/.]+$/, '') + '.' + currentFormat,
+                };
+                f.status = 'completed';
+                f.gifNote = isGifToOther;
+            } catch (e) {
+                f.status = 'error';
+            }
+            completed++;
+            updateProgress(Math.round((completed / total) * 100));
+            updateStats();
+        }
+
+        updatePreviewStatuses();
+        isProcessing = false;
+        updateButtons();
+        hideProgress();
+        showToast('✅ 转换完成');
+    });
+
+    // ── 批量下载 ──────────────────────────────────
+    downloadAllBtn.addEventListener('click', () => {
+        files.filter(f => f.status === 'completed' && f.converted).forEach(f => {
+            const a = document.createElement('a');
+            a.href = f.converted.url;
+            a.download = f.converted.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+        showToast('📦 已开始下载全部');
+    });
+
+    // ── 清空全部 ──────────────────────────────────
+    resetBtn.addEventListener('click', () => {
+        files.forEach(f => { if (f.converted) URL.revokeObjectURL(f.converted.url); });
+        files = [];
+        fileInput.value = '';
+        previewCard.style.display = 'none';
+        previewGrid.innerHTML = '';
+        progressWrap.classList.remove('visible');
+        progressFill.style.width = '0%';
+        updateStats();
+        updateButtons();
+        showToast('🗑️ 已清空全部');
+    });
+
+    function updateButtons() {
+        convertBtn.disabled = files.length === 0 || isProcessing;
+        downloadAllBtn.disabled = files.filter(f => f.status === 'completed').length === 0;
+    }
+
+    function updateStats() {
+        const total = files.length;
+        const processed = files.filter(f => f.status === 'completed' || f.status === 'error').length;
+        const success = files.filter(f => f.status === 'completed').length;
+        const fail = files.filter(f => f.status === 'error').length;
+        $('totalFiles').textContent = total;
+        $('processedFiles').textContent = processed;
+        $('successFiles').textContent = success;
+        $('failFiles').textContent = fail;
+    }
+
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(window.toastTimer);
+        window.toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    updateQualityNote();
+</script>
+</body>
+</html>

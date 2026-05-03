@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片加水印</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes headerShine {
+            0%   { left: -100%; }
+            50%  { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to   { filter: brightness(1.15); }
+        }
+
+        .subtitle { font-size: 0.92rem; color: var(--text-secondary); font-weight: 500; }
+
+        /* ── 主布局 ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ── 上传区 ── */
+        .file-drop {
+            border: 2px dashed var(--text-muted);
+            border-radius: var(--border-radius-sm);
+            padding: 26px 20px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .file-drop:hover, .file-drop.dragover {
+            border-color: var(--accent-primary);
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102,126,234,0.15);
+        }
+
+        .file-drop.dragover { border-style: solid; border-color: var(--success); }
+
+        .file-drop input[type="file"] {
+            position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;
+        }
+
+        .file-drop-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+        .file-drop-text {
+            font-size: 0.92rem; font-weight: 700;
+            background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .file-drop-sub { font-size: 0.74rem; color: var(--text-secondary); margin-bottom: 10px; }
+        .file-badge {
+            display: inline-block; padding: 3px 12px; background: var(--bg-primary); border-radius: 20px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.7rem; font-weight: 600; color: var(--accent-primary);
+        }
+
+        .file-chosen {
+            margin-top: 8px; font-size: 0.72rem; color: var(--success); font-weight: 600; text-align: center; display: none;
+        }
+
+        .preview-wrap {
+            background: var(--bg-primary); border-radius: var(--border-radius-xs);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            min-height: 160px; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 12px;
+        }
+
+        .preview-wrap canvas {
+            max-width: 100%; height: auto; border-radius: var(--border-radius-xs);
+            box-shadow: 4px 4px 10px var(--shadow-dark), -2px -2px 6px var(--shadow-light); display: block;
+        }
+
+        .preview-placeholder { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; text-align: center; padding: 20px; line-height: 1.8; }
+        .preview-placeholder-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+        /* ── Settings Tab Card ── */
+        .settings-tab-card {
+            background: var(--bg-primary); border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .settings-tab-nav {
+            display: flex; gap: 8px; background: var(--bg-primary); border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+            padding: 6px; margin-bottom: 20px;
+            overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+            scrollbar-width: none; -ms-overflow-style: none;
+        }
+
+        .settings-tab-nav::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+        .settings-tab-btn {
+            flex: 1 0 auto; min-width: 64px; padding: 9px 8px; border: none; background: transparent;
+            border-radius: 8px; font-size: 0.78rem; font-weight: 600; color: var(--text-muted);
+            cursor: pointer; transition: var(--transition); -webkit-tap-highlight-color: transparent;
+            display: flex; align-items: center; justify-content: center; gap: 4px; white-space: nowrap; flex-shrink: 0;
+        }
+
+        .settings-tab-btn .tab-icon { font-size: 0.95rem; flex-shrink: 0; }
+
+        .settings-tab-btn.active {
+            background: var(--bg-primary); box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .settings-tab-content { display: none; animation: tabFadeIn 0.25s ease; }
+        .settings-tab-content.active { display: block; }
+
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── 水印内部布局复用原有样式 ── */
+        .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+        .type-btn {
+            padding: 12px 8px; border: none; border-radius: var(--border-radius-xs);
+            background: var(--bg-primary); box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); cursor: pointer;
+            font-family: inherit; -webkit-tap-highlight-color: transparent; transition: var(--transition);
+            display: flex; align-items: center; justify-content: center; gap: 6px; outline: none;
+        }
+        .type-btn:active { transform: scale(0.96); }
+        .type-btn.active {
+            background: var(--accent-gradient); color: #fff;
+            box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+        }
+
+        .param-section { display: flex; flex-direction: column; gap: 16px; }
+        .param-row { display: flex; flex-direction: column; gap: 6px; }
+        .param-label {
+            font-size: 0.7rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .param-val {
+            font-size: 0.85rem; font-weight: 700; background: var(--accent-gradient);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .text-input {
+            width: 100%; padding: 10px 14px; border: none; border-radius: var(--border-radius-xs);
+            background: var(--bg-primary); box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.9rem; font-weight: 600; color: var(--text-primary); outline: none; font-family: inherit; transition: var(--transition);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px;
+            background: var(--bg-primary); box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            outline: none; cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
+            background: var(--accent-gradient); box-shadow: 3px 3px 8px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+            cursor: pointer; transition: transform 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.2); }
+
+        select {
+            width: 100%; padding: 10px 14px; border: none; border-radius: var(--border-radius-xs);
+            background: var(--bg-primary); box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.85rem; font-weight: 600; color: var(--text-primary); outline: none; font-family: inherit;
+            -webkit-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b9dc3' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 14px center; cursor: pointer;
+        }
+
+        input[type="number"] {
+            width: 100%; padding: 10px 14px; border: none; border-radius: var(--border-radius-xs);
+            background: var(--bg-primary); box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.9rem; font-weight: 600; color: var(--text-primary); outline: none; font-family: inherit;
+            -moz-appearance: textfield;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+        .color-row { display: flex; align-items: center; gap: 10px; }
+        .color-preview {
+            width: 40px; height: 36px; border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            cursor: pointer; border: none; padding: 0; flex-shrink: 0; overflow: hidden; position: relative;
+        }
+        .color-preview input[type="color"] {
+            position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px);
+            opacity: 0; cursor: pointer; border: none; padding: 0; box-shadow: none;
+        }
+        .color-hex {
+            flex: 1; padding: 8px 12px; border: none; border-radius: var(--border-radius-xs);
+            background: var(--bg-primary); box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); outline: none; font-family: monospace; letter-spacing: 1px;
+        }
+
+        .pos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .pos-btn {
+            border: none; border-radius: 8px; background: var(--bg-primary);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            cursor: pointer; font-size: 0.58rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.2px;
+            -webkit-tap-highlight-color: transparent; transition: var(--transition); outline: none;
+            display: flex; align-items: center; justify-content: center; padding: 8px 4px; text-align: center;
+            line-height: 1.2; height: 44px;
+        }
+        .pos-btn:active { transform: scale(0.92); }
+        .pos-btn.active {
+            background: var(--accent-gradient); color: #fff;
+            box-shadow: 3px 3px 8px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+        }
+
+        .file-drop-sm {
+            border: 2px dashed var(--text-muted); border-radius: var(--border-radius-xs); padding: 16px;
+            text-align: center; cursor: pointer; position: relative; background: var(--bg-primary);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transition: var(--transition); -webkit-tap-highlight-color: transparent;
+        }
+        .file-drop-sm:hover, .file-drop-sm.dragover { border-color: var(--accent-primary); }
+        .file-drop-sm.has-file { border-color: var(--success); border-style: solid; }
+        .file-drop-sm input[type="file"] {
+            position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;
+        }
+        .file-drop-sm-text {
+            font-size: 0.78rem; font-weight: 700; background: var(--accent-gradient);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .file-drop-sm-sub { font-size: 0.68rem; color: var(--text-muted); margin-top: 3px; }
+
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .action-btn {
+            padding: 13px 10px; border: none; border-radius: var(--border-radius-xs);
+            background: var(--bg-primary); box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.85rem; font-weight: 700; color: var(--text-primary); cursor: pointer;
+            font-family: inherit; -webkit-tap-highlight-color: transparent; transition: var(--transition);
+            display: flex; align-items: center; justify-content: center; gap: 6px; outline: none;
+        }
+        .action-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+        .action-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+        .action-btn.primary {
+            background: var(--accent-gradient); color: #fff;
+            box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+            grid-column: span 2;
+        }
+        .action-btn.primary:hover { box-shadow: 6px 6px 16px rgba(102,126,234,0.4); transform: translateY(-2px); }
+        .action-btn.primary:active { transform: scale(0.97); }
+        .action-btn.primary:disabled { background: linear-gradient(135deg, #a3b1c6, #8b9dc3); }
+        .action-btn.danger-btn { color: var(--danger); }
+        .action-btn.success-btn { color: var(--success); }
+
+        .progress-wrap {
+            height: 4px; border-radius: 2px; background: var(--bg-primary);
+            box-shadow: inset 1px 1px 3px var(--shadow-dark); overflow: hidden; margin-top: 10px; display: none;
+        }
+        .progress-fill { height: 100%; border-radius: 2px; background: var(--accent-gradient); width: 0; transition: width 0.4s ease; }
+
+        .fmt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .fmt-btn {
+            padding: 11px 8px; border: none; border-radius: var(--border-radius-xs);
+            background: var(--bg-primary); box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); cursor: pointer;
+            font-family: inherit; -webkit-tap-highlight-color: transparent; transition: var(--transition); outline: none;
+        }
+        .fmt-btn:active { transform: scale(0.96); }
+        .fmt-btn.active {
+            background: var(--accent-gradient); color: #fff;
+            box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+        }
+
+        .quality-note {
+            margin-top: 8px; padding: 8px 12px; background: var(--bg-primary); border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            font-size: 0.72rem; color: var(--text-muted); line-height: 1.5;
+        }
+
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+        .instr-item {
+            display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px;
+            background: var(--bg-primary); border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+        .instr-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 420px) {
+            h1 { font-size: 1.8rem; }
+            .two-col { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>图片加水印</h1>
+        <p class="subtitle">文字 / 图片水印 · 实时预览 · 九宫格定位 · 平铺铺满</p>
+    </header>
+
+    <div class="main">
+
+        <!-- ① 上传图片 -->
+        <div class="card">
+            <div class="card-label">上传图片</div>
+            <div class="file-drop" id="dropArea">
+                <span class="file-drop-icon">📁</span>
+                <div class="file-drop-text">拖放图片到此处</div>
+                <div class="file-drop-sub">或点击选择文件</div>
+                <span class="file-badge">JPG · PNG · WEBP · BMP</span>
+                <input type="file" id="fileInput" accept="image/*" />
+            </div>
+            <div class="file-chosen" id="mainFileName"></div>
+
+            <div class="preview-wrap" id="previewWrap">
+                <div class="preview-placeholder">
+                    <span class="preview-placeholder-icon">🖼️</span>
+                    上传图片后<br>实时预览水印效果
+                </div>
+            </div>
+            <canvas id="previewCanvas" style="display:none"></canvas>
+        </div>
+
+        <!-- ② 水印设置 Tab 导航卡片 -->
+        <div class="settings-tab-card">
+            <div class="settings-tab-nav">
+                <button class="settings-tab-btn active" id="stab-watermark" onclick="switchSettingsTab('watermark')">
+                    <span class="tab-icon">✏️</span>水印类型
+                </button>
+                <button class="settings-tab-btn" id="stab-position" onclick="switchSettingsTab('position')">
+                    <span class="tab-icon">📍</span>位置模式
+                </button>
+                <button class="settings-tab-btn" id="stab-output" onclick="switchSettingsTab('output')">
+                    <span class="tab-icon">📦</span>输出格式
+                </button>
+            </div>
+
+            <!-- 水印类型内容 -->
+            <div class="settings-tab-content active" id="stab-content-watermark">
+                <div class="type-grid">
+                    <button class="type-btn active" data-type="text">✏️ 文字水印</button>
+                    <button class="type-btn" data-type="image">🏷️ 图片水印</button>
+                </div>
+
+                <!-- 文字水印设置 -->
+                <div id="textSettings" class="param-section">
+                    <div class="param-row">
+                        <div class="param-label">水印文字</div>
+                        <input type="text" id="watermarkText" class="text-input" value="我的水印" placeholder="输入水印文字" />
+                    </div>
+                    <div class="two-col">
+                        <div class="param-row">
+                            <div class="param-label"><span>字体大小</span><span class="param-val" id="fontSizeVal">32px</span></div>
+                            <input type="range" id="fontSize" min="10" max="150" value="32" />
+                        </div>
+                        <div class="param-row">
+                            <div class="param-label">字体粗细</div>
+                            <select id="fontWeight">
+                                <option value="normal">正常</option>
+                                <option value="bold">粗体</option>
+                                <option value="100">100 极细</option>
+                                <option value="300">300 细</option>
+                                <option value="500">500 中等</option>
+                                <option value="800">800 特粗</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="two-col">
+                        <div class="param-row">
+                            <div class="param-label">文字颜色</div>
+                            <div class="color-row">
+                                <div class="color-preview" id="textColorPreview" style="background:#ffffff;">
+                                    <input type="color" id="textColor" value="#ffffff" />
+                                </div>
+                                <input type="text" class="color-hex" id="textColorHex" value="#ffffff" maxlength="7" />
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <div class="param-label">描边颜色</div>
+                            <div class="color-row">
+                                <div class="color-preview" id="strokeColorPreview" style="background:#000000;">
+                                    <input type="color" id="strokeColor" value="#000000" />
+                                </div>
+                                <input type="text" class="color-hex" id="strokeColorHex" value="#000000" maxlength="7" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="two-col">
+                        <div class="param-row">
+                            <div class="param-label"><span>透明度</span><span class="param-val" id="textOpacityVal">70%</span></div>
+                            <input type="range" id="textOpacity" min="0" max="100" value="70" />
+                        </div>
+                        <div class="param-row">
+                            <div class="param-label"><span>旋转角度</span><span class="param-val" id="textRotateVal">0°</span></div>
+                            <input type="range" id="textRotate" min="-180" max="180" value="0" />
+                        </div>
+                    </div>
+                    <div class="two-col">
+                        <div class="param-row">
+                            <div class="param-label"><span>描边宽度</span><span class="param-val" id="strokeWidthVal">0px</span></div>
+                            <input type="range" id="strokeWidth" min="0" max="8" step="0.5" value="0" />
+                        </div>
+                        <div class="param-row">
+                            <div class="param-label"><span>文字阴影</span><span class="param-val" id="shadowBlurVal">0</span></div>
+                            <input type="range" id="shadowBlur" min="0" max="20" step="0.5" value="0" />
+                        </div>
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label">字体样式</div>
+                        <select id="fontStyle">
+                            <option value="normal">正常</option>
+                            <option value="italic">斜体 (Italic)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 图片水印设置 -->
+                <div id="imageSettings" class="param-section hidden">
+                    <div class="file-drop-sm" id="watermarkDropArea">
+                        <div class="file-drop-sm-text">🏷️ 点击或拖放水印图片</div>
+                        <div class="file-drop-sm-sub" id="wmFileName">支持 PNG（推荐透明背景）</div>
+                        <input type="file" id="watermarkFileInput" accept="image/*" />
+                    </div>
+                    <div class="two-col">
+                        <div class="param-row">
+                            <div class="param-label"><span>水印缩放</span><span class="param-val" id="watermarkScaleVal">15%</span></div>
+                            <input type="range" id="watermarkScale" min="3" max="80" value="15" />
+                        </div>
+                        <div class="param-row">
+                            <div class="param-label"><span>透明度</span><span class="param-val" id="watermarkOpacityVal">60%</span></div>
+                            <input type="range" id="watermarkOpacity" min="0" max="100" value="60" />
+                        </div>
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label"><span>旋转角度</span><span class="param-val" id="watermarkRotateVal">0°</span></div>
+                        <input type="range" id="watermarkRotate" min="-180" max="180" value="0" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- 位置与模式内容 -->
+            <div class="settings-tab-content" id="stab-content-position">
+                <div class="param-section">
+                    <div class="param-row">
+                        <div class="param-label">水印模式</div>
+                        <select id="tileMode">
+                            <option value="single">单次放置</option>
+                            <option value="tile">平铺铺满</option>
+                        </select>
+                    </div>
+                    <div id="posGroup" class="param-row">
+                        <div class="param-label" style="margin-bottom:8px">水印位置</div>
+                        <div class="pos-grid">
+                            <button class="pos-btn" data-pos="top-left">左上角</button>
+                            <button class="pos-btn" data-pos="top-center">顶部<br>居中</button>
+                            <button class="pos-btn" data-pos="top-right">右上角</button>
+                            <button class="pos-btn" data-pos="center-left">左侧<br>居中</button>
+                            <button class="pos-btn" data-pos="center">正中心</button>
+                            <button class="pos-btn" data-pos="center-right">右侧<br>居中</button>
+                            <button class="pos-btn" data-pos="bottom-left">左下角</button>
+                            <button class="pos-btn" data-pos="bottom-center">底部<br>居中</button>
+                            <button class="pos-btn active" data-pos="bottom-right">右下角</button>
+                        </div>
+                    </div>
+                    <div id="tileGroup" class="param-row hidden">
+                        <div class="param-label"><span>平铺间距</span><span class="param-val" id="tileSpacingVal">40px</span></div>
+                        <input type="range" id="tileSpacing" min="0" max="200" value="40" />
+                    </div>
+                    <div id="tileDensityGroup" class="param-row hidden">
+                        <div class="param-label"><span>平铺密度</span><span class="param-val" id="tileDensityVal">100%</span></div>
+                        <input type="range" id="tileDensity" min="10" max="100" value="100" />
+                        <div class="quality-note" style="margin-top:6px">数值越小，水印越稀疏（随机抽取部分格子显示）</div>
+                    </div>
+                    <div class="two-col">
+                        <div class="param-row">
+                            <div class="param-label"><span>边距偏移</span><span class="param-val" id="marginOffsetVal">20px</span></div>
+                            <input type="range" id="marginOffset" min="0" max="100" value="20" />
+                        </div>
+                        <div class="param-row">
+                            <div class="param-label"><span>X 微调</span><span class="param-val" id="nudgeXVal">0</span></div>
+                            <input type="range" id="nudgeX" min="-200" max="200" value="0" />
+                        </div>
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label"><span>Y 微调</span><span class="param-val" id="nudgeYVal">0</span></div>
+                        <input type="range" id="nudgeY" min="-200" max="200" value="0" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- 输出格式内容 -->
+            <div class="settings-tab-content" id="stab-content-output">
+                <div class="fmt-grid">
+                    <button class="fmt-btn" data-fmt="image/png">PNG</button>
+                    <button class="fmt-btn active" data-fmt="image/jpeg">JPEG</button>
+                    <button class="fmt-btn" data-fmt="image/webp">WEBP</button>
+                </div>
+                <div class="param-row" id="qualityRow" style="margin-top:14px">
+                    <div class="param-label"><span>JPEG / WEBP 质量</span><span class="param-val" id="jpegQualityVal">90%</span></div>
+                    <input type="range" id="jpegQuality" min="10" max="100" value="90" />
+                    <div class="quality-note" id="qualityNote">数值越高，画质越好，文件越大</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ③ 操作 -->
+        <div class="card">
+            <div class="card-label">操作</div>
+            <div class="action-grid">
+                <button class="action-btn primary" id="downloadBtn" disabled>💾 下载加水印图片</button>
+                <button class="action-btn success-btn" id="copyBtn" disabled>📋 复制到剪贴板</button>
+                <button class="action-btn danger-btn" id="resetBtn">🗑️ 重置所有设置</button>
+            </div>
+            <div class="progress-wrap" id="progressWrap">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- ④ 说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item"><span class="instr-icon">📁</span><div class="instr-text"><strong>上传图片</strong>：拖放或点击选择需要加水印的图片，支持 JPG / PNG / WEBP / BMP</div></div>
+                <div class="instr-item"><span class="instr-icon">✏️</span><div class="instr-text"><strong>文字水印</strong>：自定义文字内容、字号、颜色、透明度、旋转、描边、阴影、斜体等</div></div>
+                <div class="instr-item"><span class="instr-icon">🏷️</span><div class="instr-text"><strong>图片水印</strong>：上传 Logo 或签名图，支持缩放 / 透明度 / 旋转，推荐使用透明背景 PNG</div></div>
+                <div class="instr-item"><span class="instr-icon">📍</span><div class="instr-text"><strong>九宫格定位</strong>：点击九宫格快速选择位置，再用 X/Y 微调做精确偏移</div></div>
+                <div class="instr-item"><span class="instr-icon">🔄</span><div class="instr-text"><strong>平铺模式</strong>：将水印重复铺满整张图，可调节平铺间距和密度</div></div>
+                <div class="instr-item"><span class="instr-icon">🔒</span><div class="instr-text"><strong>数据安全</strong>：所有处理在浏览器本地完成，图片不上传任何服务器</div></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    (() => {
+        // ── DOM ───────────────────────────────────────────
+        const dropArea          = document.getElementById('dropArea')
+        const fileInput         = document.getElementById('fileInput')
+        const previewWrap       = document.getElementById('previewWrap')
+        const previewCanvas     = document.getElementById('previewCanvas')
+        const ctx               = previewCanvas.getContext('2d')
+        const mainFileName      = document.getElementById('mainFileName')
+        const downloadBtn       = document.getElementById('downloadBtn')
+        const copyBtn           = document.getElementById('copyBtn')
+        const resetBtn          = document.getElementById('resetBtn')
+        const progressWrap      = document.getElementById('progressWrap')
+        const progressFill      = document.getElementById('progressFill')
+
+        // 类型切换
+        const typeBtns          = document.querySelectorAll('.type-btn')
+        const textSettingsDiv   = document.getElementById('textSettings')
+        const imageSettingsDiv  = document.getElementById('imageSettings')
+
+        // 文字参数
+        const watermarkText     = document.getElementById('watermarkText')
+        const fontSizeSlider    = document.getElementById('fontSize')
+        const fontSizeVal       = document.getElementById('fontSizeVal')
+        const fontWeightSel     = document.getElementById('fontWeight')
+        const fontStyleSel      = document.getElementById('fontStyle')
+        const textColorIn       = document.getElementById('textColor')
+        const textColorHex      = document.getElementById('textColorHex')
+        const textColorPreview  = document.getElementById('textColorPreview')
+        const strokeColorIn     = document.getElementById('strokeColor')
+        const strokeColorHex    = document.getElementById('strokeColorHex')
+        const strokeColorPreview= document.getElementById('strokeColorPreview')
+        const textOpacitySlider = document.getElementById('textOpacity')
+        const textOpacityVal    = document.getElementById('textOpacityVal')
+        const textRotateSlider  = document.getElementById('textRotate')
+        const textRotateVal     = document.getElementById('textRotateVal')
+        const strokeWidthSlider = document.getElementById('strokeWidth')
+        const strokeWidthVal    = document.getElementById('strokeWidthVal')
+        const shadowBlurSlider  = document.getElementById('shadowBlur')
+        const shadowBlurVal     = document.getElementById('shadowBlurVal')
+
+        // 图片水印
+        const wfInput           = document.getElementById('watermarkFileInput')
+        const wfDrop            = document.getElementById('watermarkDropArea')
+        const wmFileName        = document.getElementById('wmFileName')
+        const wmScaleSlider     = document.getElementById('watermarkScale')
+        const wmScaleVal        = document.getElementById('watermarkScaleVal')
+        const wmOpacitySlider   = document.getElementById('watermarkOpacity')
+        const wmOpacityVal      = document.getElementById('watermarkOpacityVal')
+        const wmRotateSlider    = document.getElementById('watermarkRotate')
+        const wmRotateVal       = document.getElementById('watermarkRotateVal')
+
+        // 位置
+        const tileModeSel       = document.getElementById('tileMode')
+        const posGroup          = document.getElementById('posGroup')
+        const tileGroup         = document.getElementById('tileGroup')
+        const tileDensityGroup  = document.getElementById('tileDensityGroup')
+        const tileDensitySlider = document.getElementById('tileDensity')
+        const tileDensityVal    = document.getElementById('tileDensityVal')
+        const posBtns           = document.querySelectorAll('.pos-btn')
+        const tileSpacingSlider = document.getElementById('tileSpacing')
+        const tileSpacingVal    = document.getElementById('tileSpacingVal')
+        const marginOffsetSlider= document.getElementById('marginOffset')
+        const marginOffsetVal   = document.getElementById('marginOffsetVal')
+        const nudgeXSlider      = document.getElementById('nudgeX')
+        const nudgeXVal         = document.getElementById('nudgeXVal')
+        const nudgeYSlider      = document.getElementById('nudgeY')
+        const nudgeYVal         = document.getElementById('nudgeYVal')
+
+        // 输出格式
+        const fmtBtns           = document.querySelectorAll('.fmt-btn')
+        const qualityRow        = document.getElementById('qualityRow')
+        const qualityNote       = document.getElementById('qualityNote')
+        const jpegQualitySlider = document.getElementById('jpegQuality')
+        const jpegQualityValEl  = document.getElementById('jpegQualityVal')
+
+        // ── 状态 ──────────────────────────────────────────
+        let originalImage    = null
+        let watermarkImgObj  = null
+        let currentType      = 'text'
+        let currentPos       = 'bottom-right'
+        let currentFmt       = 'image/jpeg'
+        let updateTimer      = null
+
+        function scheduleUpdate() {
+            if (updateTimer) clearTimeout(updateTimer)
+            updateTimer = setTimeout(updateWatermark, 40)
+        }
+
+        // ── Tab 导航切换 ────────────────────────────────
+        window.switchSettingsTab = function(name) {
+            ['watermark', 'position', 'output'].forEach(t => {
+                document.getElementById('stab-' + t).classList.toggle('active', t === name)
+                document.getElementById('stab-content-' + t).classList.toggle('active', t === name)
+            })
+            const activeBtn = document.getElementById('stab-' + name)
+            if (activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+        }
+
+        // ── 颜色联动 ──────────────────────────────────────
+        function setupColor(colorIn, hexIn, previewEl) {
+            colorIn.addEventListener('input', () => {
+                const v = colorIn.value
+                hexIn.value = v
+                previewEl.style.background = v
+                scheduleUpdate()
+            })
+            hexIn.addEventListener('input', () => {
+                const v = hexIn.value
+                if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+                    colorIn.value = v
+                    previewEl.style.background = v
+                    scheduleUpdate()
+                }
+            })
+        }
+
+        setupColor(textColorIn, textColorHex, textColorPreview)
+        setupColor(strokeColorIn, strokeColorHex, strokeColorPreview)
+
+        // ── slider 显示值 ─────────────────────────────────
+        function bindSlider(slider, display, unit) {
+            slider.addEventListener('input', () => {
+                display.textContent = slider.value + (unit || '')
+                scheduleUpdate()
+            })
+        }
+
+        bindSlider(fontSizeSlider,     fontSizeVal,    'px')
+        bindSlider(textOpacitySlider,  textOpacityVal, '%')
+        bindSlider(textRotateSlider,   textRotateVal,  '°')
+        bindSlider(strokeWidthSlider,  strokeWidthVal, 'px')
+        bindSlider(shadowBlurSlider,   shadowBlurVal,  '')
+        bindSlider(wmScaleSlider,      wmScaleVal,     '%')
+        bindSlider(wmOpacitySlider,    wmOpacityVal,   '%')
+        bindSlider(wmRotateSlider,     wmRotateVal,    '°')
+        bindSlider(tileSpacingSlider,  tileSpacingVal, 'px')
+        bindSlider(tileDensitySlider,  tileDensityVal, '%')
+        bindSlider(marginOffsetSlider, marginOffsetVal,'px')
+        bindSlider(nudgeXSlider,       nudgeXVal,      '')
+        bindSlider(nudgeYSlider,       nudgeYVal,      '')
+        bindSlider(jpegQualitySlider,  jpegQualityValEl,'%')
+
+        ;[watermarkText, fontWeightSel, fontStyleSel, tileModeSel].forEach(el =>
+            el.addEventListener('input', scheduleUpdate)
+        )
+
+        // ── 水印类型切换 ──────────────────────────────────
+        typeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                typeBtns.forEach(b => b.classList.remove('active'))
+                btn.classList.add('active')
+                currentType = btn.dataset.type
+                textSettingsDiv.classList.toggle('hidden', currentType !== 'text')
+                imageSettingsDiv.classList.toggle('hidden', currentType !== 'image')
+                scheduleUpdate()
+            })
+        })
+
+        // ── 平铺模式联动 ──────────────────────────────────
+        tileModeSel.addEventListener('change', () => {
+            const tile = tileModeSel.value === 'tile'
+            posGroup.classList.toggle('hidden', tile)
+            tileGroup.classList.toggle('hidden', !tile)
+            tileDensityGroup.classList.toggle('hidden', !tile)
+            scheduleUpdate()
+        })
+
+        // ── 九宫格位置 ────────────────────────────────────
+        posBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                posBtns.forEach(b => b.classList.remove('active'))
+                btn.classList.add('active')
+                currentPos = btn.dataset.pos
+                scheduleUpdate()
+            })
+        })
+
+        // ── 输出格式 ──────────────────────────────────────
+        fmtBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                fmtBtns.forEach(b => b.classList.remove('active'))
+                btn.classList.add('active')
+                currentFmt = btn.dataset.fmt
+                const lossless = currentFmt === 'image/png'
+                qualityRow.style.display = lossless ? 'none' : 'block'
+                qualityNote.textContent = lossless ? 'PNG 为无损格式' : '数值越高，画质越好，文件越大'
+            })
+        })
+        qualityRow.style.display = 'block'
+
+        // ── 主图片上传 ────────────────────────────────────
+        function setupDrop(dropEl, inputEl, handler) {
+            inputEl.addEventListener('change', e => { if (e.target.files[0]) handler(e.target.files[0]) })
+            dropEl.addEventListener('dragover', e => { e.preventDefault(); dropEl.classList.add('dragover') })
+            dropEl.addEventListener('dragleave', () => dropEl.classList.remove('dragover'))
+            dropEl.addEventListener('drop', e => {
+                e.preventDefault(); dropEl.classList.remove('dragover')
+                if (e.dataTransfer.files[0]) handler(e.dataTransfer.files[0])
+            })
+        }
+
+        setupDrop(dropArea, fileInput, loadMainImage)
+        setupDrop(wfDrop, wfInput, loadWatermarkImage)
+
+        function loadMainImage(file) {
+            if (!file.type.match('image.*')) return
+            const reader = new FileReader()
+            reader.onload = e => {
+                const img = new Image()
+                img.onload = () => {
+                    originalImage = img
+                    mainFileName.textContent = '✓ ' + file.name
+                    mainFileName.style.display = 'block'
+                    downloadBtn.disabled = false
+                    copyBtn.disabled = false
+                    updateWatermark()
+                }
+                img.src = e.target.result
+            }
+            reader.readAsDataURL(file)
+        }
+
+        function loadWatermarkImage(file) {
+            if (!file.type.match('image.*')) return
+            const reader = new FileReader()
+            reader.onload = e => {
+                const img = new Image()
+                img.onload = () => {
+                    watermarkImgObj = img
+                    wmFileName.textContent = '✓ ' + file.name
+                    wfDrop.classList.add('has-file')
+                    scheduleUpdate()
+                }
+                img.src = e.target.result
+            }
+            reader.readAsDataURL(file)
+        }
+
+        // ── 位置计算 ──────────────────────────────────────
+        function calcPos(cW, cH, wW, wH, pos, margin, nx, ny) {
+            let x, y
+            switch (pos) {
+                case 'top-left':      x = margin;           y = margin;           break
+                case 'top-center':    x = (cW - wW) / 2;    y = margin;           break
+                case 'top-right':     x = cW - wW - margin; y = margin;           break
+                case 'center-left':   x = margin;           y = (cH - wH) / 2;   break
+                case 'center':        x = (cW - wW) / 2;    y = (cH - wH) / 2;   break
+                case 'center-right':  x = cW - wW - margin; y = (cH - wH) / 2;   break
+                case 'bottom-left':   x = margin;           y = cH - wH - margin; break
+                case 'bottom-center': x = (cW - wW) / 2;    y = cH - wH - margin; break
+                default:              x = cW - wW - margin; y = cH - wH - margin; break
+            }
+            return { x: x + nx, y: y + ny }
+        }
+
+        // ── 绘制水印 ──────────────────────────────────────
+        function drawWatermark(c, cW, cH) {
+            const margin  = parseInt(marginOffsetSlider.value)
+            const nx      = parseInt(nudgeXSlider.value)
+            const ny      = parseInt(nudgeYSlider.value)
+            const isTile  = tileModeSel.value === 'tile'
+            const spacing = parseInt(tileSpacingSlider.value)
+
+            if (currentType === 'text') {
+                const text      = watermarkText.value.trim()
+                if (!text) return
+                const fontSize  = parseInt(fontSizeSlider.value)
+                const opacity   = parseInt(textOpacitySlider.value) / 100
+                const rotateDeg = parseInt(textRotateSlider.value)
+                const fw        = fontWeightSel.value
+                const fs        = fontStyleSel.value
+                const color     = textColorIn.value
+                const sColor    = strokeColorIn.value
+                const sWidth    = parseFloat(strokeWidthSlider.value)
+                const shadow    = parseFloat(shadowBlurSlider.value)
+
+                c.save()
+                c.globalAlpha = opacity
+                c.font        = `${fs} ${fw} ${fontSize}px "SF Pro Display","PingFang SC",system-ui`
+                c.shadowBlur  = shadow
+                c.shadowColor = 'rgba(0,0,0,0.6)'
+
+                const metrics = c.measureText(text)
+                const tw = metrics.width
+                const th = fontSize * 1.3
+
+                function drawOne(x, y) {
+                    c.save()
+                    c.translate(x + tw / 2, y + th / 2)
+                    c.rotate(rotateDeg * Math.PI / 180)
+                    if (sWidth > 0) {
+                        c.strokeStyle = sColor
+                        c.lineWidth   = sWidth * 2
+                        c.lineJoin    = 'round'
+                        c.strokeText(text, -tw / 2, th / 2 - fontSize * 0.15)
+                    }
+                    c.fillStyle = color
+                    c.fillText(text, -tw / 2, th / 2 - fontSize * 0.15)
+                    c.restore()
+                }
+
+                if (isTile) {
+                    const density = parseInt(tileDensitySlider.value) / 100
+                    const cols = Math.ceil(cW / (tw + spacing)) + 2
+                    const rows = Math.ceil(cH / (th + spacing)) + 2
+                    for (let r = -1; r < rows; r++) {
+                        for (let col = -1; col < cols; col++) {
+                            if (density < 1 && Math.random() > density) continue
+                            drawOne(col * (tw + spacing) + nx, r * (th + spacing) + ny)
+                        }
+                    }
+                } else {
+                    const { x, y } = calcPos(cW, cH, tw, th, currentPos, margin, nx, ny)
+                    drawOne(x, y)
+                }
+                c.restore()
+
+            } else if (currentType === 'image') {
+                if (!watermarkImgObj) return
+                const scale   = parseInt(wmScaleSlider.value) / 100
+                const opacity = parseInt(wmOpacitySlider.value) / 100
+                const rotate  = parseInt(wmRotateSlider.value)
+                const wW      = watermarkImgObj.width  * scale
+                const wH      = watermarkImgObj.height * scale
+
+                c.save()
+                c.globalAlpha = opacity
+
+                function drawImgOne(x, y) {
+                    c.save()
+                    c.translate(x + wW / 2, y + wH / 2)
+                    c.rotate(rotate * Math.PI / 180)
+                    c.drawImage(watermarkImgObj, -wW / 2, -wH / 2, wW, wH)
+                    c.restore()
+                }
+
+                if (isTile) {
+                    const density = parseInt(tileDensitySlider.value) / 100
+                    const cols = Math.ceil(cW / (wW + spacing)) + 2
+                    const rows = Math.ceil(cH / (wH + spacing)) + 2
+                    for (let r = -1; r < rows; r++) {
+                        for (let col = -1; col < cols; col++) {
+                            if (density < 1 && Math.random() > density) continue
+                            drawImgOne(col * (wW + spacing) + nx, r * (wH + spacing) + ny)
+                        }
+                    }
+                } else {
+                    const { x, y } = calcPos(cW, cH, wW, wH, currentPos, margin, nx, ny)
+                    drawImgOne(x, y)
+                }
+                c.restore()
+            }
+        }
+
+        // ── 更新预览 ──────────────────────────────────────
+        function updateWatermark() {
+            if (!originalImage) return
+            previewCanvas.width  = originalImage.width
+            previewCanvas.height = originalImage.height
+            ctx.drawImage(originalImage, 0, 0)
+            drawWatermark(ctx, previewCanvas.width, previewCanvas.height)
+
+            previewWrap.innerHTML = ''
+            const displayCanvas = document.createElement('canvas')
+            const maxW = 640
+            const scale = Math.min(1, maxW / previewCanvas.width)
+            displayCanvas.width  = previewCanvas.width  * scale
+            displayCanvas.height = previewCanvas.height * scale
+            displayCanvas.style.maxWidth   = '100%'
+            displayCanvas.style.borderRadius = 'var(--border-radius-xs)'
+            displayCanvas.style.boxShadow  = '4px 4px 10px var(--shadow-dark), -2px -2px 6px var(--shadow-light)'
+            const dCtx = displayCanvas.getContext('2d')
+            dCtx.drawImage(previewCanvas, 0, 0, displayCanvas.width, displayCanvas.height)
+            previewWrap.appendChild(displayCanvas)
+        }
+
+        // ── 下载 ──────────────────────────────────────────
+        downloadBtn.addEventListener('click', () => {
+            if (!originalImage) return
+            progressWrap.style.display = 'block'
+            progressFill.style.width = '60%'
+
+            setTimeout(() => {
+                const quality = parseInt(jpegQualitySlider.value) / 100
+                const ext = currentFmt === 'image/jpeg' ? 'jpg' : currentFmt === 'image/webp' ? 'webp' : 'png'
+                const dataURL = previewCanvas.toDataURL(currentFmt, quality)
+                const a = document.createElement('a')
+                a.download = `watermarked_${Date.now()}.${ext}`
+                a.href = dataURL
+                document.body.appendChild(a); a.click(); document.body.removeChild(a)
+                progressFill.style.width = '100%'
+                setTimeout(() => { progressWrap.style.display = 'none'; progressFill.style.width = '0' }, 600)
+            }, 80)
+        })
+
+        // ── 复制到剪贴板 ──────────────────────────────────
+        copyBtn.addEventListener('click', async () => {
+            if (!originalImage) return
+            try {
+                previewCanvas.toBlob(async blob => {
+                    await navigator.clipboard.write([
+                        new ClipboardItem({ 'image/png': blob })
+                    ])
+                    const orig = copyBtn.textContent
+                    copyBtn.textContent = '✓ 已复制！'
+                    setTimeout(() => { copyBtn.textContent = orig }, 2000)
+                })
+            } catch (e) {
+                copyBtn.textContent = '浏览器不支持'
+                setTimeout(() => { copyBtn.textContent = '📋 复制到剪贴板' }, 2000)
+            }
+        })
+
+        // ── 重置 ──────────────────────────────────────────
+        resetBtn.addEventListener('click', () => {
+            originalImage    = null
+            watermarkImgObj  = null
+            fileInput.value  = ''
+            wfInput.value    = ''
+
+            mainFileName.style.display = 'none'
+            mainFileName.textContent   = ''
+            wmFileName.textContent     = '支持 PNG（推荐透明背景）'
+            wfDrop.classList.remove('has-file')
+
+            previewWrap.innerHTML = `<div class="preview-placeholder"><span class="preview-placeholder-icon">🖼️</span>上传图片后<br>实时预览水印效果</div>`
+
+            downloadBtn.disabled = true
+            copyBtn.disabled     = true
+
+            watermarkText.value         = '我的水印'
+            fontSizeSlider.value        = 32;    fontSizeVal.textContent    = '32px'
+            fontWeightSel.value         = 'normal'
+            fontStyleSel.value          = 'normal'
+            textColorIn.value           = '#ffffff'; textColorHex.value = '#ffffff'
+            textColorPreview.style.background   = '#ffffff'
+            strokeColorIn.value         = '#000000'; strokeColorHex.value = '#000000'
+            strokeColorPreview.style.background = '#000000'
+            textOpacitySlider.value     = 70;   textOpacityVal.textContent  = '70%'
+            textRotateSlider.value      = 0;    textRotateVal.textContent   = '0°'
+            strokeWidthSlider.value     = 0;    strokeWidthVal.textContent  = '0px'
+            shadowBlurSlider.value      = 0;    shadowBlurVal.textContent   = '0'
+
+            wmScaleSlider.value         = 15;   wmScaleVal.textContent      = '15%'
+            wmOpacitySlider.value       = 60;   wmOpacityVal.textContent    = '60%'
+            wmRotateSlider.value        = 0;    wmRotateVal.textContent     = '0°'
+
+            tileModeSel.value = 'single'
+            posGroup.classList.remove('hidden')
+            tileGroup.classList.add('hidden')
+            tileDensityGroup.classList.add('hidden')
+            posBtns.forEach(b => { b.classList.remove('active'); if (b.dataset.pos === 'bottom-right') b.classList.add('active') })
+            currentPos = 'bottom-right'
+            tileSpacingSlider.value     = 40;   tileSpacingVal.textContent  = '40px'
+            tileDensitySlider.value     = 100;  tileDensityVal.textContent  = '100%'
+            marginOffsetSlider.value    = 20;   marginOffsetVal.textContent = '20px'
+            nudgeXSlider.value          = 0;    nudgeXVal.textContent       = '0'
+            nudgeYSlider.value          = 0;    nudgeYVal.textContent       = '0'
+
+            fmtBtns.forEach(b => { b.classList.remove('active'); if (b.dataset.fmt === 'image/jpeg') b.classList.add('active') })
+            currentFmt = 'image/jpeg'
+            qualityRow.style.display = 'block'
+            jpegQualitySlider.value     = 90;   jpegQualityValEl.textContent = '90%'
+
+            typeBtns.forEach(b => { b.classList.remove('active'); if (b.dataset.type === 'text') b.classList.add('active') })
+            currentType = 'text'
+            textSettingsDiv.classList.remove('hidden')
+            imageSettingsDiv.classList.add('hidden')
+        })
+
+    })()
+    </script>
+</body>
+</html>

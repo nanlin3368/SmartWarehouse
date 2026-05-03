@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>文本转 Base64</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        /* ── 主布局 ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ── 文本域 ── */
+        .textarea {
+            width: 100%;
+            min-height: 130px;
+            padding: 14px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--border-radius-xs);
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            outline: none;
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.5;
+        }
+
+        .textarea:focus {
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .textarea::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        /* ── 状态栏 ── */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            margin-top: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-height: 42px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+
+        .status-dot.ready {
+            background: var(--text-muted);
+        }
+
+        .status-dot.ok {
+            background: var(--success);
+            animation: dotPulse 2s infinite;
+        }
+
+        .status-dot.loading {
+            background: var(--warning);
+            animation: dotPulse 1s infinite;
+        }
+
+        .status-dot.error {
+            background: var(--danger);
+        }
+
+        @keyframes dotPulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ── 按钮行 ── */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 0;
+            padding: 12px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(102, 126, 234, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.primary:hover {
+            box-shadow: 5px 5px 14px rgba(102, 126, 234, 0.45);
+        }
+
+        .btn.primary:active {
+            box-shadow: inset 3px 3px 8px rgba(50, 50, 150, 0.4), inset -2px -2px 6px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(78, 205, 196, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.danger {
+            color: var(--danger);
+        }
+
+        /* ── 说明列表 ── */
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .instr-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .instr-text strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        @media (max-width: 420px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>文本转 Base64</h1>
+        <p class="subtitle">将任意文本（含中文、符号）编码为 Base64 字符串 · 实时转换 · 一键复制</p>
+    </header>
+
+    <div class="main">
+        <div class="card">
+            <div class="card-label">🔒 文本转 Base64 编码</div>
+
+            <textarea class="textarea" id="textInput" placeholder="在此输入需要编码的原始文本，例如：Hello, 世界！"></textarea>
+
+            <div class="status-bar" id="encodeStatus">
+                <div class="status-dot ready" id="encodeDot"></div>
+                <span id="encodeStatusText">就绪，输入文本后点击编码</span>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn primary" id="encodeBtn">🔄 开始编码</button>
+                <button class="btn success" id="copyResultBtn" disabled>📋 复制结果</button>
+                <button class="btn danger" id="clearBtn">🗑️ 清空</button>
+            </div>
+
+            <textarea class="textarea" id="base64Output" placeholder="Base64 编码结果将显示在这里…" readonly style="margin-top: 14px;"></textarea>
+        </div>
+
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">🔤</span>
+                    <div class="instr-text"><strong>支持所有文本</strong>：包括中文、emoji、特殊符号等，内部使用 UTF-8 编码转换，确保跨平台兼容</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📋</span>
+                    <div class="instr-text"><strong>一键复制</strong>：转换成功后，点击「复制结果」按钮可将 Base64 字符串直接复制到剪贴板</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔒</span>
+                    <div class="instr-text"><strong>隐私安全</strong>：所有编码操作完全在浏览器本地完成，不会向服务器发送任何数据</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const textInput = document.getElementById('textInput');
+            const base64Output = document.getElementById('base64Output');
+            const encodeBtn = document.getElementById('encodeBtn');
+            const copyResultBtn = document.getElementById('copyResultBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const encodeDot = document.getElementById('encodeDot');
+            const encodeStatusText = document.getElementById('encodeStatusText');
+
+            function setStatus(dot, textEl, msg, type) {
+                textEl.textContent = msg;
+                dot.className = 'status-dot ' + (type || 'ready');
+            }
+
+            // UTF-8 文本转 Base64
+            function utf8ToBase64(str) {
+                const encoder = new TextEncoder();
+                const bytes = encoder.encode(str);
+                let binary = '';
+                bytes.forEach(byte => binary += String.fromCharCode(byte));
+                return btoa(binary);
+            }
+
+            encodeBtn.addEventListener('click', () => {
+                const raw = textInput.value;
+                if (raw.length === 0) {
+                    setStatus(encodeDot, encodeStatusText, '请先输入需要编码的文本', 'error');
+                    return;
+                }
+                setStatus(encodeDot, encodeStatusText, '正在编码…', 'loading');
+                try {
+                    const result = utf8ToBase64(raw);
+                    base64Output.value = result;
+                    copyResultBtn.disabled = false;
+                    setStatus(encodeDot, encodeStatusText, '编码完成，结果已生成', 'ok');
+                } catch (e) {
+                    setStatus(encodeDot, encodeStatusText, '编码失败：' + e.message, 'error');
+                    copyResultBtn.disabled = true;
+                    base64Output.value = '';
+                }
+            });
+
+            copyResultBtn.addEventListener('click', async () => {
+                if (!base64Output.value) return;
+                try {
+                    await navigator.clipboard.writeText(base64Output.value);
+                    setStatus(encodeDot, encodeStatusText, 'Base64 结果已复制到剪贴板 📋', 'ok');
+                } catch (err) {
+                    const ta = document.createElement('textarea');
+                    ta.value = base64Output.value;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    setStatus(encodeDot, encodeStatusText, '已复制（备用方式）', 'ok');
+                }
+            });
+
+            clearBtn.addEventListener('click', () => {
+                textInput.value = '';
+                base64Output.value = '';
+                copyResultBtn.disabled = true;
+                setStatus(encodeDot, encodeStatusText, '已清空，输入文本后点击编码', 'ready');
+            });
+
+            // 初始状态
+            setStatus(encodeDot, encodeStatusText, '就绪，输入文本后点击编码', 'ready');
+        })();
+    </script>
+</body>
+</html>

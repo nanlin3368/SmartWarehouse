@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线黄历 - 传统农历查询工具</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 今日黄历 */
+        .date-display {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .solar-date {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .lunar-date {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin-bottom: 4px;
+        }
+
+        .zodiac-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .info-card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            padding: 14px 12px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .info-card.good {
+            border-left: 3px solid var(--success);
+        }
+
+        .info-card.bad {
+            border-left: 3px solid var(--danger);
+        }
+
+        .info-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        /* 节假日 */
+        .holiday-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .holiday-card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            padding: 14px 16px;
+            transition: var(--transition);
+        }
+
+        .holiday-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .holiday-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 12px;
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+        }
+
+        .holiday-detail span {
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        /* 完整数据 */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .data-card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            padding: 12px 14px;
+        }
+
+        .data-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.4px;
+            margin-bottom: 4px;
+        }
+
+        .data-value {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            word-break: break-all;
+            line-height: 1.4;
+        }
+
+        .loading-wrap {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--bg-primary);
+            border-top: 3px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 18px;
+            text-align: center;
+            color: var(--danger);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 13px 8px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 5px 5px 10px rgba(102, 126, 234, 0.3), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .action-btn:active {
+            transform: scale(0.97);
+            box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .hint-text {
+            text-align: center;
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+            .holiday-detail {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>在线黄历</h1>
+        <p class="subtitle">传统农历查询 · 节气宜忌 · 节假日信息</p>
+    </header>
+
+    <div class="main">
+        <!-- 今日黄历 -->
+        <div class="card">
+            <div class="card-label">🗓️ 今日黄历</div>
+            <div id="calendar-content">
+                <div class="loading-wrap">
+                    <div class="loading-spinner"></div>
+                    <p>正在加载黄历信息...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 宜忌事项 -->
+        <div class="card">
+            <div class="card-label">🎯 宜忌事项</div>
+            <div id="yiji-content">
+                <div class="loading-wrap">
+                    <div class="loading-spinner"></div>
+                    <p>正在加载宜忌信息...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 节假日信息 -->
+        <div class="card">
+            <div class="card-label">🎉 节假日信息</div>
+            <div id="holiday-content">
+                <div class="loading-wrap">
+                    <div class="loading-spinner"></div>
+                    <p>正在加载节假日信息...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 完整数据展示 -->
+        <div class="card">
+            <div class="card-label">📊 完整数据展示</div>
+            <div id="full-data-content">
+                <div class="loading-wrap">
+                    <div class="loading-spinner"></div>
+                    <p>正在加载完整数据...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 刷新按钮 -->
+        <div class="card" style="text-align:center;">
+            <button class="action-btn" onclick="loadAllData()">🔄 刷新数据</button>
+            <p class="hint-text">数据来源于网络API，每天自动更新</p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://api.996day.com/api/chineseHolidays';
+
+        const zodiacMap = {
+            '鼠': '🐭',
+            '牛': '🐮',
+            '虎': '🐯',
+            '兔': '🐰',
+            '龙': '🐲',
+            '蛇': '🐍',
+            '马': '🐴',
+            '羊': '🐑',
+            '猴': '🐵',
+            '鸡': '🐔',
+            '狗': '🐶',
+            '猪': '🐷',
+        };
+
+        async function loadAllData() {
+            const loadingHtml =
+                '<div class="loading-wrap"><div class="loading-spinner"></div><p>正在加载...</p></div>';
+            document.getElementById('calendar-content').innerHTML = loadingHtml;
+            document.getElementById('yiji-content').innerHTML = loadingHtml;
+            document.getElementById('holiday-content').innerHTML = loadingHtml;
+            document.getElementById('full-data-content').innerHTML = loadingHtml;
+
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('网络请求失败');
+                const data = await response.json();
+                if (data.code === 0) {
+                    renderCalendarInfo(data.data);
+                    renderYijiInfo(data.data);
+                    renderHolidayInfo(data.data);
+                    renderFullData(data.data);
+                } else {
+                    throw new Error('API返回错误');
+                }
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                const errorHtml = '<div class="error-card">❌ 数据加载失败，请稍后重试</div>';
+                document.getElementById('calendar-content').innerHTML = errorHtml;
+                document.getElementById('yiji-content').innerHTML = errorHtml;
+                document.getElementById('holiday-content').innerHTML = errorHtml;
+                document.getElementById('full-data-content').innerHTML = errorHtml;
+            }
+        }
+
+        function renderCalendarInfo(data) {
+            const today = new Date();
+            const solarDate = today.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+            });
+
+            const lunarInfo = data.upcomingSolarTerms || {};
+            const zodiacName = lunarInfo.shengXiao?.name || '未知';
+            const zodiacIcon = zodiacMap[zodiacName] || '🔮';
+
+            const html = `
+                <div class="date-display">
+                    <div class="solar-date">${solarDate}</div>
+                    <div class="lunar-date">${lunarInfo.lunar || '农历信息获取中...'}</div>
+                    <div class="zodiac-row">
+                        <span>${zodiacIcon}</span>
+                        <span>${zodiacName}年</span>
+                    </div>
+                </div>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-label">🌿 节气</div>
+                        <div class="info-value">${lunarInfo.NextJieQi?.name || '无'}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">📅 下个节气</div>
+                        <div class="info-value">${lunarInfo.NextJieQi?.date || '无'}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">💰 财神方位</div>
+                        <div class="info-value">${lunarInfo.dayShenPosition?.caiShen?.desc || '未知'}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">😊 喜神方位</div>
+                        <div class="info-value">${lunarInfo.dayShenPosition?.xiShen?.desc || '未知'}</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('calendar-content').innerHTML = html;
+        }
+
+        function renderYijiInfo(data) {
+            const dayInfo = data.upcomingSolarTerms?.day || {};
+            const timeInfo = data.upcomingSolarTerms?.time || {};
+            const dayYi = dayInfo.dayYi || '无特别宜事';
+            const dayJi = dayInfo.datJi || '无特别忌事';
+
+            const html = `
+                <div class="info-grid">
+                    <div class="info-card good">
+                        <div class="info-label">✅ 今日宜</div>
+                        <div class="info-value">${dayYi.split(',').slice(0, 4).join('、')}</div>
+                    </div>
+                    <div class="info-card bad">
+                        <div class="info-label">❌ 今日忌</div>
+                        <div class="info-value">${dayJi.split(',').slice(0, 4).join('、')}</div>
+                    </div>
+                    <div class="info-card good">
+                        <div class="info-label">⏰ 时辰宜</div>
+                        <div class="info-value">${timeInfo.timeYi?.split(',').slice(0, 3).join('、') || '无'}</div>
+                    </div>
+                    <div class="info-card bad">
+                        <div class="info-label">⏰ 时辰忌</div>
+                        <div class="info-value">${timeInfo.timeJi?.split(',').slice(0, 3).join('、') || '无'}</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('yiji-content').innerHTML = html;
+        }
+
+        function renderHolidayInfo(data) {
+            const holidays = data.nextHolidays || [];
+            const weekend = data.closestWeekend || {};
+            let html = '<div class="holiday-list">';
+
+            if (weekend.date) {
+                html += `
+                    <div class="holiday-card">
+                        <div class="holiday-name">🌅 最近周末</div>
+                        <div class="holiday-detail">
+                            <div>📅 日期：<span>${weekend.date}</span> (${weekend.day})</div>
+                            <div>⏳ 还有：<span>${weekend.daysLeft}天</span></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            holidays.forEach((holiday) => {
+                html += `
+                    <div class="holiday-card">
+                        <div class="holiday-name">🎊 ${holiday.name}</div>
+                        <div class="holiday-detail">
+                            <div>📅 开始：<span>${holiday.startDate}</span></div>
+                            <div>📅 结束：<span>${holiday.endDate}</span></div>
+                            <div>📊 天数：<span>${holiday.totalDays}天</span></div>
+                            <div>⏳ 倒计时：<span>${holiday.daysLeft}天</span></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (!weekend.date && holidays.length === 0) {
+                html += '<div class="holiday-card"><div class="holiday-name">暂无即将到来的节假日信息</div></div>';
+            }
+
+            html += '</div>';
+            document.getElementById('holiday-content').innerHTML = html;
+        }
+
+        function renderFullData(data) {
+            const lunarInfo = data.upcomingSolarTerms || {};
+            let html = '<div class="data-grid">';
+
+            const items = [
+                { label: '🗓️ 农历日期', value: lunarInfo.lunar || '未知' },
+                { label: '🐲 生肖', value: (lunarInfo.shengXiao?.name || '未知') + ' (' + (lunarInfo.shengXiao?.date ||
+                        '') + ')' },
+                { label: '🌿 上个节气', value: (lunarInfo.lastJieQi?.name || '未知') + ' ' + (lunarInfo.lastJieQi
+                        ?.date || '') },
+                { label: '🌱 下个节气', value: (lunarInfo.NextJieQi?.name || '未知') + ' ' + (lunarInfo.NextJieQi
+                        ?.date || '') },
+                { label: '🔮 八字', value: lunarInfo.baZi?.info || '未知' },
+                { label: '📊 干支', value: (lunarInfo.ganZhi?.info || '未知') + ' (天干:' + (lunarInfo.ganZhi?.tianGan ||
+                        '') + ' 地支:' + (lunarInfo.ganZhi?.diZhi || '') + ')' },
+                { label: '💰 财神', value: lunarInfo.dayShenPosition?.caiShen?.desc || '未知' },
+                { label: '😊 喜神', value: lunarInfo.dayShenPosition?.xiShen?.desc || '未知' },
+                { label: '🌟 阳贵神', value: lunarInfo.dayShenPosition?.yangShen?.desc || '未知' },
+                { label: '🌙 阴贵神', value: lunarInfo.dayShenPosition?.yinShen?.desc || '未知' },
+                { label: '🍀 福神', value: lunarInfo.dayShenPosition?.fuShen?.desc || '未知' },
+                { label: '🌅 日冲煞', value: '冲:' + (lunarInfo.chongAndSha?.day?.chong || '') + ' 煞:' + (lunarInfo
+                        .chongAndSha?.day?.sha || '') },
+                { label: '😇 吉神', value: lunarInfo.dayShen?.dayJiShen || '无' },
+                { label: '👹 凶神', value: lunarInfo.dayShen?.dayXiongShen || '无' },
+                { label: '✅ 完整日宜', value: lunarInfo.day?.dayYi || '无' },
+                { label: '❌ 完整日忌', value: lunarInfo.day?.datJi || '无' },
+            ];
+
+            items.forEach(item => {
+                if (item.value && item.value !== '未知' && item.value !== '无' && item.value !== ' ()') {
+                    html += `
+                        <div class="data-card">
+                            <div class="data-label">${item.label}</div>
+                            <div class="data-value">${item.value}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            html += '</div>';
+            document.getElementById('full-data-content').innerHTML = html;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAllData);
+    </script>
+</body>
+</html>

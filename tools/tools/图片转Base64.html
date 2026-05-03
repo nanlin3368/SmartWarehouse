@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>图片转 Base64</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            width: 100%;
+            max-width: 720px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 720px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-drop {
+            border: 2px dashed var(--text-muted);
+            border-radius: var(--border-radius-sm);
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            margin-bottom: 14px;
+        }
+
+        .file-drop:hover,
+        .file-drop.dragover {
+            border-color: var(--accent-primary);
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102, 126, 234, 0.15);
+        }
+
+        .file-drop input[type="file"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .file-drop-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .file-drop-text {
+            font-size: 0.9rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .file-drop-sub {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .file-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .preview-box {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 16px;
+            margin-top: 14px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .preview-placeholder {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 220px;
+            border-radius: var(--border-radius-xs);
+            box-shadow: 4px 4px 12px var(--shadow-dark), -2px -2px 8px var(--shadow-light);
+        }
+
+        .file-info {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .file-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            font-size: 0.72rem;
+        }
+
+        .file-info-label {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .file-info-value {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-family: 'SF Mono', 'Menlo', monospace;
+        }
+
+        .result-textarea {
+            width: 100%;
+            min-height: 160px;
+            padding: 14px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--border-radius-sm);
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            outline: none;
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.5;
+        }
+
+        .result-textarea::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+            font-size: 0.8rem;
+        }
+
+        .result-textarea:focus {
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light);
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            margin-top: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-height: 42px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+
+        .status-dot.ready {
+            background: var(--text-muted);
+        }
+
+        .status-dot.ok {
+            background: var(--success);
+            animation: dotPulse 2s infinite;
+        }
+
+        .status-dot.loading {
+            background: var(--warning);
+            animation: dotPulse 1s infinite;
+        }
+
+        .status-dot.error {
+            background: var(--danger);
+        }
+
+        @keyframes dotPulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 0;
+            padding: 12px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(102, 126, 234, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(78, 205, 196, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.warning {
+            background: linear-gradient(135deg, #f7b731 0%, #fc5c65 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(247, 183, 49, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.danger {
+            color: var(--danger);
+        }
+
+        .result-card {
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
+            animation: resultSlide 0.4s ease;
+        }
+
+        @keyframes resultSlide {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .instr-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .instr-text strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        @media (max-width: 420px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            .btn-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>图片转 Base64</h1>
+        <p class="subtitle">将图片文件转换为 Base64 编码字符串</p>
+    </header>
+
+    <div class="main">
+        <div class="card">
+            <div class="card-label">📁 上传图片</div>
+            <div class="file-drop" id="imageUpload">
+                <span class="file-drop-icon">🖼️</span>
+                <div class="file-drop-text">拖放图片到此处</div>
+                <div class="file-drop-sub">或点击选择本地图片文件</div>
+                <span class="file-badge">JPG · PNG · GIF · WEBP · BMP · SVG</span>
+                <input type="file" id="imageInput" accept="image/*" />
+            </div>
+
+            <div class="preview-box" id="imagePreview">
+                <span class="preview-placeholder">🖼️ 图片预览区</span>
+            </div>
+
+            <div class="status-bar" id="encodeStatus">
+                <div class="status-dot ready" id="encodeDot"></div>
+                <span id="encodeStatusText">就绪，等待上传图片</span>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn primary" id="convertBtn" disabled>🔄 转换为 Base64</button>
+                <button class="btn danger" id="clearBtn">🗑️ 清空</button>
+            </div>
+        </div>
+
+        <div class="card result-card" id="resultSection">
+            <div class="card-label">✨ 转换结果</div>
+            <textarea class="result-textarea" id="resultBase64" readonly placeholder="Base64 编码结果将显示在这里…"></textarea>
+            <div class="btn-row">
+                <button class="btn success" id="copyBtn">📋 复制 Base64</button>
+                <button class="btn warning" id="downloadBtn">💾 下载文本</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item"><span class="instr-icon">📁</span><div class="instr-text"><strong>上传图片</strong>：拖放或点击选择图片文件，支持 JPG / PNG / GIF / WEBP / BMP / SVG 格式</div></div>
+                <div class="instr-item"><span class="instr-icon">🔄</span><div class="instr-text"><strong>转换为 Base64</strong>：点击按钮将图片编码为 Base64 字符串，结果会显示在下方文本区</div></div>
+                <div class="instr-item"><span class="instr-icon">📋</span><div class="instr-text"><strong>复制 & 下载</strong>：可一键复制 Base64 编码到剪贴板，或下载为 .txt 文本文件保存</div></div>
+                <div class="instr-item"><span class="instr-icon">📐</span><div class="instr-text"><strong>文件限制</strong>：图片大小不超过 10MB，Base64 编码约比原文件大 33%</div></div>
+                <div class="instr-item"><span class="instr-icon">🔒</span><div class="instr-text"><strong>隐私安全</strong>：完全本地处理，文件不上传服务器，无需外部依赖</div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const $ = id => document.getElementById(id);
+            const imageUpload = $('imageUpload');
+            const imageInput = $('imageInput');
+            const imagePreview = $('imagePreview');
+            const encodeDot = $('encodeDot');
+            const encodeStatusText = $('encodeStatusText');
+            const convertBtn = $('convertBtn');
+            const clearBtn = $('clearBtn');
+            const resultSection = $('resultSection');
+            const resultBase64 = $('resultBase64');
+            const copyBtn = $('copyBtn');
+            const downloadBtn = $('downloadBtn');
+
+            let currentImageFile = null;
+            let currentBase64 = '';
+
+            function setStatus(msg, type = 'ready') {
+                encodeStatusText.textContent = msg;
+                encodeDot.className = 'status-dot ' + type;
+            }
+
+            function formatSize(bytes) {
+                if (!bytes) return '0 B';
+                const k = 1024,
+                    units = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + units[i];
+            }
+
+            function showResult(base64) {
+                currentBase64 = base64;
+                resultBase64.value = base64;
+                resultSection.classList.add('show');
+            }
+
+            function hideResult() {
+                currentBase64 = '';
+                resultBase64.value = '';
+                resultSection.classList.remove('show');
+            }
+
+            function showImagePreview(src, file) {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = 'preview-image';
+                img.alt = '图片预览';
+
+                const info = document.createElement('div');
+                info.className = 'file-info';
+                info.innerHTML = `
+                    <div class="file-info-item"><span class="file-info-label">文件名</span><span class="file-info-value">${file.name}</span></div>
+                    <div class="file-info-item"><span class="file-info-label">文件大小</span><span class="file-info-value">${formatSize(file.size)}</span></div>
+                    <div class="file-info-item"><span class="file-info-label">文件类型</span><span class="file-info-value">${file.type}</span></div>
+                `;
+                imagePreview.innerHTML = '';
+                imagePreview.appendChild(img);
+                imagePreview.appendChild(info);
+            }
+
+            function handleImageFile(file) {
+                if (!file.type.startsWith('image/')) {
+                    setStatus('请选择有效的图片文件', 'error');
+                    return;
+                }
+                if (file.size > 10 * 1024 * 1024) {
+                    setStatus('文件过大，请选择小于 10MB 的图片', 'error');
+                    return;
+                }
+
+                currentImageFile = file;
+                setStatus('正在读取图片…', 'loading');
+
+                const reader = new FileReader();
+                reader.onload = e => {
+                    showImagePreview(e.target.result, file);
+                    convertBtn.disabled = false;
+                    setStatus('图片已加载，可以开始转换', 'ok');
+                };
+                reader.onerror = () => setStatus('读取图片失败', 'error');
+                reader.readAsDataURL(file);
+            }
+
+            imageUpload.addEventListener('dragover', e => {
+                e.preventDefault();
+                imageUpload.classList.add('dragover');
+            });
+            imageUpload.addEventListener('dragleave', e => {
+                e.preventDefault();
+                imageUpload.classList.remove('dragover');
+            });
+            imageUpload.addEventListener('drop', e => {
+                e.preventDefault();
+                imageUpload.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) handleImageFile(files[0]);
+            });
+
+            imageInput.addEventListener('change', e => {
+                if (e.target.files[0]) handleImageFile(e.target.files[0]);
+            });
+
+            convertBtn.addEventListener('click', () => {
+                if (!currentImageFile) return;
+                setStatus('正在转换为 Base64…', 'loading');
+                convertBtn.disabled = true;
+
+                const reader = new FileReader();
+                reader.onload = e => {
+                    showResult(e.target.result);
+                    setStatus('转换完成！Base64 编码已生成', 'ok');
+                    convertBtn.disabled = false;
+                };
+                reader.onerror = () => {
+                    setStatus('转换失败，请重试', 'error');
+                    convertBtn.disabled = false;
+                };
+                reader.readAsDataURL(currentImageFile);
+            });
+
+            clearBtn.addEventListener('click', () => {
+                currentImageFile = null;
+                currentBase64 = '';
+                imageInput.value = '';
+                imagePreview.innerHTML = '<span class="preview-placeholder">🖼️ 图片预览区</span>';
+                convertBtn.disabled = true;
+                hideResult();
+                setStatus('就绪，等待上传图片', 'ready');
+            });
+
+            copyBtn.addEventListener('click', async () => {
+                if (!currentBase64) return;
+                try {
+                    await navigator.clipboard.writeText(currentBase64);
+                } catch {
+                    const ta = document.createElement('textarea');
+                    ta.value = currentBase64;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                }
+                setStatus('📋 Base64 已复制到剪贴板', 'ok');
+            });
+
+            downloadBtn.addEventListener('click', () => {
+                if (!currentBase64) return;
+                const ts = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                const blob = new Blob([currentBase64], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `base64_${ts}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+                setStatus('💾 Base64 文件已下载', 'ok');
+            });
+        })();
+    </script>
+</body>
+</html>

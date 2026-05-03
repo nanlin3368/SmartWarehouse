@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>随机密码生成</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent; /* 全局禁用点击高亮 */
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 密码显示区 ── */
+      .password-display {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .password-output {
+        font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        word-break: break-all;
+        line-height: 1.5;
+        min-height: 2.2em;
+        padding-right: 8px;
+        letter-spacing: 0.5px;
+        transition: color 0.2s;
+      }
+
+      .password-output.flash {
+        animation: flashPw 0.25s ease;
+      }
+
+      @keyframes flashPw {
+        0%   { opacity: 1; }
+        40%  { opacity: 0.15; }
+        100% { opacity: 1; }
+      }
+
+      /* ── 强度条 ── */
+      .strength-bar-wrap {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .strength-segments {
+        display: flex;
+        gap: 5px;
+        flex: 1;
+      }
+
+      .seg {
+        flex: 1;
+        height: 5px;
+        border-radius: 3px;
+        background: var(--shadow-dark);
+        box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light);
+        transition: background 0.35s ease;
+      }
+
+      .seg.on-weak    { background: var(--danger); box-shadow: none; }
+      .seg.on-fair    { background: var(--warning); box-shadow: none; }
+      .seg.on-good    { background: var(--success); box-shadow: none; }
+      .seg.on-strong  { background: var(--accent-primary); box-shadow: none; }
+
+      .strength-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        width: 36px;
+        text-align: right;
+        color: var(--text-muted);
+        transition: color 0.3s;
+      }
+
+      .strength-label.weak   { color: var(--danger); }
+      .strength-label.fair   { color: var(--warning); }
+      .strength-label.good   { color: var(--success); }
+      .strength-label.strong { color: var(--accent-primary); }
+
+      /* ── 复制按钮 ── */
+      .copy-btn {
+        width: 100%;
+        margin-top: 16px;
+        padding: 14px;
+        background: var(--accent-gradient);
+        color: #fff;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        letter-spacing: 0.3px;
+      }
+
+      .copy-btn:hover  { transform: translateY(-2px); box-shadow: 6px 6px 16px rgba(102,126,234,0.4); }
+      .copy-btn:active { transform: scale(0.97); }
+      .copy-btn.copied {
+        background: linear-gradient(135deg, #4ecdc4, #26a69a);
+        box-shadow: 4px 4px 12px rgba(78,205,196,0.35);
+      }
+
+      /* ── 长度滑块 ── */
+      .length-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .length-label-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 10px;
+      }
+
+      .length-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--bg-primary);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        outline: none;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--accent-gradient);
+        box-shadow: 3px 3px 8px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      input[type="range"]::-webkit-slider-thumb:active {
+        transform: scale(1.2);
+      }
+
+      .range-hints {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 6px;
+        font-size: 0.72rem;
+        color: var(--text-muted);
+      }
+
+      /* ── 字符集选项 ── */
+      .options-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .option-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        user-select: none;
+      }
+
+      .option-toggle:hover { transform: translateY(-1px); }
+      .option-toggle:active { transform: scale(0.97); }
+
+      .option-toggle.active {
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+      }
+
+      /* 自定义 checkbox */
+      .toggle-check {
+        width: 18px;
+        height: 18px;
+        border-radius: 5px;
+        flex-shrink: 0;
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.25s;
+      }
+
+      .option-toggle.active .toggle-check {
+        background: var(--accent-gradient);
+        box-shadow: none;
+      }
+
+      .toggle-check svg {
+        width: 11px;
+        height: 11px;
+        stroke: #fff;
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      .option-toggle.active .toggle-check svg { opacity: 1; }
+
+      .option-text {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .option-sub {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 1px;
+        font-family: 'SF Mono', 'Menlo', monospace;
+      }
+
+      /* ── 数量批量生成 ── */
+      .count-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .count-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: none;
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        flex-shrink: 0;
+      }
+
+      .count-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.95);
+      }
+
+      .count-display {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        width: 28px;
+        text-align: center;
+      }
+
+      .count-hint {
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+        flex: 1;
+      }
+
+      /* ── 批量结果 ── */
+      .batch-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .batch-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        gap: 10px;
+      }
+
+      .batch-pw {
+        font-family: 'SF Mono', 'Menlo', monospace;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        word-break: break-all;
+        flex: 1;
+        letter-spacing: 0.3px;
+      }
+
+      .batch-copy-btn {
+        flex-shrink: 0;
+        padding: 5px 12px;
+        border: none;
+        border-radius: 8px;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        color: var(--accent-primary);
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+      }
+
+      .batch-copy-btn:active { transform: scale(0.94); }
+      .batch-copy-btn.copied { color: var(--success); }
+
+      /* ── 重新生成按钮 ── */
+      .regen-btn {
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .regen-btn:hover  { transform: translateY(-2px); }
+      .regen-btn:active { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); transform: scale(0.97); }
+
+      .regen-icon {
+        font-size: 1rem;
+        display: inline-block;
+        transition: transform 0.4s ease;
+      }
+
+      .regen-btn.spinning .regen-icon {
+        animation: spin 0.4s ease;
+      }
+
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+      }
+
+      /* ── 响应式 ── */
+      @media (max-width: 480px) {
+        h1 { font-size: 1.8rem; }
+        .password-output { font-size: 1rem; }
+        .options-grid { grid-template-columns: 1fr 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>随机密码生成</h1>
+      <p class="subtitle">自定义规则 · 强度可视 · 一键复制</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 密码展示卡 -->
+      <div class="password-display">
+        <div class="password-output" id="pwOutput">正在生成…</div>
+        <div class="strength-bar-wrap">
+          <div class="strength-segments">
+            <div class="seg" id="seg0"></div>
+            <div class="seg" id="seg1"></div>
+            <div class="seg" id="seg2"></div>
+            <div class="seg" id="seg3"></div>
+          </div>
+          <span class="strength-label" id="strengthLabel">—</span>
+        </div>
+        <button class="copy-btn" id="copyBtn">复制密码</button>
+      </div>
+
+      <!-- 长度设置 -->
+      <div class="card">
+        <div class="length-label-wrap">
+          <span class="card-label" style="margin-bottom:0">密码长度</span>
+          <span class="length-value" id="lengthVal">16</span>
+        </div>
+        <input type="range" id="lengthSlider" min="4" max="64" value="16" />
+        <div class="range-hints"><span>4</span><span>64</span></div>
+      </div>
+
+      <!-- 字符集 -->
+      <div class="card">
+        <div class="card-label">字符类型</div>
+        <div class="options-grid">
+          <div class="option-toggle active" data-key="upper" onclick="toggleOpt(this)">
+            <div class="toggle-check">
+              <svg viewBox="0 0 12 12"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+            </div>
+            <div>
+              <div class="option-text">大写字母</div>
+              <div class="option-sub">A–Z</div>
+            </div>
+          </div>
+          <div class="option-toggle active" data-key="lower" onclick="toggleOpt(this)">
+            <div class="toggle-check">
+              <svg viewBox="0 0 12 12"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+            </div>
+            <div>
+              <div class="option-text">小写字母</div>
+              <div class="option-sub">a–z</div>
+            </div>
+          </div>
+          <div class="option-toggle active" data-key="number" onclick="toggleOpt(this)">
+            <div class="toggle-check">
+              <svg viewBox="0 0 12 12"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+            </div>
+            <div>
+              <div class="option-text">数字</div>
+              <div class="option-sub">0–9</div>
+            </div>
+          </div>
+          <div class="option-toggle active" data-key="symbol" onclick="toggleOpt(this)">
+            <div class="toggle-check">
+              <svg viewBox="0 0 12 12"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+            </div>
+            <div>
+              <div class="option-text">特殊符号</div>
+              <div class="option-sub">!@#$…</div>
+            </div>
+          </div>
+          <div class="option-toggle" data-key="noambig" onclick="toggleOpt(this)">
+            <div class="toggle-check">
+              <svg viewBox="0 0 12 12"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+            </div>
+            <div>
+              <div class="option-text">排除歧义</div>
+              <div class="option-sub">去 0O1lI</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 批量生成 -->
+      <div class="card">
+        <div class="card-label">批量生成</div>
+        <div class="count-row" style="margin-bottom:16px">
+          <button class="count-btn" onclick="changeCount(-1)">−</button>
+          <span class="count-display" id="countDisplay">1</span>
+          <button class="count-btn" onclick="changeCount(1)">+</button>
+          <span class="count-hint">条密码</span>
+        </div>
+        <div class="batch-list" id="batchList"></div>
+        <button class="regen-btn" id="regenBtn" onclick="regenerate()" style="margin-top:14px">
+          <span class="regen-icon">🔄</span>重新生成
+        </button>
+      </div>
+
+    </div>
+
+    <script>
+      const CHARS = {
+        upper:  'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        lower:  'abcdefghijklmnopqrstuvwxyz',
+        number: '0123456789',
+        symbol: '!@#$%^&*()-_=+[]{}|;:,.<>?',
+      }
+      const AMBIG = /[0O1lI]/g
+
+      let pwCount = 1
+
+      // ── 读取当前设置 ────────────────────────────────
+      function getSettings() {
+        const length = parseInt(document.getElementById('lengthSlider').value)
+        const active = {}
+        document.querySelectorAll('.option-toggle').forEach(el => {
+          active[el.dataset.key] = el.classList.contains('active')
+        })
+        return { length, ...active }
+      }
+
+      // ── 生成单条密码 ────────────────────────────────
+      function generateOne(settings) {
+        let pool = ''
+        if (settings.upper)  pool += CHARS.upper
+        if (settings.lower)  pool += CHARS.lower
+        if (settings.number) pool += CHARS.number
+        if (settings.symbol) pool += CHARS.symbol
+        if (!pool) pool = CHARS.lower + CHARS.number
+
+        if (settings.noambig) pool = pool.replace(AMBIG, '')
+        if (!pool) pool = 'abcdefghijkmnpqrstuvwxyz23456789'
+
+        // 保证每种选中类型至少出现一个
+        const required = []
+        const types = ['upper','lower','number','symbol'].filter(k => settings[k])
+        types.forEach(k => {
+          let src = CHARS[k]
+          if (settings.noambig) src = src.replace(AMBIG, '')
+          if (src) required.push(src[crypto.getRandomValues(new Uint32Array(1))[0] % src.length])
+        })
+
+        const arr = new Uint32Array(settings.length)
+        crypto.getRandomValues(arr)
+        const pw = Array.from(arr).map(v => pool[v % pool.length])
+
+        // 把 required 字符随机插入
+        required.forEach((ch, i) => {
+          const pos = crypto.getRandomValues(new Uint32Array(1))[0] % settings.length
+          pw[pos] = ch
+        })
+        return pw.join('')
+      }
+
+      // ── 强度评估 ────────────────────────────────────
+      function calcStrength(pw, settings) {
+        let score = 0
+        const len = pw.length
+        if (len >= 8)  score++
+        if (len >= 12) score++
+        if (len >= 20) score++
+        if (/[A-Z]/.test(pw)) score++
+        if (/[a-z]/.test(pw)) score++
+        if (/[0-9]/.test(pw)) score++
+        if (/[^A-Za-z0-9]/.test(pw)) score++
+        // 归一到 1-4
+        if (score <= 2) return 1
+        if (score <= 4) return 2
+        if (score <= 5) return 3
+        return 4
+      }
+
+      const STRENGTH_INFO = {
+        1: { label: '弱',   cls: 'weak',   segCls: 'on-weak',   segs: 1 },
+        2: { label: '一般', cls: 'fair',   segCls: 'on-fair',   segs: 2 },
+        3: { label: '良好', cls: 'good',   segCls: 'on-good',   segs: 3 },
+        4: { label: '强',   cls: 'strong', segCls: 'on-strong', segs: 4 },
+      }
+
+      // ── 渲染强度条 ──────────────────────────────────
+      function renderStrength(level) {
+        const info = STRENGTH_INFO[level]
+        const label = document.getElementById('strengthLabel')
+        label.textContent = info.label
+        label.className = `strength-label ${info.cls}`
+        for (let i = 0; i < 4; i++) {
+          const seg = document.getElementById('seg' + i)
+          seg.className = 'seg' + (i < info.segs ? ' ' + info.segCls : '')
+        }
+      }
+
+      // ── 渲染主密码 ──────────────────────────────────
+      function renderMain(pw) {
+        const el = document.getElementById('pwOutput')
+        el.classList.remove('flash')
+        void el.offsetWidth  // reflow
+        el.classList.add('flash')
+        el.textContent = pw
+        const s = calcStrength(pw, getSettings())
+        renderStrength(s)
+      }
+
+      // ── 渲染批量列表 ────────────────────────────────
+      function renderBatch(passwords) {
+        const list = document.getElementById('batchList')
+        if (passwords.length <= 1) { list.innerHTML = ''; return }
+        list.innerHTML = passwords.slice(1).map((pw, i) => `
+          <div class="batch-item">
+            <span class="batch-pw" id="bpw${i}">${pw}</span>
+            <button class="batch-copy-btn" onclick="copyBatch(${i})">复制</button>
+          </div>`).join('')
+      }
+
+      // ── 生成所有密码 ────────────────────────────────
+      let lastPasswords = []
+
+      function generateAll() {
+        const s = getSettings()
+        lastPasswords = Array.from({ length: pwCount }, () => generateOne(s))
+        renderMain(lastPasswords[0])
+        renderBatch(lastPasswords)
+      }
+
+      function regenerate() {
+        const btn = document.getElementById('regenBtn')
+        btn.classList.add('spinning')
+        setTimeout(() => btn.classList.remove('spinning'), 400)
+        generateAll()
+      }
+
+      // ── 复制功能 ────────────────────────────────────
+      function copyText(text, btn, origText) {
+        const write = () => {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).catch(fallback)
+          } else { fallback() }
+        }
+        const fallback = () => {
+          const el = document.createElement('textarea')
+          el.value = text
+          el.style.cssText = 'position:fixed;opacity:0;pointer-events:none'
+          document.body.appendChild(el)
+          el.focus(); el.select()
+          try { document.execCommand('copy') } catch(e) {}
+          document.body.removeChild(el)
+        }
+        write()
+        btn.textContent = '已复制 ✓'
+        btn.classList.add('copied')
+        setTimeout(() => {
+          btn.textContent = origText
+          btn.classList.remove('copied')
+        }, 1800)
+      }
+
+      document.getElementById('copyBtn').addEventListener('click', function () {
+        if (!lastPasswords[0]) return
+        copyText(lastPasswords[0], this, '复制密码')
+      })
+
+      function copyBatch(i) {
+        const pw = lastPasswords[i + 1]
+        if (!pw) return
+        const btn = document.querySelector(`.batch-item:nth-child(${i+1}) .batch-copy-btn`)
+        if (btn) copyText(pw, btn, '复制')
+      }
+
+      // ── 长度滑块 ────────────────────────────────────
+      const slider = document.getElementById('lengthSlider')
+      const lengthVal = document.getElementById('lengthVal')
+      slider.addEventListener('input', function () {
+        lengthVal.textContent = this.value
+        generateAll()
+      })
+
+      // ── 字符集开关 ──────────────────────────────────
+      function toggleOpt(el) {
+        const key = el.dataset.key
+        if (key === 'noambig') {
+          el.classList.toggle('active')
+        } else {
+          // 至少保留一个普通字符类型
+          const types = ['upper','lower','number','symbol']
+          const activeCnt = types.filter(k => {
+            const t = document.querySelector(`[data-key="${k}"]`)
+            return t && t.classList.contains('active')
+          }).length
+          if (el.classList.contains('active') && activeCnt <= 1) return
+          el.classList.toggle('active')
+        }
+        generateAll()
+      }
+
+      // ── 数量控制 ────────────────────────────────────
+      function changeCount(delta) {
+        pwCount = Math.max(1, Math.min(10, pwCount + delta))
+        document.getElementById('countDisplay').textContent = pwCount
+        generateAll()
+      }
+
+      // ── 初始化 ──────────────────────────────────────
+      generateAll()
+    </script>
+
+  </body>
+</html>

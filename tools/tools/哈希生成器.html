@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>哈希生成器</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      *:focus { outline: none; }
+      button:focus, button:focus-visible { outline: none; box-shadow: none; }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 输入 Tab 切换 ── */
+      .tab-bar {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .tab-btn {
+        flex: 1;
+        padding: 10px 8px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+      }
+
+      .tab-btn:active { transform: scale(0.96); }
+
+      .tab-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+      }
+
+      /* ── 文本输入 ── */
+      .code-textarea {
+        width: 100%;
+        min-height: 120px;
+        border: none;
+        border-radius: var(--border-radius-sm);
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        padding: 14px;
+        font-family: 'SF Mono', 'Fira Code', 'Menlo', 'Courier New', monospace;
+        font-size: 0.82rem;
+        color: var(--text-primary);
+        line-height: 1.6;
+        resize: vertical;
+        transition: var(--transition);
+      }
+
+      .code-textarea:focus {
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.15);
+      }
+
+      .code-textarea::placeholder {
+        color: var(--text-muted);
+        font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        font-size: 0.8rem;
+      }
+
+      /* ── 文件拖拽区 ── */
+      .file-drop {
+        border: 2px dashed var(--text-muted);
+        border-radius: var(--border-radius-sm);
+        padding: 22px 20px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        transition: var(--transition);
+        display: none;
+      }
+
+      .file-drop.visible { display: block; }
+
+      .file-drop:hover, .file-drop.dragover {
+        border-color: var(--accent-primary);
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.15);
+      }
+
+      .file-drop.dragover { border-style: solid; border-color: var(--success); }
+
+      .file-drop input[type="file"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .file-drop-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+      .file-drop-text {
+        font-size: 0.92rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 4px;
+      }
+
+      .file-drop-sub { font-size: 0.74rem; color: var(--text-secondary); }
+
+      .file-name-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        padding: 4px 14px;
+        background: var(--bg-primary);
+        border-radius: 20px;
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--accent-primary);
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* ── 算法选择 ── */
+      .algo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .algo-btn {
+        padding: 13px 8px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+      }
+
+      .algo-btn:hover  { transform: translateY(-1px); }
+      .algo-btn:active { transform: scale(0.96); }
+
+      .algo-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+      }
+
+      .algo-bits {
+        font-size: 0.6rem;
+        font-weight: 500;
+        opacity: 0.72;
+        letter-spacing: 0.3px;
+      }
+
+      /* ── 选项行 ── */
+      .option-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        margin-bottom: 10px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        user-select: none;
+      }
+
+      .option-row:last-child { margin-bottom: 0; }
+      .option-row:active { transform: scale(0.98); }
+
+      .option-row-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .option-row-label span { font-size: 1rem; }
+
+      .toggle {
+        width: 40px;
+        height: 22px;
+        border-radius: 11px;
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        position: relative;
+        flex-shrink: 0;
+        transition: var(--transition);
+      }
+
+      .toggle::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--text-muted);
+        top: 3px;
+        left: 3px;
+        transition: var(--transition);
+        box-shadow: 1px 1px 3px var(--shadow-dark);
+      }
+
+      .option-row.active .toggle {
+        background: var(--accent-gradient);
+        box-shadow: inset 2px 2px 4px rgba(0,0,0,0.15);
+      }
+
+      .option-row.active .toggle::after {
+        left: 21px;
+        background: #fff;
+        box-shadow: 1px 1px 4px rgba(102,126,234,0.4);
+      }
+
+      .option-row.active .option-row-label { color: var(--text-primary); }
+
+      /* ── 结果列表 ── */
+      .result-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .result-item {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        padding: 12px 14px;
+        transition: var(--transition);
+      }
+
+      .result-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 7px;
+      }
+
+      .result-algo {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .result-copy-btn {
+        padding: 3px 12px;
+        border: none;
+        border-radius: 12px;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+      }
+
+      .result-copy-btn:active { transform: scale(0.95); }
+      .result-copy-btn.copied { color: var(--success); }
+
+      .result-hash {
+        font-family: 'SF Mono', 'Fira Code', 'Menlo', 'Courier New', monospace;
+        font-size: 0.73rem;
+        color: var(--text-primary);
+        word-break: break-all;
+        line-height: 1.5;
+      }
+
+      .result-placeholder {
+        text-align: center;
+        padding: 20px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      /* ── 操作按钮 ── */
+      .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .action-btn {
+        padding: 13px 10px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        user-select: none;
+      }
+
+      .action-btn:hover  { transform: translateY(-1px); }
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .action-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      .action-btn.primary {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        grid-column: span 2;
+      }
+
+      .action-btn.primary:hover  { box-shadow: 6px 6px 16px rgba(102,126,234,0.4); transform: translateY(-2px); }
+      .action-btn.primary:active { transform: scale(0.97); }
+      .action-btn.primary.running {
+        background: linear-gradient(135deg, #a3b1c6, #8b9dc3);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      }
+
+      .action-btn.success-btn { color: var(--success); }
+      .action-btn.danger-btn  { color: var(--danger); }
+
+      /* ── 进度条 ── */
+      .progress-bar-wrap {
+        height: 4px;
+        border-radius: 2px;
+        background: var(--bg-primary);
+        box-shadow: inset 1px 1px 3px var(--shadow-dark);
+        overflow: hidden;
+        margin-top: 10px;
+        display: none;
+      }
+
+      .progress-bar-fill {
+        height: 100%;
+        border-radius: 2px;
+        background: var(--accent-gradient);
+        width: 0;
+        transition: width 0.4s ease;
+      }
+
+      /* ── 文件信息条 ── */
+      .file-info-bar {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        margin-top: 10px;
+      }
+
+      .file-info-bar.visible { display: flex; }
+
+      .file-info-name {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 60%;
+      }
+
+      .file-info-size {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      /* ── 说明卡片 ── */
+      .instr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+      .instr-text {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── Toast ── */
+      .toast {
+        position: fixed;
+        bottom: 28px;
+        left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        background: var(--text-primary);
+        color: #fff;
+        padding: 10px 22px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        opacity: 0;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+        z-index: 999;
+        white-space: nowrap;
+      }
+
+      .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+      @media (max-width: 480px) {
+        h1 { font-size: 1.8rem; }
+        .algo-grid { grid-template-columns: repeat(3, 1fr); }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>哈希生成器</h1>
+      <p class="subtitle">本地计算 · 多算法 · 保护隐私</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 输入来源 -->
+      <div class="card">
+        <div class="card-label">输入来源</div>
+        <div class="tab-bar">
+          <button class="tab-btn active" data-tab="text">✏️ 文本</button>
+          <button class="tab-btn" data-tab="file">📁 文件</button>
+        </div>
+
+        <!-- 文本输入 -->
+        <textarea
+          class="code-textarea"
+          id="inputText"
+          placeholder="在此输入或粘贴文本内容，实时生成哈希值…"
+          spellcheck="false"
+        ></textarea>
+
+        <!-- 文件拖拽 -->
+        <div class="file-drop" id="dropArea">
+          <input type="file" id="fileInput" />
+          <span class="file-drop-icon">📁</span>
+          <div class="file-drop-text">拖放文件到此处</div>
+          <div class="file-drop-sub">或点击选择文件，支持任意格式</div>
+        </div>
+        <div class="file-info-bar" id="fileInfoBar">
+          <span class="file-info-name" id="fileInfoName">—</span>
+          <span class="file-info-size" id="fileInfoSize">—</span>
+        </div>
+      </div>
+
+      <!-- 哈希算法 -->
+      <div class="card">
+        <div class="card-label">哈希算法</div>
+        <div class="algo-grid">
+          <button class="algo-btn active" data-algo="MD5">
+            MD5
+            <span class="algo-bits">128 bit</span>
+          </button>
+          <button class="algo-btn active" data-algo="SHA-1">
+            SHA-1
+            <span class="algo-bits">160 bit</span>
+          </button>
+          <button class="algo-btn active" data-algo="SHA-256">
+            SHA-256
+            <span class="algo-bits">256 bit</span>
+          </button>
+          <button class="algo-btn" data-algo="SHA-384">
+            SHA-384
+            <span class="algo-bits">384 bit</span>
+          </button>
+          <button class="algo-btn active" data-algo="SHA-512">
+            SHA-512
+            <span class="algo-bits">512 bit</span>
+          </button>
+          <button class="algo-btn" data-algo="SHA3-256">
+            SHA3-256
+            <span class="algo-bits">256 bit</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 输出选项 -->
+      <div class="card">
+        <div class="card-label">输出选项</div>
+        <div class="option-row active" id="optUppercase">
+          <div class="option-row-label"><span>🔤</span> 大写输出</div>
+          <div class="toggle"></div>
+        </div>
+        <div class="option-row" id="optAutoCompute">
+          <div class="option-row-label"><span>⚡</span> 文本实时计算</div>
+          <div class="toggle"></div>
+        </div>
+        <div class="option-row" id="optShowCompare">
+          <div class="option-row-label"><span>🔍</span> 哈希比对模式</div>
+          <div class="toggle"></div>
+        </div>
+      </div>
+
+      <!-- 比对输入（条件显示） -->
+      <div class="card" id="compareCard" style="display:none">
+        <div class="card-label">输入对比哈希值</div>
+        <textarea
+          class="code-textarea"
+          id="compareInput"
+          style="min-height:60px;resize:none;"
+          placeholder="粘贴已知哈希值进行比对，不区分大小写…"
+          spellcheck="false"
+        ></textarea>
+      </div>
+
+      <!-- 操作 -->
+      <div class="card">
+        <div class="card-label">操作</div>
+        <div class="action-grid">
+          <button class="action-btn primary" id="computeBtn">🔢 生成哈希</button>
+          <button class="action-btn success-btn" id="copyAllBtn" disabled>📋 复制全部</button>
+          <button class="action-btn danger-btn"  id="resetBtn">🗑️ 重置</button>
+        </div>
+        <div class="progress-bar-wrap" id="progressWrap">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <!-- 结果 -->
+      <div class="card">
+        <div class="card-label">计算结果</div>
+        <div class="result-list" id="resultList">
+          <div class="result-placeholder">生成后在此显示各算法哈希值</div>
+        </div>
+      </div>
+
+      <!-- 说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+          <div class="instr-item">
+            <span class="instr-icon">✏️</span>
+            <div class="instr-text"><strong>文本模式</strong>：直接输入文本，开启"实时计算"后自动生成哈希；关闭则点击按钮触发</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">📁</span>
+            <div class="instr-text"><strong>文件模式</strong>：拖放或选择任意格式文件，计算其完整哈希值，适合文件完整性校验</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">⚙️</span>
+            <div class="instr-text"><strong>多算法</strong>：可同时勾选多个算法，一次计算输出全部结果，点击各行右侧按钮单独复制</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔍</span>
+            <div class="instr-text"><strong>哈希比对</strong>：开启比对模式后输入已知哈希值，自动高亮匹配结果，快速验证一致性</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔒</span>
+            <div class="instr-text"><strong>数据安全</strong>：所有计算在浏览器本地完成，文本与文件均不上传服务器</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- SparkMD5 for MD5 support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spark-md5/3.0.2/spark-md5.min.js"></script>
+
+    <script>
+      // ── 状态 ──
+      let currentTab    = 'text'
+      let selectedFile  = null
+      let lastResults   = {}
+      let autoCompute   = false
+      let uppercase     = true
+      let showCompare   = false
+      let activeAlgos   = new Set(['MD5', 'SHA-1', 'SHA-256', 'SHA-512'])
+
+      // ── DOM ──
+      const inputText    = document.getElementById('inputText')
+      const dropArea     = document.getElementById('dropArea')
+      const fileInput    = document.getElementById('fileInput')
+      const fileInfoBar  = document.getElementById('fileInfoBar')
+      const fileInfoName = document.getElementById('fileInfoName')
+      const fileInfoSize = document.getElementById('fileInfoSize')
+      const resultList   = document.getElementById('resultList')
+      const computeBtn   = document.getElementById('computeBtn')
+      const copyAllBtn   = document.getElementById('copyAllBtn')
+      const resetBtn     = document.getElementById('resetBtn')
+      const progressWrap = document.getElementById('progressWrap')
+      const progressFill = document.getElementById('progressFill')
+      const compareCard  = document.getElementById('compareCard')
+      const compareInput = document.getElementById('compareInput')
+
+      // ── Tab 切换 ──
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+          btn.classList.add('active')
+          currentTab = btn.dataset.tab
+          const isFile = currentTab === 'file'
+          inputText.style.display = isFile ? 'none' : 'block'
+          dropArea.classList.toggle('visible', isFile)
+          fileInfoBar.classList.toggle('visible', isFile && !!selectedFile)
+        })
+      })
+
+      // ── 算法多选 ──
+      document.querySelectorAll('.algo-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          btn.classList.toggle('active')
+          const algo = btn.dataset.algo
+          activeAlgos.has(algo) ? activeAlgos.delete(algo) : activeAlgos.add(algo)
+          if (activeAlgos.size === 0) {
+            btn.classList.add('active')
+            activeAlgos.add(algo)
+            showToast('⚠️ 至少选择一种算法')
+          }
+        })
+      })
+
+      // ── 选项开关 ──
+      function bindToggle(el, onChange) {
+        el.addEventListener('click', () => {
+          el.classList.toggle('active')
+          onChange(el.classList.contains('active'))
+        })
+      }
+
+      bindToggle(document.getElementById('optUppercase'), v => {
+        uppercase = v
+        if (Object.keys(lastResults).length) renderResults(lastResults)
+      })
+
+      bindToggle(document.getElementById('optAutoCompute'), v => {
+        autoCompute = v
+      })
+
+      bindToggle(document.getElementById('optShowCompare'), v => {
+        showCompare = v
+        compareCard.style.display = v ? 'block' : 'none'
+        if (Object.keys(lastResults).length) renderResults(lastResults)
+      })
+
+      compareInput.addEventListener('input', () => {
+        if (Object.keys(lastResults).length) renderResults(lastResults)
+      })
+
+      // ── 文本实时计算 ──
+      let autoTimer = null
+      inputText.addEventListener('input', () => {
+        if (!autoCompute) return
+        clearTimeout(autoTimer)
+        autoTimer = setTimeout(() => runCompute(), 300)
+      })
+
+      // ── 文件处理 ──
+      fileInput.addEventListener('change', e => {
+        const f = e.target.files[0]
+        if (f) loadFile(f)
+      })
+
+      dropArea.addEventListener('dragover', e => {
+        e.preventDefault()
+        dropArea.classList.add('dragover')
+      })
+      dropArea.addEventListener('dragleave', e => {
+        e.preventDefault()
+        dropArea.classList.remove('dragover')
+      })
+      dropArea.addEventListener('drop', e => {
+        e.preventDefault()
+        dropArea.classList.remove('dragover')
+        const f = e.dataTransfer.files[0]
+        if (f) loadFile(f)
+      })
+
+      function loadFile(f) {
+        selectedFile = f
+        fileInfoName.textContent = f.name
+        fileInfoSize.textContent = fmtSize(f.size)
+        fileInfoBar.classList.add('visible')
+        showToast('📁 ' + f.name + ' 已加载')
+      }
+
+      // ── 计算入口 ──
+      computeBtn.addEventListener('click', runCompute)
+
+      async function runCompute() {
+        if (currentTab === 'text' && !inputText.value.trim()) {
+          showToast('⚠️ 请先输入文本内容'); return
+        }
+        if (currentTab === 'file' && !selectedFile) {
+          showToast('⚠️ 请先选择或拖入文件'); return
+        }
+        if (activeAlgos.size === 0) {
+          showToast('⚠️ 请至少选择一种算法'); return
+        }
+
+        computeBtn.disabled = true
+        computeBtn.classList.add('running')
+        computeBtn.textContent = '计算中…'
+        progressWrap.style.display = 'block'
+        progressFill.style.width = '20%'
+
+        await tick()
+
+        const results = {}
+        const algos = [...activeAlgos]
+
+        if (currentTab === 'text') {
+          const buf = new TextEncoder().encode(inputText.value)
+          let i = 0
+          for (const algo of algos) {
+            progressFill.style.width = (20 + (i / algos.length) * 75) + '%'
+            await tick()
+            results[algo] = await hashBuffer(buf, algo)
+            i++
+          }
+        } else {
+          const buf = await selectedFile.arrayBuffer()
+          let i = 0
+          for (const algo of algos) {
+            progressFill.style.width = (20 + (i / algos.length) * 75) + '%'
+            await tick()
+            results[algo] = await hashBuffer(buf, algo)
+            i++
+          }
+        }
+
+        progressFill.style.width = '100%'
+        await new Promise(r => setTimeout(r, 400))
+        progressWrap.style.display = 'none'
+        progressFill.style.width = '0'
+
+        lastResults = results
+        renderResults(results)
+
+        copyAllBtn.disabled = false
+        computeBtn.disabled = false
+        computeBtn.classList.remove('running')
+        computeBtn.textContent = '🔢 生成哈希'
+        showToast('✅ 计算完成，共 ' + algos.length + ' 种算法')
+      }
+
+      // ── 哈希计算核心 ──
+      async function hashBuffer(buf, algo) {
+        if (algo === 'MD5') {
+          // SparkMD5
+          try {
+            const ab = buf instanceof ArrayBuffer ? buf : buf.buffer
+            return SparkMD5.ArrayBuffer.hash(ab)
+          } catch(e) {
+            return '[MD5 计算失败]'
+          }
+        }
+        if (algo === 'SHA3-256') {
+          return sha3_256_hex(buf instanceof ArrayBuffer ? new Uint8Array(buf) : buf)
+        }
+        const subtle = crypto.subtle
+        const algoMap = { 'SHA-1': 'SHA-1', 'SHA-256': 'SHA-256', 'SHA-384': 'SHA-384', 'SHA-512': 'SHA-512' }
+        const ab = buf instanceof ArrayBuffer ? buf : buf.buffer
+        const hashBuf = await subtle.digest(algoMap[algo], ab)
+        return bufToHex(new Uint8Array(hashBuf))
+      }
+
+      function bufToHex(arr) {
+        return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('')
+      }
+
+      // ── SHA3-256 纯 JS 实现（Keccak） ──
+      function sha3_256_hex(msgBytes) {
+        // Keccak-256 (SHA3-256)
+        const rate = 136, outputLen = 32
+        const state = new Uint32Array(50)
+        const RC = [
+          [0x00000001,0x00000000],[0x00008082,0x00000000],[0x0000808A,0x80000000],
+          [0x80008000,0x80000000],[0x0000808B,0x00000000],[0x80000001,0x00000000],
+          [0x80008081,0x80000000],[0x00008009,0x80000000],[0x0000008A,0x00000000],
+          [0x00000088,0x00000000],[0x80008009,0x00000000],[0x8000000A,0x00000000],
+          [0x8000808B,0x00000000],[0x0000008B,0x80000000],[0x00008089,0x80000000],
+          [0x00008003,0x80000000],[0x00008002,0x80000000],[0x00000080,0x80000000],
+          [0x0000800A,0x00000000],[0x8000000A,0x80000000],[0x80008081,0x80000000],
+          [0x00008080,0x80000000],[0x80000001,0x00000000],[0x80008008,0x80000000],
+        ]
+        function keccakF(s) {
+          for (let r = 0; r < 24; r++) {
+            let c = new Uint32Array(10)
+            for (let x = 0; x < 10; x++) c[x] = s[x] ^ s[x+10] ^ s[x+20] ^ s[x+30] ^ s[x+40]
+            let d = new Uint32Array(10)
+            for (let x = 0; x < 5; x++) {
+              d[2*x]   = c[2*((x+4)%5)] ^ (c[2*((x+1)%5)+1]<<1 | c[2*((x+1)%5)]>>>31)
+              d[2*x+1] = c[2*((x+4)%5)+1] ^ (c[2*((x+1)%5)]<<1 | c[2*((x+1)%5)+1]>>>31)
+            }
+            for (let x = 0; x < 10; x++) s[x] = s[x]^d[x], s[x+10]=s[x+10]^d[x], s[x+20]=s[x+20]^d[x], s[x+30]=s[x+30]^d[x], s[x+40]=s[x+40]^d[x]
+            const ROT = [[0,0],[1,0],[62,1],[28,1],[27,1],[36,1],[44,0],[6,1],[55,1],[20,0],[3,0],[10,1],[43,1],[25,1],[39,1],[41,1],[45,1],[15,0],[21,1],[8,1],[18,1],[2,1],[61,1],[56,1],[14,1]]
+            let b = new Uint32Array(50)
+            for (let i = 0; i < 25; i++) {
+              const [n, sw] = ROT[i]
+              const lo = s[2*i], hi = s[2*i+1]
+              const PI = [0,6,12,18,24,3,9,10,16,22,1,7,13,19,20,4,5,11,17,23,2,8,14,15,21]
+              const pi = PI[i]
+              if (n === 0) { b[2*pi] = lo; b[2*pi+1] = hi }
+              else if (sw) { b[2*pi] = hi<<n|lo>>>(32-n); b[2*pi+1] = lo<<n|hi>>>(32-n) }
+              else { b[2*pi] = lo<<n|hi>>>(32-n); b[2*pi+1] = hi<<n|lo>>>(32-n) }
+            }
+            for (let i = 0; i < 25; i++) {
+              s[2*i]   = b[2*i]   ^ (~b[2*((i+1)%25)]   & b[2*((i+2)%25)])
+              s[2*i+1] = b[2*i+1] ^ (~b[2*((i+1)%25)+1] & b[2*((i+2)%25)+1])
+            }
+            s[0] ^= RC[r][0]; s[1] ^= RC[r][1]
+          }
+        }
+        // padding
+        const msg = new Uint8Array(msgBytes)
+        const padded = new Uint8Array(Math.ceil((msg.length + 1) / rate) * rate)
+        padded.set(msg)
+        padded[msg.length] = 0x06
+        padded[padded.length - 1] |= 0x80
+        // absorb
+        for (let block = 0; block < padded.length; block += rate) {
+          for (let i = 0; i < rate / 4; i++) {
+            const idx = block + i * 4
+            state[i] ^= (padded[idx] | padded[idx+1]<<8 | padded[idx+2]<<16 | padded[idx+3]<<24) >>> 0
+          }
+          keccakF(state)
+        }
+        // squeeze
+        const out = []
+        for (let i = 0; i < outputLen / 4; i++) {
+          const v = state[i]
+          out.push(v & 0xff, v>>8&0xff, v>>16&0xff, v>>>24&0xff)
+        }
+        return bufToHex(out)
+      }
+
+      // ── 渲染结果 ──
+      function renderResults(results) {
+        const cmpRaw = compareInput.value.trim().toLowerCase()
+        resultList.innerHTML = Object.entries(results).map(([algo, hash]) => {
+          const display = uppercase ? hash.toUpperCase() : hash.toLowerCase()
+          let matchBadge = ''
+          if (showCompare && cmpRaw) {
+            const isMatch = hash.toLowerCase() === cmpRaw
+            matchBadge = isMatch
+              ? `<span style="font-size:0.65rem;font-weight:700;color:var(--success);margin-left:8px;">✓ 匹配</span>`
+              : `<span style="font-size:0.65rem;font-weight:700;color:var(--danger);margin-left:8px;">✗ 不匹配</span>`
+          }
+          return `
+            <div class="result-item">
+              <div class="result-header">
+                <span class="result-algo">${algo}${matchBadge}</span>
+                <button class="result-copy-btn" onclick="copyHash(this,'${hash}')">复制</button>
+              </div>
+              <div class="result-hash">${display}</div>
+            </div>`
+        }).join('')
+      }
+
+      function copyHash(btn, hash) {
+        const display = uppercase ? hash.toUpperCase() : hash.toLowerCase()
+        navigator.clipboard.writeText(display).then(() => {
+          btn.textContent = '已复制'
+          btn.classList.add('copied')
+          setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied') }, 1500)
+        }).catch(() => fallbackCopy(display))
+      }
+
+      // ── 复制全部 ──
+      copyAllBtn.addEventListener('click', () => {
+        if (!Object.keys(lastResults).length) return
+        const text = Object.entries(lastResults)
+          .map(([a, h]) => `${a}: ${uppercase ? h.toUpperCase() : h.toLowerCase()}`)
+          .join('\n')
+        navigator.clipboard.writeText(text).then(() => showToast('📋 已复制全部哈希值'))
+          .catch(() => { fallbackCopy(text); showToast('📋 已复制全部哈希值') })
+      })
+
+      function fallbackCopy(text) {
+        const ta = document.createElement('textarea')
+        ta.value = text
+        document.body.appendChild(ta)
+        ta.select()
+        document.execCommand('copy')
+        document.body.removeChild(ta)
+      }
+
+      // ── 重置 ──
+      resetBtn.addEventListener('click', () => {
+        inputText.value = ''
+        compareInput.value = ''
+        selectedFile = null
+        fileInput.value = ''
+        lastResults = {}
+        fileInfoBar.classList.remove('visible')
+        resultList.innerHTML = '<div class="result-placeholder">生成后在此显示各算法哈希值</div>'
+        copyAllBtn.disabled = true
+        showToast('🗑️ 已重置')
+      })
+
+      // ── 工具 ──
+      function fmtSize(bytes) {
+        if (bytes < 1024)    return bytes + ' B'
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB'
+        if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB'
+        return (bytes / 1073741824).toFixed(1) + ' GB'
+      }
+
+      function tick() { return new Promise(r => setTimeout(r, 16)) }
+
+      function showToast(msg) {
+        const t = document.getElementById('toast')
+        t.textContent = msg
+        t.classList.add('show')
+        clearTimeout(t._timer)
+        t._timer = setTimeout(() => t.classList.remove('show'), 2200)
+      }
+    </script>
+
+  </body>
+</html>

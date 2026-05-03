@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>人民币大写转小写</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes headerShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.15); }
+        }
+
+        .subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 90px;
+            padding: 16px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--border-radius-xs);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: 'PingFang SC', 'Microsoft YaHei', serif;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            outline: none;
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.8;
+            letter-spacing: 2px;
+        }
+
+        .textarea:focus {
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102,126,234,0.2);
+        }
+
+        .textarea::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+            opacity: 0.7;
+            letter-spacing: 0;
+        }
+
+        .amount-display {
+            font-size: 1.15rem;
+            font-weight: 700;
+            font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            margin-top: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-height: 42px;
+            flex-wrap: wrap;
+        }
+
+        .status-dot {
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+        .status-dot.ready { background: var(--text-muted); }
+        .status-dot.ok { background: var(--success); animation: dotPulse 2s infinite; }
+        .status-dot.loading { background: var(--warning); animation: dotPulse 1s infinite; }
+        .status-dot.error { background: var(--danger); }
+
+        @keyframes dotPulse {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 0;
+            padding: 11px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+        .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+        .btn.primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+            font-size: 0.9rem;
+            padding: 14px 12px;
+        }
+        .btn.primary:hover { box-shadow: 5px 5px 14px rgba(102,126,234,0.45); }
+        .btn.primary:active { box-shadow: inset 3px 3px 8px rgba(50,50,150,0.4), inset -2px -2px 6px rgba(255,255,255,0.2); }
+        .btn.success { background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: #fff; }
+        .btn.warning { background: linear-gradient(135deg, #f7b731 0%, #e68a00 100%); color: #fff; }
+        .btn.danger { color: var(--danger); }
+
+        .quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quick-chip {
+            padding: 6px 14px;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .quick-chip:hover { transform: translateY(-1px); }
+        .quick-chip:active { box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
+
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+        .instr-item {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+        .instr-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+        @media (max-width: 420px) {
+            h1 { font-size: 1.7rem; }
+            .btn { font-size: 0.74rem; padding: 10px 8px; }
+            .btn.primary { font-size: 0.82rem; padding: 12px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>人民币大写转小写</h1>
+        <p class="subtitle">中文大写转小写数字金额 · 支持元角分 · 一键复制</p>
+    </header>
+
+    <div class="main">
+        <div class="card">
+            <div class="card-label">📝 输入大写金额</div>
+            <textarea class="textarea" id="chineseInput" placeholder="输入中文大写金额，例如：壹万贰仟叁佰肆拾伍元陆角柒分" rows="2"></textarea>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:6px;">支持格式：壹仟贰佰叁拾肆元伍角陆分 · 也可含“整” · 最大玖兆元以内</div>
+
+            <div class="quick-chips">
+                <button class="quick-chip" data-amount="壹万贰仟叁佰肆拾伍元陆角柒分">¥12,345.67</button>
+                <button class="quick-chip" data-amount="壹佰元整">¥100.00</button>
+                <button class="quick-chip" data-amount="壹仟零捌元零伍分">¥1,008.05</button>
+                <button class="quick-chip" data-amount="伍万元整">¥50,000.00</button>
+                <button class="quick-chip" data-amount="壹拾万捌仟元叁角整">¥108,000.30</button>
+                <button class="quick-chip" data-amount="壹亿元整">¥100,000,000.00</button>
+            </div>
+
+            <div class="status-bar" id="convertStatus">
+                <div class="status-dot ready" id="convertDot"></div>
+                <span id="convertStatusText">就绪，输入大写金额后点击转换</span>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn primary" id="convertBtn">🔄 转换为小写</button>
+            </div>
+            <div class="btn-row" style="margin-top:8px;">
+                <button class="btn danger" id="clearBtn">🗑️ 清空</button>
+            </div>
+        </div>
+
+        <div class="card" id="outputCard" style="display:none;">
+            <div class="card-label">💰 小写金额结果</div>
+            <textarea class="textarea amount-display" id="outputText" placeholder="转换后的小写金额将显示在这里…" readonly rows="1"></textarea>
+            <div class="btn-row">
+                <button class="btn success" id="copyBtn" disabled>📋 复制结果</button>
+                <button class="btn warning" id="downloadBtn" disabled>💾 下载文本</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item"><span class="instr-icon">📝</span><div class="instr-text"><strong>输入金额</strong>：输入标准中文大写金额，如“壹仟贰佰叁拾肆元伍角陆分”，可含“整”</div></div>
+                <div class="instr-item"><span class="instr-icon">🔄</span><div class="instr-text"><strong>一键转换</strong>：点击转换按钮自动输出阿拉伯数字，保留两位小数</div></div>
+                <div class="instr-item"><span class="instr-icon">📋</span><div class="instr-text"><strong>复制下载</strong>：可复制到剪贴板或保存为文本文件</div></div>
+                <div class="instr-item"><span class="instr-icon">🔒</span><div class="instr-text"><strong>隐私安全</strong>：全部在浏览器本地完成，不上传数据</div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // DOM 元素
+            const chineseInput = document.getElementById('chineseInput');
+            const outputText = document.getElementById('outputText');
+            const convertBtn = document.getElementById('convertBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const outputCard = document.getElementById('outputCard');
+            const convertDot = document.getElementById('convertDot');
+            const convertStatusText = document.getElementById('convertStatusText');
+            const quickChips = document.querySelectorAll('.quick-chip');
+
+            function setStatus(dot, textEl, msg, type) {
+                textEl.textContent = msg;
+                dot.className = 'status-dot ' + (type || 'ready');
+            }
+
+            // 大写数字映射
+            const CN_NUM = {
+                '零':0,'壹':1,'贰':2,'叁':3,'肆':4,'伍':5,'陆':6,'柒':7,'捌':8,'玖':9,
+                '一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'两':2
+            };
+
+            // 单位映射 (相对于当前段的倍率)
+            const UNIT_VAL = {
+                '拾':10,'佰':100,'仟':1000,
+                '万':10000,'亿':100000000,'兆':1000000000000,
+                '元':1,'角':0.1,'分':0.01
+            };
+
+            // 解析四位数（仟佰拾个），返回数字
+            function parseFourDigits(str) {
+                if (!str || str === '零') return 0;
+                let num = 0;
+                let cur = 0;
+                let hasDigit = false;
+                for (let i = 0; i < str.length; i++) {
+                    const c = str[i];
+                    if (CN_NUM[c] !== undefined) {
+                        cur = CN_NUM[c];
+                        hasDigit = true;
+                    } else if (c === '拾' || c === '佰' || c === '仟') {
+                        if (!hasDigit) cur = 1; // 如“拾”前面没有数字，默认1
+                        num += cur * UNIT_VAL[c];
+                        cur = 0;
+                        hasDigit = false;
+                    } else {
+                        // 万、亿等不应该在这里处理，但为安全忽略
+                        return NaN;
+                    }
+                }
+                num += cur; // 个位
+                return num;
+            }
+
+            // 解析整数部分（元之前），支持亿、万层级
+            function parseInteger(chinese) {
+                if (!chinese || chinese === '零') return 0;
+                // 按“亿”分割
+                const yiParts = chinese.split('亿');
+                let total = 0;
+                for (let i = 0; i < yiParts.length; i++) {
+                    let yiVal = 0;
+                    const yiPart = yiParts[i];
+                    // 按“万”分割
+                    const wanParts = yiPart.split('万');
+                    for (let j = 0; j < wanParts.length; j++) {
+                        const wanPart = wanParts[j];
+                        const val = parseFourDigits(wanPart);
+                        if (isNaN(val)) throw new Error('整数部分格式错误');
+                        yiVal += val;
+                        if (j < wanParts.length - 1) yiVal *= 10000; // 万倍
+                    }
+                    total += yiVal;
+                    if (i < yiParts.length - 1) total *= 100000000; // 亿倍
+                }
+                return total;
+            }
+
+            // 解析角/分部分（简单数字）
+            function parseJiaoFen(str, unitName) {
+                if (!str) return 0;
+                const num = CN_NUM[str];
+                if (num === undefined) throw new Error(unitName + '部分格式错误');
+                return num;
+            }
+
+            // 主转换函数
+            function chineseToAmount(input) {
+                let s = input.replace(/人民币|整|正/g, '').replace(/[\s,，]/g, '').trim();
+                if (!s) throw new Error('请输入有效的大写金额');
+
+                // 分离元和角分
+                let intPart = '', jiaoPart = '', fenPart = '';
+                const yuanPos = s.indexOf('元');
+                if (yuanPos >= 0) {
+                    intPart = s.substring(0, yuanPos);
+                    const after = s.substring(yuanPos + 1);
+                    const jiaoPos = after.indexOf('角');
+                    const fenPos = after.indexOf('分');
+                    if (jiaoPos >= 0) {
+                        jiaoPart = after.substring(0, jiaoPos);
+                        if (fenPos > jiaoPos) fenPart = after.substring(jiaoPos + 1, fenPos);
+                    } else if (fenPos >= 0) {
+                        fenPart = after.substring(0, fenPos);
+                    }
+                } else {
+                    // 可能只有角分，如“伍角”
+                    const jiaoPos = s.indexOf('角');
+                    const fenPos = s.indexOf('分');
+                    intPart = '零';
+                    if (jiaoPos >= 0) jiaoPart = s.substring(0, jiaoPos);
+                    if (fenPos >= 0) fenPart = (jiaoPos >= 0) ? s.substring(jiaoPos + 1, fenPos) : s.substring(0, fenPos);
+                }
+
+                const yuan = parseInteger(intPart);
+                if (isNaN(yuan)) throw new Error('整数部分无法解析');
+
+                let jiao = 0, fen = 0;
+                if (jiaoPart) {
+                    jiao = parseJiaoFen(jiaoPart, '角');
+                    if (jiao >= 10) throw new Error('角部分不能大于9');
+                }
+                if (fenPart) {
+                    fen = parseJiaoFen(fenPart, '分');
+                    if (fen >= 10) throw new Error('分部分不能大于9');
+                }
+
+                const total = yuan + jiao * 0.1 + fen * 0.01;
+                // 格式化为带分隔符的两位小数
+                return total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+
+            // 事件
+            convertBtn.addEventListener('click', () => {
+                const raw = chineseInput.value.trim();
+                if (!raw) {
+                    setStatus(convertDot, convertStatusText, '请先输入大写金额', 'error');
+                    return;
+                }
+                setStatus(convertDot, convertStatusText, '正在转换…', 'loading');
+                try {
+                    const result = chineseToAmount(raw);
+                    outputText.value = result;
+                    copyBtn.disabled = false;
+                    downloadBtn.disabled = false;
+                    outputCard.style.display = 'block';
+                    setStatus(convertDot, convertStatusText, '转换完成！', 'ok');
+                    outputCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } catch (e) {
+                    setStatus(convertDot, convertStatusText, e.message, 'error');
+                    outputText.value = '';
+                    copyBtn.disabled = true;
+                    downloadBtn.disabled = true;
+                }
+            });
+
+            chineseInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); convertBtn.click(); }
+            });
+
+            quickChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    chineseInput.value = chip.getAttribute('data-amount');
+                    setStatus(convertDot, convertStatusText, '金额已填充，点击转换', 'ready');
+                    chineseInput.focus();
+                });
+            });
+
+            copyBtn.addEventListener('click', async () => {
+                if (!outputText.value) return;
+                try {
+                    await navigator.clipboard.writeText(outputText.value);
+                    setStatus(convertDot, convertStatusText, '已复制 📋', 'ok');
+                } catch {
+                    const ta = document.createElement('textarea');
+                    ta.value = outputText.value;
+                    document.body.appendChild(ta); ta.select();
+                    document.execCommand('copy'); document.body.removeChild(ta);
+                    setStatus(convertDot, convertStatusText, '已复制（备用方式）', 'ok');
+                }
+            });
+
+            downloadBtn.addEventListener('click', () => {
+                if (!outputText.value) return;
+                const blob = new Blob([outputText.value], { type: 'text/plain;charset=utf-8' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = '人民币小写_' + new Date().toISOString().slice(0,19).replace(/:/g,'-') + '.txt';
+                a.click();
+                setTimeout(() => URL.revokeObjectURL(a.href), 100);
+                setStatus(convertDot, convertStatusText, '下载中… 💾', 'ok');
+            });
+
+            clearBtn.addEventListener('click', () => {
+                chineseInput.value = '';
+                outputText.value = '';
+                copyBtn.disabled = true;
+                downloadBtn.disabled = true;
+                outputCard.style.display = 'none';
+                setStatus(convertDot, convertStatusText, '已清空', 'ready');
+                chineseInput.focus();
+            });
+
+            setStatus(convertDot, convertStatusText, '就绪，输入大写金额后点击转换', 'ready');
+        })();
+    </script>
+</body>
+</html>

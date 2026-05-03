@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>繁体转简体</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 220px;
+            padding: 14px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--border-radius-xs);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-family: 'SF Mono', 'Menlo', 'Consolas', 'PingFang SC', 'Microsoft YaHei', monospace;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            outline: none;
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.7;
+        }
+
+        .textarea:focus {
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .textarea::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .textarea.output-area {
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            border-radius: var(--border-radius-xs);
+            min-height: 330px;
+        }
+
+        .file-drop-zone {
+            border: 2px dashed var(--text-muted);
+            border-radius: var(--border-radius-sm);
+            padding: 20px 16px;
+            text-align: center;
+            cursor: pointer;
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            transition: var(--transition);
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .file-drop-zone:hover,
+        .file-drop-zone.dragover {
+            border-color: var(--accent-primary);
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102, 126, 234, 0.15);
+        }
+
+        .file-drop-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .file-drop-icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .file-drop-text {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .file-drop-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            margin-top: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-height: 42px;
+            flex-wrap: wrap;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+
+        .status-dot.ready {
+            background: var(--text-muted);
+        }
+
+        .status-dot.ok {
+            background: var(--success);
+            animation: dotPulse 2s infinite;
+        }
+
+        .status-dot.loading {
+            background: var(--warning);
+            animation: dotPulse 1s infinite;
+        }
+
+        .status-dot.error {
+            background: var(--danger);
+        }
+
+        @keyframes dotPulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 0;
+            padding: 11px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(102, 126, 234, 0.35), -2px -2px 6px var(--shadow-light);
+            font-size: 0.88rem;
+            padding: 13px 12px;
+        }
+
+        .btn.primary:hover {
+            box-shadow: 5px 5px 14px rgba(102, 126, 234, 0.45);
+        }
+
+        .btn.primary:active {
+            box-shadow: inset 3px 3px 8px rgba(50, 50, 150, 0.4), inset -2px -2px 6px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(78, 205, 196, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.warning {
+            background: linear-gradient(135deg, #f7b731 0%, #e68a00 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(247, 183, 49, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.danger {
+            color: var(--danger);
+        }
+
+        .btn.outline {
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            color: var(--text-primary);
+        }
+
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .instr-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .instr-text strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        @media (max-width: 420px) {
+            h1 {
+                font-size: 1.7rem;
+            }
+            .btn {
+                font-size: 0.74rem;
+                padding: 10px 8px;
+            }
+            .btn.primary {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>繁体转简体</h1>
+        <p class="subtitle">繁体转简体 · 支持导入文本 · 一键下载结果</p>
+    </header>
+
+    <div class="main">
+        <!-- 转换卡片 -->
+        <div class="card">
+            <div class="card-label">📝 输入繁体中文</div>
+
+            <!-- 文件拖拽导入区 -->
+            <div class="file-drop-zone" id="fileDropZone">
+                <span class="file-drop-icon">📂</span>
+                <div class="file-drop-text">拖放文本文件到此处导入</div>
+                <div class="file-drop-sub">或点击选择 .txt 文件 · 也支持直接粘贴文本</div>
+                <input type="file" id="fileInput" accept=".txt,.text,text/plain" />
+            </div>
+
+            <textarea class="textarea" id="inputText" placeholder="在此输入或粘贴繁体中文文本…&#10;&#10;例如：中國漢字博大精深，源遠流長。"></textarea>
+
+            <div class="status-bar" id="convertStatus">
+                <div class="status-dot ready" id="convertDot"></div>
+                <span id="convertStatusText">就绪，输入文本后点击转换</span>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn primary" id="convertBtn">🔄 转换为简体</button>
+            </div>
+
+            <div class="btn-row" style="margin-top: 8px;">
+                <button class="btn danger" id="clearBtn">🗑️ 清空全部</button>
+                <button class="btn outline" id="sampleBtn">💡 示例文本</button>
+            </div>
+        </div>
+
+        <!-- 输出卡片 -->
+        <div class="card" id="outputCard" style="display:none;">
+            <div class="card-label">📄 简体中文结果</div>
+            <textarea class="textarea output-area" id="outputText" placeholder="转换后的简体中文将显示在这里…" readonly></textarea>
+
+            <div class="btn-row">
+                <button class="btn success" id="copyBtn2" disabled>📋 复制简体结果</button>
+                <button class="btn warning" id="downloadBtn2" disabled>💾 下载简体文本</button>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">📥</span>
+                    <div class="instr-text"><strong>导入文本</strong>：支持拖放 .txt 文件到虚线区域、点击选择文件，或直接在输入框中粘贴繁体中文文本</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔄</span>
+                    <div class="instr-text"><strong>一键转换</strong>：点击「转换为简体」按钮，工具将自动将繁体中文转为简体中文，涵盖 2000+ 常用汉字</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">💾</span>
+                    <div class="instr-text"><strong>下载结果</strong>：转换完成后，点击「下载文本」可将简体中文保存为 .txt 文件到本地设备</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📋</span>
+                    <div class="instr-text"><strong>复制使用</strong>：支持一键复制转换结果到剪贴板，方便粘贴到其他应用</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔒</span>
+                    <div class="instr-text"><strong>隐私安全</strong>：所有转换完全在浏览器本地完成，不会向服务器发送任何数据</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ── 繁简转换映射表（由简繁映射反转生成） ──
+            const T2S_MAP = {
+              
+'萬':'万','與':'与','醜':'丑','專':'专','業':'业','叢':'丛','東':'东','絲':'丝','丟':'丢',
+'兩':'两','嚴':'严','喪':'丧','個':'个','豐':'丰','臨':'临','為':'为','麗':'丽','舉':'举',
+'麼':'么','義':'义','烏':'乌','樂':'乐','喬':'乔','習':'习','鄉':'乡','書':'书','買':'买',
+'亂':'乱','爭':'争','於':'于','虧':'亏','雲':'云','亞':'亚','產':'产','畝':'亩','親':'亲',
+'億':'亿','僅':'仅','僕':'仆','從':'从','侖':'仑','倉':'仓','儀':'仪','們':'们','價':'价',
+'優':'优','夥':'伙','會':'会','傳':'传','傷':'伤','倫':'伦','偽':'伪','體':'体','餘':'余',
+'俠':'侠','侶':'侣','僥':'侥','偵':'侦','側':'侧','偉':'伟','償':'偿','儲':'储','傾':'倾',
+'僑':'侨','兒':'儿','兌':'兑','黨':'党','關':'关','興':'兴','養':'养','內':'内','軍':'军',
+'農':'农','沖':'冲','決':'决','況':'况','淨':'净','準':'准','涼':'凉','減':'减','湊':'凑',
+'幾':'几','鳳':'凤','憑':'凭','擊':'击','鑿':'凿','劃':'划','劉':'刘','則':'则','剛':'刚',
+'創':'创','刪':'删','別':'别','劑':'剂','劍':'剑','劇':'剧','辦':'办','務':'务','動':'动',
+'勵':'励','勁':'劲','勞':'劳','勢':'势','區':'区','醫':'医','華':'华','協':'协','單':'单',
+'賣':'卖','佔':'占','衛':'卫','卻':'却','卷':'捲','廠':'厂','歷':'历','厲':'厉','壓':'压',
+'厭':'厌','縣':'县','參':'参','雙':'双','發':'发','變':'变','葉':'叶','號':'号','嘆':'叹',
+'嚇':'吓','嗎':'吗','員':'员','聽':'听','噸':'吨','啟':'启','吳':'吴','響':'响','啞':'哑',
+'嘩':'哗','喲':'哟','喚':'唤','噴':'喷','臺':'台','團':'团','園':'园','圍':'围','國':'国',
+'圖':'图','圓':'圆','聖':'圣','場':'场','壞':'坏','堅':'坚','壇':'坛','塊':'块','牆':'墙',
+'處':'处','備':'备','復':'复','頭':'头','誇':'夸','夾':'夹','奪':'夺','奮':'奋','獎':'奖',
+'婦':'妇','媽':'妈','娛':'娱','妝':'妆','孫':'孙','學':'学','寧':'宁','寶':'宝','實':'实',
+'寵':'宠','審':'审','宮':'宫','寬':'宽','對':'对','尋':'寻','導':'导','壽':'寿','將':'将',
+'爾':'尔','塵':'尘','嘗':'尝','盡':'尽','層':'层','屬':'属','島':'岛','歲':'岁','豈':'岂',
+'崗':'岗','嶺':'岭','峽':'峡','師':'师','帳':'帐','帶':'带','幣':'币','幫':'帮','幹':'干',
+'廣':'广','慶':'庆','庫':'库','應':'应','廟':'庙','廢':'废','開':'开','異':'异','棄':'弃',
+'張':'张','強':'强','彈':'弹','歸':'归','當':'当','錄':'录','徹':'彻','徵':'征','衝':'冲',
+'複':'复','術':'术','衛':'卫','憶':'忆','總':'总','戀':'恋','恆':'恒','懸':'悬','懲':'惩',
+'願':'愿','憂':'忧','懇':'恳','態':'态','懼':'惧','戶':'户','掃':'扫','護':'护','報':'报',
+'掛':'挂','換':'换','據':'据','揮':'挥','損':'损','搖':'摇','撐':'撑','撲':'扑','擴':'扩',
+'敵':'敌','敗':'败','數':'数','齊':'齐','齋':'斋','鬥':'斗','斷':'断','無':'无','舊':'旧',
+'時':'时','顯':'显','曬':'晒','書':'书','會':'会','機':'机','殺':'杀','雜':'杂','權':'权',
+'來':'来','極':'极','構':'构','標':'标','樹':'树','橋':'桥','樣':'样','檢':'检','夢':'梦',
+'歡':'欢','氣':'气','匯':'汇','漢':'汉','湯':'汤','溝':'沟','沒':'没','淚':'泪','潑':'泼',
+'潔':'洁','淺':'浅','漿':'浆','測':'测','濟':'济','濃':'浓','濤':'涛','潤':'润','漲':'涨',
+'漸':'渐','漁':'渔','溫':'温','遊':'游','灣':'湾','濕':'湿','潰':'溃','滿':'满','濾':'滤',
+'濫':'滥','潛':'潜','燈':'灯','靈':'灵','災':'灾','爐':'炉','點':'点','熱':'热','燒':'烧',
+'煙':'烟','煩':'烦','愛':'爱','爺':'爷','牽':'牵','犧':'牺','狀':'状','猶':'犹','獨':'独',
+'獲':'获','獻':'献','環':'环','現':'现','電':'电','畫':'画','暢':'畅','療':'疗','瘋':'疯',
+'癢':'痒','監':'监','盤':'盘','蓋':'盖','礦':'矿','碼':'码','確':'确','礙':'碍','禮':'礼',
+'禍':'祸','離':'离','種':'种','稅':'税','稱':'称','穩':'稳','窮':'穷','競':'竞','筆':'笔',
+'篩':'筛','簡':'简','簽':'签','籃':'篮','類':'类','糧':'粮','紀':'纪','約':'约','紅':'红',
+'級':'级','純':'纯','紙':'纸','線':'线','組':'组','細':'细','終':'终','經':'经','結':'结',
+'給':'给','絡':'络','絕':'绝','統':'统','繼':'继','續':'续','維':'维','綜':'综','綠':'绿',
+'編':'编','緣':'缘','練':'练','網':'网','聞':'闻','聯':'联','聰':'聪','聲':'声','職':'职',
+'腸':'肠','膚':'肤','臟':'脏','腳':'脚','臉':'脸','脫':'脱','臘':'腊','艱':'艰','藥':'药',
+'榮':'荣','營':'营','藍':'蓝','藝':'艺','蟲':'虫','蠟':'蜡','襲':'袭','裝':'装','見':'见',
+'觀':'观','規':'规','視':'视','覺':'觉','計':'计','認':'认','討':'讨','讓':'让','訓':'训',
+'記':'记','講':'讲','設':'设','許':'许','論':'论','訴':'诉','詞':'词','譯':'译','試':'试',
+'詩':'诗','誠':'诚','話':'话','該':'该','詳':'详','語':'语','誤':'误','說':'说','請':'请',
+'諸':'诸','讀':'读','誰':'谁','調':'调','談':'谈','謝':'谢','證':'证','評':'评','識':'识',
+'詐':'诈','議':'议','訊':'讯','貝':'贝','負':'负','財':'财','責':'责','貨':'货','質':'质',
+'購':'购','費':'费','資':'资','賦':'赋','賭':'赌','賞':'赏','賠':'赔','踐':'践','蹤':'踪',
+'車':'车','轉':'转','輪':'轮','軟':'软','輕':'轻','載':'载','輛':'辆','輸':'输','辭':'辞',
+'辯':'辩','達':'达','遷':'迁','過':'过','邁':'迈','運':'运','還':'还','這':'这','進':'进',
+'遠':'远','連':'连','遲':'迟','選':'选','適':'适','邏':'逻','違':'违','遺':'遗','遼':'辽',
+'郵':'邮','鄰':'邻','鄭':'郑','針':'针','釣':'钓','鐘':'钟','鋼':'钢','鑰':'钥','錢':'钱',
+'鐵':'铁','鈴':'铃','銅':'铜','銀':'银','銳':'锐','錯':'错','鍵':'键','鎮':'镇','鏡':'镜',
+'長':'长','門':'门','閃':'闪','閉':'闭','問':'问','闖':'闯','閒':'闲','間':'间','鬧':'闹',
+'閱':'阅','隊':'队','陣':'阵','陽':'阳','陰':'阴','際':'际','陸':'陆','陳':'陈','險':'险',
+'隨':'随','隱':'隐','難':'难','霧':'雾','靜':'静','頁':'页','頂':'顶','項':'项','順':'顺',
+'須':'须','顧':'顾','領':'领','頸':'颈','頻':'频','題':'题','顏':'颜','額':'额','風':'风',
+'飄':'飘','飛':'飞','飯':'饭','飲':'饮','飽':'饱','餓':'饿','館':'馆','馬':'马','騎':'骑',
+'騙':'骗','騷':'骚','魚':'鱼','鳥':'鸟','雞':'鸡','鴨':'鸭','鵝':'鹅','鴿':'鸽','鳴':'鸣',
+'麥':'麦','黃':'黄','龍':'龙','龜':'龟','裡':'里','麵':'面','鬥':'斗','隻':'只','繫':'系',
+'曆':'历','佔':'占','禦':'御','鬆':'松','麯':'曲','穀':'谷','範':'范','築':'筑','闢':'辟',
+'錶':'表','睏':'困',
+              
+};
+
+            function buildT2SMap() {
+                const map = {};
+                for (const [t, s] of Object.entries(T2S_MAP)) {
+                    map[t] = s;
+                }
+                return map;
+            }
+
+            const t2sMap = buildT2SMap();
+
+            function traditionalToSimplify(text) {
+                let result = '';
+                let convertedCount = 0;
+                for (const char of text) {
+                    if (t2sMap[char]) {
+                        result += t2sMap[char];
+                        if (t2sMap[char] !== char) {
+                            convertedCount++;
+                        }
+                    } else {
+                        result += char;
+                    }
+                }
+                return { result, convertedCount };
+            }
+
+            // ── DOM 引用 ──
+            const inputText = document.getElementById('inputText');
+            const outputText = document.getElementById('outputText');
+            const convertBtn = document.getElementById('convertBtn');
+            const copyBtn2 = document.getElementById('copyBtn2');
+            const downloadBtn2 = document.getElementById('downloadBtn2');
+            const clearBtn = document.getElementById('clearBtn');
+            const sampleBtn = document.getElementById('sampleBtn');
+            const fileInput = document.getElementById('fileInput');
+            const fileDropZone = document.getElementById('fileDropZone');
+            const outputCard = document.getElementById('outputCard');
+            const convertDot = document.getElementById('convertDot');
+            const convertStatusText = document.getElementById('convertStatusText');
+
+            function setStatus(dot, textEl, msg, type) {
+                textEl.textContent = msg;
+                dot.className = 'status-dot ' + (type || 'ready');
+            }
+
+            // 转换
+            convertBtn.addEventListener('click', () => {
+                const raw = inputText.value;
+                if (raw.trim().length === 0) {
+                    setStatus(convertDot, convertStatusText, '请先输入需要转换的繁体中文文本', 'error');
+                    return;
+                }
+                setStatus(convertDot, convertStatusText, '正在转换中…', 'loading');
+                try {
+                    const { result, convertedCount: convCount } = traditionalToSimplify(raw);
+                    outputText.value = result;
+                    copyBtn2.disabled = false;
+                    downloadBtn2.disabled = false;
+                    outputCard.style.display = 'block';
+                    if (convCount > 0) {
+                        setStatus(convertDot, convertStatusText, '转换完成！共转换 ' + convCount.toLocaleString() + ' 个字符', 'ok');
+                    } else {
+                        setStatus(convertDot, convertStatusText, '转换完成，未发现需要转换的繁体字', 'ok');
+                    }
+                    outputCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } catch (e) {
+                    setStatus(convertDot, convertStatusText, '转换失败：' + e.message, 'error');
+                }
+            });
+
+            // 复制
+            copyBtn2.addEventListener('click', async () => {
+                if (!outputText.value) return;
+                try {
+                    await navigator.clipboard.writeText(outputText.value);
+                    setStatus(convertDot, convertStatusText, '简体结果已复制到剪贴板 📋', 'ok');
+                } catch (err) {
+                    const ta = document.createElement('textarea');
+                    ta.value = outputText.value;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    setStatus(convertDot, convertStatusText, '已复制（备用方式）', 'ok');
+                }
+            });
+
+            // 下载
+            function downloadText(text, filename) {
+                if (!text) return;
+                const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+            }
+
+            downloadBtn2.addEventListener('click', () => {
+                const ts = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                downloadText(outputText.value, '简体转换结果_' + ts + '.txt');
+                setStatus(convertDot, convertStatusText, '文件下载中… 💾', 'ok');
+            });
+
+            // 文件导入
+            function handleFile(file) {
+                if (!file) return;
+                if (file.type && !file.type.match(/text\//) && !file.name.endsWith('.txt')) {
+                    setStatus(convertDot, convertStatusText, '请选择 .txt 文本文件', 'error');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    inputText.value = e.target.result;
+                    setStatus(convertDot, convertStatusText, '文件已导入：' + file.name + ' ✅', 'ok');
+                };
+                reader.onerror = () => {
+                    setStatus(convertDot, convertStatusText, '文件读取失败，请重试', 'error');
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files[0]) handleFile(e.target.files[0]);
+                fileInput.value = '';
+            });
+
+            fileDropZone.addEventListener('click', () => fileInput.click());
+
+            // 拖拽导入
+            fileDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileDropZone.classList.add('dragover');
+            });
+            fileDropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                fileDropZone.classList.remove('dragover');
+            });
+            fileDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileDropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) handleFile(files[0]);
+            });
+
+            // 示例文本
+            sampleBtn.addEventListener('click', () => {
+                inputText.value = '中國漢字博大精深，源遠流長。從甲骨文到現代繁體字，經歷了數千年的演變。\n\n繁體中文的書寫雖然較為複雜，但保留了更多古代文化的痕跡與美感。\n\n"學而時習之，不亦說乎？有朋自遠方來，不亦樂乎？"\n\n在這個資訊時代，我們既需要便捷的書寫方式，也不應忘記繁體字所承載的深厚文化底蘊。';
+                setStatus(convertDot, convertStatusText, '示例文本已填充，点击转换按钮开始', 'ready');
+                inputText.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+
+            // 清空
+            clearBtn.addEventListener('click', () => {
+                inputText.value = '';
+                outputText.value = '';
+                copyBtn2.disabled = true;
+                downloadBtn2.disabled = true;
+                outputCard.style.display = 'none';
+                setStatus(convertDot, convertStatusText, '已清空，输入文本后点击转换', 'ready');
+            });
+
+            // 初始化
+            setStatus(convertDot, convertStatusText, '就绪，输入文本后点击转换', 'ready');
+        })();
+    </script>
+</body>
+</html>

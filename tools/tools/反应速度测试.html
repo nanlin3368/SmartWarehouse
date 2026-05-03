@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>反应速度测试</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes headerShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.15); }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .test-area {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            max-height: 320px;
+            border-radius: var(--border-radius);
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s, box-shadow 0.3s, transform 0.1s;
+            margin-bottom: 14px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            flex-direction: column;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .test-area:active { transform: scale(0.98); }
+
+        .test-area.waiting {
+            background: #f8d7da;
+            box-shadow: inset 8px 8px 16px #c9b6b8, inset -8px -8px 16px #fff;
+            color: #a94442;
+        }
+
+        .test-area.ready {
+            background: #d4edda;
+            box-shadow: inset 8px 8px 16px #b1c9b6, inset -8px -8px 16px #fff;
+            color: #155724;
+        }
+
+        .test-area.idle {
+            background: var(--bg-primary);
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+        }
+
+        .test-icon {
+            font-size: 2.4rem;
+            line-height: 1;
+        }
+
+        .feedback-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            min-height: 48px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .latest-time {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(1.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .feedback-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 14px 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            font-family: 'SF Mono', 'Menlo', monospace;
+        }
+
+        .history-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .history-time {
+            font-family: 'SF Mono', monospace;
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 11px 8px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        .btn.accent {
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: #fff;
+        }
+
+        .btn.danger { color: var(--danger); }
+
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .instr-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); }
+
+        @media (max-width: 420px) {
+            h1 { font-size: 1.8rem; }
+            .btn { font-size: 0.76rem; padding: 10px 6px; }
+            .latest-time { font-size: 2rem; }
+            .stat-value { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>反应速度测试</h1>
+        <p class="subtitle">测试反应时间 · 多次点击 · 查看统计</p>
+    </header>
+
+    <div class="main">
+        <div class="card">
+            <div class="card-label">🎯 反应测试区域</div>
+            <div class="test-area" id="testArea">
+                <span class="test-icon" id="testIcon">👆</span>
+                <span id="testText">点击开始测试</span>
+            </div>
+            <div class="feedback-row">
+                <span class="latest-time" id="latestTimeDisplay" style="display:none;">0 ms</span>
+                <span class="feedback-text" id="feedbackText"></span>
+            </div>
+            <div class="btn-row">
+                <button class="btn accent" id="startBtn">🔄 重新开始</button>
+                <button class="btn danger" id="resetBtn">🗑️ 重置统计</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-label">📊 成绩统计</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">总次数</span>
+                    <span class="stat-value" id="totalCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">平均</span>
+                    <span class="stat-value" id="avgTime">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">最佳</span>
+                    <span class="stat-value" id="bestTime">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">最差</span>
+                    <span class="stat-value" id="worstTime">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">最近一次</span>
+                    <span class="stat-value" id="lastTime">--</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-label">📜 历史记录 (最近10次)</div>
+            <ul class="history-list" id="historyList">
+                <li class="history-item" style="opacity:0.5; justify-content:center;">暂无记录</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">👆</span>
+                    <div class="instr-text"><strong>开始测试</strong>：点击灰色方块即可开始，它会随机延迟后变绿</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">⚡</span>
+                    <div class="instr-text"><strong>快速反应</strong>：当方块变成绿色时，立刻点击！会显示您的反应时间</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">⚠️</span>
+                    <div class="instr-text"><strong>别太早</strong>：如果在方块变绿之前点击，会被判定为过早，需要重新开始</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">⌨️</span>
+                    <div class="instr-text"><strong>键盘操作</strong>：也可以按空格键代替点击，方便反复测试</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📊</span>
+                    <div class="instr-text"><strong>数据记录</strong>：每次有效点击都会被记录，您可以在统计卡片和历史记录中查看成绩</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const testArea = document.getElementById('testArea');
+            const testIcon = document.getElementById('testIcon');
+            const testText = document.getElementById('testText');
+            const latestTimeDisplay = document.getElementById('latestTimeDisplay');
+            const feedbackText = document.getElementById('feedbackText');
+            const startBtn = document.getElementById('startBtn');
+            const resetBtn = document.getElementById('resetBtn');
+
+            const totalCountEl = document.getElementById('totalCount');
+            const avgTimeEl = document.getElementById('avgTime');
+            const bestTimeEl = document.getElementById('bestTime');
+            const worstTimeEl = document.getElementById('worstTime');
+            const lastTimeEl = document.getElementById('lastTime');
+            const historyList = document.getElementById('historyList');
+
+            const STATE = {
+                IDLE: 'idle',
+                WAITING: 'waiting',
+                READY: 'ready',
+            };
+
+            let currentState = STATE.IDLE;
+            let timeoutId = null;
+            let readyTime = null;
+            let results = [];
+
+            function setAreaState(state) {
+                currentState = state;
+                testArea.classList.remove('waiting', 'ready', 'idle');
+                if (state === STATE.WAITING) {
+                    testArea.classList.add('waiting');
+                    testIcon.textContent = '⏳';
+                    testText.textContent = '等待绿色出现...';
+                } else if (state === STATE.READY) {
+                    testArea.classList.add('ready');
+                    testIcon.textContent = '⚡';
+                    testText.textContent = '快点击！';
+                } else {
+                    testArea.classList.add('idle');
+                    testIcon.textContent = '👆';
+                    testText.textContent = '点击开始测试';
+                }
+            }
+
+            function showLatestTime(ms) {
+                latestTimeDisplay.style.display = 'inline';
+                latestTimeDisplay.textContent = ms + ' ms';
+                latestTimeDisplay.style.animation = 'none';
+                latestTimeDisplay.offsetHeight;
+                latestTimeDisplay.style.animation = 'popIn 0.3s ease';
+            }
+
+            function hideLatestTime() {
+                latestTimeDisplay.style.display = 'none';
+                feedbackText.textContent = '';
+            }
+
+            function updateStatistics() {
+                const count = results.length;
+                totalCountEl.textContent = count;
+                if (count === 0) {
+                    avgTimeEl.textContent = '--';
+                    bestTimeEl.textContent = '--';
+                    worstTimeEl.textContent = '--';
+                    lastTimeEl.textContent = '--';
+                    historyList.innerHTML = '<li class="history-item" style="opacity:0.5;justify-content:center;">暂无记录</li>';
+                    return;
+                }
+                const sum = results.reduce((a, b) => a + b, 0);
+                const avg = Math.round(sum / count);
+                const best = Math.min(...results);
+                const worst = Math.max(...results);
+                const last = results[results.length - 1];
+                avgTimeEl.textContent = avg + ' ms';
+                bestTimeEl.textContent = best + ' ms';
+                worstTimeEl.textContent = worst + ' ms';
+                lastTimeEl.textContent = last + ' ms';
+                const recent = results.slice(-10).reverse();
+                historyList.innerHTML = recent.map((time, idx) => {
+                    const order = results.length - recent.length + idx + 1;
+                    return `<li class="history-item">
+                        <span>#${order}</span>
+                        <span class="history-time">${time} ms</span>
+                    </li>`;
+                }).join('');
+            }
+
+            function startRound() {
+                if (timeoutId) clearTimeout(timeoutId);
+                setAreaState(STATE.WAITING);
+                hideLatestTime();
+                feedbackText.textContent = '';
+                const delay = 1500 + Math.random() * 3500;
+                timeoutId = setTimeout(() => {
+                    setAreaState(STATE.READY);
+                    readyTime = performance.now();
+                    timeoutId = null;
+                }, delay);
+            }
+
+            testArea.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentState === STATE.IDLE) {
+                    startRound();
+                } else if (currentState === STATE.WAITING) {
+                    clearTimeout(timeoutId);
+                    timeoutId = null;
+                    setAreaState(STATE.IDLE);
+                    hideLatestTime();
+                    feedbackText.textContent = '⚠️ 太早了！请在绿色出现后再点击';
+                    feedbackText.style.color = 'var(--danger)';
+                } else if (currentState === STATE.READY) {
+                    const reactionTime = Math.round(performance.now() - readyTime);
+                    results.push(reactionTime);
+                    showLatestTime(reactionTime);
+                    feedbackText.textContent = '✅ 很好！点击方块继续测试';
+                    feedbackText.style.color = 'var(--success)';
+                    updateStatistics();
+                    setAreaState(STATE.IDLE);
+                    readyTime = null;
+                }
+            });
+
+            startBtn.addEventListener('click', () => {
+                if (timeoutId) clearTimeout(timeoutId);
+                hideLatestTime();
+                feedbackText.textContent = '';
+                startRound();
+            });
+
+            resetBtn.addEventListener('click', () => {
+                if (timeoutId) { clearTimeout(timeoutId);
+                    timeoutId = null; }
+                results = [];
+                setAreaState(STATE.IDLE);
+                hideLatestTime();
+                feedbackText.textContent = '';
+                updateStatistics();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && document.activeElement === document.body) {
+                    e.preventDefault();
+                    testArea.click();
+                }
+            });
+
+            setAreaState(STATE.IDLE);
+            hideLatestTime();
+            updateStatistics();
+        })();
+    </script>
+</body>
+</html>

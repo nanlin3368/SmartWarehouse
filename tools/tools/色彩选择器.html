@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>色彩选择器</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent; /* 全局禁用点击高亮 */
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 大色块预览 ── */
+      .color-big-preview {
+        width: 100%;
+        height: 90px;
+        border-radius: var(--border-radius-sm);
+        box-shadow: inset 4px 4px 8px rgba(0,0,0,0.25), inset -2px -2px 6px rgba(255,255,255,0.05);
+        transition: background-color 0.25s ease;
+        margin-bottom: 14px;
+        /* 透明格子背景（用于透明色展示） */
+        background-image:
+          linear-gradient(45deg, #ccc 25%, transparent 25%),
+          linear-gradient(-45deg, #ccc 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #ccc 75%),
+          linear-gradient(-45deg, transparent 75%, #ccc 75%);
+        background-size: 14px 14px;
+        background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .color-big-preview-fill {
+        position: absolute;
+        inset: 0;
+        background: #3498db;
+        transition: background 0.25s ease;
+      }
+
+      /* HEX 大数值展示 */
+      .hex-big {
+        font-size: 1.5rem;
+        font-weight: 700;
+        font-family: 'SF Mono', 'Menlo', monospace;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: 2px;
+        text-align: center;
+        margin-bottom: 12px;
+      }
+
+      /* ── 颜色输入 ── */
+      .color-input-row {
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
+      }
+
+      .color-text-input {
+        flex: 1;
+        padding: 13px 14px;
+        background: var(--bg-primary);
+        border: none;
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        font-size: 0.9rem;
+        font-family: 'SF Mono', 'Menlo', monospace;
+        color: var(--text-primary);
+        outline: none;
+        transition: var(--transition);
+      }
+
+      .color-text-input:focus {
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.2);
+      }
+
+      .color-text-input::placeholder { color: var(--text-muted); }
+
+      /* 原生拾色器按钮 */
+      .native-picker-btn {
+        width: 52px;
+        height: 52px;
+        border-radius: var(--border-radius-xs);
+        border: none;
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        cursor: pointer;
+        padding: 0;
+        overflow: hidden;
+        flex-shrink: 0;
+        position: relative;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+      }
+
+      .native-picker-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      }
+
+      #nativeColorPicker {
+        position: absolute;
+        inset: -4px;
+        width: calc(100% + 8px);
+        height: calc(100% + 8px);
+        border: none;
+        cursor: pointer;
+        opacity: 0;
+      }
+
+      .native-picker-swatch {
+        position: absolute;
+        inset: 6px;
+        border-radius: 6px;
+        background: #3498db;
+        transition: background 0.2s;
+        pointer-events: none;
+        box-shadow: inset 2px 2px 4px rgba(0,0,0,0.2);
+      }
+
+      /* ── 色相滑块 ── */
+      .hue-slider-wrap {
+        position: relative;
+        height: 22px;
+        border-radius: 11px;
+        background: linear-gradient(to right,
+          #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+        box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3), inset -1px -1px 3px rgba(255,255,255,0.1);
+        cursor: pointer;
+        overflow: visible;
+        margin: 8px 0 4px;
+      }
+
+      .hue-cursor {
+        position: absolute;
+        top: 50%;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 8px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        transition: left 0.05s;
+        border: 2px solid white;
+      }
+
+      /* ── 图片取色区 ── */
+      .file-drop {
+        border: 2px dashed var(--text-muted);
+        border-radius: var(--border-radius-sm);
+        padding: 22px 20px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .file-drop:hover, .file-drop.dragover {
+        border-color: var(--accent-primary);
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.15);
+      }
+
+      .file-drop input[type="file"] {
+        position: absolute;
+        inset: 0;
+        width: 100%; height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .file-drop-icon  { font-size: 1.8rem; display: block; margin-bottom: 6px; }
+      .file-drop-text  {
+        font-size: 0.88rem; font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 3px;
+      }
+      .file-drop-sub   { font-size: 0.72rem; color: var(--text-secondary); }
+
+      /* 图片预览区 */
+      .img-preview-wrap {
+        position: relative;
+        border-radius: var(--border-radius-xs);
+        overflow: hidden;
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        display: none;
+        background: #111;
+      }
+
+      #imagePreview {
+        width: 100%;
+        max-height: 260px;
+        object-fit: contain;
+        display: block;
+        cursor: crosshair;
+      }
+
+      .crosshair {
+        position: absolute;
+        width: 20px; height: 20px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3);
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        display: none;
+      }
+
+      /* 图片控制条 */
+      .img-ctrl-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .img-ctrl-btn {
+        flex: 1;
+        padding: 9px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+      }
+
+      .img-ctrl-btn:active {
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .img-ctrl-btn.danger { color: var(--danger); }
+      .img-ctrl-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+      /* 取色提示 */
+      .pick-hint {
+        margin-top: 8px;
+        padding: 8px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        text-align: center;
+        display: none;
+      }
+
+      /* ── 预设颜色 ── */
+      .preset-grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 8px;
+      }
+
+      .preset-dot {
+        aspect-ratio: 1;
+        border-radius: var(--border-radius-xs);
+        cursor: pointer;
+        box-shadow: 3px 3px 6px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+        transition: var(--transition);
+        border: 2px solid transparent;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .preset-dot:hover  { transform: scale(1.1); box-shadow: 5px 5px 10px var(--shadow-dark), -3px -3px 7px var(--shadow-light); }
+      .preset-dot:active { transform: scale(0.95); }
+      .preset-dot.selected { box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.7); }
+
+      /* ── 格式转换结果 ── */
+      .results-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .result-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      }
+
+      .result-label-tag {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        width: 44px;
+        flex-shrink: 0;
+        text-transform: uppercase;
+      }
+
+      .result-value {
+        flex: 1;
+        font-size: 0.82rem;
+        font-weight: 600;
+        font-family: 'SF Mono', 'Menlo', monospace;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .copy-btn {
+        flex-shrink: 0;
+        padding: 5px 12px;
+        border: none;
+        border-radius: 8px;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        color: var(--accent-primary);
+        font-size: 0.72rem;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+      }
+
+      .copy-btn:active { transform: scale(0.94); }
+      .copy-btn.copied { color: var(--success); }
+
+      /* ── 响应式 ── */
+      @media (max-width: 420px) {
+        h1 { font-size: 1.8rem; }
+        .preset-grid { grid-template-columns: repeat(8, 1fr); }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>色彩选择器</h1>
+      <p class="subtitle">图片取色 · 颜色转换 · 实时预览</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 颜色预览 + 大 HEX 值 -->
+      <div class="card">
+        <div class="card-label">当前颜色</div>
+        <div class="color-big-preview">
+          <div class="color-big-preview-fill" id="previewFill"></div>
+        </div>
+        <div class="hex-big" id="hexBig">#3498DB</div>
+      </div>
+
+      <!-- 颜色输入 + 原生拾色器 + 色相滑块 -->
+      <div class="card">
+        <div class="card-label">输入 / 选择颜色</div>
+        <div class="color-input-row">
+          <input
+            type="text"
+            id="colorInput"
+            class="color-text-input"
+            value="#3498db"
+            placeholder="#HEX · rgb() · hsl() · 颜色名"
+          />
+          <div class="native-picker-btn" title="点击打开拾色器">
+            <div class="native-picker-swatch" id="pickerSwatch"></div>
+            <input type="color" id="nativeColorPicker" value="#3498db" />
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="card-label" style="margin-bottom:6px">色相滑块</div>
+          <div class="hue-slider-wrap" id="hueSlider">
+            <div class="hue-cursor" id="hueCursor" style="left:56.7%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 预设颜色 -->
+      <div class="card">
+        <div class="card-label">预设颜色</div>
+        <div class="preset-grid">
+          <div class="preset-dot" style="background:#FF6B6B" data-color="#FF6B6B"></div>
+          <div class="preset-dot" style="background:#FF9F43" data-color="#FF9F43"></div>
+          <div class="preset-dot" style="background:#FFEAA7" data-color="#FFEAA7"></div>
+          <div class="preset-dot" style="background:#96CEB4" data-color="#96CEB4"></div>
+          <div class="preset-dot" style="background:#4ECDC4" data-color="#4ECDC4"></div>
+          <div class="preset-dot" style="background:#45B7D1" data-color="#45B7D1"></div>
+          <div class="preset-dot" style="background:#667eea" data-color="#667eea"></div>
+          <div class="preset-dot" style="background:#764ba2" data-color="#764ba2"></div>
+          <div class="preset-dot" style="background:#DDA0DD" data-color="#DDA0DD"></div>
+          <div class="preset-dot" style="background:#BB8FCE" data-color="#BB8FCE"></div>
+          <div class="preset-dot" style="background:#85C1E9" data-color="#85C1E9"></div>
+          <div class="preset-dot" style="background:#82E0AA" data-color="#82E0AA"></div>
+          <div class="preset-dot" style="background:#F8C471" data-color="#F8C471"></div>
+          <div class="preset-dot" style="background:#E8DAEF" data-color="#E8DAEF"></div>
+          <div class="preset-dot" style="background:#2C3E50" data-color="#2C3E50"></div>
+          <div class="preset-dot" style="background:#ffffff" data-color="#ffffff" style="box-shadow:3px 3px 6px #a3b1c6,-2px -2px 5px #ffffff,inset 0 0 0 1px #ddd"></div>
+        </div>
+      </div>
+
+      <!-- 格式转换结果 -->
+      <div class="card">
+        <div class="card-label">格式转换</div>
+        <div class="results-list">
+          <div class="result-item">
+            <span class="result-label-tag">HEX</span>
+            <span class="result-value" id="hexResult">#3498DB</span>
+            <button class="copy-btn" data-target="hexResult">复制</button>
+          </div>
+          <div class="result-item">
+            <span class="result-label-tag">RGB</span>
+            <span class="result-value" id="rgbResult">rgb(52, 152, 219)</span>
+            <button class="copy-btn" data-target="rgbResult">复制</button>
+          </div>
+          <div class="result-item">
+            <span class="result-label-tag">RGBA</span>
+            <span class="result-value" id="rgbaResult">rgba(52, 152, 219, 1)</span>
+            <button class="copy-btn" data-target="rgbaResult">复制</button>
+          </div>
+          <div class="result-item">
+            <span class="result-label-tag">HSL</span>
+            <span class="result-value" id="hslResult">hsl(204, 70%, 53%)</span>
+            <button class="copy-btn" data-target="hslResult">复制</button>
+          </div>
+          <div class="result-item">
+            <span class="result-label-tag">HSLA</span>
+            <span class="result-value" id="hslaResult">hsla(204, 70%, 53%, 1)</span>
+            <button class="copy-btn" data-target="hslaResult">复制</button>
+          </div>
+          <div class="result-item">
+            <span class="result-label-tag">HSV</span>
+            <span class="result-value" id="hsvResult">hsv(204, 76%, 86%)</span>
+            <button class="copy-btn" data-target="hsvResult">复制</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 图片取色 -->
+      <div class="card">
+        <div class="card-label">图片取色</div>
+        <div class="file-drop" id="uploadArea">
+          <span class="file-drop-icon">📷</span>
+          <div class="file-drop-text">点击或拖拽上传图片</div>
+          <div class="file-drop-sub">支持 JPG · PNG · GIF · WebP</div>
+          <input type="file" id="imageInput" accept="image/*" />
+        </div>
+
+        <!-- 图片预览 -->
+        <div class="img-preview-wrap" id="imgPreviewWrap">
+          <img id="imagePreview" alt="取色图片" />
+          <div class="crosshair" id="crosshair"></div>
+        </div>
+
+        <!-- 图片控制 -->
+        <div class="img-ctrl-row" id="imgCtrlRow" style="display:none">
+          <button class="img-ctrl-btn" id="zoomInBtn">🔍＋</button>
+          <button class="img-ctrl-btn" id="zoomOutBtn">🔍－</button>
+          <button class="img-ctrl-btn" id="resetZoomBtn">↺ 重置</button>
+          <button class="img-ctrl-btn danger" id="clearImageBtn">🗑️ 清除</button>
+        </div>
+
+        <div class="pick-hint" id="pickHint">点击图片任意位置取色 · 准星指示当前位置</div>
+      </div>
+
+    </div>
+
+    <script>
+      // ── 工具函数 ──────────────────────────────────────
+      function rgbToHex(r, g, b) {
+        return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase()
+      }
+
+      function rgbToHsl(r, g, b) {
+        r /= 255; g /= 255; b /= 255
+        const max = Math.max(r, g, b), min = Math.min(r, g, b)
+        let h, s, l = (max + min) / 2
+        if (max === min) { h = s = 0 }
+        else {
+          const d = max - min
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+          switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break
+            case g: h = (b - r) / d + 2; break
+            case b: h = (r - g) / d + 4; break
+          }
+          h /= 6
+        }
+        return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) }
+      }
+
+      function rgbToHsv(r, g, b) {
+        r /= 255; g /= 255; b /= 255
+        const max = Math.max(r, g, b), min = Math.min(r, g, b)
+        const d = max - min
+        let h, s = max === 0 ? 0 : d / max, v = max
+        if (max === min) { h = 0 }
+        else {
+          switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break
+            case g: h = (b - r) / d + 2; break
+            case b: h = (r - g) / d + 4; break
+          }
+          h /= 6
+        }
+        return { h: Math.round(h * 360), s: Math.round(s * 100), v: Math.round(v * 100) }
+      }
+
+      function hslToHex(h, s, l) {
+        l /= 100
+        const a = s * Math.min(l, 1 - l) / 100
+        const f = n => {
+          const k = (n + h / 30) % 12
+          const c = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
+          return Math.round(255 * c).toString(16).padStart(2, '0')
+        }
+        return `#${f(0)}${f(8)}${f(4)}`
+      }
+
+      function parseColor(val) {
+        const d = document.createElement('div')
+        d.style.color = val
+        document.body.appendChild(d)
+        const c = getComputedStyle(d).color
+        document.body.removeChild(d)
+        if (!c || c === 'rgba(0, 0, 0, 0)') return null
+        const m = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
+        if (!m) return null
+        const r = +m[1], g = +m[2], b = +m[3]
+        const hex = rgbToHex(r, g, b)
+        const hsl = rgbToHsl(r, g, b)
+        const hsv = rgbToHsv(r, g, b)
+        return { r, g, b, hex, ...hsl, sv: hsv.s, v: hsv.v }
+      }
+
+      // ── DOM ───────────────────────────────────────────
+      const previewFill    = document.getElementById('previewFill')
+      const hexBig         = document.getElementById('hexBig')
+      const colorInput     = document.getElementById('colorInput')
+      const nativePicker   = document.getElementById('nativeColorPicker')
+      const pickerSwatch   = document.getElementById('pickerSwatch')
+      const hueSlider      = document.getElementById('hueSlider')
+      const hueCursor      = document.getElementById('hueCursor')
+
+      const hexResult      = document.getElementById('hexResult')
+      const rgbResult      = document.getElementById('rgbResult')
+      const rgbaResult     = document.getElementById('rgbaResult')
+      const hslResult      = document.getElementById('hslResult')
+      const hslaResult     = document.getElementById('hslaResult')
+      const hsvResult      = document.getElementById('hsvResult')
+
+      const uploadArea     = document.getElementById('uploadArea')
+      const imageInput     = document.getElementById('imageInput')
+      const imgPreviewWrap = document.getElementById('imgPreviewWrap')
+      const imagePreview   = document.getElementById('imagePreview')
+      const crosshair      = document.getElementById('crosshair')
+      const imgCtrlRow     = document.getElementById('imgCtrlRow')
+      const pickHint       = document.getElementById('pickHint')
+      const zoomInBtn      = document.getElementById('zoomInBtn')
+      const zoomOutBtn     = document.getElementById('zoomOutBtn')
+      const resetZoomBtn   = document.getElementById('resetZoomBtn')
+      const clearImageBtn  = document.getElementById('clearImageBtn')
+
+      let currentHSL = { h: 204, s: 70, l: 53 }
+      let currentZoom = 1
+
+      // ── 更新颜色 ──────────────────────────────────────
+      function updateColor(val) {
+        const c = parseColor(val)
+        if (!c) return
+
+        currentHSL = { h: c.h, s: c.s, l: c.l }
+
+        // 预览
+        previewFill.style.background = c.hex
+        hexBig.textContent = c.hex
+        pickerSwatch.style.background = c.hex
+
+        // 原生拾色器
+        try { nativePicker.value = c.hex } catch(e) {}
+
+        // 色相游标
+        hueCursor.style.left = (c.h / 360 * 100) + '%'
+
+        // 结果
+        hexResult.textContent  = c.hex
+        rgbResult.textContent  = `rgb(${c.r}, ${c.g}, ${c.b})`
+        rgbaResult.textContent = `rgba(${c.r}, ${c.g}, ${c.b}, 1)`
+        hslResult.textContent  = `hsl(${c.h}, ${c.s}%, ${c.l}%)`
+        hslaResult.textContent = `hsla(${c.h}, ${c.s}%, ${c.l}%, 1)`
+        hsvResult.textContent  = `hsv(${c.h}, ${c.sv}%, ${c.v}%)`
+
+        // 同步输入框（仅当值有效时更新）
+        if (document.activeElement !== colorInput) colorInput.value = c.hex
+      }
+
+      // ── 颜色输入 ──────────────────────────────────────
+      colorInput.addEventListener('input', e => updateColor(e.target.value.trim()))
+      nativePicker.addEventListener('input', e => { colorInput.value = e.target.value; updateColor(e.target.value) })
+
+      // ── 色相滑块 ──────────────────────────────────────
+      function hueFromEvent(e) {
+        const rect = hueSlider.getBoundingClientRect()
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX
+        const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+        const hue = Math.round(pct * 360)
+        currentHSL.h = hue
+        const hex = hslToHex(hue, currentHSL.s, currentHSL.l)
+        colorInput.value = hex
+        updateColor(hex)
+      }
+
+      let draggingHue = false
+      hueSlider.addEventListener('mousedown',  e => { draggingHue = true; hueFromEvent(e) })
+      hueSlider.addEventListener('touchstart', e => { draggingHue = true; hueFromEvent(e) }, { passive: true })
+      document.addEventListener('mousemove',   e => { if (draggingHue) hueFromEvent(e) })
+      document.addEventListener('touchmove',   e => { if (draggingHue) hueFromEvent(e) }, { passive: true })
+      document.addEventListener('mouseup',     () => draggingHue = false)
+      document.addEventListener('touchend',    () => draggingHue = false)
+      hueSlider.addEventListener('click', hueFromEvent)
+
+      // ── 预设颜色 ──────────────────────────────────────
+      document.querySelectorAll('.preset-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+          document.querySelectorAll('.preset-dot').forEach(d => d.classList.remove('selected'))
+          dot.classList.add('selected')
+          const c = dot.dataset.color
+          colorInput.value = c
+          updateColor(c)
+        })
+      })
+
+      // ── 复制按钮 ──────────────────────────────────────
+      function copyText(text) {
+        if (navigator.clipboard?.writeText) {
+          navigator.clipboard.writeText(text).catch(fallback)
+        } else fallback()
+        function fallback() {
+          const el = document.createElement('textarea')
+          el.value = text
+          el.style.cssText = 'position:fixed;opacity:0'
+          document.body.appendChild(el); el.select()
+          try { document.execCommand('copy') } catch(e) {}
+          document.body.removeChild(el)
+        }
+      }
+
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const text = document.getElementById(this.dataset.target).textContent
+          copyText(text)
+          const orig = this.textContent
+          this.textContent = '已复制 ✓'
+          this.classList.add('copied')
+          setTimeout(() => { this.textContent = orig; this.classList.remove('copied') }, 1800)
+        })
+      })
+
+      // ── 图片取色 ──────────────────────────────────────
+      uploadArea.addEventListener('dragover',  e => { e.preventDefault(); uploadArea.classList.add('dragover') })
+      uploadArea.addEventListener('dragleave', e => { e.preventDefault(); uploadArea.classList.remove('dragover') })
+      uploadArea.addEventListener('drop', e => {
+        e.preventDefault()
+        uploadArea.classList.remove('dragover')
+        const f = e.dataTransfer.files[0]
+        if (f && f.type.startsWith('image/')) loadImage(f)
+      })
+      imageInput.addEventListener('change', e => {
+        const f = e.target.files[0]
+        if (f) loadImage(f)
+      })
+
+      function loadImage(file) {
+        const reader = new FileReader()
+        reader.onload = e => {
+          imagePreview.src = e.target.result
+          imagePreview.style.transform = 'scale(1)'
+          currentZoom = 1
+          uploadArea.style.display = 'none'
+          imgPreviewWrap.style.display = 'block'
+          imgCtrlRow.style.display = 'flex'
+          pickHint.style.display = 'block'
+        }
+        reader.readAsDataURL(file)
+      }
+
+      // 图片点击取色
+      imagePreview.addEventListener('click', e => {
+        const rect = imagePreview.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        const c = getPixelColor(x, y)
+        if (c) { colorInput.value = c; updateColor(c) }
+        crosshair.style.display = 'block'
+        crosshair.style.left = x + 'px'
+        crosshair.style.top  = y + 'px'
+      })
+
+      imagePreview.addEventListener('mousemove', e => {
+        const rect = imagePreview.getBoundingClientRect()
+        crosshair.style.display = 'block'
+        crosshair.style.left = (e.clientX - rect.left) + 'px'
+        crosshair.style.top  = (e.clientY - rect.top)  + 'px'
+      })
+
+      imagePreview.addEventListener('mouseleave', () => { crosshair.style.display = 'none' })
+
+      // 触摸取色
+      imagePreview.addEventListener('touchend', e => {
+        e.preventDefault()
+        const t = e.changedTouches[0]
+        const rect = imagePreview.getBoundingClientRect()
+        const x = t.clientX - rect.left
+        const y = t.clientY - rect.top
+        const c = getPixelColor(x, y)
+        if (c) { colorInput.value = c; updateColor(c) }
+        crosshair.style.display = 'block'
+        crosshair.style.left = x + 'px'
+        crosshair.style.top  = y + 'px'
+        setTimeout(() => { crosshair.style.display = 'none' }, 600)
+      })
+
+      function getPixelColor(x, y) {
+        const canvas = document.createElement('canvas')
+        canvas.width  = imagePreview.naturalWidth
+        canvas.height = imagePreview.naturalHeight
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(imagePreview, 0, 0)
+        const scaleX = imagePreview.naturalWidth  / (imagePreview.offsetWidth  * currentZoom)
+        const scaleY = imagePreview.naturalHeight / (imagePreview.offsetHeight * currentZoom)
+        try {
+          const d = ctx.getImageData(Math.floor(x * scaleX), Math.floor(y * scaleY), 1, 1).data
+          return `rgb(${d[0]}, ${d[1]}, ${d[2]})`
+        } catch(e) { return null }
+      }
+
+      // 图片控制
+      zoomInBtn.addEventListener('click',    () => { currentZoom = Math.min(3, currentZoom + 0.2); applyZoom() })
+      zoomOutBtn.addEventListener('click',   () => { currentZoom = Math.max(0.5, currentZoom - 0.2); applyZoom() })
+      resetZoomBtn.addEventListener('click', () => { currentZoom = 1; applyZoom() })
+
+      function applyZoom() {
+        imagePreview.style.transform = `scale(${currentZoom})`
+        zoomInBtn.disabled  = currentZoom >= 3
+        zoomOutBtn.disabled = currentZoom <= 0.5
+      }
+
+      clearImageBtn.addEventListener('click', () => {
+        imagePreview.src = ''
+        currentZoom = 1
+        imageInput.value = ''
+        crosshair.style.display = 'none'
+        imgPreviewWrap.style.display = 'none'
+        imgCtrlRow.style.display = 'none'
+        pickHint.style.display = 'none'
+        uploadArea.style.display = 'block'
+      })
+
+      // ── 初始化 ────────────────────────────────────────
+      updateColor('#3498db')
+    </script>
+
+  </body>
+</html>

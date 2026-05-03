@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>玻璃拟态生成器</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-gradient: linear-gradient(135deg, #43e1f8 0%, #667eea 50%, #f857a6 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--glass-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ── Main Layout ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Card ── */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Settings Tab Card ── */
+        .settings-tab-card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .settings-tab-nav {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+            padding: 6px;
+            margin-bottom: 20px;
+            /* 横向滚动支持 */
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            /* 隐藏滚动条 - Firefox */
+            scrollbar-width: none;
+            /* 隐藏滚动条 - IE/Edge */
+            -ms-overflow-style: none;
+        }
+
+        /* 隐藏滚动条 - Chrome/Safari/Opera */
+        .settings-tab-nav::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+
+        .settings-tab-btn {
+            flex: 1 0 auto;
+            min-width: 64px;
+            padding: 9px 8px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .settings-tab-btn .tab-icon {
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .settings-tab-btn.active {
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .settings-tab-content {
+            display: none;
+            animation: tabFadeIn 0.25s ease;
+        }
+
+        .settings-tab-content.active {
+            display: block;
+        }
+
+        @keyframes tabFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Preset ── */
+        .preset-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .preset-btn {
+            padding: 5px 14px;
+            border: none;
+            border-radius: 30px;
+            background: var(--bg-primary);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .preset-btn.active,
+        .preset-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        /* ── Options Grid ── */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .option-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .option-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .option-label span {
+            float: right;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* ── Inputs ── */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 38px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: none;
+            cursor: pointer;
+            padding: 2px;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 2px;
+            border-radius: 8px;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 6px;
+        }
+
+        .color-preview-bar {
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 4px;
+            transition: background 0.2s;
+        }
+
+        /* ── Tint color toggle ── */
+        .tint-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tint-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .tint-dot.active {
+            box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 3px white, 0 0 0 5px var(--accent-primary);
+            transform: scale(1.1);
+        }
+
+        /* ── Preview Stage ── */
+        .preview-stage {
+            border-radius: var(--border-radius-sm);
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 240px;
+            position: relative;
+            overflow: hidden;
+            /* background set by JS */
+        }
+
+        /* floating orbs in background */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.7;
+            filter: blur(30px);
+            pointer-events: none;
+            transition: background 0.4s;
+        }
+
+        .orb1 {
+            width: 130px;
+            height: 130px;
+            top: -20px;
+            left: -20px;
+        }
+
+        .orb2 {
+            width: 100px;
+            height: 100px;
+            bottom: -10px;
+            right: 10px;
+        }
+
+        .orb3 {
+            width: 80px;
+            height: 80px;
+            top: 40%;
+            right: 25%;
+        }
+
+        /* ── Glass element itself ── */
+        .glass-element {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 5px;
+            transition: all 0.2s;
+            /* all glass styles applied via JS */
+        }
+
+        .glass-element .g-icon {
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+        }
+
+        .glass-element .g-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        .glass-element .g-sub {
+            font-size: 0.7rem;
+            opacity: 0.75;
+        }
+
+        /* ── Content tabs ── */
+        .content-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .content-tab {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 30px;
+            background: var(--bg-primary);
+            box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .content-tab.active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        /* ── Code Block ── */
+        .code-block {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 14px;
+            font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.65;
+            margin-bottom: 14px;
+        }
+
+        /* ── Export Grid ── */
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .export-btn {
+            padding: 9px 6px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .export-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        /* ── Action Bar ── */
+        .action-bar {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 11px 8px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .action-btn:active {
+            transform: scale(0.97);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        /* ── Badge ── */
+        .badge-new {
+            display: inline-block;
+            padding: 1px 6px;
+            background: var(--glass-gradient);
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: white;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        /* ── Instruction List ── */
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .instr-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .instr-text strong {
+            color: var(--text-primary);
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--text-primary);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>玻璃拟态生成器</h1>
+        <p class="subtitle">可视化调节 · 实时预览 · 一键导出 CSS</p>
+    </header>
+
+    <div class="main">
+
+        <!-- ①②③④ 四合一 Tab 导航卡片 -->
+        <div class="settings-tab-card">
+            <!-- Tab 导航栏 -->
+            <div class="settings-tab-nav">
+                <button class="settings-tab-btn active" id="stab-preset" onclick="switchSettingsTab('preset')">
+                    <span class="tab-icon">🎨</span>快速预设
+                </button>
+                <button class="settings-tab-btn" id="stab-background" onclick="switchSettingsTab('background')">
+                    <span class="tab-icon">🖼️</span>背景配置
+                </button>
+                <button class="settings-tab-btn" id="stab-params" onclick="switchSettingsTab('params')">
+                    <span class="tab-icon">⚙️</span>玻璃参数
+                </button>
+                <button class="settings-tab-btn" id="stab-text" onclick="switchSettingsTab('text')">
+                    <span class="tab-icon">✏️</span>文字色调
+                </button>
+            </div>
+
+            <!-- Tab 内容：快速预设 -->
+            <div class="settings-tab-content active" id="stab-content-preset">
+                <div class="preset-row">
+                    <button class="preset-btn active" data-preset="aurora">极光紫</button>
+                    <button class="preset-btn" data-preset="ocean">深海蓝</button>
+                    <button class="preset-btn" data-preset="sunset">日落橙</button>
+                    <button class="preset-btn" data-preset="forest">翠绿森林</button>
+                    <button class="preset-btn" data-preset="rose">玫瑰金</button>
+                    <button class="preset-btn" data-preset="night">暗夜黑</button>
+                </div>
+            </div>
+
+            <!-- Tab 内容：背景配置 -->
+            <div class="settings-tab-content" id="stab-content-background">
+                <div class="options-grid">
+                    <div class="option-item">
+                        <div class="option-label">光球颜色 1</div>
+                        <input type="color" id="orb1Color" value="#667eea">
+                        <div class="color-preview-bar" id="orb1Bar" style="background:#667eea"></div>
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">光球颜色 2</div>
+                        <input type="color" id="orb2Color" value="#f857a6">
+                        <div class="color-preview-bar" id="orb2Bar" style="background:#f857a6"></div>
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">背景底色</div>
+                        <input type="color" id="bgSceneColor" value="#1a1a2e">
+                        <div class="color-preview-bar" id="bgBar" style="background:#1a1a2e"></div>
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">光球颜色 3</div>
+                        <input type="color" id="orb3Color" value="#43e1f8">
+                        <div class="color-preview-bar" id="orb3Bar" style="background:#43e1f8"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 内容：玻璃参数 -->
+            <div class="settings-tab-content" id="stab-content-params">
+                <div class="options-grid">
+                    <div class="option-item">
+                        <div class="option-label">模糊强度 <span id="blurVal">12px</span></div>
+                        <input type="range" id="blurAmount" min="0" max="40" step="1" value="12">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">透明度 <span id="alphaVal">18%</span></div>
+                        <input type="range" id="alphaAmount" min="0" max="80" step="1" value="18">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">边框不透明度 <span id="borderAlphaVal">30%</span></div>
+                        <input type="range" id="borderAlpha" min="0" max="80" step="1" value="30">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">边框宽度 <span id="borderWVal">1px</span></div>
+                        <input type="range" id="borderW" min="0" max="4" step="1" value="1">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">圆角大小 <span id="radiusVal">20px</span></div>
+                        <input type="range" id="radius" min="0" max="60" step="1" value="20">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">阴影强度 <span id="shadowAlphaVal">20%</span></div>
+                        <input type="range" id="shadowAlpha" min="0" max="60" step="1" value="20">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">元素宽度 <span id="widthVal">220px</span></div>
+                        <input type="range" id="elWidth" min="80" max="300" step="5" value="220">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">元素高度 <span id="heightVal">220px</span></div>
+                        <input type="range" id="elHeight" min="80" max="300" step="5" value="220">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 内容：文字 & 色调 -->
+            <div class="settings-tab-content" id="stab-content-text">
+                <div class="options-grid" style="margin-bottom:16px;">
+                    <div class="option-item">
+                        <div class="option-label">文字颜色</div>
+                        <input type="color" id="textColor" value="#ffffff">
+                        <div class="color-preview-bar" id="textBar" style="background:#ffffff;border:1px solid #ccc;"></div>
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">玻璃色调</div>
+                        <input type="color" id="tintColor" value="#ffffff">
+                        <div class="color-preview-bar" id="tintBar" style="background:#ffffff;border:1px solid #ccc;"></div>
+                    </div>
+                </div>
+                <div class="option-label" style="margin-bottom:10px;">快速色调</div>
+                <div class="tint-grid" id="tintGrid">
+                    <button class="tint-dot active" data-tint="#ffffff" style="background:#ffffff;border:1px solid #ddd;" title="白色"></button>
+                    <button class="tint-dot" data-tint="#667eea" style="background:#667eea" title="紫蓝"></button>
+                    <button class="tint-dot" data-tint="#43e1f8" style="background:#43e1f8" title="青色"></button>
+                    <button class="tint-dot" data-tint="#f857a6" style="background:#f857a6" title="粉红"></button>
+                    <button class="tint-dot" data-tint="#f7b731" style="background:#f7b731" title="金黄"></button>
+                    <button class="tint-dot" data-tint="#4ecdc4" style="background:#4ecdc4" title="薄荷"></button>
+                    <button class="tint-dot" data-tint="#fc5c65" style="background:#fc5c65" title="红色"></button>
+                    <button class="tint-dot" data-tint="#000000" style="background:#222" title="黑色"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ⑤ 实时预览 -->
+        <div class="card">
+            <div class="card-label">👁️ 实时预览</div>
+            <div class="content-tabs">
+                <button class="content-tab active" onclick="setContent('card')">卡片</button>
+                <button class="content-tab" onclick="setContent('button')">按钮</button>
+                <button class="content-tab" onclick="setContent('input')">输入框</button>
+                <button class="content-tab" onclick="setContent('icon')">图标</button>
+                <button class="content-tab" onclick="setContent('circle')">圆形</button>
+            </div>
+            <div class="preview-stage" id="previewStage">
+                <div class="orb orb1" id="orb1"></div>
+                <div class="orb orb2" id="orb2"></div>
+                <div class="orb orb3" id="orb3"></div>
+                <div class="glass-element" id="glassEl">
+                    <span class="g-icon">💎</span>
+                    <span class="g-label">Glassmorphism</span>
+                    <span class="g-sub">Design</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ⑥ CSS 代码 -->
+        <div class="card">
+            <div class="card-label">📋 CSS 代码</div>
+            <div class="code-block" id="cssCode"></div>
+            <div class="export-grid">
+                <button class="export-btn" id="copyBtn">📋 复制 CSS</button>
+                <button class="export-btn" id="copyTailwindBtn">🌊 Tailwind<span class="badge-new">新</span></button>
+                <button class="export-btn" id="copyVarBtn">🔧 CSS 变量<span class="badge-new">新</span></button>
+            </div>
+            <div class="action-bar">
+                <button class="action-btn" id="resetBtn">⟳ 重置默认</button>
+                <button class="action-btn" id="randomBtn">🎲 随机配色</button>
+            </div>
+        </div>
+
+        <!-- ⑦ 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item"><span class="instr-icon">🎨</span><div class="instr-text"><strong>快速预设</strong>：一键切换极光紫、深海蓝、日落橙等场景配色，快速上手。</div></div>
+                <div class="instr-item"><span class="instr-icon">🔮</span><div class="instr-text"><strong>光球背景</strong>：三个彩色光球构成渐变背景，是玻璃拟态效果的核心视觉来源。</div></div>
+                <div class="instr-item"><span class="instr-icon">💨</span><div class="instr-text"><strong>模糊强度</strong>：控制 backdrop-filter blur 值，越高玻璃感越强，建议 8–24px。</div></div>
+                <div class="instr-item"><span class="instr-icon">🪟</span><div class="instr-text"><strong>透明度</strong>：玻璃背景的白色（或色调）填充不透明度，越低越透明。</div></div>
+                <div class="instr-item"><span class="instr-icon">✏️</span><div class="instr-text"><strong>玻璃色调</strong>：改变玻璃层的底色，可快速切换为带色彩的彩色玻璃。</div></div>
+                <div class="instr-item"><span class="instr-icon">📐</span><div class="instr-text"><strong>边框</strong>：半透明边框是玻璃效果的关键细节，可调节宽度和不透明度。</div></div>
+                <div class="instr-item"><span class="instr-icon">📋</span><div class="instr-text"><strong>多格式导出</strong>：支持复制标准 CSS、Tailwind 内联样式 和 CSS 变量三种格式。</div></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ── DOM ───────────────────────────────────────────────
+        const orb1Color = document.getElementById('orb1Color');
+        const orb2Color = document.getElementById('orb2Color');
+        const orb3Color = document.getElementById('orb3Color');
+        const bgSceneColor = document.getElementById('bgSceneColor');
+        const textColor = document.getElementById('textColor');
+        const tintColor = document.getElementById('tintColor');
+        const blurAmount = document.getElementById('blurAmount');
+        const alphaAmount = document.getElementById('alphaAmount');
+        const borderAlpha = document.getElementById('borderAlpha');
+        const borderW = document.getElementById('borderW');
+        const radius = document.getElementById('radius');
+        const shadowAlpha = document.getElementById('shadowAlpha');
+        const elWidth = document.getElementById('elWidth');
+        const elHeight = document.getElementById('elHeight');
+
+        const previewStage = document.getElementById('previewStage');
+        const glassEl = document.getElementById('glassEl');
+        const orb1El = document.getElementById('orb1');
+        const orb2El = document.getElementById('orb2');
+        const orb3El = document.getElementById('orb3');
+        const cssCode = document.getElementById('cssCode');
+        const toast = document.getElementById('toast');
+
+        let contentType = 'card';
+
+        // ── Settings Tab Switch ───────────────────────────────
+        function switchSettingsTab(name) {
+            ['preset', 'background', 'params', 'text'].forEach(t => {
+                document.getElementById('stab-' + t).classList.toggle('active', t === name);
+                document.getElementById('stab-content-' + t).classList.toggle('active', t === name);
+            });
+
+            // 自动滚动到当前激活的tab按钮（确保在窄屏下可见）
+            const activeBtn = document.getElementById('stab-' + name);
+            if (activeBtn) {
+                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // ── Helpers ───────────────────────────────────────────
+        function hexToRgb(hex) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return { r, g, b };
+        }
+
+        function hexToRgba(hex, a) {
+            const { r, g, b } = hexToRgb(hex);
+            return `rgba(${r},${g},${b},${a})`;
+        }
+
+        // ── Update All ────────────────────────────────────────
+        function updateAll() {
+            const bl = parseInt(blurAmount.value);
+            const al = parseInt(alphaAmount.value) / 100;
+            const bAl = parseInt(borderAlpha.value) / 100;
+            const bw = parseInt(borderW.value);
+            const rad = parseInt(radius.value);
+            const shAl = parseInt(shadowAlpha.value) / 100;
+            const w = parseInt(elWidth.value);
+            const h = parseInt(elHeight.value);
+            const tint = tintColor.value;
+            const text = textColor.value;
+            const bg = bgSceneColor.value;
+            const c1 = orb1Color.value;
+            const c2 = orb2Color.value;
+            const c3 = orb3Color.value;
+
+            // labels
+            document.getElementById('blurVal').innerText = bl + 'px';
+            document.getElementById('alphaVal').innerText = Math.round(al * 100) + '%';
+            document.getElementById('borderAlphaVal').innerText = Math.round(bAl * 100) + '%';
+            document.getElementById('borderWVal').innerText = bw + 'px';
+            document.getElementById('radiusVal').innerText = rad + 'px';
+            document.getElementById('shadowAlphaVal').innerText = Math.round(shAl * 100) + '%';
+            document.getElementById('widthVal').innerText = w + 'px';
+            document.getElementById('heightVal').innerText = h + 'px';
+
+            // color bars
+            document.getElementById('orb1Bar').style.background = c1;
+            document.getElementById('orb2Bar').style.background = c2;
+            document.getElementById('orb3Bar').style.background = c3;
+            document.getElementById('bgBar').style.background = bg;
+            document.getElementById('textBar').style.background = text;
+            document.getElementById('tintBar').style.background = tint;
+
+            // preview stage bg
+            previewStage.style.background = bg;
+
+            // orbs
+            orb1El.style.background = c1;
+            orb2El.style.background = c2;
+            orb3El.style.background = c3;
+
+            // glass element
+            const glassBg = hexToRgba(tint, al);
+            const borderColor = hexToRgba('#ffffff', bAl);
+            const shadowColor = `0 8px 32px ${hexToRgba('#000000', shAl)}`;
+
+            glassEl.style.background = glassBg;
+            glassEl.style.backdropFilter = `blur(${bl}px)`;
+            glassEl.style.webkitBackdropFilter = `blur(${bl}px)`;
+            glassEl.style.borderRadius = rad + 'px';
+            glassEl.style.border = bw > 0 ? `${bw}px solid ${borderColor}` : 'none';
+            glassEl.style.boxShadow = shadowColor;
+            glassEl.style.width = w + 'px';
+            glassEl.style.height = h + 'px';
+            glassEl.style.color = text;
+
+            // CSS code
+            const tintRgb = hexToRgb(tint);
+            const bgLine = `rgba(${tintRgb.r}, ${tintRgb.g}, ${tintRgb.b}, ${al.toFixed(2)})`;
+            const bdrLine = bw > 0 ? `\n  border: ${bw}px solid rgba(255, 255, 255, ${bAl.toFixed(2)});` : '';
+            const shLine = `0 8px 32px rgba(0, 0, 0, ${shAl.toFixed(2)})`;
+
+            let css = `.glass-card {\n`;
+            css += `  background: ${bgLine};\n`;
+            css += `  backdrop-filter: blur(${bl}px);\n`;
+            css += `  -webkit-backdrop-filter: blur(${bl}px);\n`;
+            css += `  border-radius: ${rad}px;\n`;
+            css += `  width: ${w}px;\n`;
+            css += `  height: ${h}px;`;
+            css += bdrLine;
+            css += `\n  box-shadow: ${shLine};\n`;
+            css += `  color: ${text};\n}`;
+
+            cssCode.innerText = css;
+        }
+
+        // ── Tint dots ─────────────────────────────────────────
+        document.querySelectorAll('.tint-dot').forEach(dot => {
+            dot.addEventListener('click', () => {
+                document.querySelectorAll('.tint-dot').forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+                tintColor.value = dot.dataset.tint;
+                updateAll();
+            });
+        });
+
+        // ── Content Type ─────────────────────────────────────
+        const contentMap = {
+            card: `<span class="g-icon">💎</span><span class="g-label">Glassmorphism</span><span class="g-sub">Design</span>`,
+            button: `<span class="g-label" style="font-size:0.95rem;letter-spacing:0.5px">✦ 点击确认</span>`,
+            input: `<span class="g-sub" style="font-size:0.8rem;opacity:0.6">请输入内容…</span>`,
+            icon: `<span class="g-icon" style="font-size:2.4rem">🌊</span>`,
+            circle: `<span class="g-icon">✨</span>`,
+        };
+
+        function setContent(type) {
+            contentType = type;
+            document.querySelectorAll('.content-tab').forEach(t => {
+                t.classList.toggle('active', t.getAttribute('onclick').includes(type));
+            });
+            glassEl.innerHTML = contentMap[type];
+            if (type === 'circle') {
+                radius.value = 999;
+            }
+            updateAll();
+        }
+
+        // ── Presets ───────────────────────────────────────────
+        const presets = {
+            aurora: { bg: '#1a1a2e', c1: '#667eea', c2: '#f857a6', c3: '#43e1f8', tint: '#ffffff', text: '#ffffff',
+                bl: 12, al: 18, bAl: 30, bw: 1, rad: 20, shAl: 20, w: 220, h: 220 },
+            ocean: { bg: '#0d1b2a', c1: '#1e90ff', c2: '#00cfff', c3: '#4ecdc4', tint: '#ffffff', text: '#e0f4ff',
+                bl: 16, al: 15, bAl: 25, bw: 1, rad: 16, shAl: 25, w: 220, h: 220 },
+            sunset: { bg: '#1a0a00', c1: '#ff6b35', c2: '#f7b731', c3: '#fc5c65', tint: '#ffffff', text: '#fff0e0',
+                bl: 14, al: 20, bAl: 35, bw: 1, rad: 24, shAl: 20, w: 220, h: 220 },
+            forest: { bg: '#0a1f0a', c1: '#27ae60', c2: '#4ecdc4', c3: '#a8e6cf', tint: '#ffffff', text: '#e0ffe8',
+                bl: 10, al: 16, bAl: 28, bw: 1, rad: 18, shAl: 18, w: 220, h: 220 },
+            rose: { bg: '#1f0a10', c1: '#e84393', c2: '#f857a6', c3: '#f7b731', tint: '#ffffff', text: '#ffe0ec',
+                bl: 18, al: 22, bAl: 40, bw: 2, rad: 28, shAl: 22, w: 220, h: 220 },
+            night: { bg: '#050510', c1: '#333366', c2: '#224488', c3: '#112244', tint: '#000000', text: '#aabbdd',
+                bl: 20, al: 30, bAl: 20, bw: 1, rad: 20, shAl: 30, w: 220, h: 220 },
+        };
+
+        function applyPreset(name) {
+            const p = presets[name];
+            if (!p) return;
+            bgSceneColor.value = p.bg;
+            orb1Color.value = p.c1;
+            orb2Color.value = p.c2;
+            orb3Color.value = p.c3;
+            tintColor.value = p.tint;
+            textColor.value = p.text;
+            blurAmount.value = p.bl;
+            alphaAmount.value = p.al;
+            borderAlpha.value = p.bAl;
+            borderW.value = p.bw;
+            radius.value = p.rad;
+            shadowAlpha.value = p.shAl;
+            elWidth.value = p.w;
+            elHeight.value = p.h;
+            document.querySelectorAll('.preset-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.preset === name);
+            });
+            // sync tint dots
+            document.querySelectorAll('.tint-dot').forEach(d => {
+                d.classList.toggle('active', d.dataset.tint === p.tint);
+            });
+            updateAll();
+        }
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+        });
+
+        // ── Reset ─────────────────────────────────────────────
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            applyPreset('aurora');
+        });
+
+        // ── Random ────────────────────────────────────────────
+        function randHex(hueBase) {
+            const hue = hueBase !== undefined ? (hueBase + Math.floor(Math.random() * 60)) % 360 : Math.floor(Math
+            .random() * 360);
+            const s = 60 + Math.floor(Math.random() * 30);
+            const l = 40 + Math.floor(Math.random() * 25);
+            return hslToHex(hue, s, l);
+        }
+
+        function hslToHex(h, s, l) {
+            s /= 100;
+            l /= 100;
+            const a = s * Math.min(l, 1 - l);
+            const f = n => { const k = (n + h / 30) % 12;
+                const c = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); return Math.round(255 * c).toString(16)
+                    .padStart(2, '0'); };
+            return `#${f(0)}${f(8)}${f(4)}`;
+        }
+
+        function darkHex(hex, amt = 40) {
+            const { r, g, b } = hexToRgb(hex);
+            return '#' + [r, g, b].map(x => Math.max(0, x - amt).toString(16).padStart(2, '0')).join('');
+        }
+
+        document.getElementById('randomBtn').addEventListener('click', () => {
+            const baseHue = Math.floor(Math.random() * 360);
+            orb1Color.value = randHex(baseHue);
+            orb2Color.value = randHex(baseHue + 120);
+            orb3Color.value = randHex(baseHue + 240);
+            bgSceneColor.value = darkHex(orb1Color.value, 100);
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            updateAll();
+            showToast('🎲 随机配色已生成');
+        });
+
+        // ── Copy ─────────────────────────────────────────────
+        async function copyText(text, msg) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast(msg || '✅ 已复制');
+            } catch {
+                showToast('❌ 复制失败，请手动复制');
+            }
+        }
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            copyText(cssCode.innerText, '✅ CSS 已复制到剪贴板');
+        });
+
+        document.getElementById('copyTailwindBtn').addEventListener('click', () => {
+            const bl = parseInt(blurAmount.value);
+            const al = parseInt(alphaAmount.value) / 100;
+            const bAl = parseInt(borderAlpha.value) / 100;
+            const bw = parseInt(borderW.value);
+            const rad = parseInt(radius.value);
+            const shAl = parseInt(shadowAlpha.value) / 100;
+            const tint = tintColor.value;
+            const text = textColor.value;
+            const { r, g, b } = hexToRgb(tint);
+            const bgVal = `rgba(${r},${g},${b},${al.toFixed(2)})`;
+            const bdrVal = bw > 0 ? `${bw}px solid rgba(255,255,255,${bAl.toFixed(2)})` : '';
+            const shVal = `0 8px 32px rgba(0,0,0,${shAl.toFixed(2)})`;
+            let tw =
+                `style="background:${bgVal};backdrop-filter:blur(${bl}px);-webkit-backdrop-filter:blur(${bl}px);border-radius:${rad}px;`;
+            if (bdrVal) tw += `border:${bdrVal};`;
+            tw += `box-shadow:${shVal};color:${text};"`;
+            copyText(tw, '🌊 Tailwind 内联样式已复制');
+        });
+
+        document.getElementById('copyVarBtn').addEventListener('click', () => {
+            const bl = parseInt(blurAmount.value);
+            const al = parseInt(alphaAmount.value) / 100;
+            const bAl = parseInt(borderAlpha.value) / 100;
+            const bw = parseInt(borderW.value);
+            const rad = parseInt(radius.value);
+            const shAl = parseInt(shadowAlpha.value) / 100;
+            const tint = tintColor.value;
+            const text = textColor.value;
+            const { r, g, b } = hexToRgb(tint);
+            const vars =
+                `:root {\n  --glass-bg: rgba(${r},${g},${b},${al.toFixed(2)});\n  --glass-blur: ${bl}px;\n  --glass-radius: ${rad}px;\n  --glass-border: rgba(255,255,255,${bAl.toFixed(2)});\n  --glass-border-width: ${bw}px;\n  --glass-shadow: 0 8px 32px rgba(0,0,0,${shAl.toFixed(2)});\n  --glass-color: ${text};\n}\n\n.glass-card {\n  background: var(--glass-bg);\n  backdrop-filter: blur(var(--glass-blur));\n  -webkit-backdrop-filter: blur(var(--glass-blur));\n  border-radius: var(--glass-radius);\n  border: var(--glass-border-width) solid var(--glass-border);\n  box-shadow: var(--glass-shadow);\n  color: var(--glass-color);\n}`;
+            copyText(vars, '🔧 CSS 变量已复制');
+        });
+
+        // ── Toast ─────────────────────────────────────────────
+        let toastTimer = null;
+
+        function showToast(msg) {
+            toast.innerText = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // ── Bindings ──────────────────────────────────────────
+        [orb1Color, orb2Color, orb3Color, bgSceneColor, textColor, tintColor,
+            blurAmount, alphaAmount, borderAlpha, borderW, radius, shadowAlpha, elWidth, elHeight
+        ].forEach(el => el.addEventListener('input', updateAll));
+
+        // ── Init ─────────────────────────────────────────────
+        applyPreset('aurora');
+    </script>
+</body>
+</html>

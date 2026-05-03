@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文字转拼音</title>
+    <script src="https://unpkg.com/pinyin-pro@3.19.6/dist/index.js"></script>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 文本输入区 ── */
+      .text-area-wrap {
+        position: relative;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 160px;
+        padding: 14px 14px 36px 14px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        outline: none;
+        resize: vertical;
+        font-family: inherit;
+        line-height: 1.6;
+        transition: var(--transition);
+      }
+
+      textarea::placeholder {
+        color: var(--text-muted);
+      }
+
+      .char-counter {
+        position: absolute;
+        bottom: 10px;
+        right: 12px;
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        pointer-events: none;
+        font-weight: 500;
+      }
+
+      .char-counter.warn { color: var(--warning); }
+      .char-counter.over { color: var(--danger); }
+
+      /* ── 输出风格按钮组 ── */
+      .fmt-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .fmt-btn {
+        padding: 12px 8px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        letter-spacing: 0.3px;
+        text-align: center;
+        line-height: 1.4;
+      }
+
+      .fmt-btn span {
+        display: block;
+        font-size: 0.66rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        margin-top: 3px;
+      }
+
+      .fmt-btn:hover  { transform: translateY(-1px); }
+      .fmt-btn:active { transform: scale(0.96); }
+
+      .fmt-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+      }
+
+      .fmt-btn.active span { color: rgba(255,255,255,0.75); }
+
+      /* ── 分隔符选项 ── */
+      .sep-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+
+      .sep-btn {
+        padding: 10px 6px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        text-align: center;
+      }
+
+      .sep-btn:hover  { transform: translateY(-1px); }
+      .sep-btn:active { transform: scale(0.96); }
+
+      .sep-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+      }
+
+      /* ── 开关选项行 ── */
+      .toggle-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .toggle-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .toggle-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .toggle-desc {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      /* iOS-style toggle switch */
+      .toggle-switch {
+        position: relative;
+        width: 44px;
+        height: 26px;
+        flex-shrink: 0;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
+
+      .toggle-track {
+        position: absolute;
+        inset: 0;
+        border-radius: 13px;
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .toggle-track::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--bg-primary);
+        box-shadow: 2px 2px 5px var(--shadow-dark), -1px -1px 3px var(--shadow-light);
+        transition: var(--transition);
+      }
+
+      .toggle-switch input:checked + .toggle-track {
+        background: var(--accent-gradient);
+        box-shadow: inset 2px 2px 5px rgba(102,126,234,0.3);
+      }
+
+      .toggle-switch input:checked + .toggle-track::after {
+        transform: translateX(18px);
+        background: #fff;
+        box-shadow: 1px 1px 4px rgba(0,0,0,0.2);
+      }
+
+      /* ── 结果输出区 ── */
+      .output-box {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        padding: 14px;
+        height: 50vh;
+        min-height: 220px;
+        max-height: 500px;
+        overflow-y: auto;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        line-height: 1.8;
+        word-break: break-all;
+        white-space: pre-wrap;
+        font-family: 'SF Mono', 'Fira Code', monospace;
+        position: relative;
+      }
+
+      .output-placeholder {
+        color: var(--text-muted);
+        font-family: 'SF Pro Display', 'PingFang SC', Arial, sans-serif;
+        font-size: 0.85rem;
+        position: absolute;
+        top: 14px;
+        left: 14px;
+      }
+
+      /* ── 拼音注音视图 ── */
+      .ruby-box {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        padding: 16px;
+        height: 50vh;
+        min-height: 220px;
+        max-height: 500px;
+        overflow-y: auto;
+        line-height: 2.8;
+        word-break: break-all;
+        font-size: 1rem;
+        color: var(--text-primary);
+        display: none;
+      }
+
+      ruby { display: inline-flex; flex-direction: column-reverse; align-items: center; margin: 0 2px; }
+      rt {
+        font-size: 0.62em;
+        color: var(--accent-primary);
+        font-weight: 600;
+        line-height: 1;
+        text-align: center;
+        font-family: 'SF Pro Display', 'PingFang SC', Arial, sans-serif;
+      }
+
+      /* ── 统计信息行 ── */
+      .stats-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+
+      .stat-badge {
+        padding: 5px 12px;
+        background: var(--bg-primary);
+        border-radius: 20px;
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      .stat-badge strong {
+        color: var(--accent-primary);
+        font-size: 0.82rem;
+      }
+
+      /* ── 操作按钮 ── */
+      .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .action-btn {
+        padding: 13px 10px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .action-btn:hover  { transform: translateY(-1px); }
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .action-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      .action-btn.primary {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        grid-column: span 2;
+      }
+
+      .action-btn.primary:hover { box-shadow: 6px 6px 16px rgba(102,126,234,0.4); transform: translateY(-2px); }
+      .action-btn.primary:active { transform: scale(0.97); }
+
+      .action-btn.success-btn { color: var(--success); }
+      .action-btn.danger-btn  { color: var(--danger); }
+      .action-btn.warn-btn    { color: var(--warning); }
+
+      /* ── 视图切换标签 ── */
+      .view-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .view-tab {
+        flex: 1;
+        padding: 9px 6px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        text-align: center;
+      }
+
+      .view-tab.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 3px 3px 8px rgba(102,126,234,0.3);
+      }
+
+      /* ── 说明卡片 ── */
+      .instr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+      .instr-text {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── Toast 提示 ── */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        padding: 10px 22px;
+        background: var(--text-primary);
+        color: #fff;
+        border-radius: 30px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 9999;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* ── 响应式 ── */
+      @media (max-width: 420px) {
+        h1 { font-size: 1.8rem; }
+        .fmt-grid { grid-template-columns: repeat(3, 1fr); }
+        .sep-grid { grid-template-columns: repeat(2, 1fr); }
+        .action-grid { grid-template-columns: 1fr 1fr; }
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <header>
+      <h1>文字转拼音</h1>
+      <p class="subtitle">汉字转拼音 · 声调可选 · 多音字支持</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 输入卡片 -->
+      <div class="card">
+        <div class="card-label">输入中文</div>
+        <div class="text-area-wrap">
+          <textarea id="inputText" placeholder="请输入或粘贴中文文本...&#10;&#10;例如：春眠不觉晓，处处闻啼鸟。"></textarea>
+          <span class="char-counter" id="charCounter">0 字</span>
+        </div>
+      </div>
+
+      <!-- 输出风格 -->
+      <div class="card">
+        <div class="card-label">输出风格</div>
+        <div class="fmt-grid">
+          <button class="fmt-btn active" data-tone="symbol">
+            带声调符号
+            <span>pīn yīn</span>
+          </button>
+          <button class="fmt-btn" data-tone="num">
+            数字声调
+            <span>pin1 yin1</span>
+          </button>
+          <button class="fmt-btn" data-tone="none">
+            无声调
+            <span>pin yin</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 分隔符 -->
+      <div class="card">
+        <div class="card-label">分隔符</div>
+        <div class="sep-grid">
+          <button class="sep-btn active" data-sep=" ">空格</button>
+          <button class="sep-btn" data-sep="">无</button>
+          <button class="sep-btn" data-sep="-">连字符</button>
+          <button class="sep-btn" data-sep="/">斜杠</button>
+        </div>
+      </div>
+
+      <!-- 更多选项 -->
+      <div class="card">
+        <div class="card-label">更多选项</div>
+        <div class="toggle-row">
+          <div class="toggle-item">
+            <div>
+              <div class="toggle-label">非汉字保留</div>
+              <div class="toggle-desc">英文、数字、标点原样输出</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="keepNonChinese" checked />
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+          <div class="toggle-item">
+            <div>
+              <div class="toggle-label">首字母大写</div>
+              <div class="toggle-desc">每个拼音首字母大写输出</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="capitalize" />
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+          <div class="toggle-item">
+            <div>
+              <div class="toggle-label">仅输出首字母</div>
+              <div class="toggle-desc">缩写模式，如「中国」→ ZG</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="firstLetterOnly" />
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 拼音结果 -->
+      <div class="card">
+        <div class="card-label">拼音结果</div>
+        <div class="view-tabs">
+          <button class="view-tab active" data-view="plain">纯文本</button>
+          <button class="view-tab" data-view="ruby">注音视图</button>
+        </div>
+        <div class="output-box" id="pinyinResult">
+          <span class="output-placeholder">等待输入...</span>
+        </div>
+        <div class="ruby-box" id="rubyResult"></div>
+        <div class="stats-row" id="statsRow" style="display:none">
+          <div class="stat-badge">汉字 <strong id="statChinese">0</strong></div>
+          <div class="stat-badge">拼音字节 <strong id="statPinyin">0</strong></div>
+          <div class="stat-badge">总字符 <strong id="statTotal">0</strong></div>
+        </div>
+      </div>
+
+      <!-- 操作 -->
+      <div class="card">
+        <div class="card-label">操作</div>
+        <div class="action-grid">
+          <button class="action-btn success-btn" id="copyBtn">📋 复制拼音</button>
+          <button class="action-btn warn-btn" id="exampleBtn">✨ 示例文本</button>
+          <button class="action-btn danger-btn" id="clearBtn">🗑️ 清空全部</button>
+          <button class="action-btn" id="downloadBtn">💾 下载文本</button>
+        </div>
+      </div>
+
+      <!-- 使用说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+          <div class="instr-item">
+            <span class="instr-icon">⚡</span>
+            <div class="instr-text"><strong>实时转换</strong>：输入中文后自动生成拼音，支持多音字智能识别，无需手动点击转换</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🎵</span>
+            <div class="instr-text"><strong>声调模式</strong>：可切换带符号（pīn）、数字声调（pin1）或无声调（pin）三种输出风格</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔗</span>
+            <div class="instr-text"><strong>分隔符</strong>：支持空格、无分隔、连字符（-）或斜杠（/）四种拼音间隔方式</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">👀</span>
+            <div class="instr-text"><strong>注音视图</strong>：切换到「注音视图」可在每个汉字上方看到对应拼音，便于阅读核对</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔤</span>
+            <div class="instr-text"><strong>首字母缩写</strong>：开启「仅输出首字母」可提取拼音缩写，适合制作索引或搜索关键字</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔒</span>
+            <div class="instr-text"><strong>隐私安全</strong>：所有处理均在浏览器本地完成，文字内容不上传任何服务器</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+    (function () {
+      const inputEl         = document.getElementById('inputText');
+      const resultBox       = document.getElementById('pinyinResult');
+      const rubyBox         = document.getElementById('rubyResult');
+      const charCounter     = document.getElementById('charCounter');
+      const statsRow        = document.getElementById('statsRow');
+      const statChinese     = document.getElementById('statChinese');
+      const statPinyin      = document.getElementById('statPinyin');
+      const statTotal       = document.getElementById('statTotal');
+      const copyBtn         = document.getElementById('copyBtn');
+      const clearBtn        = document.getElementById('clearBtn');
+      const exampleBtn      = document.getElementById('exampleBtn');
+      const downloadBtn     = document.getElementById('downloadBtn');
+      const keepNonChinese  = document.getElementById('keepNonChinese');
+      const capitalize      = document.getElementById('capitalize');
+      const firstLetterOnly = document.getElementById('firstLetterOnly');
+      const toastEl         = document.getElementById('toast');
+
+      let currentTone = 'symbol';
+      let currentSep  = ' ';
+      let currentView = 'plain';
+      let lastResult  = '';
+      let updateTimer = null;
+
+      // ── 格式按钮 ──────────────────────────────────────────
+      document.querySelectorAll('.fmt-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentTone = btn.dataset.tone;
+          triggerUpdate();
+        });
+      });
+
+      // ── 分隔符按钮 ────────────────────────────────────────
+      document.querySelectorAll('.sep-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.sep-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentSep = btn.dataset.sep;
+          triggerUpdate();
+        });
+      });
+
+      // ── 视图切换 ─────────────────────────────────────────
+      document.querySelectorAll('.view-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentView = tab.dataset.view;
+          if (currentView === 'plain') {
+            resultBox.style.display = 'block';
+            rubyBox.style.display = 'none';
+          } else {
+            resultBox.style.display = 'none';
+            rubyBox.style.display = 'block';
+          }
+          triggerUpdate();
+        });
+      });
+
+      // ── 开关选项 ─────────────────────────────────────────
+      [keepNonChinese, capitalize, firstLetterOnly].forEach(el => {
+        el.addEventListener('change', triggerUpdate);
+      });
+
+      // ── 首字母only互斥声调 ───────────────────────────────
+      firstLetterOnly.addEventListener('change', function () {
+        if (this.checked) {
+          document.querySelectorAll('.fmt-btn').forEach(b => b.style.opacity = '0.45');
+          document.querySelectorAll('.sep-btn').forEach(b => b.style.opacity = '0.45');
+        } else {
+          document.querySelectorAll('.fmt-btn').forEach(b => b.style.opacity = '');
+          document.querySelectorAll('.sep-btn').forEach(b => b.style.opacity = '');
+        }
+      });
+
+      // ── 字符计数 ─────────────────────────────────────────
+      function updateCharCount(text) {
+        const len = [...text].length;
+        charCounter.textContent = len + ' 字';
+        charCounter.className = 'char-counter' + (len > 4000 ? ' over' : len > 2000 ? ' warn' : '');
+      }
+
+      // ── 获取拼音库函数 ────────────────────────────────────
+      function getPinyinFunc() {
+        if (window.pinyinPro && window.pinyinPro.pinyin) return window.pinyinPro.pinyin;
+        if (typeof window.pinyin === 'function') return window.pinyin;
+        return null;
+      }
+
+      // ── 核心转换 ─────────────────────────────────────────
+      function doConvert(text) {
+        const fn = getPinyinFunc();
+        if (!fn) return null;
+        if (!text.trim()) return '';
+
+        const onlyFirst = firstLetterOnly.checked;
+
+        if (onlyFirst) {
+          // 逐字提取首字母
+          const chars = [...text];
+          return chars.map(ch => {
+            if (/[\u4e00-\u9fff]/.test(ch)) {
+              const py = fn(ch, { toneType: 'none', separator: '' });
+              return capitalize.checked
+                ? py.charAt(0).toUpperCase()
+                : py.charAt(0).toUpperCase(); // 首字母缩写默认大写
+            }
+            return keepNonChinese.checked ? ch : '';
+          }).join('');
+        }
+
+        // 正常拼音转换
+        const opts = {
+          toneType: currentTone,
+          separator: currentSep,
+          nonZh: keepNonChinese.checked ? 'consecutive' : 'removed',
+        };
+
+        let result = fn(text, opts);
+
+        if (capitalize.checked && currentTone !== 'none') {
+          result = result.replace(/\b([a-zA-Zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ])/gu, ch => ch.toUpperCase());
+        } else if (capitalize.checked) {
+          result = result.replace(/\b[a-z]/g, ch => ch.toUpperCase());
+        }
+
+        return result;
+      }
+
+      // ── 生成注音视图 ──────────────────────────────────────
+      function buildRuby(text) {
+        const fn = getPinyinFunc();
+        if (!fn || !text.trim()) return '';
+        const chars = [...text];
+        return chars.map(ch => {
+          if (/[\u4e00-\u9fff]/.test(ch)) {
+            const py = fn(ch, { toneType: currentTone, separator: '' });
+            return `<ruby>${ch}<rt>${py}</rt></ruby>`;
+          }
+          return `<span>${ch}</span>`;
+        }).join('');
+      }
+
+      // ── 统计信息 ─────────────────────────────────────────
+      function updateStats(text, result) {
+        if (!text.trim()) { statsRow.style.display = 'none'; return; }
+        const chCount = [...text].filter(c => /[\u4e00-\u9fff]/.test(c)).length;
+        statsRow.style.display = 'flex';
+        statChinese.textContent = chCount;
+        statPinyin.textContent  = result.length;
+        statTotal.textContent   = [...text].length;
+      }
+
+      // ── 触发更新 ─────────────────────────────────────────
+      function triggerUpdate() {
+        if (updateTimer) clearTimeout(updateTimer);
+        updateTimer = setTimeout(() => {
+          const text = inputEl.value;
+          updateCharCount(text);
+
+          if (!text.trim()) {
+            resultBox.innerHTML = '<span class="output-placeholder">等待输入...</span>';
+            rubyBox.innerHTML   = '';
+            lastResult = '';
+            statsRow.style.display = 'none';
+            return;
+          }
+
+          const result = doConvert(text);
+          if (result === null) {
+            resultBox.innerHTML = '<span class="output-placeholder">⚠️ 拼音库加载中，请稍候...</span>';
+            return;
+          }
+
+          lastResult = result;
+          if (currentView === 'plain') {
+            resultBox.textContent = result;
+          } else {
+            rubyBox.innerHTML = buildRuby(text);
+          }
+          updateStats(text, result);
+        }, 250);
+      }
+
+      // ── 复制 ─────────────────────────────────────────────
+      async function copyResult() {
+        if (!lastResult) { showToast('没有可复制的内容'); return; }
+        try {
+          await navigator.clipboard.writeText(lastResult);
+          showToast('✅ 已复制到剪贴板');
+        } catch {
+          // 降级方案
+          const ta = document.createElement('textarea');
+          ta.value = lastResult;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('✅ 已复制到剪贴板');
+        }
+      }
+
+      // ── 下载文本 ─────────────────────────────────────────
+      function downloadResult() {
+        if (!lastResult) { showToast('没有可下载的内容'); return; }
+        const blob = new Blob([lastResult], { type: 'text/plain;charset=utf-8' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = 'pinyin_result.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('💾 已下载文本文件');
+      }
+
+      // ── 清空 ─────────────────────────────────────────────
+      function clearAll() {
+        inputEl.value = '';
+        resultBox.innerHTML = '<span class="output-placeholder">等待输入...</span>';
+        rubyBox.innerHTML = '';
+        lastResult = '';
+        charCounter.textContent = '0 字';
+        charCounter.className = 'char-counter';
+        statsRow.style.display = 'none';
+      }
+
+      // ── 示例文本 ─────────────────────────────────────────
+      const examples = [
+        '春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。',
+        '你好，世界！欢迎使用文字转拼音工具。\n支持多音字，例如：重庆、银行、行走。',
+        '床前明月光，疑是地上霜。\n举头望明月，低头思故乡。',
+        '中华人民共和国成立于1949年，首都北京。',
+      ];
+      let exampleIdx = 0;
+
+      function setExample() {
+        inputEl.value = examples[exampleIdx % examples.length];
+        exampleIdx++;
+        triggerUpdate();
+      }
+
+      // ── Toast ─────────────────────────────────────────────
+      let toastTimer = null;
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000);
+      }
+
+      // ── 监听 ─────────────────────────────────────────────
+      inputEl.addEventListener('input', triggerUpdate);
+      copyBtn.addEventListener('click', copyResult);
+      clearBtn.addEventListener('click', clearAll);
+      exampleBtn.addEventListener('click', setExample);
+      downloadBtn.addEventListener('click', downloadResult);
+
+      // ── 等待库就绪 ────────────────────────────────────────
+      function waitForLib() {
+        if (getPinyinFunc()) {
+          if (inputEl.value) triggerUpdate();
+        } else {
+          setTimeout(waitForLib, 200);
+        }
+      }
+      waitForLib();
+
+      setTimeout(() => {
+        if (!getPinyinFunc()) {
+          resultBox.innerHTML = '<span class="output-placeholder">⚠️ 拼音库加载失败，请检查网络后刷新页面。</span>';
+        }
+      }, 5000);
+    })();
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>代码统计器</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent; /* 全局禁用点击高亮 */
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 文件上传区 ── */
+      .file-drop {
+        border: 2px dashed var(--text-muted);
+        border-radius: var(--border-radius-sm);
+        padding: 26px 20px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        margin-bottom: 12px;
+      }
+
+      .file-drop:hover, .file-drop.dragover {
+        border-color: var(--accent-primary);
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.15);
+      }
+
+      .file-drop.dragover {
+        border-style: solid;
+        border-color: var(--success);
+      }
+
+      .file-drop input[type="file"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .file-drop-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+      .file-drop-text {
+        font-size: 0.92rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 4px;
+      }
+
+      .file-drop-sub {
+        font-size: 0.74rem;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+      }
+
+      .file-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        background: var(--bg-primary);
+        border-radius: 20px;
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--accent-primary);
+      }
+
+      /* ── 文件列表 ── */
+      .file-list-wrap {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        max-height: 220px;
+        overflow-y: auto;
+        padding: 10px;
+      }
+
+      .file-empty {
+        text-align: center;
+        padding: 18px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        margin-bottom: 8px;
+        gap: 10px;
+        transition: var(--transition);
+      }
+
+      .file-item:last-child { margin-bottom: 0; }
+
+      .file-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .file-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+      .file-meta { min-width: 0; flex: 1; }
+
+      .file-name {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+      }
+
+      .file-size {
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        margin-top: 1px;
+      }
+
+      .file-lines {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+
+      /* ── 语言过滤 ── */
+      .lang-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .lang-btn {
+        padding: 7px 14px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .lang-btn:hover  { transform: translateY(-1px); }
+      .lang-btn:active { transform: scale(0.95); }
+
+      .lang-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 3px 3px 8px rgba(102,126,234,0.35), -1px -1px 4px var(--shadow-light);
+      }
+
+      .lang-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      /* ── 操作按钮 ── */
+      .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .action-btn {
+        padding: 13px 10px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .action-btn:hover  { transform: translateY(-1px); }
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .action-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      .action-btn.primary {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        grid-column: span 2;
+      }
+
+      .action-btn.primary:hover { box-shadow: 6px 6px 16px rgba(102,126,234,0.4); transform: translateY(-2px); }
+      .action-btn.primary:active { transform: scale(0.97); }
+      .action-btn.success-btn { color: var(--success); }
+      .action-btn.danger-btn  { color: var(--danger); }
+
+      /* ── 进度条 ── */
+      .progress-bar-wrap {
+        height: 4px;
+        border-radius: 2px;
+        background: var(--bg-primary);
+        box-shadow: inset 1px 1px 3px var(--shadow-dark);
+        overflow: hidden;
+        margin-top: 10px;
+        display: none;
+      }
+
+      .progress-bar-fill {
+        height: 100%;
+        border-radius: 2px;
+        background: var(--accent-gradient);
+        width: 0;
+        transition: width 0.3s ease;
+      }
+
+      /* ── 汇总统计卡 ── */
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      @media (min-width: 480px) {
+        .summary-grid { grid-template-columns: repeat(4, 1fr); }
+      }
+
+      .summary-card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        padding: 14px 12px;
+        text-align: center;
+      }
+
+      .summary-num {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.2;
+        margin-bottom: 4px;
+      }
+
+      .summary-label {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+      }
+
+      /* ── 语言占比条 ── */
+      .lang-bar-wrap {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        height: 12px;
+        overflow: hidden;
+        margin-bottom: 14px;
+        display: flex;
+      }
+
+      .lang-bar-seg {
+        height: 100%;
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* ── 语言明细列表 ── */
+      .lang-detail-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .lang-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      }
+
+      .lang-detail-dot {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .lang-detail-name {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        flex: 1;
+        min-width: 0;
+      }
+
+      .lang-detail-stats {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+
+      .lang-stat {
+        text-align: right;
+      }
+
+      .lang-stat-num {
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: var(--text-primary);
+      }
+
+      .lang-stat-label {
+        font-size: 0.62rem;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      .lang-pct-badge {
+        padding: 3px 10px;
+        border-radius: 12px;
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--text-secondary);
+        flex-shrink: 0;
+        min-width: 46px;
+        text-align: center;
+      }
+
+      /* ── 文件明细表 ── */
+      .file-detail-wrap {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .file-detail-table {
+        width: 100%;
+        min-width: 520px;
+        border-collapse: collapse;
+        font-size: 0.76rem;
+      }
+
+      .file-detail-table thead th {
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 0.66rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(163,177,198,0.3);
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+      }
+
+      .file-detail-table thead th:hover { color: var(--accent-primary); }
+
+      .file-detail-table thead th .sort-arrow {
+        display: inline-block;
+        margin-left: 3px;
+        opacity: 0.4;
+        font-size: 0.6rem;
+      }
+
+      .file-detail-table thead th.sort-active { color: var(--accent-primary); }
+      .file-detail-table thead th.sort-active .sort-arrow { opacity: 1; }
+
+      .file-detail-table tbody tr {
+        border-bottom: 1px solid rgba(163,177,198,0.15);
+        transition: background 0.15s;
+      }
+
+      .file-detail-table tbody tr:last-child { border-bottom: none; }
+      .file-detail-table tbody tr:hover { background: rgba(102,126,234,0.05); }
+
+      .file-detail-table tbody td {
+        padding: 9px 12px;
+        color: var(--text-secondary);
+        font-size: 0.74rem;
+      }
+
+      .file-detail-table tbody td:first-child {
+        font-weight: 600;
+        color: var(--text-primary);
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .td-num {
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+      }
+
+      .inline-dot {
+        display: inline-block;
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        margin-right: 5px;
+        vertical-align: middle;
+        flex-shrink: 0;
+      }
+
+      /* ── 排序/展示数量 ── */
+      .table-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .show-more-btn {
+        padding: 6px 16px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        margin-top: 10px;
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
+
+      .show-more-btn:hover { color: var(--accent-primary); }
+      .show-more-btn:active { transform: scale(0.97); }
+
+      /* ── 说明卡片 ── */
+      .instr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+      .instr-text {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── Toast ── */
+      .toast {
+        position: fixed;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--text-primary);
+        color: #fff;
+        padding: 9px 20px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        z-index: 999;
+        white-space: nowrap;
+      }
+
+      .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+      /* ── 响应式 ── */
+      @media (max-width: 420px) {
+        h1 { font-size: 1.8rem; }
+        .lang-detail-stats { gap: 6px; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>代码统计器</h1>
+      <p class="subtitle">本地分析 · 多语言 · 行数 / 注释 / 空行</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 文件上传 -->
+      <div class="card">
+        <div class="card-label">上传代码文件</div>
+        <div class="file-drop" id="dropArea">
+          <span class="file-drop-icon">💻</span>
+          <div class="file-drop-text">拖放代码文件到此处</div>
+          <div class="file-drop-sub">或点击选择文件（支持多选，可混合语言）</div>
+          <span class="file-badge">JS · TS · PY · JAVA · C · CPP · GO · RS · HTML · CSS · 等</span>
+          <input type="file" id="fileInput" multiple />
+        </div>
+        <div class="file-list-wrap" id="fileList">
+          <div class="file-empty">暂无上传文件</div>
+        </div>
+      </div>
+
+      <!-- 操作 -->
+      <div class="card">
+        <div class="card-label">操作</div>
+        <div class="action-grid">
+          <button class="action-btn primary" id="analyzeBtn" disabled>📊 开始统计</button>
+          <button class="action-btn success-btn" id="exportBtn" disabled>📥 导出报告</button>
+          <button class="action-btn danger-btn" id="resetBtn">🗑️ 清空</button>
+        </div>
+        <div class="progress-bar-wrap" id="progressWrap">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <!-- 统计结果 -->
+      <div class="card" id="resultCard" style="display:none">
+        <div class="card-label">汇总</div>
+
+        <!-- 四项统计 -->
+        <div class="summary-grid" id="summaryGrid"></div>
+
+        <!-- 语言占比彩条 -->
+        <div class="lang-bar-wrap" id="langBar"></div>
+
+        <!-- 语言明细 -->
+        <div class="lang-detail-list" id="langDetailList"></div>
+      </div>
+
+      <!-- 文件明细 -->
+      <div class="card" id="fileDetailCard" style="display:none">
+        <div class="table-header-row">
+          <div class="card-label" style="margin-bottom:0">文件明细</div>
+        </div>
+        <div class="file-detail-wrap">
+          <table class="file-detail-table" id="fileTable">
+            <thead>
+              <tr>
+                <th data-col="name">文件名 <span class="sort-arrow">↕</span></th>
+                <th data-col="lang">语言 <span class="sort-arrow">↕</span></th>
+                <th data-col="total" class="sort-active">总行数 <span class="sort-arrow">↓</span></th>
+                <th data-col="code">代码行 <span class="sort-arrow">↕</span></th>
+                <th data-col="comment">注释行 <span class="sort-arrow">↕</span></th>
+                <th data-col="blank">空行 <span class="sort-arrow">↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="fileTableBody"></tbody>
+          </table>
+        </div>
+        <button class="show-more-btn" id="showMoreBtn" style="display:none">展开全部文件 ▼</button>
+      </div>
+
+      <!-- 使用说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+          <div class="instr-item">
+            <span class="instr-icon">💻</span>
+            <div class="instr-text"><strong>上传文件</strong>：拖放或点击选择，支持同时选择多个代码文件，混合不同语言一次分析</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">📊</span>
+            <div class="instr-text"><strong>统计内容</strong>：自动识别编程语言，分别统计 <strong>代码行</strong>（有效逻辑行）、<strong>注释行</strong>（单行 / 块注释）、<strong>空行</strong> 三类数据</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🌈</span>
+            <div class="instr-text"><strong>语言占比</strong>：彩色进度条直观展示各语言行数占比，悬停可查看详细数据</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔢</span>
+            <div class="instr-text"><strong>文件明细</strong>：点击表头可按总行数 / 代码行 / 文件名等字段排序，超过 10 个文件时可展开查看全部</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">📥</span>
+            <div class="instr-text"><strong>导出报告</strong>：统计完成后可导出 CSV 格式的详细报告，包含每个文件的完整统计数据</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔒</span>
+            <div class="instr-text"><strong>数据安全</strong>：所有分析均在浏览器本地完成，代码文件不会上传至任何服务器</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // ── 语言定义 ─────────────────────────────────────────
+      const LANG_MAP = {
+        js:   { name: 'JavaScript', color: '#f7b731', icon: '🟨', single: '//', block: ['/*','*/'] },
+        mjs:  { name: 'JavaScript', color: '#f7b731', icon: '🟨', single: '//', block: ['/*','*/'] },
+        jsx:  { name: 'React JSX',  color: '#61dafb', icon: '⚛️',  single: '//', block: ['/*','*/'] },
+        ts:   { name: 'TypeScript', color: '#3178c6', icon: '🔷', single: '//', block: ['/*','*/'] },
+        tsx:  { name: 'React TSX',  color: '#3178c6', icon: '🔷', single: '//', block: ['/*','*/'] },
+        py:   { name: 'Python',     color: '#4ecdc4', icon: '🐍', single: '#',  block: ['"""','"""', "'''","'''"] },
+        java: { name: 'Java',       color: '#fc5c65', icon: '☕', single: '//', block: ['/*','*/'] },
+        kt:   { name: 'Kotlin',     color: '#a97bff', icon: '🟣', single: '//', block: ['/*','*/'] },
+        swift:{ name: 'Swift',      color: '#ff6b35', icon: '🍎', single: '//', block: ['/*','*/'] },
+        c:    { name: 'C',          color: '#667eea', icon: '🔵', single: '//', block: ['/*','*/'] },
+        h:    { name: 'C Header',   color: '#667eea', icon: '🔵', single: '//', block: ['/*','*/'] },
+        cpp:  { name: 'C++',        color: '#764ba2', icon: '🟣', single: '//', block: ['/*','*/'] },
+        cc:   { name: 'C++',        color: '#764ba2', icon: '🟣', single: '//', block: ['/*','*/'] },
+        cs:   { name: 'C#',         color: '#68b246', icon: '🟢', single: '//', block: ['/*','*/'] },
+        go:   { name: 'Go',         color: '#00acd7', icon: '🐹', single: '//', block: ['/*','*/'] },
+        rs:   { name: 'Rust',       color: '#ce422b', icon: '🦀', single: '//', block: ['/*','*/'] },
+        rb:   { name: 'Ruby',       color: '#cc342d', icon: '💎', single: '#',  block: ['=begin','=end'] },
+        php:  { name: 'PHP',        color: '#8892be', icon: '🐘', single: '//', block: ['/*','*/'] },
+        html: { name: 'HTML',       color: '#e34c26', icon: '🌐', single: null, block: ['<!--','-->'] },
+        htm:  { name: 'HTML',       color: '#e34c26', icon: '🌐', single: null, block: ['<!--','-->'] },
+        css:  { name: 'CSS',        color: '#264de4', icon: '🎨', single: null, block: ['/*','*/'] },
+        scss: { name: 'SCSS',       color: '#cc6699', icon: '💅', single: '//', block: ['/*','*/'] },
+        sass: { name: 'Sass',       color: '#cc6699', icon: '💅', single: '//', block: ['/*','*/'] },
+        less: { name: 'Less',       color: '#1d365d', icon: '🔹', single: '//', block: ['/*','*/'] },
+        vue:  { name: 'Vue',        color: '#42b883', icon: '🟩', single: '//', block: ['/*','*/'] },
+        svelte:{name: 'Svelte',     color: '#ff3e00', icon: '🔴', single: '//', block: ['/*','*/'] },
+        sh:   { name: 'Shell',      color: '#89e051', icon: '🐚', single: '#',  block: null },
+        bash: { name: 'Bash',       color: '#89e051', icon: '🐚', single: '#',  block: null },
+        sql:  { name: 'SQL',        color: '#e97e00', icon: '🗃️',  single: '--', block: ['/*','*/'] },
+        json: { name: 'JSON',       color: '#f7b731', icon: '📋', single: null, block: null },
+        yaml: { name: 'YAML',       color: '#cb171e', icon: '📄', single: '#',  block: null },
+        yml:  { name: 'YAML',       color: '#cb171e', icon: '📄', single: '#',  block: null },
+        md:   { name: 'Markdown',   color: '#083fa1', icon: '📝', single: null, block: null },
+        dart: { name: 'Dart',       color: '#00b4ab', icon: '🎯', single: '//', block: ['/*','*/'] },
+        r:    { name: 'R',          color: '#198ce7', icon: '📈', single: '#',  block: null },
+        lua:  { name: 'Lua',        color: '#000080', icon: '🌙', single: '--', block: ['--[[',']]'] },
+      }
+
+      const LANG_COLORS_FALLBACK = ['#667eea','#4ecdc4','#f7b731','#fc5c65','#764ba2','#89e051','#ff6b35','#00acd7','#cc342d','#42b883']
+
+      // ── 行分析 ───────────────────────────────────────────
+      function analyzeLines(text, ext) {
+        const lang = LANG_MAP[ext.toLowerCase()] || null
+        const lines = text.split(/\r?\n/)
+        let code = 0, comment = 0, blank = 0
+        let inBlock = false
+
+        const singleToken  = lang?.single || null
+        const blockStart   = lang?.block?.[0] || null
+        const blockEnd     = lang?.block?.[1] || null
+        // Python triple-quote
+        const blockStart2  = lang?.block?.[2] || null
+        const blockEnd2    = lang?.block?.[3] || null
+
+        for (let raw of lines) {
+          const line = raw.trim()
+          if (line === '') { blank++; continue }
+
+          // 块注释结束判断
+          if (inBlock) {
+            comment++
+            if (line.includes(blockEnd) || (blockEnd2 && line.includes(blockEnd2))) inBlock = false
+            continue
+          }
+
+          // 块注释开始
+          if (blockStart && line.includes(blockStart)) {
+            comment++
+            // 检查是否在同一行关闭
+            const afterStart = line.indexOf(blockStart) + blockStart.length
+            if (!line.slice(afterStart).includes(blockEnd)) inBlock = true
+            continue
+          }
+          if (blockStart2 && line.includes(blockStart2)) {
+            comment++
+            const afterStart = line.indexOf(blockStart2) + blockStart2.length
+            if (!line.slice(afterStart).includes(blockEnd2)) inBlock = true
+            continue
+          }
+
+          // 单行注释
+          if (singleToken && line.startsWith(singleToken)) {
+            comment++
+            continue
+          }
+
+          code++
+        }
+
+        return { total: lines.length, code, comment, blank }
+      }
+
+      function getExt(filename) {
+        const parts = filename.toLowerCase().split('.')
+        return parts.length > 1 ? parts[parts.length - 1] : ''
+      }
+
+      function getLangInfo(ext) {
+        return LANG_MAP[ext.toLowerCase()] || { name: ext.toUpperCase() || '未知', color: '#8b9dc3', icon: '📄' }
+      }
+
+      // ── 文件图标 ─────────────────────────────────────────
+      function getFileIcon(ext) {
+        return LANG_MAP[ext.toLowerCase()]?.icon || '📄'
+      }
+
+      // ── Toast ────────────────────────────────────────────
+      const toastEl = document.getElementById('toast')
+      let toastTimer = null
+      function showToast(msg) {
+        toastEl.textContent = msg
+        toastEl.classList.add('show')
+        clearTimeout(toastTimer)
+        toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200)
+      }
+
+      // ── 状态 ─────────────────────────────────────────────
+      let uploadedFiles = []
+      let statsResults  = []
+      let sortCol = 'total', sortDir = -1
+      let showAll = false
+
+      // ── DOM refs ─────────────────────────────────────────
+      const fileInput    = document.getElementById('fileInput')
+      const dropArea     = document.getElementById('dropArea')
+      const fileListEl   = document.getElementById('fileList')
+      const analyzeBtn   = document.getElementById('analyzeBtn')
+      const exportBtn    = document.getElementById('exportBtn')
+      const resetBtn     = document.getElementById('resetBtn')
+      const progressWrap = document.getElementById('progressWrap')
+      const progressFill = document.getElementById('progressFill')
+
+      // ── 文件选择 ─────────────────────────────────────────
+      fileInput.addEventListener('change', e => handleFiles(e.target.files))
+
+      dropArea.addEventListener('dragover',  e => { e.preventDefault(); dropArea.classList.add('dragover') })
+      dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.classList.remove('dragover') })
+      dropArea.addEventListener('drop', e => {
+        e.preventDefault(); dropArea.classList.remove('dragover')
+        if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files)
+      })
+
+      function handleFiles(files) {
+        for (const file of files) {
+          // 避免重复
+          if (!uploadedFiles.find(f => f.name === file.name && f.size === file.size)) {
+            uploadedFiles.push(file)
+          }
+        }
+        renderFileList()
+      }
+
+      function renderFileList() {
+        if (!uploadedFiles.length) {
+          fileListEl.innerHTML = '<div class="file-empty">暂无上传文件</div>'
+          analyzeBtn.disabled = true
+          return
+        }
+        fileListEl.innerHTML = uploadedFiles.map((f, i) => {
+          const ext  = getExt(f.name)
+          const icon = getFileIcon(ext)
+          const lang = getLangInfo(ext).name
+          const size = fmtSize(f.size)
+          const stat = statsResults.find(s => s.name === f.name)
+          const linesStr = stat ? `${stat.total.toLocaleString()} 行` : ''
+          return `
+            <div class="file-item">
+              <div class="file-info">
+                <span class="file-icon">${icon}</span>
+                <div class="file-meta">
+                  <div class="file-name">${escHtml(f.name)}</div>
+                  <div class="file-size">${lang} · ${size}</div>
+                </div>
+              </div>
+              ${linesStr ? `<span class="file-lines">${linesStr}</span>` : ''}
+              <span style="font-size:0.8rem;color:var(--text-muted);cursor:pointer;padding:2px 6px;flex-shrink:0" 
+                    onclick="removeFile(${i})" title="移除">✕</span>
+            </div>`
+        }).join('')
+        analyzeBtn.disabled = false
+      }
+
+      window.removeFile = function(i) {
+        uploadedFiles.splice(i, 1)
+        statsResults = []
+        exportBtn.disabled = true
+        document.getElementById('resultCard').style.display = 'none'
+        document.getElementById('fileDetailCard').style.display = 'none'
+        renderFileList()
+      }
+
+      // ── 统计 ─────────────────────────────────────────────
+      analyzeBtn.addEventListener('click', async () => {
+        if (!uploadedFiles.length) return
+        analyzeBtn.disabled = true
+        analyzeBtn.textContent = '⏳ 分析中…'
+        progressWrap.style.display = 'block'
+        statsResults = []
+
+        for (let i = 0; i < uploadedFiles.length; i++) {
+          const file = uploadedFiles[i]
+          progressFill.style.width = ((i / uploadedFiles.length) * 100) + '%'
+          try {
+            const text = await readFileText(file)
+            const ext  = getExt(file.name)
+            const stat = analyzeLines(text, ext)
+            statsResults.push({ name: file.name, ext, ...stat })
+          } catch(e) {
+            statsResults.push({ name: file.name, ext: getExt(file.name), total: 0, code: 0, comment: 0, blank: 0 })
+          }
+        }
+
+        progressFill.style.width = '100%'
+        setTimeout(() => { progressWrap.style.display = 'none'; progressFill.style.width = '0' }, 600)
+
+        analyzeBtn.disabled = false
+        analyzeBtn.textContent = '📊 重新统计'
+        exportBtn.disabled = false
+
+        renderFileList()
+        renderResults()
+        showToast('✓ 统计完成，共 ' + statsResults.length + ' 个文件')
+      })
+
+      function readFileText(file) {
+        return new Promise((res, rej) => {
+          const reader = new FileReader()
+          reader.onload = e => res(e.target.result)
+          reader.onerror = () => rej(new Error('读取失败'))
+          reader.readAsText(file, 'utf-8')
+        })
+      }
+
+      // ── 渲染结果 ─────────────────────────────────────────
+      function renderResults() {
+        if (!statsResults.length) return
+
+        // 汇总
+        const total   = statsResults.reduce((s, r) => s + r.total,   0)
+        const code    = statsResults.reduce((s, r) => s + r.code,    0)
+        const comment = statsResults.reduce((s, r) => s + r.comment, 0)
+        const blank   = statsResults.reduce((s, r) => s + r.blank,   0)
+
+        document.getElementById('summaryGrid').innerHTML = `
+          <div class="summary-card">
+            <div class="summary-num">${fmtNum(total)}</div>
+            <div class="summary-label">总行数</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-num">${fmtNum(code)}</div>
+            <div class="summary-label">代码行</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-num">${fmtNum(comment)}</div>
+            <div class="summary-label">注释行</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-num">${fmtNum(blank)}</div>
+            <div class="summary-label">空白行</div>
+          </div>
+        `
+
+        // 按语言聚合
+        const langMap = {}
+        for (const r of statsResults) {
+          const info = getLangInfo(r.ext)
+          const key  = info.name
+          if (!langMap[key]) langMap[key] = { ...info, total: 0, code: 0, comment: 0, blank: 0, files: 0 }
+          langMap[key].total   += r.total
+          langMap[key].code    += r.code
+          langMap[key].comment += r.comment
+          langMap[key].blank   += r.blank
+          langMap[key].files   += 1
+        }
+        const langs = Object.values(langMap).sort((a, b) => b.total - a.total)
+
+        // 彩色占比条
+        document.getElementById('langBar').innerHTML = langs.map(l => {
+          const pct = total > 0 ? (l.total / total * 100).toFixed(1) : 0
+          return `<div class="lang-bar-seg" style="width:${pct}%;background:${l.color}" title="${l.name}: ${pct}%"></div>`
+        }).join('')
+
+        // 语言明细
+        document.getElementById('langDetailList').innerHTML = langs.map(l => {
+          const pct = total > 0 ? (l.total / total * 100).toFixed(1) : 0
+          return `
+            <div class="lang-detail-item">
+              <div class="lang-detail-dot" style="background:${l.color}"></div>
+              <div class="lang-detail-name">${escHtml(l.icon)} ${escHtml(l.name)} <span style="font-size:0.65rem;color:var(--text-muted);font-weight:600">${l.files} 文件</span></div>
+              <div class="lang-detail-stats">
+                <div class="lang-stat">
+                  <div class="lang-stat-num">${fmtNum(l.code)}</div>
+                  <div class="lang-stat-label">代码</div>
+                </div>
+                <div class="lang-stat">
+                  <div class="lang-stat-num">${fmtNum(l.comment)}</div>
+                  <div class="lang-stat-label">注释</div>
+                </div>
+                <div class="lang-stat">
+                  <div class="lang-stat-num">${fmtNum(l.total)}</div>
+                  <div class="lang-stat-label">合计</div>
+                </div>
+              </div>
+              <div class="lang-pct-badge">${pct}%</div>
+            </div>`
+        }).join('')
+
+        document.getElementById('resultCard').style.display = ''
+        renderTable()
+        document.getElementById('fileDetailCard').style.display = ''
+      }
+
+      // ── 文件明细表 ───────────────────────────────────────
+      function renderTable() {
+        const sorted = [...statsResults].sort((a, b) => {
+          const av = sortCol === 'name' ? a.name : (sortCol === 'lang' ? getLangInfo(a.ext).name : a[sortCol])
+          const bv = sortCol === 'name' ? b.name : (sortCol === 'lang' ? getLangInfo(b.ext).name : b[sortCol])
+          if (typeof av === 'string') return sortDir * av.localeCompare(bv)
+          return sortDir * (bv - av)
+        })
+
+        const PAGE = 10
+        const visible = showAll ? sorted : sorted.slice(0, PAGE)
+        const showMoreBtn = document.getElementById('showMoreBtn')
+
+        document.getElementById('fileTableBody').innerHTML = visible.map(r => {
+          const info = getLangInfo(r.ext)
+          return `
+            <tr>
+              <td title="${escHtml(r.name)}">${escHtml(r.name)}</td>
+              <td><span class="inline-dot" style="background:${info.color}"></span>${escHtml(info.name)}</td>
+              <td class="td-num">${r.total.toLocaleString()}</td>
+              <td class="td-num">${r.code.toLocaleString()}</td>
+              <td class="td-num">${r.comment.toLocaleString()}</td>
+              <td class="td-num">${r.blank.toLocaleString()}</td>
+            </tr>`
+        }).join('')
+
+        if (sorted.length > PAGE) {
+          showMoreBtn.style.display = ''
+          showMoreBtn.textContent = showAll
+            ? '收起 ▲'
+            : `展开全部 ${sorted.length} 个文件 ▼`
+        } else {
+          showMoreBtn.style.display = 'none'
+        }
+
+        // 更新排序箭头
+        document.querySelectorAll('.file-detail-table thead th').forEach(th => {
+          const isActive = th.dataset.col === sortCol
+          th.classList.toggle('sort-active', isActive)
+          th.querySelector('.sort-arrow').textContent = isActive ? (sortDir === -1 ? '↓' : '↑') : '↕'
+        })
+      }
+
+      // 排序点击
+      document.querySelectorAll('.file-detail-table thead th').forEach(th => {
+        th.addEventListener('click', () => {
+          const col = th.dataset.col
+          if (sortCol === col) { sortDir *= -1 }
+          else { sortCol = col; sortDir = col === 'name' || col === 'lang' ? 1 : -1 }
+          showAll = false
+          renderTable()
+        })
+      })
+
+      // 展开/收起
+      document.getElementById('showMoreBtn').addEventListener('click', () => {
+        showAll = !showAll
+        renderTable()
+      })
+
+      // ── 导出 CSV ─────────────────────────────────────────
+      exportBtn.addEventListener('click', () => {
+        if (!statsResults.length) return
+        const header = ['文件名', '语言', '扩展名', '总行数', '代码行', '注释行', '空白行', '注释率%', '代码率%']
+        const rows = statsResults.map(r => {
+          const info = getLangInfo(r.ext)
+          const commentRate = r.total > 0 ? (r.comment / r.total * 100).toFixed(1) : 0
+          const codeRate    = r.total > 0 ? (r.code    / r.total * 100).toFixed(1) : 0
+          return [r.name, info.name, r.ext, r.total, r.code, r.comment, r.blank, commentRate, codeRate]
+        })
+        const csv = [header, ...rows].map(row => row.map(v => `"${v}"`).join(',')).join('\n')
+        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' })
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(blob)
+        a.download = 'code-stats-' + new Date().toISOString().slice(0,10) + '.csv'
+        document.body.appendChild(a); a.click(); document.body.removeChild(a)
+        URL.revokeObjectURL(a.href)
+        showToast('✓ CSV 报告已导出')
+      })
+
+      // ── 清空 ─────────────────────────────────────────────
+      resetBtn.addEventListener('click', () => {
+        uploadedFiles = []; statsResults = []
+        fileInput.value = ''
+        exportBtn.disabled = true
+        analyzeBtn.textContent = '📊 开始统计'
+        document.getElementById('resultCard').style.display = 'none'
+        document.getElementById('fileDetailCard').style.display = 'none'
+        renderFileList()
+        showAll = false
+      })
+
+      // ── 工具函数 ─────────────────────────────────────────
+      function fmtSize(bytes) {
+        if (bytes < 1024) return bytes + ' B'
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB'
+        return (bytes / 1048576).toFixed(1) + ' MB'
+      }
+
+      function fmtNum(n) {
+        if (n >= 10000) return (n / 10000).toFixed(1) + 'w'
+        return n.toLocaleString()
+      }
+
+      function escHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+      }
+    </script>
+
+  </body>
+</html>

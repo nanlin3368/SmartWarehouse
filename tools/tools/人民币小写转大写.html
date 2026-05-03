@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>人民币小写转大写</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 4px;
+        }
+
+        .currency-prefix {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .amount-input {
+            width: 100%;
+            padding: 16px 16px 16px 38px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--border-radius-xs);
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-family: 'SF Mono', 'Menlo', 'Consolas', 'PingFang SC', monospace;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            outline: none;
+            transition: var(--transition);
+            letter-spacing: 1px;
+        }
+
+        .amount-input:focus {
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .amount-input::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+            opacity: 0.7;
+            letter-spacing: 0;
+        }
+
+        .hint-text {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            margin-bottom: 2px;
+            font-weight: 500;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            margin-top: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-height: 42px;
+            flex-wrap: wrap;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+
+        .status-dot.ready {
+            background: var(--text-muted);
+        }
+
+        .status-dot.ok {
+            background: var(--success);
+            animation: dotPulse 2s infinite;
+        }
+
+        .status-dot.loading {
+            background: var(--warning);
+            animation: dotPulse 1s infinite;
+        }
+
+        .status-dot.error {
+            background: var(--danger);
+        }
+
+        @keyframes dotPulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .result-display {
+            width: 100%;
+            min-height: 80px;
+            padding: 18px 16px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--border-radius-xs);
+            color: var(--text-primary);
+            font-size: 1.15rem;
+            font-weight: 700;
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'STSong', serif;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            outline: none;
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.8;
+            letter-spacing: 2px;
+            word-break: break-all;
+        }
+
+        .result-display:focus {
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .result-display::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+            opacity: 0.7;
+            font-weight: 400;
+            letter-spacing: 0;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 0;
+            padding: 11px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(102, 126, 234, 0.35), -2px -2px 6px var(--shadow-light);
+            font-size: 0.9rem;
+            padding: 14px 12px;
+        }
+
+        .btn.primary:hover {
+            box-shadow: 5px 5px 14px rgba(102, 126, 234, 0.45);
+        }
+
+        .btn.primary:active {
+            box-shadow: inset 3px 3px 8px rgba(50, 50, 150, 0.4), inset -2px -2px 6px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(78, 205, 196, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.warning {
+            background: linear-gradient(135deg, #f7b731 0%, #e68a00 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(247, 183, 49, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.danger {
+            color: var(--danger);
+        }
+
+        .btn.outline {
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            color: var(--text-primary);
+        }
+
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .instr-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .instr-text strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .quick-amounts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quick-chip {
+            padding: 6px 14px;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .quick-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        }
+
+        .quick-chip:active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            transform: scale(0.96);
+        }
+
+        @media (max-width: 420px) {
+            h1 {
+                font-size: 1.7rem;
+            }
+            .btn {
+                font-size: 0.74rem;
+                padding: 10px 8px;
+            }
+            .btn.primary {
+                font-size: 0.82rem;
+                padding: 12px 10px;
+            }
+            .amount-input {
+                font-size: 1rem;
+                padding: 14px 14px 14px 34px;
+            }
+            .result-display {
+                font-size: 1rem;
+                letter-spacing: 1px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>人民币小写转大写</h1>
+        <p class="subtitle">数字小写转中文大写金额 · 支持元角分 · 一键复制</p>
+    </header>
+
+    <div class="main">
+        <!-- 转换卡片 -->
+        <div class="card">
+            <div class="card-label">💰 金额转换</div>
+
+            <div class="input-wrapper">
+                <span class="currency-prefix">¥</span>
+                <input
+                type="text"
+                class="amount-input"
+                id="amountInput"
+                placeholder="输入小写金额，例如：12345.67"
+                autocomplete="off"
+            />
+        </div>
+        <div class="hint-text">支持格式：12345.67 或 12,345.67 · 最大 9999999999999.99</div>
+
+        <!-- 快捷金额 -->
+        <div class="quick-amounts">
+            <button class="quick-chip" data-amount="12345.67">¥12,345.67</button>
+            <button class="quick-chip" data-amount="100.00">¥100.00</button>
+            <button class="quick-chip" data-amount="1008.05">¥1,008.05</button>
+            <button class="quick-chip" data-amount="50000.00">¥50,000.00</button>
+            <button class="quick-chip" data-amount="108000.30">¥108,000.30</button>
+            <button class="quick-chip" data-amount="100000000.00">¥1亿</button>
+        </div>
+
+        <div class="status-bar" id="convertStatus">
+            <div class="status-dot ready" id="convertDot"></div>
+            <span id="convertStatusText">就绪，输入金额后点击转换</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn primary" id="convertBtn">🔄 转换为大写</button>
+        </div>
+
+        <div class="btn-row" style="margin-top: 8px;">
+            <button class="btn danger" id="clearBtn">🗑️ 清空</button>
+        </div>
+    </div>
+
+    <!-- 输出卡片 -->
+    <div class="card" id="outputCard" style="display:none;">
+        <div class="card-label">📝 大写金额结果</div>
+        <textarea class="result-display" id="outputText" placeholder="转换后的大写金额将显示在这里…" readonly rows="2"></textarea>
+
+        <div class="btn-row">
+            <button class="btn success" id="copyBtn" disabled>📋 复制结果</button>
+            <button class="btn warning" id="downloadBtn" disabled>💾 下载文本</button>
+        </div>
+    </div>
+
+    <!-- 使用说明 -->
+    <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+            <div class="instr-item">
+                <span class="instr-icon">💰</span>
+                <div class="instr-text"><strong>输入金额</strong>：在输入框中输入阿拉伯数字的金额，支持带逗号分隔（如 12,345.67）或纯数字（如 12345.67）</div>
+            </div>
+            <div class="instr-item">
+                <span class="instr-icon">🔄</span>
+                <div class="instr-text"><strong>一键转换</strong>：点击「转换为大写」按钮，自动将小写金额转为标准中文大写格式，包含元、角、分</div>
+            </div>
+            <div class="instr-item">
+                <span class="instr-icon">📐</span>
+                <div class="instr-text"><strong>金额范围</strong>：支持 0.00 至 9,999,999,999,999.99（约10万亿），超出范围会提示</div>
+            </div>
+            <div class="instr-item">
+                <span class="instr-icon">📋</span>
+                <div class="instr-text"><strong>复制下载</strong>：转换完成后，可一键复制大写结果到剪贴板，或下载为 .txt 文本文件</div>
+            </div>
+            <div class="instr-item">
+                <span class="instr-icon">🔒</span>
+                <div class="instr-text"><strong>隐私安全</strong>：所有转换完全在浏览器本地完成，不会向服务器发送任何数据</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        // ── DOM 引用 ──
+        const amountInput = document.getElementById('amountInput');
+        const outputText = document.getElementById('outputText');
+        const convertBtn = document.getElementById('convertBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const outputCard = document.getElementById('outputCard');
+        const convertDot = document.getElementById('convertDot');
+        const convertStatusText = document.getElementById('convertStatusText');
+        const quickChips = document.querySelectorAll('.quick-chip');
+
+        function setStatus(dot, textEl, msg, type) {
+            textEl.textContent = msg;
+            dot.className = 'status-dot ' + (type || 'ready');
+        }
+
+        // ── 数字大写映射 ──
+        const DIGITS = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+        const UNITS = ['', '拾', '佰', '仟'];
+        const BIG_UNITS = ['', '万', '亿', '兆'];
+
+        /**
+         * 将整数部分（字符串）转换为大写，每4位一组处理
+         */
+        function convertIntegerPart(intStr) {
+            if (intStr === '0' || intStr === '') return '零';
+
+            // 去掉前导零
+            intStr = intStr.replace(/^0+/, '');
+            if (intStr === '') return '零';
+
+            const len = intStr.length;
+            // 从右往左每4位一组
+            const groups = [];
+            for (let i = len; i > 0; i -= 4) {
+                const start = Math.max(0, i - 4);
+                groups.push(intStr.slice(start, i));
+            }
+            // groups[0]是最低4位（个级），groups[1]是万级，groups[2]是亿级，groups[3]是兆级
+
+            const groupResults = [];
+            const groupHasValue = []; // 标记每组是否有非零值
+
+            for (let g = 0; g < groups.length; g++) {
+                const group = groups[g];
+                const groupLen = group.length;
+                let groupStr = '';
+                let prevZero = false;
+                let hasNonZero = false;
+
+                for (let i = 0; i < groupLen; i++) {
+                    const digit = parseInt(group[i], 10);
+                    const pos = groupLen - 1 - i; // 0=个位, 1=十位, 2=百位, 3=千位
+
+                    if (digit === 0) {
+                        prevZero = true;
+                    } else {
+                        hasNonZero = true;
+                        if (prevZero && groupStr !== '') {
+                            groupStr += '零';
+                        }
+                        groupStr += DIGITS[digit] + UNITS[pos];
+                        prevZero = false;
+                    }
+                }
+
+                groupResults.push(groupStr);
+                groupHasValue.push(hasNonZero);
+            }
+
+            // 拼接各组
+            let result = '';
+            for (let g = groups.length - 1; g >= 0; g--) {
+                const groupStr = groupResults[g];
+                const hasVal = groupHasValue[g];
+
+                if (!hasVal) {
+                    // 当前组全为零
+                    // 如果后面还有非零组，且结果不为空，可能需要加零
+                    let hasLaterValue = false;
+                    for (let k = g - 1; k >= 0; k--) {
+                        if (groupHasValue[k]) {
+                            hasLaterValue = true;
+                            break;
+                        }
+                    }
+                    if (hasLaterValue && result !== '' && !result.endsWith('零')) {
+                        result += '零';
+                    }
+                    continue;
+                }
+
+                result += groupStr;
+
+                // 添加大单位（万、亿、兆）
+                if (g > 0) {
+                    result += BIG_UNITS[g];
+                }
+            }
+
+            // 清理末尾多余的零
+            result = result.replace(/零+$/, '');
+
+            return result || '零';
+        }
+
+        /**
+         * 主转换函数
+         */
+        function amountToChinese(amountStr) {
+            // 清理输入：移除逗号、空格、中文逗号等
+            let cleaned = amountStr.replace(/[,，\s]/g, '');
+
+            // 检查是否为有效数字
+            if (!/^\d+(\.\d{1,2})?$/.test(cleaned)) {
+                throw new Error('请输入有效的金额格式，如 12345.67');
+            }
+
+            // 解析整数和小数部分
+            let intPart, decPart;
+            const dotIndex = cleaned.indexOf('.');
+            if (dotIndex === -1) {
+                intPart = cleaned;
+                decPart = '00';
+            } else {
+                intPart = cleaned.slice(0, dotIndex);
+                decPart = cleaned.slice(dotIndex + 1);
+                if (decPart.length === 1) decPart += '0';
+                if (decPart.length === 0) decPart = '00';
+            }
+
+            // 去除整数部分前导零
+            intPart = intPart.replace(/^0+/, '');
+            if (intPart === '') intPart = '0';
+
+            // 检查范围（最大9999999999999.99，约10万亿）
+            const maxInt = '9999999999999';
+            if (intPart.length > maxInt.length || (intPart.length === maxInt.length && intPart > maxInt)) {
+                throw new Error('金额超出范围，最大支持 9,999,999,999,999.99');
+            }
+
+            const jiao = parseInt(decPart[0], 10);
+            const fen = parseInt(decPart[1], 10);
+
+            // 转换整数部分
+            const intChinese = convertIntegerPart(intPart);
+
+            // 拼接结果
+            let result = intChinese + '元';
+
+            if (jiao === 0 && fen === 0) {
+                result += '整';
+            } else if (jiao > 0 && fen === 0) {
+                result += DIGITS[jiao] + '角整';
+            } else if (jiao === 0 && fen > 0) {
+                result += '零' + DIGITS[fen] + '分';
+            } else {
+                result += DIGITS[jiao] + '角' + DIGITS[fen] + '分';
+            }
+
+            return result;
+        }
+
+        // ── 转换按钮 ──
+        convertBtn.addEventListener('click', () => {
+            const raw = amountInput.value.trim();
+            if (!raw) {
+                setStatus(convertDot, convertStatusText, '请先输入需要转换的金额', 'error');
+                return;
+            }
+            setStatus(convertDot, convertStatusText, '正在转换…', 'loading');
+            try {
+                const result = amountToChinese(raw);
+                outputText.value = result;
+                copyBtn.disabled = false;
+                downloadBtn.disabled = false;
+                outputCard.style.display = 'block';
+                setStatus(convertDot, convertStatusText, '转换完成！', 'ok');
+                outputCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } catch (e) {
+                setStatus(convertDot, convertStatusText, e.message, 'error');
+                outputText.value = '';
+                copyBtn.disabled = true;
+                downloadBtn.disabled = true;
+            }
+        });
+
+        // ── 回车键触发转换 ──
+        amountInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                convertBtn.click();
+            }
+        });
+
+        // ── 快捷金额 ──
+        quickChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const amt = chip.getAttribute('data-amount');
+                amountInput.value = amt;
+                setStatus(convertDot, convertStatusText, '金额已填充，点击转换按钮开始', 'ready');
+                amountInput.focus();
+            });
+        });
+
+        // ── 复制 ──
+        copyBtn.addEventListener('click', async () => {
+            if (!outputText.value) return;
+            try {
+                await navigator.clipboard.writeText(outputText.value);
+                setStatus(convertDot, convertStatusText, '大写金额已复制到剪贴板 📋', 'ok');
+            } catch (err) {
+                const ta = document.createElement('textarea');
+                ta.value = outputText.value;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                setStatus(convertDot, convertStatusText, '已复制（备用方式）', 'ok');
+            }
+        });
+
+        // ── 下载 ──
+        downloadBtn.addEventListener('click', () => {
+            if (!outputText.value) return;
+            const ts = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+            const blob = new Blob([outputText.value], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '人民币大写_' + ts + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+            setStatus(convertDot, convertStatusText, '文件下载中… 💾', 'ok');
+        });
+
+        // ── 清空 ──
+        clearBtn.addEventListener('click', () => {
+            amountInput.value = '';
+            outputText.value = '';
+            copyBtn.disabled = true;
+            downloadBtn.disabled = true;
+            outputCard.style.display = 'none';
+            setStatus(convertDot, convertStatusText, '已清空，输入金额后点击转换', 'ready');
+            amountInput.focus();
+        });
+
+        // ── 输入框实时过滤非法字符 ──
+        amountInput.addEventListener('input', () => {
+            // 允许数字、小数点、逗号、空格
+            let val = amountInput.value;
+            // 移除非允许字符
+            val = val.replace(/[^\d.,，\s]/g, '');
+            amountInput.value = val;
+        });
+
+        // ── 初始化 ──
+        setStatus(convertDot, convertStatusText, '就绪，输入金额后点击转换', 'ready');
+    })();
+</script>
+</body>
+</html>

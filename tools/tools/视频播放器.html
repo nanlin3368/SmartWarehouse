@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>视频播放器</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent; /* 全局禁用点击高亮 */
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 播放器区域 ── */
+      .player-wrap {
+        border-radius: var(--border-radius-xs);
+        overflow: hidden;
+        background: #000;
+        box-shadow: inset 4px 4px 8px #000, inset -2px -2px 6px #1a1a1a;
+        position: relative;
+      }
+
+      #videoPlayer {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        display: block;
+        background: #000;
+        outline: none;
+      }
+
+      /* 空状态覆盖层 */
+      .player-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        pointer-events: none;
+        transition: opacity 0.3s;
+      }
+
+      .player-overlay.hidden { opacity: 0; }
+
+      .overlay-icon {
+        font-size: 3rem;
+        opacity: 0.4;
+      }
+
+      .overlay-text {
+        font-size: 0.85rem;
+        color: rgba(255,255,255,0.4);
+        font-weight: 500;
+      }
+
+      /* ── 状态条 ── */
+      .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        margin-top: 12px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .status-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--text-muted);
+        flex-shrink: 0;
+        transition: background 0.3s;
+      }
+
+      .status-dot.ready      { background: var(--text-muted); }
+      .status-dot.playing    { background: var(--success); animation: dotPulse 2s infinite; }
+      .status-dot.loading    { background: var(--warning); animation: dotPulse 1s infinite; }
+      .status-dot.error      { background: var(--danger); }
+
+      @keyframes dotPulse {
+        0%, 100% { opacity: 1; }
+        50%      { opacity: 0.4; }
+      }
+
+      /* ── URL 输入区 ── */
+      .url-input-row {
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
+      }
+
+      .url-input {
+        flex: 1;
+        padding: 12px 14px;
+        background: var(--bg-primary);
+        border: none;
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        font-size: 0.82rem;
+        color: var(--text-primary);
+        font-family: 'SF Mono', 'Menlo', monospace;
+        outline: none;
+        transition: var(--transition);
+      }
+
+      .url-input:focus {
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.2);
+      }
+
+      .url-input::placeholder { color: var(--text-muted); }
+
+      .add-url-btn {
+        flex-shrink: 0;
+        padding: 12px 18px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--accent-gradient);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .add-url-btn:hover  { transform: translateY(-1px); box-shadow: 5px 5px 14px rgba(102,126,234,0.4); }
+      .add-url-btn:active { transform: scale(0.97); }
+
+      /* ── 文件上传区 ── */
+      .file-drop {
+        border: 2px dashed var(--text-muted);
+        border-radius: var(--border-radius-sm);
+        padding: 22px 20px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .file-drop:hover, .file-drop.dragover {
+        border-color: var(--accent-primary);
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.15);
+      }
+
+      .file-drop input[type="file"] {
+        position: absolute;
+        inset: 0;
+        width: 100%; height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .file-drop-icon { font-size: 1.8rem; display: block; margin-bottom: 6px; }
+      .file-drop-text {
+        font-size: 0.88rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 3px;
+      }
+      .file-drop-sub {
+        font-size: 0.72rem;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+      }
+      .file-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        background: var(--bg-primary);
+        border-radius: 20px;
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: var(--accent-primary);
+      }
+
+      /* ── 播放列表 ── */
+      .playlist-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .playlist-count {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      .remove-btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--danger);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+      }
+
+      .remove-btn:active { transform: scale(0.95); }
+
+      /* 列表容器 */
+      .playlist-list-wrap {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        max-height: 260px;
+        overflow-y: auto;
+        padding: 8px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--accent-primary) var(--bg-primary);
+      }
+
+      .playlist-list-wrap::-webkit-scrollbar { width: 5px; }
+      .playlist-list-wrap::-webkit-scrollbar-track { background: transparent; }
+      .playlist-list-wrap::-webkit-scrollbar-thumb {
+        background: var(--accent-primary);
+        border-radius: 3px;
+      }
+
+      .playlist-empty {
+        text-align: center;
+        padding: 20px;
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      /* 播放列表 item */
+      .pl-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        position: relative;
+      }
+
+      .pl-item:last-child { margin-bottom: 0; }
+      .pl-item:active { transform: scale(0.98); }
+
+      .pl-item.active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      }
+
+      .pl-item.active .pl-title { color: var(--accent-primary); }
+
+      /* checkbox */
+      .pl-check {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 17px;
+        height: 17px;
+        border-radius: 5px;
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        cursor: pointer;
+        flex-shrink: 0;
+        position: relative;
+        transition: var(--transition);
+      }
+
+      .pl-check:checked {
+        background: var(--accent-gradient);
+        box-shadow: none;
+      }
+
+      .pl-check:checked::after {
+        content: '✓';
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .pl-info { flex: 1; min-width: 0; }
+
+      .pl-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .pl-url {
+        font-size: 0.66rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 2px;
+        font-family: 'SF Mono', 'Menlo', monospace;
+      }
+
+      .pl-tag {
+        flex-shrink: 0;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 8px;
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        color: var(--text-muted);
+        letter-spacing: 0.3px;
+      }
+
+      .pl-tag.mp4  { color: var(--accent-primary); }
+      .pl-tag.hls  { color: var(--accent-secondary); }
+      .pl-tag.flv  { color: var(--danger); }
+      .pl-tag.dash { color: var(--warning); }
+      .pl-tag.webm { color: var(--success); }
+
+      /* 播放中指示点 */
+      .pl-item.active::after {
+        content: '';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--success);
+        animation: dotPulse 2s infinite;
+      }
+
+      /* ── 格式标签行 ── */
+      .format-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .fmt-tag {
+        padding: 5px 12px;
+        border-radius: 20px;
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+      }
+
+      .fmt-tag.native { color: var(--success); }
+      .fmt-tag.ext    { color: var(--text-muted); }
+
+      /* ── 操作按钮 ── */
+      .ctrl-row {
+        display: flex;
+        gap: 10px;
+      }
+
+      .ctrl-btn {
+        flex: 1;
+        padding: 13px 10px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      .ctrl-btn:hover  { transform: translateY(-1px); }
+      .ctrl-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .ctrl-btn.danger { color: var(--danger); }
+
+      /* ── 视频切换按钮行（播放器卡片内） ── */
+      .video-ctrl-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 14px;
+      }
+
+      .vid-btn {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        border: none;
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+        color: var(--text-secondary);
+        font-family: inherit;
+        font-weight: 700;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .vid-btn:active {
+        box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+        transform: scale(0.95);
+      }
+
+      .vid-btn.play-btn {
+        width: 64px;
+        height: 64px;
+        font-size: 1.3rem;
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 5px 5px 14px rgba(102,126,234,0.4), -3px -3px 8px var(--shadow-light);
+      }
+
+      .vid-btn.play-btn:active {
+        box-shadow: inset 3px 3px 8px rgba(50,50,150,0.4), inset -2px -2px 6px rgba(255,255,255,0.2);
+      }
+
+      /* ── 说明 ── */
+      .instr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+      .instr-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+      .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── 响应式 ── */
+      @media (max-width: 420px) {
+        h1 { font-size: 1.8rem; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>视频播放器</h1>
+      <p class="subtitle">本地文件 · URL 播放 · 播放列表</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 播放器 -->
+      <div class="card">
+        <div class="card-label">播放器</div>
+        <div class="player-wrap">
+          <video id="videoPlayer" controls preload="metadata"></video>
+          <div class="player-overlay" id="playerOverlay">
+            <span class="overlay-icon">▶</span>
+            <span class="overlay-text">从播放列表选择或添加视频</span>
+          </div>
+        </div>
+        <div class="status-bar">
+          <div class="status-dot ready" id="statusDot"></div>
+          <span id="statusText">就绪</span>
+        </div>
+
+        <!-- 上一个 / 播放暂停 / 下一个 -->
+        <div class="video-ctrl-row">
+          <button class="vid-btn" id="prevBtn" title="上一个">⏮</button>
+          <button class="vid-btn play-btn" id="playPauseBtn" title="播放/暂停">▶</button>
+          <button class="vid-btn" id="nextBtn" title="下一个">⏭</button>
+        </div>
+      </div>
+
+      <!-- 添加 URL -->
+      <div class="card">
+        <div class="card-label">添加在线视频 URL</div>
+        <div class="url-input-row">
+          <input
+            type="url"
+            id="urlInput"
+            class="url-input"
+            placeholder="输入 MP4 / M3U8 / 视频直链…"
+          />
+          <button class="add-url-btn" id="addUrlBtn">＋ 添加</button>
+        </div>
+        <div style="margin-top:10px">
+          <input
+            type="text"
+            id="titleInput"
+            class="url-input"
+            style="width:100%"
+            placeholder="视频标题（可选，默认自动取名）"
+          />
+        </div>
+      </div>
+
+      <!-- 本地文件 -->
+      <div class="card">
+        <div class="card-label">选择本地文件</div>
+        <div class="file-drop" id="dropArea">
+          <span class="file-drop-icon">📁</span>
+          <div class="file-drop-text">拖放视频到此处</div>
+          <div class="file-drop-sub">或点击选择本地视频文件（支持多选）</div>
+          <span class="file-badge">MP4 · WebM · OGG · MOV · AVI · MKV</span>
+          <input type="file" id="fileInput" accept="video/*,.mkv,.avi,.mov,.flv,.ts,.m3u8" multiple />
+        </div>
+      </div>
+
+      <!-- 播放列表 -->
+      <div class="card">
+        <div class="playlist-header-row">
+          <div>
+            <div class="card-label" style="margin-bottom:2px">播放列表</div>
+            <span class="playlist-count" id="playlistCount">共 0 条</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="remove-btn" id="removeBtn">🗑️ 删除选中</button>
+            <button class="remove-btn" id="clearBtn" style="color:var(--danger)">清空</button>
+          </div>
+        </div>
+        <div class="playlist-list-wrap" id="playlistWrap">
+          <div class="playlist-empty" id="playlistEmpty">暂无视频，请添加或选择文件</div>
+        </div>
+      </div>
+
+      <!-- 支持格式 -->
+      <div class="card">
+        <div class="card-label">支持格式</div>
+        <div class="format-tags">
+          <span class="fmt-tag native">✓ MP4</span>
+          <span class="fmt-tag native">✓ WebM</span>
+          <span class="fmt-tag native">✓ OGG</span>
+          <span class="fmt-tag native">✓ MOV</span>
+          <span class="fmt-tag ext">M3U8/HLS *</span>
+          <span class="fmt-tag ext">FLV *</span>
+          <span class="fmt-tag ext">DASH *</span>
+          <span class="fmt-tag ext">MKV *</span>
+          <span class="fmt-tag ext">AVI *</span>
+        </div>
+        <div style="margin-top:10px;font-size:0.7rem;color:var(--text-muted);line-height:1.6">
+          ✓ 原生支持 &nbsp;|&nbsp; * 取决于浏览器解码能力，部分格式在 Android Chrome 上支持
+        </div>
+      </div>
+
+      <!-- 使用说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+          <div class="instr-item">
+            <span class="instr-icon">📁</span>
+            <div class="instr-text"><strong>本地文件</strong>：拖放或点击选择，支持多文件批量加入播放列表</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔗</span>
+            <div class="instr-text"><strong>在线 URL</strong>：粘贴直链（MP4/WebM/M3U8 等），点击「添加」加入列表</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">▶️</span>
+            <div class="instr-text"><strong>播放控制</strong>：点击列表项播放；上/下一个切换；勾选后可批量删除</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">⌨️</span>
+            <div class="instr-text"><strong>快捷键</strong>：空格 暂停/播放 · ← → 快退/快进 10 秒 · ↑ ↓ 音量</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔒</span>
+            <div class="instr-text"><strong>隐私安全</strong>：完全本地处理，文件不上传服务器，无需外部依赖</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      // ── 状态 ─────────────────────────────────────────
+      let playlist     = []   // [{title, url, blobUrl, type}]
+      let currentIdx   = -1
+
+      const video       = document.getElementById('videoPlayer')
+      const overlay     = document.getElementById('playerOverlay')
+      const statusDot   = document.getElementById('statusDot')
+      const statusText  = document.getElementById('statusText')
+      const urlInput    = document.getElementById('urlInput')
+      const titleInput  = document.getElementById('titleInput')
+      const addUrlBtn   = document.getElementById('addUrlBtn')
+      const fileInput   = document.getElementById('fileInput')
+      const dropArea    = document.getElementById('dropArea')
+      const playlistWrap= document.getElementById('playlistWrap')
+      const playlistEmpty = document.getElementById('playlistEmpty')
+      const playlistCount = document.getElementById('playlistCount')
+      const removeBtn   = document.getElementById('removeBtn')
+      const prevBtn     = document.getElementById('prevBtn')
+      const nextBtn     = document.getElementById('nextBtn')
+      const playPauseBtn = document.getElementById('playPauseBtn')
+      const clearBtn    = document.getElementById('clearBtn')
+
+      // ── 状态更新 ─────────────────────────────────────
+      function setStatus(msg, type = 'ready') {
+        statusText.textContent = msg
+        statusDot.className = 'status-dot ' + type
+      }
+
+      // ── 文件类型判断 ─────────────────────────────────
+      function guessType(name) {
+        const ext = name.split('.').pop().toLowerCase()
+        const map = { mp4:'MP4', m4v:'MP4', webm:'WebM', ogv:'WebM', ogg:'OGG',
+                      mov:'MOV', avi:'AVI', mkv:'MKV', flv:'FLV',
+                      m3u8:'HLS', ts:'HLS', mpd:'DASH', m4s:'DASH' }
+        return map[ext] || ext.toUpperCase() || 'VIDEO'
+      }
+
+      // ── 播放列表渲染 ─────────────────────────────────
+      function renderPlaylist() {
+        playlistCount.textContent = `共 ${playlist.length} 条`
+        if (!playlist.length) {
+          playlistWrap.innerHTML = ''
+          playlistWrap.appendChild(playlistEmpty)
+          playlistEmpty.style.display = 'block'
+          return
+        }
+        playlistEmpty.style.display = 'none'
+        playlistWrap.innerHTML = ''
+        playlist.forEach((item, i) => {
+          const el = document.createElement('div')
+          el.className = 'pl-item' + (i === currentIdx ? ' active' : '')
+          el.dataset.idx = i
+
+          const typeClass = item.type.toLowerCase()
+          const tagColor  = {mp4:'mp4', hls:'hls', flv:'flv', dash:'dash', webm:'webm'}[typeClass] || ''
+
+          el.innerHTML = `
+            <input type="checkbox" class="pl-check" onclick="event.stopPropagation()">
+            <div class="pl-info">
+              <div class="pl-title">${item.title}</div>
+              <div class="pl-url">${item.url.startsWith('blob:') ? '本地文件' : item.url}</div>
+            </div>
+            <span class="pl-tag ${tagColor}">${item.type}</span>
+          `
+          el.addEventListener('click', (e) => {
+            if (e.target.classList.contains('pl-check')) return
+            playAt(i)
+          })
+          playlistWrap.appendChild(el)
+        })
+      }
+
+      // ── 播放 ─────────────────────────────────────────
+      function playAt(idx) {
+        if (idx < 0 || idx >= playlist.length) return
+        currentIdx = idx
+        const item = playlist[idx]
+        video.src = item.url
+        video.load()
+        video.play().catch(() => {})
+        overlay.classList.add('hidden')
+        setStatus('正在加载：' + item.title, 'loading')
+        renderPlaylist()
+      }
+
+      video.addEventListener('playing', () => {
+        setStatus('正在播放：' + (playlist[currentIdx]?.title || ''), 'playing')
+        playPauseBtn.textContent = '⏸'
+      })
+
+      video.addEventListener('pause', () => {
+        playPauseBtn.textContent = '▶'
+      })
+
+      video.addEventListener('ended', () => {
+        setStatus('播放结束', 'ready')
+        playPauseBtn.textContent = '▶'
+        // 自动下一个
+        if (currentIdx < playlist.length - 1) playAt(currentIdx + 1)
+      })
+
+      video.addEventListener('error', () => {
+        setStatus('播放失败，格式可能不受支持', 'error')
+      })
+
+      video.addEventListener('waiting', () => {
+        if (statusDot.classList.contains('playing'))
+          setStatus('缓冲中…', 'loading')
+      })
+
+      // ── 添加到列表 ────────────────────────────────────
+      function addItem(item) {
+        playlist.push(item)
+        renderPlaylist()
+        if (playlist.length === 1) playAt(0)
+      }
+
+      // ── URL 添加 ──────────────────────────────────────
+      addUrlBtn.addEventListener('click', () => {
+        const url = urlInput.value.trim()
+        if (!url) return
+        const title = titleInput.value.trim() || decodeURIComponent(url.split('/').pop().split('?')[0]) || '在线视频'
+        addItem({ title, url, type: guessType(url) })
+        urlInput.value = ''
+        titleInput.value = ''
+      })
+
+      urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') addUrlBtn.click() })
+
+      // ── 本地文件 ──────────────────────────────────────
+      fileInput.addEventListener('change', e => handleFiles(e.target.files))
+
+      dropArea.addEventListener('dragover',  e => { e.preventDefault(); dropArea.classList.add('dragover'); })
+      dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.classList.remove('dragover'); })
+      dropArea.addEventListener('drop', e => {
+        e.preventDefault()
+        dropArea.classList.remove('dragover')
+        handleFiles(e.dataTransfer.files)
+      })
+
+      function handleFiles(files) {
+        Array.from(files).forEach(file => {
+          if (!file.type.startsWith('video/') && !file.name.match(/\.(mkv|avi|flv|ts|m3u8|mpd|m4s|mov)$/i)) return
+          const url = URL.createObjectURL(file)
+          addItem({ title: file.name, url, type: guessType(file.name) })
+        })
+        fileInput.value = ''
+      }
+
+      // ── 删除选中 ──────────────────────────────────────
+      removeBtn.addEventListener('click', () => {
+        const checked = [...playlistWrap.querySelectorAll('.pl-check:checked')]
+        const indices = checked.map(c => parseInt(c.closest('.pl-item').dataset.idx)).sort((a,b) => b-a)
+        indices.forEach(i => {
+          if (playlist[i].url.startsWith('blob:')) URL.revokeObjectURL(playlist[i].url)
+          playlist.splice(i, 1)
+          if (i === currentIdx) { currentIdx = -1; video.pause(); video.src = ''; overlay.classList.remove('hidden'); setStatus('就绪', 'ready') }
+          else if (i < currentIdx) currentIdx--
+        })
+        renderPlaylist()
+      })
+
+      // ── 上/下一个 ─────────────────────────────────────
+      prevBtn.addEventListener('click', () => { if (currentIdx > 0) playAt(currentIdx - 1) })
+      nextBtn.addEventListener('click', () => { if (currentIdx < playlist.length - 1) playAt(currentIdx + 1) })
+
+      // ── 播放/暂停 ─────────────────────────────────────
+      playPauseBtn.addEventListener('click', () => {
+        if (!video.src && playlist.length > 0) { playAt(0); return }
+        if (video.paused) video.play().catch(() => {})
+        else video.pause()
+      })
+
+      // ── 清空 ──────────────────────────────────────────
+      clearBtn.addEventListener('click', () => {
+        playlist.forEach(p => { if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url) })
+        playlist = []
+        currentIdx = -1
+        video.pause(); video.src = ''
+        overlay.classList.remove('hidden')
+        setStatus('就绪', 'ready')
+        renderPlaylist()
+      })
+
+      // ── 键盘快捷键 ────────────────────────────────────
+      document.addEventListener('keydown', e => {
+        if (['INPUT','TEXTAREA'].includes(e.target.tagName)) return
+        if (e.key === ' ')           { e.preventDefault(); video.paused ? video.play() : video.pause() }
+        if (e.key === 'ArrowRight')  { e.preventDefault(); video.currentTime += 10 }
+        if (e.key === 'ArrowLeft')   { e.preventDefault(); video.currentTime -= 10 }
+        if (e.key === 'ArrowUp')     { e.preventDefault(); video.volume = Math.min(1, video.volume + 0.1) }
+        if (e.key === 'ArrowDown')   { e.preventDefault(); video.volume = Math.max(0, video.volume - 0.1) }
+      })
+
+      // ── 初始化 ────────────────────────────────────────
+      renderPlaylist()
+    </script>
+
+  </body>
+</html>
