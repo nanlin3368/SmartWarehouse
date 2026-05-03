@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSON 对比</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent; /* 全局禁用点击高亮 */
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 双栏输入 ── */
+      .input-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      @media (max-width: 560px) {
+        .input-grid { grid-template-columns: 1fr; }
+      }
+
+      .input-col-label {
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .input-col-label .dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .dot-a { background: var(--accent-primary); }
+      .dot-b { background: var(--danger); }
+
+      textarea {
+        width: 100%;
+        height: 200px;
+        border: none;
+        outline: none;
+        resize: vertical;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        padding: 12px 14px;
+        font-size: 0.78rem;
+        font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+        color: var(--text-primary);
+        line-height: 1.6;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      textarea::placeholder { color: var(--text-muted); }
+
+      textarea:focus {
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.2);
+      }
+
+      textarea.error-input {
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light),
+                    0 0 0 2px rgba(252,92,101,0.35);
+      }
+
+      .input-status {
+        margin-top: 6px;
+        font-size: 0.68rem;
+        font-weight: 600;
+        height: 16px;
+      }
+
+      .input-status.ok  { color: var(--success); }
+      .input-status.err { color: var(--danger); }
+
+      /* ── 操作按钮 ── */
+      .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .action-btn {
+        padding: 13px 10px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .action-btn:hover  { transform: translateY(-1px); }
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .action-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      .action-btn.primary {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        grid-column: span 2;
+      }
+
+      .action-btn.primary:hover { box-shadow: 6px 6px 16px rgba(102,126,234,0.4); transform: translateY(-2px); }
+      .action-btn.primary:active { transform: scale(0.97); }
+      .action-btn.success-btn { color: var(--success); }
+      .action-btn.danger-btn  { color: var(--danger); }
+
+      /* ── 统计徽章 ── */
+      .stats-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+
+      .stat-badge {
+        padding: 5px 14px;
+        border-radius: 20px;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .stat-badge .badge-num {
+        font-size: 0.9rem;
+        font-weight: 800;
+      }
+
+      .stat-badge.added   .badge-num { color: var(--success); }
+      .stat-badge.removed .badge-num { color: var(--danger); }
+      .stat-badge.changed .badge-num { color: var(--warning); }
+      .stat-badge.same    .badge-num { color: var(--text-muted); }
+
+      /* ── 结果区 ── */
+      .result-placeholder {
+        text-align: center;
+        padding: 32px;
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      .diff-tree {
+        font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+        font-size: 0.76rem;
+        line-height: 1.7;
+        overflow-x: auto;
+      }
+
+      .diff-line {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 3px 10px;
+        border-radius: 6px;
+        margin-bottom: 2px;
+        word-break: break-all;
+      }
+
+      .diff-line.added   { background: rgba(78,205,196,0.12); }
+      .diff-line.removed { background: rgba(252,92,101,0.12); }
+      .diff-line.changed { background: rgba(247,183,49,0.12); }
+      .diff-line.same    { background: transparent; }
+      .diff-line.key-only { background: transparent; }
+
+      .diff-marker {
+        flex-shrink: 0;
+        width: 16px;
+        font-weight: 800;
+        font-size: 0.8rem;
+        padding-top: 1px;
+      }
+
+      .diff-line.added   .diff-marker { color: var(--success); }
+      .diff-line.removed .diff-marker { color: var(--danger); }
+      .diff-line.changed .diff-marker { color: var(--warning); }
+      .diff-line.same    .diff-marker { color: var(--text-muted); }
+      .diff-line.key-only .diff-marker { color: var(--text-muted); }
+
+      .diff-content { flex: 1; }
+
+      .diff-key {
+        color: var(--accent-primary);
+        font-weight: 700;
+      }
+
+      .diff-val-a { color: var(--danger); }
+      .diff-val-b { color: var(--success); }
+      .diff-val-same { color: var(--text-secondary); }
+
+      .diff-arrow {
+        color: var(--text-muted);
+        margin: 0 4px;
+      }
+
+      .diff-indent { display: inline-block; }
+
+      /* 折叠按钮 */
+      .fold-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px; height: 16px;
+        border: none;
+        border-radius: 4px;
+        background: var(--bg-primary);
+        box-shadow: 2px 2px 4px var(--shadow-dark), -1px -1px 3px var(--shadow-light);
+        font-size: 0.6rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 700;
+        flex-shrink: 0;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        vertical-align: middle;
+        margin-right: 4px;
+      }
+
+      .fold-btn:active { transform: scale(0.9); }
+
+      .foldable-children { }
+      .foldable-children.hidden { display: none; }
+
+      /* ── 视图模式 ── */
+      .mode-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .mode-btn {
+        padding: 7px 16px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+      }
+
+      .mode-btn:active { transform: scale(0.95); }
+
+      .mode-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 3px 3px 8px rgba(102,126,234,0.35), -1px -1px 4px var(--shadow-light);
+      }
+
+      /* ── 格式化预览 ── */
+      .formatted-wrap {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        padding: 14px;
+        overflow-x: auto;
+        max-height: 360px;
+        overflow-y: auto;
+        font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+        font-size: 0.76rem;
+        line-height: 1.7;
+        color: var(--text-primary);
+        white-space: pre;
+      }
+
+      /* JSON 语法高亮 */
+      .json-key    { color: var(--accent-primary); font-weight: 600; }
+      .json-str    { color: var(--success); }
+      .json-num    { color: var(--warning); }
+      .json-bool   { color: var(--danger); }
+      .json-null   { color: var(--text-muted); font-style: italic; }
+      .json-punct  { color: var(--text-secondary); }
+
+      /* ── 说明卡片 ── */
+      .instr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+      .instr-text {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── 输入框工具栏 ── */
+      .input-col-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      .input-col-actions {
+        display: flex;
+        gap: 6px;
+      }
+
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px; height: 28px;
+        border: none;
+        border-radius: 8px;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .icon-btn:hover  { transform: translateY(-1px); color: var(--accent-primary); }
+      .icon-btn:active {
+        box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        transform: scale(0.93);
+      }
+
+      .icon-btn input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+        font-size: 0;
+      }
+
+      /* ── 复制结果按钮行 ── */
+      .result-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .copy-result-btn {
+        padding: 5px 14px;
+        border: none;
+        border-radius: 20px;
+        background: var(--bg-primary);
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .copy-result-btn:hover  { color: var(--accent-primary); transform: translateY(-1px); }
+      .copy-result-btn:active { transform: scale(0.95); }
+
+      /* ── Toast 提示 ── */
+      .toast {
+        position: fixed;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--text-primary);
+        color: #fff;
+        padding: 9px 20px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        z-index: 999;
+        white-space: nowrap;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* ── 响应式 ── */
+      @media (max-width: 420px) {
+        h1 { font-size: 1.8rem; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>JSON 对比</h1>
+      <p class="subtitle">本地处理 · 深度对比 · 语法高亮</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 输入区 -->
+      <div class="card">
+        <div class="card-label">输入 JSON</div>
+        <div class="input-grid">
+          <div>
+            <div class="input-col-header">
+              <div class="input-col-label" style="margin-bottom:0">
+                <span class="dot dot-a"></span> JSON A（原始）
+              </div>
+              <div class="input-col-actions">
+                <button class="icon-btn" title="导入 JSON 文件">
+                  📂
+                  <input type="file" accept=".json,application/json,text/plain" id="importA" />
+                </button>
+                <button class="icon-btn" id="copyA" title="复制内容">📋</button>
+                <button class="icon-btn" id="clearA" title="清空">✕</button>
+              </div>
+            </div>
+            <textarea id="inputA" placeholder='{"name":"Alice","age":25}'></textarea>
+            <div class="input-status" id="statusA"></div>
+          </div>
+          <div>
+            <div class="input-col-header">
+              <div class="input-col-label" style="margin-bottom:0">
+                <span class="dot dot-b"></span> JSON B（对比）
+              </div>
+              <div class="input-col-actions">
+                <button class="icon-btn" title="导入 JSON 文件">
+                  📂
+                  <input type="file" accept=".json,application/json,text/plain" id="importB" />
+                </button>
+                <button class="icon-btn" id="copyB" title="复制内容">📋</button>
+                <button class="icon-btn" id="clearB" title="清空">✕</button>
+              </div>
+            </div>
+            <textarea id="inputB" placeholder='{"name":"Bob","age":26,"city":"Shanghai"}'></textarea>
+            <div class="input-status" id="statusB"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 操作 -->
+      <div class="card">
+        <div class="card-label">操作</div>
+        <div class="action-grid">
+          <button class="action-btn primary" id="diffBtn">🔍 开始对比</button>
+          <button class="action-btn success-btn" id="formatBtn">✨ 格式化 A &amp; B</button>
+          <button class="action-btn danger-btn"  id="clearBtn">🗑️ 清空</button>
+        </div>
+      </div>
+
+      <!-- 对比结果 -->
+      <div class="card" id="resultCard" style="display:none">
+        <div class="result-header">
+          <div class="card-label" style="margin-bottom:0">对比结果</div>
+          <button class="copy-result-btn" id="copyResultBtn">📋 复制结果</button>
+        </div>
+        <div class="stats-row" id="statsRow"></div>
+        <div class="mode-row">
+          <button class="mode-btn active" id="modeTree" onclick="switchMode('tree')">🌲 差异树</button>
+          <button class="mode-btn" id="modeSide" onclick="switchMode('side')">📄 格式化预览</button>
+        </div>
+        <div id="treeView">
+          <div class="diff-tree" id="diffTree"></div>
+        </div>
+        <div id="sideView" style="display:none">
+          <div class="input-col-label" style="margin-bottom:8px"><span class="dot dot-a"></span>&nbsp;JSON A</div>
+          <div class="formatted-wrap" id="fmtA"></div>
+          <div style="height:14px"></div>
+          <div class="input-col-label" style="margin-bottom:8px"><span class="dot dot-b"></span>&nbsp;JSON B</div>
+          <div class="formatted-wrap" id="fmtB"></div>
+        </div>
+      </div>
+
+      <!-- 使用说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+          <div class="instr-item">
+            <span class="instr-icon">📂</span>
+            <div class="instr-text"><strong>导入文件</strong>：点击输入框右上角 📂 按钮，可直接从本地导入 .json 文件，自动填入对应输入框</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">📋</span>
+            <div class="instr-text"><strong>复制内容</strong>：点击 📋 按钮可将对应输入框的 JSON 内容复制到剪贴板；对比完成后点击"复制结果"可导出纯文本差异报告</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">📝</span>
+            <div class="instr-text"><strong>输入 JSON</strong>：在左侧粘贴原始 JSON（A），右侧粘贴新版本 JSON（B），支持任意嵌套结构</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔍</span>
+            <div class="instr-text"><strong>开始对比</strong>：点击对比按钮，工具会递归遍历所有字段，逐层列出新增、删除、修改的差异</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🎨</span>
+            <div class="instr-text"><strong>差异高亮</strong>：<span style="color:#4ecdc4;font-weight:700">绿色</span> 表示新增字段，<span style="color:#fc5c65;font-weight:700">红色</span> 表示删除字段，<span style="color:#f7b731;font-weight:700">黄色</span> 表示值被修改</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🌲</span>
+            <div class="instr-text"><strong>折叠节点</strong>：对象和数组节点可点击 ▶ / ▼ 按钮展开或折叠，便于聚焦查看关键差异</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">✨</span>
+            <div class="instr-text"><strong>格式化</strong>：点击"格式化 A &amp; B"可自动美化输入框中的 JSON，同时验证语法合法性</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">📄</span>
+            <div class="instr-text"><strong>格式化预览</strong>：切换到"格式化预览"模式，可查看带语法高亮的完整 JSON 内容（含 key、字符串、数字、布尔值等色彩区分）</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔒</span>
+            <div class="instr-text"><strong>数据安全</strong>：所有处理均在浏览器本地完成，JSON 数据不会上传至任何服务器</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      // ── Toast ───────────────────────────────────────────
+      const toastEl = document.createElement('div')
+      toastEl.className = 'toast'
+      document.body.appendChild(toastEl)
+      let toastTimer = null
+
+      function showToast(msg) {
+        toastEl.textContent = msg
+        toastEl.classList.add('show')
+        clearTimeout(toastTimer)
+        toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000)
+      }
+
+      // ── 复制到剪贴板 ────────────────────────────────────
+      function copyText(text, label) {
+        if (!text.trim()) { showToast('内容为空'); return }
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('✓ ' + label + '已复制')
+        }).catch(() => {
+          // fallback
+          const ta = document.createElement('textarea')
+          ta.value = text
+          ta.style.position = 'fixed'; ta.style.opacity = '0'
+          document.body.appendChild(ta); ta.select()
+          document.execCommand('copy')
+          document.body.removeChild(ta)
+          showToast('✓ ' + label + '已复制')
+        })
+      }
+
+      // ── 导入 JSON 文件 ───────────────────────────────────
+      function bindImport(inputId, textareaEl, statusEl) {
+        document.getElementById(inputId).addEventListener('change', function(e) {
+          const file = e.target.files[0]
+          if (!file) return
+          const reader = new FileReader()
+          reader.onload = ev => {
+            textareaEl.value = ev.target.result
+            validateInput(textareaEl, statusEl)
+            showToast('✓ 已导入 ' + file.name)
+          }
+          reader.readAsText(file, 'utf-8')
+          this.value = '' // 允许重复导入同一文件
+        })
+      }
+
+      // ── 实时语法验证 ────────────────────────────────────
+      function validateInput(el, statusEl) {
+        const val = el.value.trim()
+        if (!val) {
+          statusEl.textContent = ''
+          el.classList.remove('error-input')
+          return null
+        }
+        try {
+          const parsed = JSON.parse(val)
+          statusEl.textContent = '✓ JSON 合法'
+          statusEl.className = 'input-status ok'
+          el.classList.remove('error-input')
+          return parsed
+        } catch(e) {
+          statusEl.textContent = '✗ ' + e.message
+          statusEl.className = 'input-status err'
+          el.classList.add('error-input')
+          return null
+        }
+      }
+
+      const inputA = document.getElementById('inputA')
+      const inputB = document.getElementById('inputB')
+      const statusA = document.getElementById('statusA')
+      const statusB = document.getElementById('statusB')
+
+      inputA.addEventListener('input', () => validateInput(inputA, statusA))
+      inputB.addEventListener('input', () => validateInput(inputB, statusB))
+
+      // ── 绑定导入 ─────────────────────────────────────────
+      bindImport('importA', inputA, statusA)
+      bindImport('importB', inputB, statusB)
+
+      // ── 复制 A / B ───────────────────────────────────────
+      document.getElementById('copyA').addEventListener('click', () => copyText(inputA.value, 'JSON A '))
+      document.getElementById('copyB').addEventListener('click', () => copyText(inputB.value, 'JSON B '))
+
+      // ── 单独清空 A / B ───────────────────────────────────
+      document.getElementById('clearA').addEventListener('click', () => {
+        inputA.value = ''; statusA.textContent = ''; inputA.classList.remove('error-input')
+      })
+      document.getElementById('clearB').addEventListener('click', () => {
+        inputB.value = ''; statusB.textContent = ''; inputB.classList.remove('error-input')
+      })
+
+      // ── 格式化 ──────────────────────────────────────────
+      document.getElementById('formatBtn').addEventListener('click', () => {
+        [{ el: inputA, st: statusA }, { el: inputB, st: statusB }].forEach(({ el, st }) => {
+          const v = el.value.trim()
+          if (!v) return
+          try {
+            el.value = JSON.stringify(JSON.parse(v), null, 2)
+            st.textContent = '✓ 格式化完成'
+            st.className = 'input-status ok'
+            el.classList.remove('error-input')
+          } catch(e) {
+            st.textContent = '✗ ' + e.message
+            st.className = 'input-status err'
+            el.classList.add('error-input')
+          }
+        })
+      })
+
+      // ── 清空 ─────────────────────────────────────────────
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        inputA.value = ''; inputB.value = ''
+        statusA.textContent = ''; statusB.textContent = ''
+        inputA.classList.remove('error-input'); inputB.classList.remove('error-input')
+        document.getElementById('resultCard').style.display = 'none'
+      })
+
+      // ── 视图切换 ─────────────────────────────────────────
+      let currentMode = 'tree'
+      function switchMode(mode) {
+        currentMode = mode
+        document.getElementById('treeView').style.display = mode === 'tree' ? '' : 'none'
+        document.getElementById('sideView').style.display = mode === 'side' ? '' : 'none'
+        document.getElementById('modeTree').classList.toggle('active', mode === 'tree')
+        document.getElementById('modeSide').classList.toggle('active', mode === 'side')
+      }
+
+      // ── 对比入口 ─────────────────────────────────────────
+      document.getElementById('diffBtn').addEventListener('click', () => {
+        const a = validateInput(inputA, statusA)
+        const b = validateInput(inputB, statusB)
+        if (a === null || b === null) {
+          if (inputA.value.trim() === '') { statusA.textContent = '✗ 请输入 JSON'; statusA.className = 'input-status err' }
+          if (inputB.value.trim() === '') { statusB.textContent = '✗ 请输入 JSON'; statusB.className = 'input-status err' }
+          return
+        }
+
+        const stats = { added: 0, removed: 0, changed: 0, same: 0 }
+        const fragment = document.createDocumentFragment()
+        buildDiffTree(a, b, '', 0, fragment, stats)
+
+        document.getElementById('diffTree').innerHTML = ''
+        document.getElementById('diffTree').appendChild(fragment)
+
+        // 统计徽章
+        document.getElementById('statsRow').innerHTML = `
+          <div class="stat-badge added"><span class="badge-num">+${stats.added}</span> 新增</div>
+          <div class="stat-badge removed"><span class="badge-num">-${stats.removed}</span> 删除</div>
+          <div class="stat-badge changed"><span class="badge-num">~${stats.changed}</span> 修改</div>
+          <div class="stat-badge same"><span class="badge-num">${stats.same}</span> 相同</div>
+        `
+
+        // 格式化预览
+        document.getElementById('fmtA').innerHTML = syntaxHighlight(JSON.stringify(a, null, 2))
+        document.getElementById('fmtB').innerHTML = syntaxHighlight(JSON.stringify(b, null, 2))
+
+        document.getElementById('resultCard').style.display = ''
+        switchMode('tree')
+
+        // ── 复制结果（纯文本差异报告） ──────────────────────
+        document.getElementById('copyResultBtn').onclick = () => {
+          const lines = []
+          lines.push('=== JSON 对比结果 ===')
+          lines.push(`新增: ${stats.added}  删除: ${stats.removed}  修改: ${stats.changed}  相同: ${stats.same}`)
+          lines.push('')
+          function collectLines(node, prefix) {
+            node.querySelectorAll(':scope > .diff-line, :scope > .foldable-children').forEach(el => {
+              if (el.classList.contains('foldable-children')) {
+                collectLines(el, prefix + '  ')
+              } else {
+                const marker = el.querySelector('.diff-marker')?.textContent?.trim() || ' '
+                const content = el.querySelector('.diff-content')
+                if (content) {
+                  // 拼接纯文本
+                  let txt = content.innerText || content.textContent
+                  lines.push(prefix + marker + ' ' + txt.trim())
+                }
+              }
+            })
+          }
+          collectLines(document.getElementById('diffTree'), '')
+          copyText(lines.join('\n'), '差异报告')
+        }
+      })
+
+      // ── 递归构建差异树 ───────────────────────────────────
+      function buildDiffTree(a, b, path, depth, container, stats) {
+        const aType = getType(a)
+        const bType = getType(b)
+
+        // 两边都是对象
+        if (aType === 'object' && bType === 'object') {
+          const allKeys = new Set([...Object.keys(a), ...Object.keys(b)])
+          allKeys.forEach(key => {
+            const aHas = Object.prototype.hasOwnProperty.call(a, key)
+            const bHas = Object.prototype.hasOwnProperty.call(b, key)
+            const childPath = path ? path + '.' + key : key
+
+            if (aHas && bHas) {
+              const aVal = a[key], bVal = b[key]
+              const aT = getType(aVal), bT = getType(bVal)
+              if ((aT === 'object' || aT === 'array') && aT === bT) {
+                // 嵌套，创建折叠节点
+                const wrapper = makeFoldableNode(key, depth, childPath)
+                container.appendChild(wrapper.header)
+                buildDiffTree(aVal, bVal, childPath, depth + 1, wrapper.body, stats)
+                container.appendChild(wrapper.body)
+              } else if (JSON.stringify(aVal) === JSON.stringify(bVal)) {
+                stats.same++
+                container.appendChild(makeLine('same', '·', depth, key, null, aVal, null))
+              } else {
+                stats.changed++
+                container.appendChild(makeLine('changed', '~', depth, key, aVal, bVal, 'changed'))
+              }
+            } else if (aHas && !bHas) {
+              stats.removed++
+              container.appendChild(makeLine('removed', '−', depth, key, a[key], null, 'removed'))
+            } else {
+              stats.added++
+              container.appendChild(makeLine('added', '+', depth, key, null, b[key], 'added'))
+            }
+          })
+        }
+        // 两边都是数组
+        else if (aType === 'array' && bType === 'array') {
+          const maxLen = Math.max(a.length, b.length)
+          for (let i = 0; i < maxLen; i++) {
+            const childPath = path + '[' + i + ']'
+            if (i >= a.length) {
+              stats.added++
+              container.appendChild(makeLine('added', '+', depth, '[' + i + ']', null, b[i], 'added'))
+            } else if (i >= b.length) {
+              stats.removed++
+              container.appendChild(makeLine('removed', '−', depth, '[' + i + ']', a[i], null, 'removed'))
+            } else {
+              const aT = getType(a[i]), bT = getType(b[i])
+              if ((aT === 'object' || aT === 'array') && aT === bT) {
+                const wrapper = makeFoldableNode('[' + i + ']', depth, childPath)
+                container.appendChild(wrapper.header)
+                buildDiffTree(a[i], b[i], childPath, depth + 1, wrapper.body, stats)
+                container.appendChild(wrapper.body)
+              } else if (JSON.stringify(a[i]) === JSON.stringify(b[i])) {
+                stats.same++
+                container.appendChild(makeLine('same', '·', depth, '[' + i + ']', null, a[i], null))
+              } else {
+                stats.changed++
+                container.appendChild(makeLine('changed', '~', depth, '[' + i + ']', a[i], b[i], 'changed'))
+              }
+            }
+          }
+        }
+        // 类型不同或原始值
+        else {
+          if (JSON.stringify(a) === JSON.stringify(b)) {
+            stats.same++
+            container.appendChild(makeLine('same', '·', depth, path || '(root)', null, a, null))
+          } else {
+            stats.changed++
+            container.appendChild(makeLine('changed', '~', depth, path || '(root)', a, b, 'changed'))
+          }
+        }
+      }
+
+      // ── 构建可折叠节点 ───────────────────────────────────
+      let foldId = 0
+      function makeFoldableNode(key, depth, path) {
+        const id = 'fold-' + (foldId++)
+        const header = document.createElement('div')
+        header.className = 'diff-line key-only'
+
+        const indent = makeIndent(depth)
+        const btn = document.createElement('button')
+        btn.className = 'fold-btn'
+        btn.textContent = '▼'
+        btn.setAttribute('data-target', id)
+        btn.addEventListener('click', function() {
+          const target = document.getElementById(id)
+          const isHidden = target.classList.toggle('hidden')
+          this.textContent = isHidden ? '▶' : '▼'
+        })
+
+        const marker = document.createElement('span')
+        marker.className = 'diff-marker'
+        marker.textContent = ' '
+
+        const content = document.createElement('span')
+        content.className = 'diff-content'
+        content.innerHTML = indent + '<span class="diff-key">' + escHtml(key) + '</span><span class="json-punct"> {…}</span>'
+
+        header.appendChild(marker)
+        content.insertBefore(btn, content.firstChild)
+        header.appendChild(content)
+
+        const body = document.createElement('div')
+        body.id = id
+        body.className = 'foldable-children'
+
+        return { header, body }
+      }
+
+      // ── 构建单行 diff ────────────────────────────────────
+      function makeLine(type, markerChar, depth, key, valA, valB, diffType) {
+        const line = document.createElement('div')
+        line.className = 'diff-line ' + type
+
+        const marker = document.createElement('span')
+        marker.className = 'diff-marker'
+        marker.textContent = markerChar
+
+        const content = document.createElement('span')
+        content.className = 'diff-content'
+
+        const indent = makeIndent(depth)
+        let html = indent + '<span class="diff-key">' + escHtml(key) + '</span>: '
+
+        if (diffType === 'changed') {
+          html += '<span class="diff-val-a">' + escHtml(formatVal(valA)) + '</span>'
+          html += '<span class="diff-arrow"> → </span>'
+          html += '<span class="diff-val-b">' + escHtml(formatVal(valB)) + '</span>'
+        } else if (diffType === 'added') {
+          html += '<span class="diff-val-b">' + escHtml(formatVal(valB)) + '</span>'
+        } else if (diffType === 'removed') {
+          html += '<span class="diff-val-a">' + escHtml(formatVal(valA)) + '</span>'
+        } else {
+          html += '<span class="diff-val-same">' + escHtml(formatVal(valA)) + '</span>'
+        }
+
+        content.innerHTML = html
+        line.appendChild(marker)
+        line.appendChild(content)
+        return line
+      }
+
+      // ── 工具函数 ─────────────────────────────────────────
+      function getType(v) {
+        if (v === null) return 'null'
+        if (Array.isArray(v)) return 'array'
+        return typeof v
+      }
+
+      function formatVal(v) {
+        if (v === null) return 'null'
+        if (typeof v === 'string') return '"' + v + '"'
+        if (typeof v === 'object') return Array.isArray(v) ? '[…]' : '{…}'
+        return String(v)
+      }
+
+      function makeIndent(depth) {
+        return '<span class="diff-indent">' + '&nbsp;&nbsp;&nbsp;&nbsp;'.repeat(depth) + '</span>'
+      }
+
+      function escHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+      }
+
+      // ── JSON 语法高亮 ────────────────────────────────────
+      function syntaxHighlight(json) {
+        return json
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+            let cls = 'json-num'
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = 'json-key'
+                match = match.replace(/:$/, '')
+                return '<span class="' + cls + '">' + match + '</span>:'
+              } else {
+                cls = 'json-str'
+              }
+            } else if (/true|false/.test(match)) {
+              cls = 'json-bool'
+            } else if (/null/.test(match)) {
+              cls = 'json-null'
+            }
+            return '<span class="' + cls + '">' + match + '</span>'
+          })
+      }
+    </script>
+
+  </body>
+</html>

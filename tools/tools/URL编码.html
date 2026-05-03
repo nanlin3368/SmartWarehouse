@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>URL 编码</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerShine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.15);
+            }
+        }
+
+        .subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        /* ── 主布局 ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ── 文本域 ── */
+        .textarea {
+            width: 100%;
+            min-height: 130px;
+            padding: 14px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--border-radius-xs);
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            outline: none;
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.5;
+        }
+
+        .textarea:focus {
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .textarea::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        /* ── 选项行 ── */
+        .option-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin: 14px 0;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .radio-group input[type="radio"] {
+            accent-color: var(--accent-primary);
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ── 状态栏 ── */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            margin-top: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-height: 42px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+
+        .status-dot.ready {
+            background: var(--text-muted);
+        }
+
+        .status-dot.ok {
+            background: var(--success);
+            animation: dotPulse 2s infinite;
+        }
+
+        .status-dot.loading {
+            background: var(--warning);
+            animation: dotPulse 1s infinite;
+        }
+
+        .status-dot.error {
+            background: var(--danger);
+        }
+
+        @keyframes dotPulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ── 按钮行 ── */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 0;
+            padding: 12px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(102, 126, 234, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.primary:hover {
+            box-shadow: 5px 5px 14px rgba(102, 126, 234, 0.45);
+        }
+
+        .btn.primary:active {
+            box-shadow: inset 3px 3px 8px rgba(50, 50, 150, 0.4), inset -2px -2px 6px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(78, 205, 196, 0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.danger {
+            color: var(--danger);
+        }
+
+        /* ── 说明列表 ── */
+        .instr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .instr-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .instr-text strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* ── 响应式 ── */
+        @media (max-width: 420px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            .option-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>URL 编码</h1>
+        <p class="subtitle">将原始文本转换为安全的 URL 编码 · 支持两种编码模式</p>
+    </header>
+
+    <div class="main">
+        <!-- 编码功能卡片 -->
+        <div class="card">
+            <div class="card-label">🔒 URL 编码</div>
+
+            <textarea class="textarea" id="encodeInput" placeholder="输入需要编码的原始文本，例如：https://example.com?name=张三&age=28"></textarea>
+
+            <div class="option-row">
+                <span>编码方式：</span>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="encodeMode" value="encodeURIComponent" checked> 完整编码 (encodeURIComponent)
+                    </label>
+                    <label>
+                        <input type="radio" name="encodeMode" value="encodeURI"> 保留URL符号 (encodeURI)
+                    </label>
+                </div>
+            </div>
+
+            <div class="status-bar" id="encodeStatus">
+                <div class="status-dot ready" id="encodeDot"></div>
+                <span id="encodeStatusText">就绪，输入文本后点击编码</span>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn primary" id="encodeBtn">🔄 开始编码</button>
+                <button class="btn success" id="copyEncodedBtn" disabled>📋 复制结果</button>
+                <button class="btn danger" id="clearEncodeBtn">🗑️ 清空</button>
+            </div>
+
+            <textarea class="textarea" id="encodeOutput" placeholder="编码结果将显示在这里…" readonly style="margin-top: 14px;"></textarea>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">🔒</span>
+                    <div class="instr-text"><strong>编码模式</strong>：将普通文本转为URL安全字符串。选择「完整编码」会转义更多字符（适合参数值），「保留URL符号」会保留 <code>://</code> 等URL结构字符（适合整个链接）</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">⚙️</span>
+                    <div class="instr-text"><strong>使用场景</strong>：在URL中传递中文、特殊符号或空格时，需要先进行编码才能保证链接有效</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📋</span>
+                    <div class="instr-text"><strong>一键复制</strong>：生成结果后，点击复制按钮即可将编码结果放入剪贴板</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔒</span>
+                    <div class="instr-text"><strong>隐私安全</strong>：所有转换完全在您的浏览器本地进行，不会向服务器发送任何数据</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ── DOM 引用 ──
+            const encodeInput = document.getElementById('encodeInput');
+            const encodeOutput = document.getElementById('encodeOutput');
+            const encodeBtn = document.getElementById('encodeBtn');
+            const copyEncodedBtn = document.getElementById('copyEncodedBtn');
+            const clearEncodeBtn = document.getElementById('clearEncodeBtn');
+            const encodeDot = document.getElementById('encodeDot');
+            const encodeStatusText = document.getElementById('encodeStatusText');
+            const encodeModeRadios = document.getElementsByName('encodeMode');
+
+            // ── 状态显示辅助 ──
+            function setStatus(dot, textEl, msg, type) {
+                textEl.textContent = msg;
+                dot.className = 'status-dot ' + (type || 'ready');
+            }
+
+            // ── 获取选中的编码模式 ──
+            function getEncodeMode() {
+                for (let radio of encodeModeRadios) {
+                    if (radio.checked) return radio.value;
+                }
+                return 'encodeURIComponent';
+            }
+
+            // ── 编码操作 ──
+            encodeBtn.addEventListener('click', () => {
+                const raw = encodeInput.value;
+                if (!raw.trim()) {
+                    setStatus(encodeDot, encodeStatusText, '请输入需要编码的文本', 'error');
+                    return;
+                }
+                setStatus(encodeDot, encodeStatusText, '正在编码…', 'loading');
+                try {
+                    const mode = getEncodeMode();
+                    let result;
+                    if (mode === 'encodeURIComponent') {
+                        result = encodeURIComponent(raw);
+                    } else {
+                        result = encodeURI(raw);
+                    }
+                    encodeOutput.value = result;
+                    copyEncodedBtn.disabled = false;
+                    setStatus(encodeDot, encodeStatusText, '编码完成，结果已生成', 'ok');
+                } catch (e) {
+                    setStatus(encodeDot, encodeStatusText, '编码失败：' + e.message, 'error');
+                    copyEncodedBtn.disabled = true;
+                }
+            });
+
+            // ── 复制结果 ──
+            copyEncodedBtn.addEventListener('click', async () => {
+                if (!encodeOutput.value) return;
+                try {
+                    await navigator.clipboard.writeText(encodeOutput.value);
+                    setStatus(encodeDot, encodeStatusText, '编码结果已复制到剪贴板 📋', 'ok');
+                } catch (err) {
+                    const ta = document.createElement('textarea');
+                    ta.value = encodeOutput.value;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    setStatus(encodeDot, encodeStatusText, '已复制（备用方式）', 'ok');
+                }
+            });
+
+            // ── 清空按钮 ──
+            clearEncodeBtn.addEventListener('click', () => {
+                encodeInput.value = '';
+                encodeOutput.value = '';
+                copyEncodedBtn.disabled = true;
+                setStatus(encodeDot, encodeStatusText, '已清空，输入文本后点击编码', 'ready');
+                // 恢复默认编码模式
+                encodeModeRadios[0].checked = true;
+            });
+
+            // ── 初始化状态 ──
+            setStatus(encodeDot, encodeStatusText, '就绪，输入文本后点击编码', 'ready');
+        })();
+    </script>
+</body>
+</html>

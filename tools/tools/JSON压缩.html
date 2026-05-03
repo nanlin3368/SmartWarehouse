@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>JSON 压缩</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes headerShine {
+            0%   { left: -100%; }
+            50%  { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to   { filter: brightness(1.15); }
+        }
+
+        .subtitle { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; line-height: 1.5; }
+
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: space-between;
+        }
+
+        .import-btn {
+            padding: 5px 14px;
+            border: none;
+            border-radius: 30px;
+            background: var(--bg-primary);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .import-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .json-textarea {
+            width: 100%;
+            min-height: 240px;
+            padding: 16px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--border-radius-sm);
+            color: var(--text-primary);
+            font-size: 0.82rem;
+            font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            outline: none;
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.6;
+            tab-size: 2;
+        }
+
+        .json-textarea:focus {
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+        }
+
+        .json-textarea::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+            font-size: 0.8rem;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .result-box {
+            width: 100%;
+            min-height: 180px;
+            padding: 16px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-primary);
+            font-size: 0.82rem;
+            font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            overflow-y: auto;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 400px;
+            min-height: 180px;
+            padding: 16px;
+        }
+
+        .result-box.placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+            font-size: 0.8rem;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            padding: 40px 20px;
+            white-space: normal;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            margin-top: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-height: 42px;
+        }
+
+        .status-dot {
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+
+        .status-dot.ready   { background: var(--text-muted); }
+        .status-dot.ok      { background: var(--success); animation: dotPulse 2s infinite; }
+        .status-dot.loading { background: var(--warning); animation: dotPulse 1s infinite; }
+        .status-dot.error   { background: var(--danger); }
+
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.4; }
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin: 10px 0 4px;
+            letter-spacing: 0.3px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 0;
+            padding: 12px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn:hover  { transform: translateY(-1px); }
+        .btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            transform: scale(0.97);
+        }
+        .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+        .btn.primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        }
+        .btn.primary:hover  { box-shadow: 5px 5px 14px rgba(102,126,234,0.45); }
+        .btn.primary:active { box-shadow: inset 3px 3px 8px rgba(50,50,150,0.4), inset -2px -2px 6px rgba(255,255,255,0.2); }
+
+        .btn.success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(78,205,196,0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.warning {
+            background: linear-gradient(135deg, #f7b731 0%, #fc5c65 100%);
+            color: #fff;
+            box-shadow: 4px 4px 10px rgba(247,183,49,0.35), -2px -2px 6px var(--shadow-light);
+        }
+
+        .btn.danger { color: var(--danger); }
+
+        .result-card {
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
+            animation: resultSlide 0.4s ease;
+        }
+
+        @keyframes resultSlide {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+        .instr-item {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+        .instr-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+        @media (max-width: 420px) {
+            h1 { font-size: 1.8rem; }
+            .btn-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>JSON 压缩</h1>
+        <p class="subtitle">JSON 压缩 · 验证 · 文件导入</p>
+    </header>
+
+    <div class="main">
+        <!-- JSON 压缩输入卡片 -->
+        <div class="card">
+            <div class="card-label">
+                <span>📝 输入 JSON 文本</span>
+                <button class="import-btn" id="importBtn">📂 导入文件</button>
+            </div>
+            <textarea class="json-textarea" id="jsonInput" placeholder="在此粘贴 JSON 文本…&#10;&#10;示例：&#10;{&#10;  &quot;name&quot;: &quot;张三&quot;,&#10;  &quot;age&quot;: 25&#10;}"></textarea>
+            <div class="stats-row" id="inputStats">
+                <span>字符: 0</span><span>行数: 0</span>
+            </div>
+            <div class="status-bar" id="compressStatus">
+                <div class="status-dot ready" id="compressDot"></div>
+                <span id="compressStatusText">就绪，等待输入 JSON 文本</span>
+            </div>
+            <div class="btn-row">
+                <button class="btn primary" id="compressBtn">📦 压缩 JSON</button>
+                <button class="btn warning" id="validateBtn">✅ 验证 JSON</button>
+                <button class="btn danger" id="clearBtn">🗑️ 清空</button>
+            </div>
+        </div>
+
+        <!-- 转换结果 -->
+        <div class="card result-card" id="resultSection">
+            <div class="card-label">✨ 转换结果</div>
+            <div class="result-box placeholder" id="resultOutput">处理结果将显示在这里</div>
+            <div class="stats-row" id="resultStats">
+                <span>字符: 0</span><span>行数: 0</span>
+            </div>
+            <div class="btn-row">
+                <button class="btn success" id="copyResultBtn">📋 复制结果</button>
+                <button class="btn warning" id="downloadResultBtn">💾 下载文件</button>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item"><span class="instr-icon">📦</span><div class="instr-text"><strong>JSON 压缩</strong>：将格式化的 JSON 压缩为一行，移除多余空格和换行，减小体积</div></div>
+                <div class="instr-item"><span class="instr-icon">✅</span><div class="instr-text"><strong>验证 JSON</strong>：检查输入的文本是否为有效的 JSON 格式，并显示具体错误位置</div></div>
+                <div class="instr-item"><span class="instr-icon">📂</span><div class="instr-text"><strong>导入文件</strong>：支持导入 .json 文件，自动读取内容到输入区</div></div>
+                <div class="instr-item"><span class="instr-icon">📋</span><div class="instr-text"><strong>复制 & 下载</strong>：处理结果可一键复制到剪贴板，或下载为 .json 文件保存</div></div>
+                <div class="instr-item"><span class="instr-icon">🔒</span><div class="instr-text"><strong>隐私安全</strong>：所有处理在浏览器本地完成，数据不上传任何服务器</div></div>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".json,application/json" style="display:none;">
+
+    <script>
+        (function() {
+            const $ = id => document.getElementById(id);
+            const jsonInput = $('jsonInput');
+            const inputStats = $('inputStats');
+            const compressDot = $('compressDot');
+            const compressStatusText = $('compressStatusText');
+            const compressBtn = $('compressBtn');
+            const validateBtn = $('validateBtn');
+            const clearBtn = $('clearBtn');
+            const resultSection = $('resultSection');
+            const resultOutput = $('resultOutput');
+            const resultStats = $('resultStats');
+            const copyResultBtn = $('copyResultBtn');
+            const downloadResultBtn = $('downloadResultBtn');
+            const importBtn = $('importBtn');
+            const fileInput = $('fileInput');
+
+            let currentResult = '';
+
+            // ── 工具函数 ──────────────────────────────────────
+            function updateInputStats() {
+                const text = jsonInput.value;
+                const chars = text.length;
+                const lines = text.split(/\n/).length;
+                inputStats.innerHTML = `<span>字符: ${chars.toLocaleString()}</span><span>行数: ${lines}</span>`;
+            }
+
+            function updateResultStats(text) {
+                if (!text) {
+                    resultStats.innerHTML = '<span>字符: 0</span><span>行数: 0</span>';
+                    return;
+                }
+                const chars = text.length;
+                const lines = text.split(/\n/).length;
+                resultStats.innerHTML = `<span>字符: ${chars.toLocaleString()}</span><span>行数: ${lines}</span>`;
+            }
+
+            function setStatus(msg, type = 'ready') {
+                compressStatusText.textContent = msg;
+                compressDot.className = 'status-dot ' + type;
+            }
+
+            // ── JSON 处理核心 ──────────────────────────────────
+            function tryParseJSON(text) {
+                try {
+                    const obj = JSON.parse(text);
+                    return { success: true, data: obj, error: null };
+                } catch (e) {
+                    return { success: false, data: null, error: e.message };
+                }
+            }
+
+            function compressJSON(text) {
+                const result = tryParseJSON(text);
+                if (!result.success) return { success: false, output: null, error: result.error };
+                return { success: true, output: JSON.stringify(result.data), error: null };
+            }
+
+            // ── 显示结果 ────────────────────────────────────────
+            function showResult(text) {
+                currentResult = text;
+                resultOutput.textContent = text;
+                resultOutput.classList.remove('placeholder');
+                resultSection.classList.add('show');
+                updateResultStats(text);
+            }
+
+            function hideResult() {
+                currentResult = '';
+                resultOutput.textContent = '处理结果将显示在这里';
+                resultOutput.classList.add('placeholder');
+                resultSection.classList.remove('show');
+                updateResultStats('');
+            }
+
+            // ── 压缩操作 ────────────────────────────────────────
+            compressBtn.addEventListener('click', () => {
+                const text = jsonInput.value.trim();
+                if (!text) {
+                    setStatus('请先输入 JSON 文本', 'error');
+                    return;
+                }
+                const result = compressJSON(text);
+                if (result.success) {
+                    showResult(result.output);
+                    setStatus('压缩成功！JSON 有效', 'ok');
+                } else {
+                    hideResult();
+                    setStatus('JSON 无效: ' + result.error, 'error');
+                }
+            });
+
+            // ── 验证操作 ────────────────────────────────────────
+            validateBtn.addEventListener('click', () => {
+                const text = jsonInput.value.trim();
+                if (!text) {
+                    setStatus('请先输入 JSON 文本', 'error');
+                    return;
+                }
+                const result = tryParseJSON(text);
+                if (result.success) {
+                    setStatus('✅ JSON 格式有效！包含 ' + Object.keys(result.data).length + ' 个顶级键', 'ok');
+                } else {
+                    setStatus('JSON 无效: ' + result.error, 'error');
+                }
+            });
+
+            // ── 清空操作 ────────────────────────────────────────
+            clearBtn.addEventListener('click', () => {
+                jsonInput.value = '';
+                hideResult();
+                updateInputStats();
+                setStatus('就绪，等待输入 JSON 文本', 'ready');
+            });
+
+            // ── 复制结果 ────────────────────────────────────────
+            copyResultBtn.addEventListener('click', async () => {
+                if (!currentResult) return;
+                try {
+                    await navigator.clipboard.writeText(currentResult);
+                } catch {
+                    const ta = document.createElement('textarea');
+                    ta.value = currentResult;
+                    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                }
+                setStatus('📋 结果已复制到剪贴板', 'ok');
+            });
+
+            // ── 下载结果 ────────────────────────────────────────
+            downloadResultBtn.addEventListener('click', () => {
+                if (!currentResult) return;
+                const ts = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                const blob = new Blob([currentResult], { type: 'application/json;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `json_compressed_${ts}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                setStatus('💾 JSON 文件已下载', 'ok');
+            });
+
+            // ── 文件导入 ────────────────────────────────────────
+            importBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    jsonInput.value = ev.target.result;
+                    updateInputStats();
+                };
+                reader.onerror = () => setStatus('文件读取失败', 'error');
+                reader.readAsText(file, 'UTF-8');
+                fileInput.value = '';
+            });
+
+            // ── 输入统计更新 ────────────────────────────────────
+            jsonInput.addEventListener('input', () => {
+                updateInputStats();
+                setStatus('就绪，等待输入 JSON 文本', 'ready');
+            });
+
+            // ── 初始化 ────────────────────────────────────────
+            updateInputStats();
+        })();
+    </script>
+</body>
+</html>

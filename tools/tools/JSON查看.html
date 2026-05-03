@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSON 查看</title>
+    <link rel="stylesheet" href="./json/jsoneditor.min.css">
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent; /* 全局禁用点击高亮 */
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 文件上传区 ── */
+      .file-drop {
+        border: 2px dashed var(--text-muted);
+        border-radius: var(--border-radius-sm);
+        padding: 28px 20px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .file-drop:hover, .file-drop.dragover {
+        border-color: var(--accent-primary);
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.15);
+      }
+
+      .file-drop.dragover {
+        border-style: solid;
+        border-color: var(--success);
+      }
+
+      .file-drop input[type="file"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .file-drop-icon {
+        font-size: 2.2rem;
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .file-drop-text {
+        font-size: 0.95rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 4px;
+      }
+
+      .file-drop-sub {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+      }
+
+      .file-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        background: var(--bg-primary);
+        border-radius: 20px;
+        box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--accent-primary);
+      }
+
+      /* 已选文件提示 */
+      .file-chosen {
+        margin-top: 10px;
+        padding: 8px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        font-size: 0.78rem;
+        color: var(--success);
+        font-weight: 600;
+        display: none;
+        text-align: center;
+      }
+
+      /* ── textarea ── */
+      .json-textarea {
+        width: 100%;
+        min-height: 180px;
+        padding: 14px 16px;
+        background: var(--bg-primary);
+        border: none;
+        border-radius: var(--border-radius-xs);
+        color: var(--text-primary);
+        font-size: 0.82rem;
+        font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+        resize: vertical;
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        outline: none;
+        transition: var(--transition);
+        line-height: 1.6;
+      }
+
+      .json-textarea:focus {
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.2);
+      }
+
+      .json-textarea::placeholder {
+        color: var(--text-muted);
+        font-style: italic;
+      }
+
+      /* ── 实时状态指示条 ── */
+      .validate-bar {
+        height: 3px;
+        border-radius: 2px;
+        margin-top: 8px;
+        background: var(--bg-primary);
+        box-shadow: inset 1px 1px 3px var(--shadow-dark);
+        overflow: hidden;
+        transition: var(--transition);
+      }
+
+      .validate-bar-fill {
+        height: 100%;
+        width: 0;
+        border-radius: 2px;
+        transition: width 0.3s ease, background 0.3s ease;
+      }
+
+      .validate-bar-fill.valid   { background: var(--success); width: 100%; }
+      .validate-bar-fill.invalid { background: var(--danger);  width: 100%; }
+
+      /* ── 操作按钮组 ── */
+      .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .action-btn {
+        padding: 13px 10px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .action-btn:hover  { transform: translateY(-1px); }
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .action-btn.primary {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        grid-column: span 2;
+      }
+
+      .action-btn.primary:hover {
+        box-shadow: 6px 6px 16px rgba(102,126,234,0.4);
+        transform: translateY(-2px);
+      }
+
+      .action-btn.primary:active { transform: scale(0.97); }
+
+      .action-btn.success-btn {
+        color: var(--success);
+      }
+
+      .action-btn.danger-btn {
+        color: var(--danger);
+      }
+
+      /* ── 消息提示 ── */
+      .msg-area {
+        min-height: 0;
+        overflow: hidden;
+        transition: var(--transition);
+      }
+
+      .msg-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-radius: var(--border-radius-xs);
+        font-size: 0.82rem;
+        font-weight: 600;
+        animation: msgIn 0.25s ease;
+      }
+
+      @keyframes msgIn {
+        from { opacity: 0; transform: translateY(-6px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .msg-bar.success {
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        color: var(--success);
+      }
+
+      .msg-bar.error {
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        color: var(--danger);
+        animation: msgIn 0.25s ease, shake 0.35s ease 0.1s;
+      }
+
+      @keyframes shake {
+        0%,100% { transform: translateX(0); }
+        25%      { transform: translateX(-5px); }
+        75%      { transform: translateX(5px); }
+      }
+
+      /* ── 统计卡片 ── */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .stat-item {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        padding: 14px 10px;
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: block;
+        line-height: 1.2;
+      }
+
+      .stat-label {
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+
+      /* ── JSON Editor 容器 ── */
+      .viewer-wrap {
+        border-radius: var(--border-radius-xs);
+        overflow: hidden;
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+      }
+
+      #jsoneditor {
+        height: 420px;
+        border: none !important;
+      }
+
+      /* Override JSONEditor styles to fit neumorphism */
+      .jsoneditor {
+        border: none !important;
+        background: var(--bg-primary) !important;
+      }
+
+      .jsoneditor-menu {
+        background: var(--bg-primary) !important;
+        border-bottom: 1px solid var(--shadow-dark) !important;
+      }
+
+      .jsoneditor-menu button {
+        background: var(--bg-primary) !important;
+        color: var(--text-secondary) !important;
+        box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light) !important;
+        border-radius: 6px !important;
+        border: none !important;
+        margin: 2px !important;
+        transition: var(--transition) !important;
+      }
+
+      .jsoneditor-menu button:hover {
+        background: var(--bg-primary) !important;
+        box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light) !important;
+      }
+
+      .jsoneditor-navigation-bar {
+        background: var(--bg-primary) !important;
+        border-bottom: 1px solid var(--shadow-dark) !important;
+        color: var(--text-secondary) !important;
+        font-size: 0.78rem !important;
+      }
+
+      .jsoneditor-tree {
+        background: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+      }
+
+      .jsoneditor-field { color: var(--accent-primary) !important; }
+      .jsoneditor-string { color: #4ecdc4 !important; }
+      .jsoneditor-number { color: #f7b731 !important; }
+      .jsoneditor-boolean { color: #fc5c65 !important; }
+      .jsoneditor-null { color: var(--text-muted) !important; }
+
+      .jsoneditor-statusbar {
+        background: var(--bg-primary) !important;
+        border-top: 1px solid var(--shadow-dark) !important;
+        color: var(--text-muted) !important;
+        font-size: 0.72rem !important;
+      }
+
+      /* ── 使用说明 ── */
+      .instructions-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon {
+        font-size: 1rem;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .instr-text {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instr-text strong {
+        color: var(--text-primary);
+        font-weight: 700;
+      }
+
+      /* ── 响应式 ── */
+      @media (max-width: 420px) {
+        h1 { font-size: 1.8rem; }
+        .stats-grid { grid-template-columns: repeat(3, 1fr); }
+        .action-grid { grid-template-columns: 1fr 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>JSON 查看</h1>
+      <p class="subtitle">格式化 · 验证 · 可视化</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 文件上传 -->
+      <div class="card">
+        <div class="card-label">选择文件</div>
+        <div class="file-drop" id="fileUpload">
+          <span class="file-drop-icon">📁</span>
+          <div class="file-drop-text">拖拽文件到此处</div>
+          <div class="file-drop-sub">或点击选择文件</div>
+          <span class="file-badge">支持 .json 文件</span>
+          <input type="file" id="fileInput" accept=".json,application/json,text/plain" />
+        </div>
+        <div class="file-chosen" id="fileChosen"></div>
+      </div>
+
+      <!-- 直接输入 -->
+      <div class="card">
+        <div class="card-label">直接输入 JSON</div>
+        <textarea
+          id="jsonInput"
+          class="json-textarea"
+          placeholder="在此粘贴或输入 JSON 数据…&#10;&#10;示例：&#10;{&#10;  &quot;name&quot;: &quot;张三&quot;,&#10;  &quot;age&quot;: 25&#10;}"
+        ></textarea>
+        <div class="validate-bar">
+          <div class="validate-bar-fill" id="validateFill"></div>
+        </div>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="card">
+        <div class="card-label">操作</div>
+        <div class="action-grid">
+          <button class="action-btn primary" id="formatBtn">🎨 格式化 &amp; 解析</button>
+          <button class="action-btn success-btn" id="validateBtn">✅ 验证</button>
+          <button class="action-btn" id="copyBtn">📋 复制</button>
+          <button class="action-btn" id="downloadBtn">💾 下载</button>
+          <button class="action-btn danger-btn" id="clearBtn">🗑️ 清空</button>
+        </div>
+      </div>
+
+      <!-- 消息提示 -->
+      <div class="msg-area" id="messageArea"></div>
+
+      <!-- 统计（解析后才显示） -->
+      <div class="card" id="statsCard" style="display:none">
+        <div class="card-label">数据统计</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-value" id="sizeValue">—</span>
+            <div class="stat-label">文件大小</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="keysValue">—</span>
+            <div class="stat-label">键数量</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="depthValue">—</span>
+            <div class="stat-label">嵌套深度</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- JSON 可视化 -->
+      <div class="card">
+        <div class="card-label">可视化视图</div>
+        <div class="viewer-wrap">
+          <div id="jsoneditor"></div>
+        </div>
+      </div>
+
+      <!-- 使用说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instructions-list">
+          <div class="instr-item">
+            <span class="instr-icon">📁</span>
+            <div class="instr-text"><strong>文件上传</strong>：拖拽或点击选择 JSON 文件，自动读取并解析</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">✏️</span>
+            <div class="instr-text"><strong>直接输入</strong>：在文本框粘贴 JSON，输入时实时验证语法</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🎨</span>
+            <div class="instr-text"><strong>格式化</strong>：自动美化 JSON，在可视化视图中树形展示</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🌲</span>
+            <div class="instr-text"><strong>可视化</strong>：支持树形折叠、代码、预览多种模式切换</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔒</span>
+            <div class="instr-text"><strong>数据安全</strong>：完全本地处理，数据不上传服务器</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="./json/jsoneditor.min.js"></script>
+    <script>
+      // ── JSONEditor 初始化 ──────────────────────────────
+      let editor = null;
+      let currentJsonData = null;
+
+      function initEditor() {
+        const container = document.getElementById('jsoneditor');
+        editor = new JSONEditor(container, {
+          mode: 'view',
+          modes: ['code', 'tree', 'view', 'preview'],
+          search: true,
+          navigationBar: true,
+          statusBar: true,
+          mainMenuBar: true,
+          onError: (err) => showMsg(err.toString(), 'error'),
+        });
+      }
+
+      // ── 消息提示 ──────────────────────────────────────
+      function showMsg(text, type = 'success') {
+        const area = document.getElementById('messageArea');
+        area.innerHTML = `<div class="msg-bar ${type}">${text}</div>`;
+        setTimeout(() => { area.innerHTML = ''; }, 3000);
+      }
+
+      // ── 统计信息 ──────────────────────────────────────
+      function updateStats(data) {
+        const jsonStr = JSON.stringify(data);
+        const size = new Blob([jsonStr]).size;
+        const sizeStr = size < 1024 ? size + ' B'
+                      : size < 1024*1024 ? (size/1024).toFixed(1) + ' KB'
+                      : (size/(1024*1024)).toFixed(1) + ' MB';
+
+        function countKeys(o) {
+          if (typeof o !== 'object' || o === null) return 0;
+          let c = Array.isArray(o) ? o.length : Object.keys(o).length;
+          Object.values(o).forEach(v => { c += countKeys(v); });
+          return c;
+        }
+
+        function getDepth(o) {
+          if (typeof o !== 'object' || o === null) return 0;
+          return 1 + Math.max(0, ...Object.values(o).map(getDepth));
+        }
+
+        document.getElementById('sizeValue').textContent  = sizeStr;
+        document.getElementById('keysValue').textContent  = countKeys(data);
+        document.getElementById('depthValue').textContent = getDepth(data);
+        document.getElementById('statsCard').style.display = 'block';
+      }
+
+      // ── 解析 & 渲染 ───────────────────────────────────
+      function processJson(str) {
+        try {
+          const data = JSON.parse(str);
+          currentJsonData = data;
+          editor.set(data);
+          updateStats(data);
+          showMsg('✅ JSON 解析成功', 'success');
+          return true;
+        } catch (e) {
+          showMsg(`❌ 解析错误：${e.message}`, 'error');
+          return false;
+        }
+      }
+
+      // ── 文件读取 ──────────────────────────────────────
+      function handleFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const content = e.target.result;
+          document.getElementById('jsonInput').value = content;
+          triggerValidateBar(content);
+          processJson(content);
+          const chosen = document.getElementById('fileChosen');
+          chosen.textContent = `✅ 已加载：${file.name}`;
+          chosen.style.display = 'block';
+        };
+        reader.onerror = () => showMsg('❌ 文件读取失败', 'error');
+        reader.readAsText(file);
+      }
+
+      // ── 实时验证条 ────────────────────────────────────
+      function triggerValidateBar(str) {
+        const fill = document.getElementById('validateFill');
+        fill.className = 'validate-bar-fill';
+        if (!str.trim()) { fill.style.width = '0'; return; }
+        try {
+          JSON.parse(str);
+          fill.className = 'validate-bar-fill valid';
+        } catch {
+          fill.className = 'validate-bar-fill invalid';
+        }
+      }
+
+      // ── 复制 ──────────────────────────────────────────
+      function copyText(str) {
+        const write = () => {
+          if (navigator.clipboard?.writeText) {
+            navigator.clipboard.writeText(str).catch(fallback);
+          } else fallback();
+        };
+        const fallback = () => {
+          const el = document.createElement('textarea');
+          el.value = str;
+          el.style.cssText = 'position:fixed;opacity:0';
+          document.body.appendChild(el);
+          el.select();
+          try { document.execCommand('copy'); } catch(e) {}
+          document.body.removeChild(el);
+        };
+        write();
+      }
+
+      // ── 事件绑定 ──────────────────────────────────────
+      document.addEventListener('DOMContentLoaded', () => {
+        initEditor();
+
+        // 文件输入
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+          handleFile(e.target.files[0]);
+        });
+
+        // 拖拽
+        const dropZone = document.getElementById('fileUpload');
+        dropZone.addEventListener('dragover',  (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+        dropZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropZone.classList.remove('dragover');
+          handleFile(e.dataTransfer.files[0]);
+        });
+
+        // 实时验证条
+        let timer;
+        document.getElementById('jsonInput').addEventListener('input', function() {
+          clearTimeout(timer);
+          timer = setTimeout(() => triggerValidateBar(this.value), 400);
+        });
+
+        // 格式化
+        document.getElementById('formatBtn').addEventListener('click', () => {
+          const v = document.getElementById('jsonInput').value.trim();
+          if (!v) { showMsg('⚠️ 请先输入 JSON 数据', 'error'); return; }
+          if (processJson(v)) {
+            // 美化回填到 textarea
+            document.getElementById('jsonInput').value = JSON.stringify(currentJsonData, null, 2);
+          }
+        });
+
+        // 验证
+        document.getElementById('validateBtn').addEventListener('click', () => {
+          const v = document.getElementById('jsonInput').value.trim();
+          if (!v) { showMsg('⚠️ 请先输入 JSON 数据', 'error'); return; }
+          try { JSON.parse(v); showMsg('✅ JSON 格式正确', 'success'); }
+          catch (e) { showMsg(`❌ 格式错误：${e.message}`, 'error'); }
+        });
+
+        // 复制
+        document.getElementById('copyBtn').addEventListener('click', function() {
+          if (!currentJsonData) { showMsg('⚠️ 没有可复制的数据', 'error'); return; }
+          copyText(JSON.stringify(currentJsonData, null, 2));
+          const orig = this.textContent;
+          this.textContent = '已复制 ✓';
+          this.style.color = 'var(--success)';
+          setTimeout(() => { this.textContent = orig; this.style.color = ''; }, 1800);
+        });
+
+        // 下载
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+          if (!currentJsonData) { showMsg('⚠️ 没有可下载的数据', 'error'); return; }
+          const blob = new Blob([JSON.stringify(currentJsonData, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = 'formatted.json';
+          document.body.appendChild(a); a.click();
+          document.body.removeChild(a); URL.revokeObjectURL(url);
+          showMsg('💾 文件已下载', 'success');
+        });
+
+        // 清空
+        document.getElementById('clearBtn').addEventListener('click', () => {
+          document.getElementById('jsonInput').value = '';
+          document.getElementById('validateFill').className = 'validate-bar-fill';
+          document.getElementById('fileChosen').style.display = 'none';
+          document.getElementById('statsCard').style.display = 'none';
+          document.getElementById('messageArea').innerHTML = '';
+          currentJsonData = null;
+          editor.set({});
+          showMsg('🗑️ 内容已清空', 'success');
+        });
+      });
+    </script>
+
+  </body>
+</html>

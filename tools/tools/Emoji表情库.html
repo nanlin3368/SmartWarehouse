@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Emoji 表情库</title>
+  <style>
+    :root {
+      --bg-primary: #e0e5ec;
+      --shadow-light: #ffffff;
+      --shadow-dark: #a3b1c6;
+      --text-primary: #2c3e50;
+      --text-secondary: #5a6c7d;
+      --text-muted: #8b9dc3;
+      --accent-primary: #667eea;
+      --accent-secondary: #764ba2;
+      --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --success: #4ecdc4;
+      --warning: #f7b731;
+      --border-radius: 20px;
+      --border-radius-sm: 14px;
+      --border-radius-xs: 10px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: pageLoad 0.8s ease;
+    }
+
+    @keyframes pageLoad {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      max-width: 680px;
+      text-align: center;
+      padding: 28px 24px 22px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      animation: headerSlide 0.8s ease 0.2s both;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      animation: headerShine 4s ease-in-out infinite;
+    }
+
+    @keyframes headerSlide {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes headerShine {
+      0%   { left: -100%; }
+      50%  { left: 100%; }
+      100% { left: 100%; }
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+      animation: titleGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      from { filter: brightness(1); }
+      to   { filter: brightness(1.15); }
+    }
+
+    .subtitle {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* ── 主内容 ── */
+    .main {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: contentSlide 0.8s ease 0.4s both;
+    }
+
+    @keyframes contentSlide {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── 通用卡片 ── */
+    .card {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+      padding: 22px 20px;
+    }
+
+    .card-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    /* ── 统计数字区 ── */
+    .stats-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat-item {
+      flex: 1;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      padding: 12px 8px;
+      text-align: center;
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* 统计与分类之间的分隔 */
+    .stats-divider {
+      border: none;
+      border-top: 1px solid rgba(163, 177, 198, 0.3);
+      margin: 0 0 16px 0;
+    }
+
+    /* ── 搜索区域 ── */
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 44px 14px 42px;
+      border: none;
+      border-radius: var(--border-radius-xs);
+      background: var(--bg-primary);
+      box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .search-input:focus {
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light),
+                  0 0 0 2px rgba(102,126,234,0.15);
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: none;
+      padding: 4px;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .search-clear.visible { display: flex; align-items: center; justify-content: center; }
+    .search-clear:active { color: var(--accent-primary); }
+
+    /* ── 手风琴分类 ── */
+    .categories-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .category-item {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: 5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+      overflow: hidden;
+    }
+
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 16px;
+      cursor: pointer;
+      background: var(--bg-primary);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .category-header:active {
+      background: rgba(102, 126, 234, 0.06);
+    }
+
+    .category-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toggle-icon {
+      font-size: 0.8rem;
+      transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      color: var(--accent-primary);
+    }
+
+    .category-count {
+      background: var(--bg-primary);
+      padding: 3px 10px;
+      border-radius: 40px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+    }
+
+    /* ── 内容折叠区（固定高度 + 内部滚动） ── */
+    .emojis-container {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.38s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      background: var(--bg-primary);
+    }
+
+    .category-item.expanded .emojis-container {
+      max-height: 500px;
+    }
+
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+      gap: 10px;
+      padding: 14px 16px;
+      border-top: 1px solid rgba(163, 177, 198, 0.25);
+      max-height: 440px;
+      overflow-y: auto;
+    }
+
+    /* 自定义滚动条 */
+    .emoji-grid::-webkit-scrollbar { width: 4px; }
+    .emoji-grid::-webkit-scrollbar-track { background: transparent; }
+    .emoji-grid::-webkit-scrollbar-thumb {
+      background: var(--shadow-dark);
+      border-radius: 4px;
+    }
+
+    /* ── Emoji 卡片 ── */
+    .emoji-item {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      text-align: center;
+      padding: 10px 6px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .emoji-item:active {
+      transform: scale(0.92);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+    }
+
+    .emoji-item.fav-item {
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light),
+                  0 0 0 2px rgba(247, 183, 49, 0.4);
+    }
+
+    .emoji-symbol {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .emoji-name {
+      font-size: 0.58rem;
+      color: var(--text-muted);
+      margin-top: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .emoji-fav-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      font-size: 0.55rem;
+      line-height: 1;
+    }
+
+    /* ── 最近复制区 ── */
+    .recent-grid {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .recent-emoji-item {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      text-align: center;
+      padding: 10px 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      min-width: 58px;
+    }
+
+    .recent-emoji-item:active {
+      transform: scale(0.92);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+    }
+
+    .recent-empty {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 10px 0;
+    }
+
+    /* ── 无结果 ── */
+    .no-result {
+      text-align: center;
+      padding: 36px 20px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .reset-search-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 18px;
+      background: var(--bg-primary);
+      border: none;
+      border-radius: 30px;
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      cursor: pointer;
+    }
+
+    /* ── 操作提示 ── */
+    .action-sub {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 14px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ── 说明卡片 ── */
+    .instr-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .instr-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-xs);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+    }
+
+    .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+    .instr-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+    .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(44, 62, 80, 0.92);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 9999;
+      white-space: nowrap;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 550px) {
+      .card { padding: 18px 16px; }
+      h1 { font-size: 1.8rem; }
+      .emoji-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Emoji 表情库</h1>
+  <p class="subtitle">分类折叠 · 常用精选 · 点击复制</p>
+</header>
+
+<div class="main">
+
+  <!-- 🔍 搜索卡片（独立放置于最上方） -->
+  <div class="card">
+    <div class="card-label">🔍 搜索表情</div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input"
+             placeholder="搜索 Emoji（关键词，如：笑脸、心、动物）" autocomplete="off">
+      <button class="search-clear" id="searchClear">✕</button>
+    </div>
+  </div>
+
+  <!-- 📊 数据概览 + 📂 分类浏览（合并为一个卡片） -->
+  <div class="card">
+    <div class="card-label">📊 表情总览</div>
+    <!-- 统计面板 -->
+    <div class="stats-grid" id="statsPanel"></div>
+    <hr class="stats-divider">
+    <!-- 分类手风琴列表 -->
+    <div class="categories-stack" id="categoriesContainer"></div>
+    <div class="action-sub">点击任意 Emoji 即可复制 · 长按可收藏 ⭐ 常用表情</div>
+  </div>
+
+  <!-- 最近复制 -->
+  <div class="card">
+    <div class="card-label">🕐 最近复制</div>
+    <div id="recentGrid" class="recent-grid"></div>
+  </div>
+
+  <!-- 使用说明 -->
+  <div class="card">
+    <div class="card-label">📖 使用说明</div>
+    <div class="instr-list">
+      <div class="instr-item">
+        <span class="instr-icon">🔍</span>
+        <div class="instr-text"><strong>搜索过滤</strong>：输入关键词实时筛选全部 Emoji，搜索时自动展开所有匹配分类。</div>
+      </div>
+      <div class="instr-item">
+        <span class="instr-icon">📂</span>
+        <div class="instr-text"><strong>互斥展开</strong>：点击分类标题展开该分类，同时自动收起其他分类；展开区域固定高度，超出可滚动查看。</div>
+      </div>
+      <div class="instr-item">
+        <span class="instr-icon">⭐</span>
+        <div class="instr-text"><strong>收藏表情</strong>：长按 Emoji 卡片即可收藏，收藏分类自动置顶，方便快速找到常用表情。</div>
+      </div>
+      <div class="instr-item">
+        <span class="instr-icon">📋</span>
+        <div class="instr-text"><strong>一键复制</strong>：点击任意 Emoji 卡片即可复制到剪贴板，最近 10 条复制记录自动保存。</div>
+      </div>
+      <div class="instr-item">
+        <span class="instr-icon">🔒</span>
+        <div class="instr-text"><strong>隐私安全</strong>：所有操作及收藏数据本地完成，不联网上传任何数据。</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+  // ── Emoji 数据库 ─────────────────────────────
+  const categoriesData = [
+  {
+    id: "face",
+    name: "😀 笑脸与情感",
+    emojis: [
+      { e: "😀", n: "笑脸" }, { e: "😃", n: "张嘴笑" }, { e: "😄", n: "大笑" }, { e: "😁", n: "眯眯笑" },
+      { e: "😆", n: "咧嘴笑" }, { e: "😅", n: "流汗笑" }, { e: "😂", n: "笑哭" }, { e: "🤣", n: "笑趴" },
+      { e: "🥲", n: "含泪笑" }, { e: "☺️", n: "腼腆笑" }, { e: "😊", n: "微笑" }, { e: "😇", n: "天使笑" },
+      { e: "🙂", n: "微微笑" }, { e: "🙃", n: "倒脸" }, { e: "😉", n: "眨眼" }, { e: "😌", n: "松口气" },
+      { e: "😍", n: "心心眼" }, { e: "🥰", n: "爱慕" }, { e: "😘", n: "飞吻" }, { e: "😗", n: "亲吻" },
+      { e: "😙", n: "亲吻笑" }, { e: "😚", n: "闭眼吻" }, { e: "😋", n: "美味" }, { e: "😛", n: "吐舌头" },
+      { e: "😝", n: "吐舌闭眼" }, { e: "😜", n: "眨眼吐舌" }, { e: "🤪", n: "搞怪" }, { e: "🤨", n: "挑眉" },
+      { e: "🧐", n: "戴眼镜" }, { e: "🤓", n: "书呆子" }, { e: "😎", n: "酷" }, { e: "🥸", n: "伪装" },
+      { e: "🤩", n: "星星眼" }, { e: "🥳", n: "庆祝" }, { e: "😏", n: "坏笑" }, { e: "😒", n: "不高兴" },
+      { e: "😞", n: "失望" }, { e: "😔", n: "沉思" }, { e: "😟", n: "担忧" }, { e: "😕", n: "困惑" },
+      { e: "🙁", n: "微沮丧" }, { e: "☹️", n: "沮丧" }, { e: "😣", n: "挣扎" }, { e: "😖", n: "难受" },
+      { e: "😫", n: "累" }, { e: "😩", n: "疲惫" }, { e: "🥺", n: "祈求" }, { e: "😢", n: "哭" },
+      { e: "😭", n: "大哭" }, { e: "😤", n: "生气" }, { e: "😠", n: "怒" }, { e: "😡", n: "愤怒" },
+      { e: "🤬", n: "骂人" }, { e: "🤯", n: "爆炸头" }, { e: "😳", n: "脸红" }, { e: "🥵", n: "热" },
+      { e: "🥶", n: "冷" }, { e: "😱", n: "吓到" }, { e: "😨", n: "害怕" }, { e: "😰", n: "冷汗" },
+      { e: "😥", n: "失望汗" }, { e: "😓", n: "流汗" }, { e: "🤗", n: "拥抱" }, { e: "🤔", n: "思考" },
+      { e: "🤭", n: "捂嘴" }, { e: "🤫", n: "嘘" }, { e: "🤥", n: "说谎" }, { e: "😶", n: "闭嘴" },
+      { e: "😐", n: "面无表情" }, { e: "😑", n: "无语" }, { e: "😬", n: "尴尬" }, { e: "🙄", n: "翻白眼" },
+      { e: "😯", n: "惊讶" }, { e: "😦", n: "张嘴皱眉" }, { e: "😧", n: "惊恐" }, { e: "😮", n: "哇" },
+      { e: "😲", n: "震惊" }, { e: "🥱", n: "打哈欠" }, { e: "😴", n: "睡觉" }, { e: "🤤", n: "流口水" },
+      { e: "😪", n: "困" }, { e: "😵", n: "晕" }
+    ]
+  },
+  {
+    id: "people",
+    name: "👨 人物与手势",
+    emojis: [
+      { e: "👶", n: "婴儿" }, { e: "🧒", n: "儿童" }, { e: "👦", n: "男孩" }, { e: "👧", n: "女孩" },
+      { e: "🧑", n: "成人" }, { e: "👨", n: "男人" }, { e: "👩", n: "女人" }, { e: "🧔", n: "胡须" },
+      { e: "👴", n: "老爷爷" }, { e: "👵", n: "老奶奶" }, { e: "👨‍🦰", n: "红发男" }, { e: "👩‍🦰", n: "红发女" },
+      { e: "👨‍🦱", n: "卷发男" }, { e: "👩‍🦱", n: "卷发女" }, { e: "🙋", n: "举手" }, { e: "🙆", n: "OK手势" },
+      { e: "💁", n: "服务" }, { e: "🙅", n: "不行" }, { e: "🤷", n: "耸肩" }, { e: "🤦", n: "捂脸" },
+      { e: "👸", n: "公主" }, { e: "🤴", n: "王子" }, { e: "👳", n: "缠头巾" }, { e: "👲", n: "瓜皮帽" },
+      { e: "🧕", n: "头巾女" }, { e: "👰", n: "新娘" }, { e: "🤵", n: "新郎" }, { e: "👼", n: "天使" },
+      { e: "🎅", n: "圣诞老人" }, { e: "🤶", n: "圣诞奶奶" }, { e: "🦸", n: "超级英雄" }, { e: "🦹", n: "反派" },
+      { e: "🧙", n: "魔法师" }, { e: "🧚", n: "仙女" }, { e: "🧛", n: "吸血鬼" }, { e: "🧜", n: "人鱼" },
+      { e: "🧝", n: "精灵" }, { e: "🧞", n: "灯神" }, { e: "🧟", n: "僵尸" }, { e: "💃", n: "跳舞女" },
+      { e: "🕺", n: "跳舞男" }, { e: "🕴️", n: "西装男" }, { e: "👯", n: "兔女郎" }, { e: "🧖", n: "蒸汽房" },
+      { e: "🧘", n: "瑜伽" }, { e: "🛀", n: "泡澡" }, { e: "🛌", n: "睡觉" }, { e: "👭", n: "女女牵手" },
+      { e: "👫", n: "男女牵手" }, { e: "👬", n: "男男牵手" }, { e: "💏", n: "亲吻" }, { e: "💑", n: "情侣" },
+      { e: "👪", n: "家庭" }, { e: "🗣️", n: "说话" }, { e: "👤", n: "轮廓" }, { e: "👥", n: "双人影" },
+      { e: "👣", n: "脚印" }, { e: "🦶", n: "脚" }, { e: "🦷", n: "牙齿" }, { e: "🦴", n: "骨头" },
+      { e: "👀", n: "眼睛" }, { e: "👁️", n: "单眼" }, { e: "👃", n: "鼻子" }, { e: "👄", n: "嘴巴" },
+      { e: "👅", n: "舌头" }, { e: "👂", n: "耳朵" }, { e: "🦻", n: "助听耳" }, { e: "👍", n: "赞" },
+      { e: "👎", n: "踩" }, { e: "👊", n: "拳头" }, { e: "✊", n: "举起拳" }, { e: "🤛", n: "左勾拳" },
+      { e: "🤜", n: "右勾拳" }, { e: "👏", n: "鼓掌" }, { e: "🙌", n: "举手欢呼" }, { e: "👐", n: "张开手" },
+      { e: "🤲", n: "掌心向上" }, { e: "🤝", n: "握手" }, { e: "🙏", n: "合十" }, { e: "✍️", n: "写字" },
+      { e: "💅", n: "美甲" }, { e: "💪", n: "肌肉" }, { e: "🦾", n: "机械臂" }, { e: "🦿", n: "机械腿" },
+      { e: "🦵", n: "腿" }, { e: "🦶", n: "脚" }
+    ]
+  },
+  {
+    id: "animal",
+    name: "🐶 动物与自然",
+    emojis: [
+      { e: "🐶", n: "狗" }, { e: "🐱", n: "猫" }, { e: "🐭", n: "老鼠" }, { e: "🐹", n: "仓鼠" },
+      { e: "🐰", n: "兔子" }, { e: "🦊", n: "狐狸" }, { e: "🐻", n: "熊" }, { e: "🐼", n: "熊猫" },
+      { e: "🐨", n: "考拉" }, { e: "🐯", n: "老虎" }, { e: "🦁", n: "狮子" }, { e: "🐮", n: "牛" },
+      { e: "🐷", n: "猪" }, { e: "🐸", n: "青蛙" }, { e: "🐵", n: "猴子" }, { e: "🐔", n: "鸡" },
+      { e: "🐧", n: "企鹅" }, { e: "🐦", n: "鸟" }, { e: "🐤", n: "小鸡" }, { e: "🐣", n: "破壳鸡" },
+      { e: "🐥", n: "正面鸡" }, { e: "🐺", n: "狼" }, { e: "🐗", n: "野猪" }, { e: "🐴", n: "马" },
+      { e: "🦄", n: "独角兽" }, { e: "🐝", n: "蜜蜂" }, { e: "🐛", n: "毛毛虫" }, { e: "🦋", n: "蝴蝶" },
+      { e: "🐌", n: "蜗牛" }, { e: "🐞", n: "瓢虫" }, { e: "🐜", n: "蚂蚁" }, { e: "🦟", n: "蚊子" },
+      { e: "🦗", n: "蟋蟀" }, { e: "🕷️", n: "蜘蛛" }, { e: "🕸️", n: "蜘蛛网" }, { e: "🦂", n: "蝎子" },
+      { e: "🐢", n: "乌龟" }, { e: "🐍", n: "蛇" }, { e: "🦎", n: "蜥蜴" }, { e: "🐙", n: "章鱼" },
+      { e: "🦑", n: "鱿鱼" }, { e: "🦐", n: "虾" }, { e: "🦞", n: "龙虾" }, { e: "🐠", n: "热带鱼" },
+      { e: "🐟", n: "鱼" }, { e: "🐡", n: "河豚" }, { e: "🐬", n: "海豚" }, { e: "🐳", n: "鲸鱼" },
+      { e: "🐋", n: "鲸" }, { e: "🦈", n: "鲨鱼" }, { e: "🌵", n: "仙人掌" }, { e: "🎄", n: "圣诞树" },
+      { e: "🌲", n: "松树" }, { e: "🌳", n: "落叶树" }, { e: "🌴", n: "棕榈树" }, { e: "🌱", n: "幼苗" },
+      { e: "🌿", n: "草药" }, { e: "🍀", n: "四叶草" }, { e: "🍃", n: "飘叶" }, { e: "🍂", n: "落叶" },
+      { e: "🍁", n: "枫叶" }, { e: "🍄", n: "蘑菇" }, { e: "🐚", n: "贝壳" }, { e: "🌍", n: "地球欧非" },
+      { e: "🌎", n: "地球美洲" }, { e: "🌏", n: "地球亚太" }, { e: "🌕", n: "满月" }, { e: "🌖", n: "亏凸月" },
+      { e: "🌟", n: "星星" }, { e: "⭐", n: "五角星" }, { e: "🌙", n: "月亮" }, { e: "🌚", n: "新月脸" },
+      { e: "🌝", n: "满月脸" }, { e: "🌞", n: "太阳脸" }, { e: "⚡", n: "闪电" }, { e: "🔥", n: "火" },
+      { e: "💧", n: "水滴" }, { e: "🌊", n: "波浪" }
+    ]
+  },
+  {
+    id: "food",
+    name: "🍎 食物与饮品",
+    emojis: [
+      { e: "🍎", n: "苹果" }, { e: "🍐", n: "梨" }, { e: "🍊", n: "橙子" }, { e: "🍋", n: "柠檬" },
+      { e: "🍌", n: "香蕉" }, { e: "🍉", n: "西瓜" }, { e: "🍇", n: "葡萄" }, { e: "🍓", n: "草莓" },
+      { e: "🫐", n: "蓝莓" }, { e: "🍈", n: "哈密瓜" }, { e: "🍒", n: "樱桃" }, { e: "🍑", n: "桃子" },
+      { e: "🥭", n: "芒果" }, { e: "🍍", n: "菠萝" }, { e: "🥥", n: "椰子" }, { e: "🥝", n: "猕猴桃" },
+      { e: "🍅", n: "番茄" }, { e: "🍆", n: "茄子" }, { e: "🥑", n: "牛油果" }, { e: "🥦", n: "西兰花" },
+      { e: "🥬", n: "绿叶菜" }, { e: "🥒", n: "黄瓜" }, { e: "🌶️", n: "辣椒" }, { e: "🫑", n: "甜椒" },
+      { e: "🌽", n: "玉米" }, { e: "🥕", n: "胡萝卜" }, { e: "🥔", n: "土豆" }, { e: "🍠", n: "红薯" },
+      { e: "🥐", n: "牛角包" }, { e: "🥯", n: "贝果" }, { e: "🍞", n: "面包" }, { e: "🥖", n: "法棍" },
+      { e: "🥨", n: "椒盐卷饼" }, { e: "🧀", n: "奶酪" }, { e: "🥚", n: "蛋" }, { e: "🍳", n: "煎蛋" },
+      { e: "🥓", n: "培根" }, { e: "🥩", n: "牛排" }, { e: "🍗", n: "鸡腿" }, { e: "🍖", n: "带骨肉" },
+      { e: "🌭", n: "热狗" }, { e: "🍔", n: "汉堡" }, { e: "🍟", n: "薯条" }, { e: "🍕", n: "披萨" },
+      { e: "🥪", n: "三明治" }, { e: "🥙", n: "卷饼" }, { e: "🌮", n: "墨西哥卷" }, { e: "🌯", n: "墨西哥卷饼" },
+      { e: "🥗", n: "沙拉" }, { e: "🥘", n: "平底锅菜" }, { e: "🥫", n: "罐头" }, { e: "🍝", n: "意大利面" },
+      { e: "🍜", n: "面条" }, { e: "🍲", n: "火锅" }, { e: "🍛", n: "咖喱饭" }, { e: "🍣", n: "寿司" },
+      { e: "🍱", n: "便当" }, { e: "🥟", n: "饺子" }, { e: "🍤", n: "炸虾" }, { e: "🍙", n: "饭团" },
+      { e: "🍚", n: "米饭" }, { e: "🍘", n: "仙贝" }, { e: "🍥", n: "鱼板" }, { e: "🥠", n: "饼干" },
+      { e: "🥮", n: "月饼" }, { e: "🍢", n: "关东煮" }, { e: "🍡", n: "团子" }, { e: "🍧", n: "刨冰" },
+      { e: "🍨", n: "冰淇淋" }, { e: "🍦", n: "甜筒" }, { e: "🥧", n: "派" }, { e: "🧁", n: "纸杯蛋糕" },
+      { e: "🍰", n: "蛋糕" }, { e: "🎂", n: "生日蛋糕" }, { e: "🍮", n: "布丁" }, { e: "🍭", n: "棒棒糖" },
+      { e: "🍬", n: "糖果" }, { e: "🍫", n: "巧克力" }, { e: "🍿", n: "爆米花" }, { e: "🍩", n: "甜甜圈" },
+      { e: "🍪", n: "饼干" }, { e: "🍯", n: "蜂蜜罐" }, { e: "🥛", n: "牛奶" }, { e: "🍼", n: "奶瓶" },
+      { e: "☕", n: "咖啡" }, { e: "🍵", n: "茶" }, { e: "🧃", n: "果汁盒" }, { e: "🥤", n: "杯装饮料" },
+      { e: "🧋", n: "奶茶" }, { e: "🍶", n: "清酒" }, { e: "🍺", n: "啤酒" }, { e: "🍻", n: "干杯" },
+      { e: "🥂", n: "碰杯" }, { e: "🥃", n: "烈酒杯" }
+    ]
+  },
+  {
+    id: "sports",
+    name: "⚽ 活动与运动",
+    emojis: [
+      { e: "⚽", n: "足球" }, { e: "🏀", n: "篮球" }, { e: "🏈", n: "橄榄球" }, { e: "⚾", n: "棒球" },
+      { e: "🥎", n: "垒球" }, { e: "🎾", n: "网球" }, { e: "🏐", n: "排球" }, { e: "🏉", n: "英式橄榄" },
+      { e: "🥏", n: "飞盘" }, { e: "🎱", n: "台球" }, { e: "🪀", n: "溜溜球" }, { e: "🏓", n: "乒乓球" },
+      { e: "🏸", n: "羽毛球" }, { e: "🏒", n: "冰球" }, { e: "🏑", n: "曲棍球" }, { e: "🥍", n: "长曲棍球" },
+      { e: "🏏", n: "板球" }, { e: "🪃", n: "回旋镖" }, { e: "🥅", n: "球门" }, { e: "⛳", n: "高尔夫" },
+      { e: "🪁", n: "风筝" }, { e: "🏹", n: "射箭" }, { e: "🎣", n: "钓鱼" }, { e: "🤿", n: "潜水镜" },
+      { e: "🥊", n: "拳击手套" }, { e: "🥋", n: "武道服" }, { e: "🎽", n: "运动背心" }, { e: "🛹", n: "滑板" },
+      { e: "🛼", n: "旱冰鞋" }, { e: "⛸️", n: "冰刀" }, { e: "🥌", n: "冰壶" }, { e: "🎿", n: "滑雪" },
+      { e: "⛷️", n: "滑雪者" }, { e: "🏂", n: "单板滑雪" }, { e: "🪂", n: "降落伞" }, { e: "🏋️", n: "举重" },
+      { e: "🤼", n: "摔跤" }, { e: "🤸", n: "体操" }, { e: "⛹️", n: "篮球" }, { e: "🤾", n: "手球" },
+      { e: "🏌️", n: "高尔夫" }, { e: "🏇", n: "赛马" }, { e: "🧘", n: "瑜伽" }, { e: "🏄", n: "冲浪" },
+      { e: "🏊", n: "游泳" }, { e: "🤽", n: "水球" }, { e: "🚣", n: "划船" }, { e: "🧗", n: "攀岩" },
+      { e: "🚵", n: "山地车" }, { e: "🚴", n: "骑车" }, { e: "🏍️", n: "摩托车" }, { e: "🚨", n: "警车" },
+      { e: "🚔", n: "巡逻车" }, { e: "🚍", n: "公交" }, { e: "🚘", n: "汽车" }, { e: "🚖", n: "出租车" },
+      { e: "🚡", n: "缆车" }, { e: "🚠", n: "吊车" }, { e: "🚟", n: "悬挂列车" }, { e: "🚃", n: "电车" },
+      { e: "🚋", n: "电车" }, { e: "🚞", n: "山地铁路" }, { e: "🚝", n: "单轨" }, { e: "🚄", n: "高铁" },
+      { e: "🚅", n: "子弹头" }, { e: "🚈", n: "轻轨" }, { e: "🚂", n: "火车" }, { e: "🚆", n: "火车" },
+      { e: "🚇", n: "地铁" }, { e: "🚊", n: "轻轨" }, { e: "🚉", n: "车站" }, { e: "🚁", n: "直升机" },
+      { e: "🛩️", n: "飞机" }, { e: "🚀", n: "火箭" }, { e: "🛸", n: "飞碟" }, { e: "🚲", n: "自行车" },
+      { e: "🛴", n: "滑板车" }, { e: "🛵", n: "电动摩托" }, { e: "🏍️", n: "摩托车" }, { e: "🛺", n: "三轮车" },
+      { e: "🚚", n: "卡车" }, { e: "🚛", n: "货车" }, { e: "🚜", n: "拖拉机" }
+    ]
+  },
+  {
+    id: "travel",
+    name: "🌍 旅行与地点",
+    emojis: [
+      { e: "🏠", n: "房子" }, { e: "🏡", n: "房子花园" }, { e: "🏢", n: "办公楼" }, { e: "🏣", n: "邮局" },
+      { e: "🏤", n: "邮局" }, { e: "🏥", n: "医院" }, { e: "🏦", n: "银行" }, { e: "🏨", n: "酒店" },
+      { e: "🏩", n: "情人旅馆" }, { e: "🏪", n: "便利店" }, { e: "🏫", n: "学校" }, { e: "🏬", n: "百货" },
+      { e: "🏭", n: "工厂" }, { e: "🏯", n: "日本城" }, { e: "🏰", n: "城堡" }, { e: "💒", n: "教堂婚礼" },
+      { e: "🗼", n: "东京塔" }, { e: "🗽", n: "自由女神" }, { e: "⛪", n: "教堂" }, { e: "🕌", n: "清真寺" },
+      { e: "🕍", n: "犹太教堂" }, { e: "⛩️", n: "鸟居" }, { e: "🕋", n: "天房" }, { e: "⛲", n: "喷泉" },
+      { e: "⛺", n: "帐篷" }, { e: "🌁", n: "雾" }, { e: "🌃", n: "夜景" }, { e: "🏙️", n: "城市" },
+      { e: "🌄", n: "日出山" }, { e: "🌅", n: "日出海" }, { e: "🌆", n: "黄昏城" }, { e: "🌇", n: "日落" },
+      { e: "🌉", n: "夜桥" }, { e: "🎠", n: "旋转木马" }, { e: "🎡", n: "摩天轮" }, { e: "🎢", n: "过山车" },
+      { e: "🚂", n: "火车" }, { e: "🚁", n: "直升机" }, { e: "🚟", n: "吊轨" }, { e: "🚠", n: "缆车" },
+      { e: "🚡", n: "空中缆车" }, { e: "🚀", n: "火箭" }, { e: "🛸", n: "飞碟" }, { e: "🚤", n: "快艇" },
+      { e: "🛳️", n: "邮轮" }, { e: "⛴️", n: "渡轮" }, { e: "🛥️", n: "摩托艇" }, { e: "🚢", n: "轮船" },
+      { e: "✈️", n: "飞机" }, { e: "🛩️", n: "小飞机" }, { e: "🚌", n: "公交" }, { e: "🚎", n: "电车" },
+      { e: "🏎️", n: "赛车" }, { e: "🚓", n: "警车" }, { e: "🚑", n: "救护车" }, { e: "🚒", n: "消防车" },
+      { e: "🚐", n: "面包车" }, { e: "🚚", n: "卡车" }, { e: "🚛", n: "货车" }, { e: "🚜", n: "拖拉机" },
+      { e: "🏍️", n: "摩托车" }, { e: "🛵", n: "小摩托" }, { e: "🚲", n: "自行车" }, { e: "🛴", n: "滑板车" },
+      { e: "🛹", n: "滑板" }, { e: "🚏", n: "公交站" }, { e: "⛽", n: "加油站" }, { e: "🚨", n: "警灯" },
+      { e: "🚥", n: "信号灯" }, { e: "🚦", n: "红绿灯" }, { e: "🅿️", n: "停车场" }
+    ]
+  },
+  {
+    id: "object",
+    name: "💡 物品与符号",
+    emojis: [
+      { e: "⌚", n: "手表" }, { e: "📱", n: "手机" }, { e: "📲", n: "箭头手机" }, { e: "💻", n: "笔记本" },
+      { e: "⌨️", n: "键盘" }, { e: "🖥️", n: "显示器" }, { e: "🖨️", n: "打印机" }, { e: "🖱️", n: "鼠标" },
+      { e: "🖲️", n: "轨迹球" }, { e: "🕹️", n: "游戏杆" }, { e: "💽", n: "光盘" }, { e: "💾", n: "软盘" },
+      { e: "💿", n: "光盘" }, { e: "📀", n: "DVD" }, { e: "📼", n: "录像带" }, { e: "📷", n: "相机" },
+      { e: "📸", n: "闪光相机" }, { e: "📹", n: "摄像机" }, { e: "🎥", n: "电影机" }, { e: "📽️", n: "放映机" },
+      { e: "🎞️", n: "胶片" }, { e: "📞", n: "座机" }, { e: "☎️", n: "电话" }, { e: "📟", n: "寻呼机" },
+      { e: "📠", n: "传真" }, { e: "📺", n: "电视" }, { e: "📻", n: "收音机" }, { e: "🎙️", n: "话筒" },
+      { e: "🎚️", n: "推子" }, { e: "🎛️", n: "调音台" }, { e: "⏰", n: "闹钟" }, { e: "⏲️", n: "计时器" },
+      { e: "⏱️", n: "秒表" }, { e: "🕰️", n: "座钟" }, { e: "⏳", n: "沙漏" }, { e: "⌛", n: "沙漏" },
+      { e: "📡", n: "天线" }, { e: "🔋", n: "电池" }, { e: "🔌", n: "插头" }, { e: "💡", n: "灯泡" },
+      { e: "🔦", n: "手电" }, { e: "🕯️", n: "蜡烛" }, { e: "🧯", n: "灭火器" }, { e: "🛢️", n: "油桶" },
+      { e: "💸", n: "飞钱" }, { e: "💵", n: "美元" }, { e: "💴", n: "日元" }, { e: "💶", n: "欧元" },
+      { e: "💷", n: "英镑" }, { e: "💰", n: "钱袋" }, { e: "💳", n: "信用卡" }, { e: "💎", n: "宝石" },
+      { e: "⚖️", n: "天平" }, { e: "🔧", n: "扳手" }, { e: "🔨", n: "锤子" }, { e: "⚒️", n: "镐锤" },
+      { e: "🛠️", n: "锤扳" }, { e: "⛏️", n: "镐" }, { e: "🔩", n: "螺丝" }, { e: "⚙️", n: "齿轮" },
+      { e: "⛓️", n: "链条" }, { e: "🧰", n: "工具箱" }, { e: "🧲", n: "磁铁" }, { e: "🔫", n: "水枪" },
+      { e: "💣", n: "炸弹" }, { e: "🧨", n: "鞭炮" }, { e: "🪓", n: "斧头" }, { e: "🔪", n: "刀" },
+      { e: "🗡️", n: "匕首" }, { e: "⚔️", n: "双剑" }, { e: "🛡️", n: "盾牌" }, { e: "🚬", n: "香烟" },
+      { e: "⚰️", n: "棺材" }, { e: "⚱️", n: "骨灰盒" }, { e: "🏺", n: "陶罐" }, { e: "🔮", n: "水晶球" },
+      { e: "📿", n: "念珠" }, { e: "🧿", n: "护身符" }, { e: "💈", n: "理发店" }, { e: "🛎️", n: "服务铃" },
+      { e: "🧸", n: "泰迪熊" }, { e: "🪆", n: "套娃" }, { e: "🖼️", n: "画框" }, { e: "🧵", n: "线" },
+      { e: "🧶", n: "毛线" }, { e: "🪡", n: "针" }, { e: "🪢", n: "结" }, { e: "🔐", n: "锁匙" },
+      { e: "🔒", n: "锁" }, { e: "🔓", n: "开锁" }
+    ]
+  },
+  {
+    id: "heart",
+    name: "❤️ 心形与符号",
+    emojis: [
+      { e: "❤️", n: "红心" }, { e: "🧡", n: "橙心" }, { e: "💛", n: "黄心" }, { e: "💚", n: "绿心" },
+      { e: "💙", n: "蓝心" }, { e: "💜", n: "紫心" }, { e: "🖤", n: "黑心" }, { e: "🤍", n: "白心" },
+      { e: "🤎", n: "棕心" }, { e: "💔", n: "碎心" }, { e: "❣️", n: "叹心" }, { e: "💕", n: "双心" },
+      { e: "💞", n: "旋心" }, { e: "💓", n: "跳心" }, { e: "💗", n: "粉心" }, { e: "💖", n: "闪心" },
+      { e: "💘", n: "箭心" }, { e: "💝", n: "礼心" }, { e: "💟", n: "心饰" }, { e: "☮️", n: "和平" },
+      { e: "✝️", n: "十字" }, { e: "☪️", n: "星月" }, { e: "🕉️", n: "嗡" }, { e: "☸️", n: "法轮" },
+      { e: "✡️", n: "大卫星" }, { e: "🔯", n: "六芒星" }, { e: "🕎", n: "烛台" }, { e: "☯️", n: "太极" },
+      { e: "☦️", n: "东正教" }, { e: "🛐", n: "礼拜" }, { e: "⛎", n: "蛇夫座" }, { e: "♈", n: "白羊" },
+      { e: "♉", n: "金牛" }, { e: "♊", n: "双子" }, { e: "♋", n: "巨蟹" }, { e: "♌", n: "狮子" },
+      { e: "♍", n: "处女" }, { e: "♎", n: "天秤" }, { e: "♏", n: "天蝎" }, { e: "♐", n: "射手" },
+      { e: "♑", n: "摩羯" }, { e: "♒", n: "水瓶" }, { e: "♓", n: "双鱼" }, { e: "🆔", n: "ID" },
+      { e: "⚛️", n: "原子" }, { e: "🉑", n: "可" }, { e: "☢️", n: "辐射" }, { e: "☣️", n: "生物" },
+      { e: "📴", n: "关机" }, { e: "📳", n: "振动" }, { e: "🈶", n: "有" }, { e: "🈚", n: "无" },
+      { e: "🈸", n: "申" }, { e: "🈺", n: "营" }, { e: "🈷️", n: "月" }, { e: "✴️", n: "星花" },
+      { e: "🆚", n: "VS" }, { e: "💮", n: "白花" }, { e: "🉐", n: "得" }, { e: "㊙️", n: "秘" },
+      { e: "㊗️", n: "祝" }, { e: "🈴", n: "合" }, { e: "🈵", n: "满" }, { e: "🈹", n: "割" },
+      { e: "🈲", n: "禁" }, { e: "🅰️", n: "A" }, { e: "🅱️", n: "B" }, { e: "🆎", n: "AB" },
+      { e: "🆑", n: "CL" }, { e: "🅾️", n: "O" }, { e: "🆘", n: "SOS" }, { e: "❌", n: "叉" },
+      { e: "⭕", n: "圈" }, { e: "🛑", n: "停止" }, { e: "⛔", n: "禁行" }, { e: "📛", n: "名牌" },
+      { e: "🚫", n: "禁止" }, { e: "💯", n: "一百" }, { e: "🔞", n: "十八禁" }, { e: "🚷", n: "禁行" },
+      { e: "🚯", n: "禁扔" }, { e: "🚳", n: "禁骑" }, { e: "🚭", n: "禁烟" }, { e: "📵", n: "禁手机" },
+      { e: "♿", n: "轮椅" }, { e: "🚻", n: "厕所" }, { e: "🚾", n: "洗手间" }, { e: "🆒", n: "酷" },
+      { e: "🆓", n: "免费" }, { e: "🆕", n: "全新" }, { e: "🆖", n: "NG" }, { e: "🆗", n: "OK" },
+      { e: "🆙", n: "UP" }, { e: "🆚", n: "VS" }
+    ]
+  },
+  {
+    id: "flag",
+    name: "🏁 旗帜",
+    emojis: [
+      { e: "🏁", n: "方格旗" }, { e: "🚩", n: "红旗" }, { e: "🎌", n: "交叉旗" }, { e: "🏴", n: "黑旗" },
+      { e: "🏳️", n: "白旗" }, { e: "🏳️‍🌈", n: "彩虹旗" }, { e: "🏳️‍⚧️", n: "跨性别旗" }, { e: "🏴‍☠️", n: "海盗旗" },
+      { e: "🇺🇳", n: "联合国" }, { e: "🇨🇳", n: "中国" }, { e: "🇺🇸", n: "美国" }, { e: "🇬🇧", n: "英国" },
+      { e: "🇯🇵", n: "日本" }, { e: "🇰🇷", n: "韩国" }, { e: "🇫🇷", n: "法国" }, { e: "🇩🇪", n: "德国" },
+      { e: "🇮🇹", n: "意大利" }, { e: "🇷🇺", n: "俄罗斯" }, { e: "🇧🇷", n: "巴西" }, { e: "🇮🇳", n: "印度" },
+      { e: "🇦🇺", n: "澳大利亚" }, { e: "🇨🇦", n: "加拿大" }, { e: "🇲🇽", n: "墨西哥" }, { e: "🇮🇩", n: "印尼" },
+      { e: "🇹🇷", n: "土耳其" }, { e: "🇸🇦", n: "沙特" }, { e: "🇦🇷", n: "阿根廷" }, { e: "🇿🇦", n: "南非" },
+      { e: "🇳🇬", n: "尼日利亚" }, { e: "🇪🇸", n: "西班牙" }, { e: "🇳🇱", n: "荷兰" }, { e: "🇵🇱", n: "波兰" },
+      { e: "🇺🇦", n: "乌克兰" }, { e: "🇻🇳", n: "越南" }, { e: "🇹🇭", n: "泰国" }, { e: "🇦🇪", n: "阿联酋" },
+      { e: "🇭🇰", n: "香港" }, { e: "🇹🇼", n: "台湾" }, { e: "🇨🇭", n: "瑞士" }, { e: "🇸🇪", n: "瑞典" },
+      { e: "🇧🇪", n: "比利时" }, { e: "🇦🇹", n: "奥地利" }, { e: "🇳🇴", n: "挪威" }, { e: "🇩🇰", n: "丹麦" },
+      { e: "🇫🇮", n: "芬兰" }, { e: "🇸🇬", n: "新加坡" }, { e: "🇲🇾", n: "马来西亚" }, { e: "🇵🇭", n: "菲律宾" },
+      { e: "🇵🇰", n: "巴基斯坦" }, { e: "🇪🇬", n: "埃及" }, { e: "🇮🇱", n: "以色列" }
+    ]
+  }
+];
+
+  // ── 状态 ─────────────────────────────────────────────────────
+  let currentFilterText = '';
+  // 默认收起所有分类，不再自动展开第一个
+  let currentExpandedId = null;
+  let favorites = JSON.parse(localStorage.getItem('emojiFavorites') || '[]');
+  let recentCopies = JSON.parse(localStorage.getItem('emojiRecent') || '[]');
+
+  // ── 工具函数 ──────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  async function copyEmoji(emoji, name) {
+    try {
+      await navigator.clipboard.writeText(emoji);
+      showToast('✅ 已复制 ' + emoji + ' ' + name);
+      addRecent(emoji, name);
+    } catch {
+      showToast('❌ 复制失败，请手动复制');
+    }
+  }
+
+  function isFav(emoji) {
+    return favorites.some(f => f.e === emoji);
+  }
+
+  function toggleFav(emoji, name) {
+    if (isFav(emoji)) {
+      favorites = favorites.filter(f => f.e !== emoji);
+      showToast('💔 已取消收藏');
+    } else {
+      favorites.unshift({ e: emoji, n: name });
+      showToast('⭐ 已收藏 ' + emoji);
+    }
+    localStorage.setItem('emojiFavorites', JSON.stringify(favorites));
+    updateStats();
+    renderCategories();
+  }
+
+  function addRecent(emoji, name) {
+    recentCopies = recentCopies.filter(r => r.e !== emoji);
+    recentCopies.unshift({ e: emoji, n: name });
+    if (recentCopies.length > 10) recentCopies = recentCopies.slice(0, 10);
+    localStorage.setItem('emojiRecent', JSON.stringify(recentCopies));
+    renderRecent();
+  }
+
+  // ── 长按逻辑 ─────────────────────────────────────────────────
+  let longPressTimer = null;
+
+  function attachEmojiEvents(el, emoji, name) {
+    // 点击复制
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      copyEmoji(emoji, name);
+    });
+    // 长按收藏（移动端）
+    el.addEventListener('touchstart', () => {
+      longPressTimer = setTimeout(() => {
+        longPressTimer = null;
+        toggleFav(emoji, name);
+      }, 600);
+    }, { passive: true });
+    el.addEventListener('touchend', () => {
+      clearTimeout(longPressTimer);
+    });
+    el.addEventListener('touchmove', () => {
+      clearTimeout(longPressTimer);
+    }, { passive: true });
+    // 桌面端右键收藏
+    el.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      toggleFav(emoji, name);
+    });
+  }
+
+  // ── 统计区 ───────────────────────────────────────────────────
+  function updateStats() {
+    const total = categoriesData.reduce((s, c) => s + c.emojis.length, 0);
+    document.getElementById('statsPanel').innerHTML = `
+      <div class="stat-item">
+        <div class="stat-number">${total}</div>
+        <div class="stat-label">🥳 表情总数</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">${categoriesData.length}</div>
+        <div class="stat-label">📂 分类数</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">${favorites.length}</div>
+        <div class="stat-label">⭐ 已收藏</div>
+      </div>`;
+  }
+
+  // ── 搜索 ─────────────────────────────────────────────────────
+  function updateSearchClear() {
+    document.getElementById('searchClear').classList.toggle('visible', currentFilterText.length > 0);
+  }
+
+  document.getElementById('searchInput').addEventListener('input', e => {
+    currentFilterText = e.target.value;
+    updateSearchClear();
+    if (currentFilterText) currentExpandedId = null;
+    renderCategories();
+  });
+
+  document.getElementById('searchClear').addEventListener('click', () => {
+    document.getElementById('searchInput').value = '';
+    currentFilterText = '';
+    // 清空搜索后也保持默认收起
+    currentExpandedId = null;
+    updateSearchClear();
+    renderCategories();
+  });
+
+  // ── 手风琴渲染 ────────────────────────────────────────────────
+  function buildEmojiGrid(emojis) {
+    return emojis.map(item => {
+      const favMark = isFav(item.e) ? '<span class="emoji-fav-dot">⭐</span>' : '';
+      const favClass = isFav(item.e) ? ' fav-item' : '';
+      return `<div class="emoji-item${favClass}" data-emoji="${item.e}" data-name="${item.n}">
+        ${favMark}
+        <div class="emoji-symbol">${item.e}</div>
+        <div class="emoji-name">${item.n}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderCategories() {
+    const filter = currentFilterText.trim().toLowerCase();
+    const container = document.getElementById('categoriesContainer');
+
+    // 构建分类列表（收藏置顶）
+    let allCats = [];
+
+    if (favorites.length && !filter) {
+      allCats.push({ id: '__fav__', name: '⭐ 我的收藏', emojis: favorites, actualCount: favorites.length });
+    }
+
+    categoriesData.forEach(cat => {
+      let emojis = cat.emojis;
+      if (filter) {
+        emojis = cat.emojis.filter(item =>
+          item.n.includes(filter) ||
+          item.e.includes(filter) ||
+          cat.name.toLowerCase().includes(filter)
+        );
+      }
+      if (emojis.length) allCats.push({ ...cat, emojis, actualCount: cat.emojis.length });
+    });
+
+    if (!allCats.length) {
+      container.innerHTML = `
+        <div class="no-result">
+          😢 没有找到匹配的 Emoji<br>
+          <button class="reset-search-btn" id="resetSearchBtn">清空搜索</button>
+        </div>`;
+      document.getElementById('resetSearchBtn')?.addEventListener('click', () => {
+        document.getElementById('searchInput').value = '';
+        currentFilterText = '';
+        currentExpandedId = null;
+        updateSearchClear();
+        renderCategories();
+      });
+      return;
+    }
+
+    let activeId = filter ? null : currentExpandedId;
+    // 仅在 activeId 不为 null 且对应分类不存在时才回退到第一个
+    if (!filter && activeId !== null) {
+      const activeExists = allCats.some(c => c.id === activeId);
+      if (!activeExists) {
+        activeId = allCats[0]?.id;
+        currentExpandedId = activeId;
+      }
+    }
+
+    let html = '';
+    for (const cat of allCats) {
+      const expanded = filter ? true : (activeId === cat.id);
+      const countLabel = filter
+        ? `${cat.emojis.length}/${cat.actualCount}`
+        : cat.emojis.length;
+      html += `
+        <div class="category-item ${expanded ? 'expanded' : ''}" data-category-id="${cat.id}">
+          <div class="category-header">
+            <div class="category-title">
+              <span class="toggle-icon" style="transform:${expanded ? 'rotate(180deg)' : 'rotate(0deg)'}">▼</span>
+              <span>${cat.name}</span>
+            </div>
+            <span class="category-count">${countLabel}</span>
+          </div>
+          <div class="emojis-container">
+            <div class="emoji-grid">
+              ${buildEmojiGrid(cat.emojis)}
+            </div>
+          </div>
+        </div>`;
+    }
+    container.innerHTML = html;
+
+    // 手风琴互斥点击
+    container.querySelectorAll('.category-item').forEach(item => {
+      item.querySelector('.category-header')?.addEventListener('click', e => {
+        e.stopPropagation();
+        if (filter) return;
+        const cid = item.dataset.categoryId;
+        const isExpanded = item.classList.contains('expanded');
+        container.querySelectorAll('.category-item').forEach(other => {
+          other.classList.remove('expanded');
+          const arr = other.querySelector('.toggle-icon');
+          if (arr) arr.style.transform = 'rotate(0deg)';
+        });
+        if (!isExpanded) {
+          item.classList.add('expanded');
+          const arr = item.querySelector('.toggle-icon');
+          if (arr) arr.style.transform = 'rotate(180deg)';
+          currentExpandedId = cid;
+        } else {
+          currentExpandedId = null;
+        }
+      });
+    });
+
+    // 绑定 Emoji 卡片事件
+    container.querySelectorAll('.emoji-item').forEach(el => {
+      const emoji = el.dataset.emoji;
+      const name = el.dataset.name;
+      attachEmojiEvents(el, emoji, name);
+    });
+  }
+
+  // ── 最近复制渲染 ──────────────────────────────────────────────
+  function renderRecent() {
+    const el = document.getElementById('recentGrid');
+    if (!recentCopies.length) {
+      el.innerHTML = '<div class="recent-empty">暂无复制记录</div>';
+      return;
+    }
+    el.innerHTML = recentCopies.map(r => `
+      <div class="recent-emoji-item" data-emoji="${r.e}" data-name="${r.n}">
+        <div class="emoji-symbol">${r.e}</div>
+        <div class="emoji-name">${r.n}</div>
+      </div>`).join('');
+    el.querySelectorAll('.recent-emoji-item').forEach(el => {
+      attachEmojiEvents(el, el.dataset.emoji, el.dataset.name);
+    });
+  }
+
+  // ── 初始化 ────────────────────────────────────────────────────
+  updateStats();
+  renderCategories();
+  renderRecent();
+</script>
+</body>
+</html>

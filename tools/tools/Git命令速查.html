@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Git 命令速查</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes headerShine {
+            0%   { left: -100%; }
+            50%  { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to   { filter: brightness(1.15); }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ── 主内容 ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── 通用卡片 ── */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        /* ── 统计数字区 ── */
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            flex: 1;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            padding: 12px 8px;
+            text-align: center;
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .stats-divider {
+            border: none;
+            border-top: 1px solid rgba(163, 177, 198, 0.3);
+            margin: 0 0 16px 0;
+        }
+
+        /* ── 搜索区域 ── */
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 44px 14px 42px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .search-input:focus {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light),
+                        0 0 0 2px rgba(102,126,234,0.15);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: none;
+            padding: 4px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .search-clear.visible { display: flex; align-items: center; justify-content: center; }
+        .search-clear:active { color: var(--accent-primary); }
+
+        /* ── 手风琴分类 ── */
+        .categories-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .category-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+            overflow: hidden;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 16px;
+            cursor: pointer;
+            background: var(--bg-primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .category-header:active {
+            background: rgba(102, 126, 234, 0.06);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            color: var(--accent-primary);
+        }
+
+        .category-count {
+            background: var(--bg-primary);
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+        }
+
+        /* ── 内容折叠区（固定高度 + 内部滚动） ── */
+        .emojis-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.38s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: var(--bg-primary);
+        }
+
+        .category-item.expanded .emojis-container {
+            max-height: 500px;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            padding: 14px 16px;
+            border-top: 1px solid rgba(163, 177, 198, 0.25);
+            max-height: 440px;
+            overflow-y: auto;
+        }
+
+        /* 自定义滚动条 */
+        .emoji-grid::-webkit-scrollbar { width: 4px; }
+        .emoji-grid::-webkit-scrollbar-track { background: transparent; }
+        .emoji-grid::-webkit-scrollbar-thumb {
+            background: var(--shadow-dark);
+            border-radius: 4px;
+        }
+
+        /* ── 命令卡片 ── */
+        .emoji-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            text-align: center;
+            padding: 10px 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .emoji-item:active {
+            transform: scale(0.92);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .emoji-item.fav-item {
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light),
+                        0 0 0 2px rgba(247, 183, 49, 0.4);
+        }
+
+        .emoji-symbol {
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1.2;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            word-break: break-word;
+        }
+
+        .emoji-name {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        .emoji-fav-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 0.55rem;
+            line-height: 1;
+        }
+
+        /* ── 最近复制区 ── */
+        .recent-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .recent-emoji-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            text-align: center;
+            padding: 10px 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 120px;
+        }
+
+        .recent-emoji-item:active {
+            transform: scale(0.92);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .recent-empty {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 10px 0;
+        }
+
+        /* ── 无结果 ── */
+        .no-result {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .reset-search-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 18px;
+            background: var(--bg-primary);
+            border: none;
+            border-radius: 30px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            cursor: pointer;
+        }
+
+        /* ── 操作提示 ── */
+        .action-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 14px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* ── 说明卡片 ── */
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .instr-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+        /* ── Toast ── */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(44, 62, 80, 0.92);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 550px) {
+            .card { padding: 18px 16px; }
+            h1 { font-size: 1.8rem; }
+            .emoji-grid { grid-template-columns: repeat(2, 1fr); }
+            .emoji-symbol { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Git 命令速查</h1>
+        <p class="subtitle">分类整理 · 简洁高效 · 点击复制</p>
+    </header>
+
+    <div class="main">
+
+        <!-- 🔍 搜索卡片（独立放置于最上方） -->
+        <div class="card">
+            <div class="card-label">🔍 搜索命令</div>
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input"
+                placeholder="搜索 Git 命令（如：commit、branch、remote）" autocomplete="off">
+                <button class="search-clear" id="searchClear">✕</button>
+            </div>
+        </div>
+
+        <!-- 📊 数据概览 + 📂 分类浏览（合并为一个卡片） -->
+        <div class="card">
+            <div class="card-label">📊 Git命令总览</div>
+            <!-- 统计面板 -->
+            <div class="stats-grid" id="statsPanel"></div>
+            <hr class="stats-divider">
+            <!-- 分类手风琴列表 -->
+            <div class="categories-stack" id="categoriesContainer"></div>
+            <div class="action-sub">点击任意命令即可复制 · 长按可收藏 ⭐ 常用命令</div>
+        </div>
+
+        <!-- 最近复制 -->
+        <div class="card">
+            <div class="card-label">🕐 最近复制</div>
+            <div id="recentGrid" class="recent-grid"></div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item">
+                    <span class="instr-icon">🔍</span>
+                    <div class="instr-text"><strong>搜索过滤</strong>：输入命令关键词实时筛选，搜索时自动展开所有匹配分类</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📂</span>
+                    <div class="instr-text"><strong>互斥展开</strong>：点击分类标题展开该分类，同时自动收起其他分类；展开区域固定高度，超出可滚动查看</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">⭐</span>
+                    <div class="instr-text"><strong>收藏命令</strong>：长按卡片即可收藏，收藏分类自动置顶，方便快速找到常用命令</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">📋</span>
+                    <div class="instr-text"><strong>一键复制</strong>：点击任意命令卡片即可复制完整命令到剪贴板，最近 10 条复制记录自动保存</div>
+                </div>
+                <div class="instr-item">
+                    <span class="instr-icon">🔒</span>
+                    <div class="instr-text"><strong>隐私安全</strong>：所有操作及收藏数据本地完成，不联网上传任何数据</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        // ── Git 命令数据库（8个分类，所有命令已验证正确）────────────
+        const categoriesData = [
+            {
+                id: "setup",
+                name: "⚙️ 初始配置",
+                emojis: [
+                    { e: "git config --global user.name \"Your Name\"", n: "设置全局用户名" },
+                    { e: "git config --global user.email \"you@example.com\"", n: "设置全局邮箱" },
+                    { e: "git config --global core.editor \"code --wait\"", n: "设置默认编辑器（VS Code）" },
+                    { e: "git config --list", n: "查看所有配置" },
+                    { e: "git init", n: "初始化本地仓库" },
+                    { e: "git clone <url>", n: "克隆远程仓库" }
+                ]
+            },
+            {
+                id: "basic",
+                name: "📝 基本操作",
+                emojis: [
+                    { e: "git status", n: "查看工作区状态" },
+                    { e: "git add <file>", n: "添加文件到暂存区" },
+                    { e: "git add .", n: "添加所有改动到暂存区" },
+                    { e: "git commit -m \"message\"", n: "提交暂存区内容" },
+                    { e: "git commit -am \"message\"", n: "跳过 add 直接提交已跟踪文件" },
+                    { e: "git rm <file>", n: "删除文件并记录到暂存区" },
+                    { e: "git mv <old> <new>", n: "移动/重命名文件" }
+                ]
+            },
+            {
+                id: "diff",
+                name: "🔍 差异与历史",
+                emojis: [
+                    { e: "git diff", n: "查看工作区与暂存区差异" },
+                    { e: "git diff --staged", n: "查看暂存区与最后一次提交差异" },
+                    { e: "git log", n: "查看提交历史" },
+                    { e: "git log --oneline --graph", n: "一行图形式提交历史" },
+                    { e: "git show <commit>", n: "查看某次提交的详细信息" },
+                    { e: "git blame <file>", n: "逐行查看文件修改记录" }
+                ]
+            },
+            {
+                id: "branch",
+                name: "🌿 分支管理",
+                emojis: [
+                    { e: "git branch", n: "列出本地分支" },
+                    { e: "git branch -a", n: "列出所有分支（含远程）" },
+                    { e: "git branch <name>", n: "创建新分支" },
+                    { e: "git checkout <name>", n: "切换分支" },
+                    { e: "git checkout -b <name>", n: "创建并切换分支" },
+                    { e: "git switch <name>", n: "切换分支（新版）" },
+                    { e: "git merge <branch>", n: "合并指定分支到当前分支" },
+                    { e: "git branch -d <name>", n: "删除分支" },
+                    { e: "git branch -D <name>", n: "强制删除未合并分支" }
+                ]
+            },
+            {
+                id: "remote",
+                name: "🌍 远程协作",
+                emojis: [
+                    { e: "git remote -v", n: "查看远程仓库地址" },
+                    { e: "git remote add origin <url>", n: "添加远程仓库" },
+                    { e: "git push origin <branch>", n: "推送分支到远程" },
+                    { e: "git push -u origin <branch>", n: "推送并关联远程分支" },
+                    { e: "git pull origin <branch>", n: "拉取并合并远程分支" },
+                    { e: "git fetch origin", n: "获取远程更新但不合并" },
+                    { e: "git clone --depth 1 <url>", n: "浅克隆（只取最新提交）" }
+                ]
+            },
+            {
+                id: "undo",
+                name: "⏪ 撤销与重置",
+                emojis: [
+                    { e: "git restore <file>", n: "丢弃工作区修改" },
+                    { e: "git restore --staged <file>", n: "撤销 add 操作" },
+                    { e: "git reset HEAD <file>", n: "撤销 add（旧语法）" },
+                    { e: "git reset --soft HEAD~1", n: "撤销提交，保留修改" },
+                    { e: "git reset --hard HEAD~1", n: "彻底撤销提交，丢弃修改" },
+                    { e: "git revert <commit>", n: "反转某次提交（安全撤销）" },
+                    { e: "git clean -fd", n: "删除未跟踪的文件和目录" }
+                ]
+            },
+            {
+                id: "stash",
+                name: "📦 暂存整理",
+                emojis: [
+                    { e: "git stash", n: "暂存当前未提交的修改" },
+                    { e: "git stash list", n: "查看暂存列表" },
+                    { e: "git stash pop", n: "恢复最近暂存并删除记录" },
+                    { e: "git stash apply", n: "恢复最近暂存，保留记录" },
+                    { e: "git stash drop", n: "删除暂存记录" },
+                    { e: "git rebase -i HEAD~3", n: "交互式变基，整理提交历史" }
+                ]
+            },
+            {
+                id: "tag",
+                name: "🏷️ 标签",
+                emojis: [
+                    { e: "git tag", n: "列出所有标签" },
+                    { e: "git tag v1.0.0", n: "创建轻量标签" },
+                    { e: "git tag -a v1.0.0 -m \"message\"", n: "创建附注标签" },
+                    { e: "git push origin --tags", n: "推送所有标签到远程" },
+                    { e: "git tag -d v1.0.0", n: "删除本地标签" }
+                ]
+            }
+        ];
+
+        // ── 状态管理 ─────────────────────────────────────────────
+        let currentFilterText = '';
+        // 默认收起所有分类
+        let currentExpandedId = null;
+        let favorites = JSON.parse(localStorage.getItem('gitFavorites') || '[]');
+        let recentCopies = JSON.parse(localStorage.getItem('gitRecent') || '[]');
+
+        // ── 工具函数 ──────────────────────────────────────────────
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+        }
+
+        async function copyCommand(cmd, name) {
+            try {
+                await navigator.clipboard.writeText(cmd);
+                showToast('✅ 已复制 ' + cmd);
+                addRecent(cmd, name);
+            } catch {
+                showToast('❌ 复制失败，请手动复制');
+            }
+        }
+
+        function isFav(cmd) {
+            return favorites.some(f => f.e === cmd);
+        }
+
+        function toggleFav(cmd, name) {
+            if (isFav(cmd)) {
+                favorites = favorites.filter(f => f.e !== cmd);
+                showToast('💔 已取消收藏');
+            } else {
+                favorites.unshift({ e: cmd, n: name });
+                showToast('⭐ 已收藏 ' + cmd);
+            }
+            localStorage.setItem('gitFavorites', JSON.stringify(favorites));
+            updateStats();
+            renderCategories();
+        }
+
+        function addRecent(cmd, name) {
+            recentCopies = recentCopies.filter(r => r.e !== cmd);
+            recentCopies.unshift({ e: cmd, n: name });
+            if (recentCopies.length > 10) recentCopies = recentCopies.slice(0, 10);
+            localStorage.setItem('gitRecent', JSON.stringify(recentCopies));
+            renderRecent();
+        }
+
+        // ── 长按逻辑 ─────────────────────────────────────────────
+        let longPressTimer = null;
+
+        function attachEvents(el, cmd, name) {
+            el.addEventListener('click', e => {
+                e.stopPropagation();
+                copyCommand(cmd, name);
+            });
+            el.addEventListener('touchstart', () => {
+                longPressTimer = setTimeout(() => {
+                    longPressTimer = null;
+                    toggleFav(cmd, name);
+                }, 600);
+            }, { passive: true });
+            el.addEventListener('touchend', () => clearTimeout(longPressTimer));
+            el.addEventListener('touchmove', () => clearTimeout(longPressTimer), { passive: true });
+            el.addEventListener('contextmenu', e => {
+                e.preventDefault();
+                toggleFav(cmd, name);
+            });
+        }
+
+        // ── 统计区 ───────────────────────────────────────────────
+        function updateStats() {
+            const total = categoriesData.reduce((s, c) => s + c.emojis.length, 0);
+            document.getElementById('statsPanel').innerHTML = `
+            <div class="stat-item">
+                <div class="stat-number">${total}</div>
+                <div class="stat-label">📋 命令总数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${categoriesData.length}</div>
+                <div class="stat-label">📂 分类数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">${favorites.length}</div>
+                <div class="stat-label">⭐ 已收藏</div>
+            </div>`;
+        }
+
+        // ── 搜索 ─────────────────────────────────────────────────
+        function updateSearchClear() {
+            document.getElementById('searchClear').classList.toggle('visible', currentFilterText.length > 0);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', e => {
+            currentFilterText = e.target.value;
+            updateSearchClear();
+            if (currentFilterText) currentExpandedId = null;
+            renderCategories();
+        });
+
+        document.getElementById('searchClear').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            currentFilterText = '';
+            currentExpandedId = null;
+            updateSearchClear();
+            renderCategories();
+        });
+
+        // ── 手风琴渲染 ────────────────────────────────────────────
+        function buildCommandGrid(commands) {
+            return commands.map(item => {
+                const favMark = isFav(item.e) ? '<span class="emoji-fav-dot">⭐</span>' : '';
+                const favClass = isFav(item.e) ? ' fav-item' : '';
+                return `<div class="emoji-item${favClass}" data-cmd="${escapeHtml(item.e)}" data-name="${escapeHtml(item.n)}">
+            ${favMark}
+            <div class="emoji-symbol">${escapeHtml(item.e)}</div>
+            <div class="emoji-name">${escapeHtml(item.n)}</div>
+          </div>`;
+            }).join('');
+        }
+
+        function renderCategories() {
+            const filter = currentFilterText.trim().toLowerCase();
+            const container = document.getElementById('categoriesContainer');
+
+            let allCats = [];
+            if (favorites.length && !filter) {
+                allCats.push({ id: '__fav__', name: '⭐ 我的收藏', emojis: favorites, actualCount: favorites.length });
+            }
+
+            categoriesData.forEach(cat => {
+                let commands = cat.emojis;
+                if (filter) {
+                    commands = cat.emojis.filter(item =>
+                        item.n.toLowerCase().includes(filter) ||
+                        item.e.toLowerCase().includes(filter) ||
+                        cat.name.toLowerCase().includes(filter)
+                    );
+                }
+                if (commands.length) allCats.push({ ...cat, emojis: commands, actualCount: cat.emojis.length });
+            });
+
+            if (!allCats.length) {
+                container.innerHTML = `
+            <div class="no-result">
+              😢 没有找到匹配的命令<br>
+              <button class="reset-search-btn" id="resetSearchBtn">清空搜索</button>
+            </div>`;
+                document.getElementById('resetSearchBtn')?.addEventListener('click', () => {
+                    document.getElementById('searchInput').value = '';
+                    currentFilterText = '';
+                    currentExpandedId = null;
+                    updateSearchClear();
+                    renderCategories();
+                });
+                return;
+            }
+
+            let activeId = filter ? null : currentExpandedId;
+            if (!filter && activeId !== null) {
+                const activeExists = allCats.some(c => c.id === activeId);
+                if (!activeExists) {
+                    activeId = allCats[0]?.id;
+                    currentExpandedId = activeId;
+                }
+            }
+
+            let html = '';
+            for (const cat of allCats) {
+                const expanded = filter ? true : (activeId === cat.id);
+                const countLabel = filter ? `${cat.emojis.length}/${cat.actualCount}` : cat.emojis.length;
+                html += `
+            <div class="category-item ${expanded ? 'expanded' : ''}" data-category-id="${cat.id}">
+              <div class="category-header">
+                <div class="category-title">
+                  <span class="toggle-icon" style="transform:${expanded ? 'rotate(180deg)' : 'rotate(0deg)'}">▼</span>
+                  <span>${cat.name}</span>
+                </div>
+                <span class="category-count">${countLabel}</span>
+              </div>
+              <div class="emojis-container">
+                <div class="emoji-grid">
+                  ${buildCommandGrid(cat.emojis)}
+                </div>
+              </div>
+            </div>`;
+            }
+            container.innerHTML = html;
+
+            // 手风琴互斥点击
+            container.querySelectorAll('.category-item').forEach(item => {
+                item.querySelector('.category-header')?.addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (filter) return;
+                    const cid = item.dataset.categoryId;
+                    const isExpanded = item.classList.contains('expanded');
+                    container.querySelectorAll('.category-item').forEach(other => {
+                        other.classList.remove('expanded');
+                        const arr = other.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(0deg)';
+                    });
+                    if (!isExpanded) {
+                        item.classList.add('expanded');
+                        const arr = item.querySelector('.toggle-icon');
+                        if (arr) arr.style.transform = 'rotate(180deg)';
+                        currentExpandedId = cid;
+                    } else {
+                        currentExpandedId = null;
+                    }
+                });
+            });
+
+            // 绑定命令卡片事件
+            container.querySelectorAll('.emoji-item').forEach(el => {
+                const cmd = el.dataset.cmd;
+                const name = el.dataset.name;
+                attachEvents(el, cmd, name);
+            });
+        }
+
+        // ── 最近复制渲染 ──────────────────────────────────────────
+        function renderRecent() {
+            const el = document.getElementById('recentGrid');
+            if (!recentCopies.length) {
+                el.innerHTML = '<div class="recent-empty">暂无复制记录</div>';
+                return;
+            }
+            el.innerHTML = recentCopies.map(r => `
+            <div class="recent-emoji-item" data-cmd="${escapeHtml(r.e)}" data-name="${escapeHtml(r.n)}">
+                <div class="emoji-symbol">${escapeHtml(r.e)}</div>
+                <div class="emoji-name">${escapeHtml(r.n)}</div>
+            </div>`).join('');
+            el.querySelectorAll('.recent-emoji-item').forEach(el => {
+                attachEvents(el, el.dataset.cmd, el.dataset.name);
+            });
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // 初始化
+        updateStats();
+        renderCategories();
+        renderRecent();
+    </script>
+</body>
+</html>

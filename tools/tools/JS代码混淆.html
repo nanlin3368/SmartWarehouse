@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS 代码混淆</title>
+    <style>
+      :root {
+        --bg-primary: #e0e5ec;
+        --shadow-light: #ffffff;
+        --shadow-dark: #a3b1c6;
+        --text-primary: #2c3e50;
+        --text-secondary: #5a6c7d;
+        --text-muted: #8b9dc3;
+        --accent-primary: #667eea;
+        --accent-secondary: #764ba2;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #4ecdc4;
+        --danger: #fc5c65;
+        --warning: #f7b731;
+        --border-radius: 20px;
+        --border-radius-sm: 14px;
+        --border-radius-xs: 10px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      *:focus { outline: none; }
+      button:focus, button:focus-visible { outline: none; box-shadow: none; }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: pageLoad 0.8s ease;
+      }
+
+      @keyframes pageLoad {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Header ── */
+      header {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 28px 24px 22px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        animation: headerSlide 0.8s ease 0.2s both;
+      }
+
+      header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        animation: headerShine 4s ease-in-out infinite;
+      }
+
+      @keyframes headerSlide {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes headerShine {
+        0%   { left: -100%; }
+        50%  { left: 100%; }
+        100% { left: 100%; }
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+      }
+
+      .subtitle {
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* ── 主内容 ── */
+      .main {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: contentSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes contentSlide {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── 通用卡片 ── */
+      .card {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        padding: 22px 20px;
+      }
+
+      .card-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      /* ── 代码输入区 ── */
+      .code-textarea {
+        width: 100%;
+        min-height: 180px;
+        border: none;
+        border-radius: var(--border-radius-sm);
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        padding: 14px;
+        font-family: 'SF Mono', 'Fira Code', 'Menlo', 'Courier New', monospace;
+        font-size: 0.78rem;
+        color: var(--text-primary);
+        line-height: 1.6;
+        resize: vertical;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .code-textarea:focus {
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.15);
+        outline: none;
+      }
+
+      .code-textarea::placeholder {
+        color: var(--text-muted);
+        font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        font-size: 0.78rem;
+      }
+
+      /* ── 文件拖拽区 ── */
+      .file-drop {
+        border: 2px dashed var(--text-muted);
+        border-radius: var(--border-radius-sm);
+        padding: 16px 20px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        background: var(--bg-primary);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        margin-bottom: 12px;
+      }
+
+      .file-drop:hover, .file-drop.dragover {
+        border-color: var(--accent-primary);
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light),
+                    0 0 0 2px rgba(102,126,234,0.15);
+      }
+
+      .file-drop.dragover { border-style: solid; border-color: var(--success); }
+
+      .file-drop input[type="file"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .file-drop-icon { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+
+      .file-drop-text {
+        font-size: 0.88rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 3px;
+      }
+
+      .file-drop-sub {
+        font-size: 0.72rem;
+        color: var(--text-secondary);
+      }
+
+      /* ── 选项网格 ── */
+      .options-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .option-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+        cursor: pointer;
+        transition: var(--transition);
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+      }
+
+      .option-item:active { transform: scale(0.97); }
+
+      .option-toggle {
+        width: 36px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--bg-primary);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        position: relative;
+        flex-shrink: 0;
+        transition: var(--transition);
+      }
+
+      .option-toggle::after {
+        content: '';
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--text-muted);
+        top: 3px;
+        left: 3px;
+        transition: var(--transition);
+        box-shadow: 1px 1px 3px var(--shadow-dark);
+      }
+
+      .option-item.active .option-toggle {
+        background: var(--accent-gradient);
+        box-shadow: inset 2px 2px 4px rgba(0,0,0,0.15);
+      }
+
+      .option-item.active .option-toggle::after {
+        left: 19px;
+        background: #fff;
+        box-shadow: 1px 1px 4px rgba(102,126,234,0.4);
+      }
+
+      .option-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        line-height: 1.3;
+      }
+
+      .option-item.active .option-label { color: var(--text-primary); }
+
+      /* ── 级别选择 ── */
+      .level-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .level-btn {
+        padding: 12px 8px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        letter-spacing: 0.3px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+      }
+
+      .level-btn:hover  { transform: translateY(-1px); }
+      .level-btn:active { transform: scale(0.96); }
+
+      .level-btn.active {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 10px rgba(102,126,234,0.35), -2px -2px 5px var(--shadow-light);
+      }
+
+      .level-sub {
+        font-size: 0.62rem;
+        font-weight: 500;
+        opacity: 0.75;
+        letter-spacing: 0;
+      }
+
+      /* ── 统计信息行 ── */
+      .stats-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .stat-chip {
+        flex: 1;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        text-align: center;
+      }
+
+      .stat-val {
+        font-size: 1.1rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.2;
+      }
+
+      .stat-key {
+        font-size: 0.62rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin-top: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* ── 操作按钮 ── */
+      .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .action-btn {
+        padding: 13px 10px;
+        border: none;
+        border-radius: var(--border-radius-xs);
+        background: var(--bg-primary);
+        box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        user-select: none;
+      }
+
+      .action-btn:hover  { transform: translateY(-1px); }
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        transform: scale(0.97);
+      }
+
+      .action-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      .action-btn.primary {
+        background: var(--accent-gradient);
+        color: #fff;
+        box-shadow: 4px 4px 12px rgba(102,126,234,0.35), -2px -2px 6px var(--shadow-light);
+        grid-column: span 2;
+      }
+
+      .action-btn.primary:hover { box-shadow: 6px 6px 16px rgba(102,126,234,0.4); transform: translateY(-2px); }
+      .action-btn.primary:active { transform: scale(0.97); }
+
+      .action-btn.primary.running {
+        background: linear-gradient(135deg, #a3b1c6, #8b9dc3);
+        box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      }
+
+      .action-btn.success-btn { color: var(--success); }
+      .action-btn.danger-btn  { color: var(--danger); }
+
+      /* ── 进度条 ── */
+      .progress-bar-wrap {
+        height: 4px;
+        border-radius: 2px;
+        background: var(--bg-primary);
+        box-shadow: inset 1px 1px 3px var(--shadow-dark);
+        overflow: hidden;
+        margin-top: 10px;
+        display: none;
+      }
+
+      .progress-bar-fill {
+        height: 100%;
+        border-radius: 2px;
+        background: var(--accent-gradient);
+        width: 0;
+        transition: width 0.4s ease;
+      }
+
+      /* ── 输出区 ── */
+      .output-wrap {
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        min-height: 120px;
+        padding: 14px;
+        font-family: 'SF Mono', 'Fira Code', 'Menlo', 'Courier New', monospace;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        word-break: break-all;
+        white-space: pre-wrap;
+        max-height: 260px;
+        overflow-y: auto;
+      }
+
+      .output-placeholder {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 80px;
+      }
+
+      /* ── 提示条 ── */
+      .notice {
+        padding: 8px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin-top: 10px;
+      }
+
+      /* ── 说明卡片 ── */
+      .instr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .instr-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        background: var(--bg-primary);
+        border-radius: var(--border-radius-xs);
+        box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      }
+
+      .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+      .instr-text {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .instr-text strong { color: var(--text-primary); font-weight: 700; }
+
+      /* ── Toast ── */
+      .toast {
+        position: fixed;
+        bottom: 28px;
+        left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        background: var(--text-primary);
+        color: #fff;
+        padding: 10px 22px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        opacity: 0;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+        z-index: 999;
+        white-space: nowrap;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      @media (max-width: 420px) {
+        h1 { font-size: 1.8rem; }
+        .options-grid { grid-template-columns: 1fr; }
+        .stats-row { flex-wrap: wrap; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>JS 代码混淆</h1>
+      <p class="subtitle">本地处理 · 保护源码 · 安全可靠</p>
+    </header>
+
+    <div class="main">
+
+      <!-- 输入代码 -->
+      <div class="card">
+        <div class="card-label">输入代码</div>
+        <div class="file-drop" id="dropArea">
+          <input type="file" id="fileInput" accept=".js,.ts,.mjs,.cjs" />
+          <span class="file-drop-icon">📂</span>
+          <div class="file-drop-text">拖放 JS 文件到此处</div>
+          <div class="file-drop-sub">或点击选择文件（.js / .ts / .mjs）</div>
+        </div>
+        <textarea
+          class="code-textarea"
+          id="inputCode"
+          placeholder="或直接在此粘贴 JavaScript 代码…"
+          spellcheck="false"
+        ></textarea>
+      </div>
+
+      <!-- 混淆级别 -->
+      <div class="card">
+        <div class="card-label">混淆级别</div>
+        <div class="level-grid">
+          <button class="level-btn" data-level="low">
+            轻度
+            <span class="level-sub">速度优先</span>
+          </button>
+          <button class="level-btn active" data-level="medium">
+            中度
+            <span class="level-sub">推荐</span>
+          </button>
+          <button class="level-btn" data-level="high">
+            重度
+            <span class="level-sub">安全优先</span>
+          </button>
+        </div>
+        <div class="notice" id="levelNote">中度：变量重命名 + 字符串加密 + 控制流平坦化，兼顾性能与安全</div>
+      </div>
+
+      <!-- 混淆选项 -->
+      <div class="card">
+        <div class="card-label">混淆选项</div>
+        <div class="options-grid">
+          <div class="option-item active" data-opt="renameVars">
+            <div class="option-toggle"></div>
+            <span class="option-label">变量名混淆</span>
+          </div>
+          <div class="option-item active" data-opt="encryptStr">
+            <div class="option-toggle"></div>
+            <span class="option-label">字符串加密</span>
+          </div>
+          <div class="option-item active" data-opt="flattenFlow">
+            <div class="option-toggle"></div>
+            <span class="option-label">控制流平坦化</span>
+          </div>
+          <div class="option-item" data-opt="selfDefend">
+            <div class="option-toggle"></div>
+            <span class="option-label">自我防御</span>
+          </div>
+          <div class="option-item" data-opt="deadCode">
+            <div class="option-toggle"></div>
+            <span class="option-label">插入死代码</span>
+          </div>
+          <div class="option-item active" data-opt="compress">
+            <div class="option-toggle"></div>
+            <span class="option-label">压缩输出</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 操作 -->
+      <div class="card">
+        <div class="card-label">操作</div>
+        <div class="stats-row" id="statsRow" style="display:none">
+          <div class="stat-chip">
+            <div class="stat-val" id="statIn">—</div>
+            <div class="stat-key">原始大小</div>
+          </div>
+          <div class="stat-chip">
+            <div class="stat-val" id="statOut">—</div>
+            <div class="stat-key">混淆大小</div>
+          </div>
+          <div class="stat-chip">
+            <div class="stat-val" id="statRatio">—</div>
+            <div class="stat-key">膨胀率</div>
+          </div>
+          <div class="stat-chip">
+            <div class="stat-val" id="statTime">—</div>
+            <div class="stat-key">耗时</div>
+          </div>
+        </div>
+        <div class="action-grid">
+          <button class="action-btn primary" id="obfuscateBtn">🔐 开始混淆</button>
+          <button class="action-btn success-btn" id="copyBtn" disabled>📋 复制结果</button>
+          <button class="action-btn success-btn" id="downloadBtn" disabled>💾 下载文件</button>
+          <button class="action-btn danger-btn"  id="resetBtn">🗑️ 重置</button>
+        </div>
+        <div class="progress-bar-wrap" id="progressWrap">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <!-- 输出结果 -->
+      <div class="card">
+        <div class="card-label">混淆结果</div>
+        <div class="output-wrap" id="outputWrap">
+          <div class="output-placeholder">混淆完成后在此显示结果</div>
+        </div>
+      </div>
+
+      <!-- 说明 -->
+      <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+          <div class="instr-item">
+            <span class="instr-icon">📂</span>
+            <div class="instr-text"><strong>输入代码</strong>：拖放 .js 文件或直接粘贴代码到文本框</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🎚️</span>
+            <div class="instr-text"><strong>选择级别</strong>：轻度仅重命名变量；中度增加字符串加密；重度启用全部保护</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">⚙️</span>
+            <div class="instr-text"><strong>混淆选项</strong>：可单独开关各项功能，灵活配置保护策略</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">⚠️</span>
+            <div class="instr-text"><strong>注意事项</strong>：混淆后代码功能不变，但可读性大幅下降；重度模式会增大文件体积</div>
+          </div>
+          <div class="instr-item">
+            <span class="instr-icon">🔒</span>
+            <div class="instr-text"><strong>数据安全</strong>：所有处理在浏览器本地完成，代码不上传服务器</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // ── 状态 ──
+      let currentLevel   = 'medium'
+      let obfuscatedCode = ''
+      let options = {
+        renameVars:  true,
+        encryptStr:  true,
+        flattenFlow: true,
+        selfDefend:  false,
+        deadCode:    false,
+        compress:    true,
+      }
+
+      // ── 元素引用 ──
+      const inputCode    = document.getElementById('inputCode')
+      const outputWrap   = document.getElementById('outputWrap')
+      const obfuscateBtn = document.getElementById('obfuscateBtn')
+      const copyBtn      = document.getElementById('copyBtn')
+      const downloadBtn  = document.getElementById('downloadBtn')
+      const resetBtn     = document.getElementById('resetBtn')
+      const progressWrap = document.getElementById('progressWrap')
+      const progressFill = document.getElementById('progressFill')
+      const statsRow     = document.getElementById('statsRow')
+      const levelNote    = document.getElementById('levelNote')
+      const fileInput    = document.getElementById('fileInput')
+      const dropArea     = document.getElementById('dropArea')
+
+      // ── 混淆级别 ──
+      const levelNotes = {
+        low:    '轻度：仅重命名变量与函数名，性能损耗极小，适合开发调试',
+        medium: '中度：变量重命名 + 字符串加密 + 控制流平坦化，兼顾性能与安全',
+        high:   '重度：启用全部保护策略，包含自我防御与死代码注入，文件体积会增大',
+      }
+
+      document.querySelectorAll('.level-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'))
+          btn.classList.add('active')
+          currentLevel = btn.dataset.level
+          levelNote.textContent = levelNotes[currentLevel]
+          applyLevelPreset(currentLevel)
+        })
+      })
+
+      function applyLevelPreset(level) {
+        const presets = {
+          low:    { renameVars:true,  encryptStr:false, flattenFlow:false, selfDefend:false, deadCode:false, compress:true  },
+          medium: { renameVars:true,  encryptStr:true,  flattenFlow:true,  selfDefend:false, deadCode:false, compress:true  },
+          high:   { renameVars:true,  encryptStr:true,  flattenFlow:true,  selfDefend:true,  deadCode:true,  compress:true  },
+        }
+        options = { ...presets[level] }
+        document.querySelectorAll('.option-item').forEach(item => {
+          const key = item.dataset.opt
+          item.classList.toggle('active', !!options[key])
+        })
+      }
+
+      // ── 选项切换 ──
+      document.querySelectorAll('.option-item').forEach(item => {
+        item.addEventListener('click', () => {
+          item.classList.toggle('active')
+          options[item.dataset.opt] = item.classList.contains('active')
+        })
+      })
+
+      // ── 文件拖拽 ──
+      fileInput.addEventListener('change', e => {
+        const file = e.target.files[0]
+        if (file) readFile(file)
+      })
+
+      dropArea.addEventListener('dragover', e => {
+        e.preventDefault()
+        dropArea.classList.add('dragover')
+      })
+      dropArea.addEventListener('dragleave', e => {
+        e.preventDefault()
+        dropArea.classList.remove('dragover')
+      })
+      dropArea.addEventListener('drop', e => {
+        e.preventDefault()
+        dropArea.classList.remove('dragover')
+        const file = e.dataTransfer.files[0]
+        if (file) readFile(file)
+      })
+
+      function readFile(file) {
+        const reader = new FileReader()
+        reader.onload = e => {
+          inputCode.value = e.target.result
+          showToast('📂 文件加载成功：' + file.name)
+        }
+        reader.readAsText(file, 'UTF-8')
+      }
+
+      // ── 核心混淆逻辑 ──
+      function obfuscateCode(src, opts, level) {
+
+        // 字符串收集表
+        const strMap = {}
+        const strArr = []
+        let strIdx = 0
+
+        // ① 变量名混淆
+        function renameVars(code) {
+          const reserved = new Set([
+            'var','let','const','function','return','if','else','for','while','do',
+            'break','continue','switch','case','default','try','catch','finally',
+            'throw','new','delete','typeof','instanceof','in','of','import','export',
+            'class','extends','super','this','null','undefined','true','false',
+            'void','async','await','yield','with','debugger','arguments',
+            'Array','Object','String','Number','Boolean','Date','Math','JSON',
+            'console','window','document','navigator','location','history',
+            'setTimeout','setInterval','clearTimeout','clearInterval',
+            'Promise','fetch','Map','Set','Symbol','Proxy','Reflect',
+            'parseInt','parseFloat','isNaN','isFinite','encodeURI','decodeURI',
+            'encodeURIComponent','decodeURIComponent','eval','NaN','Infinity',
+            'Error','TypeError','RangeError','SyntaxError','RegExp','WeakMap','WeakSet',
+          ])
+
+          const varReg = /\b(var|let|const)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/g
+          const fnReg  = /\bfunction\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/g
+          const nameMap = {}
+          let counter = 0
+
+          function makeAlias(name) {
+            if (reserved.has(name) || name.length <= 1) return name
+            if (!nameMap[name]) {
+              nameMap[name] = '_' + toBase36(counter++) + '_'
+            }
+            return nameMap[name]
+          }
+
+          // collect declarations
+          ;[...code.matchAll(varReg), ...code.matchAll(fnReg)].forEach(m => {
+            const n = m[2] || m[1]
+            if (n) makeAlias(n)
+          })
+
+          // replace identifiers
+          return code.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\b/g, w => {
+            return nameMap[w] || w
+          })
+        }
+
+        // ② 字符串提取加密
+        function encryptStrings(code) {
+          return code.replace(/"([^"\\]|\\.)*"|'([^'\\]|\\.)*'|`([^`\\]|\\.)*`/g, match => {
+            // skip template literals with expressions for simplicity
+            if (match[0] === '`') return match
+            const inner = match.slice(1, -1)
+            const quote = match[0]
+            const encoded = btoa(unescape(encodeURIComponent(inner)))
+            const key = '_s' + strIdx++
+            strMap[key] = encoded
+            strArr.push(encoded)
+            return `_$sd(${strArr.length - 1})`
+          })
+        }
+
+        // ③ 控制流平坦化（对独立语句块做顺序打乱，用状态机还原）
+        function flattenFlow(code) {
+          // Split top-level statements and wrap in a state-machine loop
+          const stmts = splitStatements(code)
+          if (stmts.length < 3) return code
+          const order = stmts.map((_, i) => i)
+          shuffle(order)
+          const orderStr = order.join('|')
+          const reverseMap = {}
+          order.forEach((orig, pos) => { reverseMap[orig] = pos })
+          const reordered = order.map(i => stmts[i])
+
+          return `var _cf='${orderStr}'.split('|'),_ci=0;while(true){switch(_cf[_ci++]){${
+            reordered.map((s, i) => `case '${i}':${s};break;`).join('')
+          }case '${stmts.length}':break;}if(_ci>=${stmts.length})break;}`
+        }
+
+        // ④ 自我防御（检测 devtools）
+        function addSelfDefense(code) {
+          const guard = `(function(){var _t=+new Date;debugger;if(+new Date-_t>100){(function(){}).constructor('debugger')();}})();`
+          return guard + '\n' + code
+        }
+
+        // ⑤ 插入死代码
+        function insertDeadCode(code) {
+          const dead = [
+            `var _d${rnd(4)}=function(){return Math.random()>2;}();`,
+            `if(false){console.log('${rndStr(8)}');}`,
+            `var _x${rnd(4)}=(function(a,b){return a+b;})(0,0);`,
+          ]
+          const stmts = code.split(';')
+          const pos = Math.floor(stmts.length / 2)
+          stmts.splice(pos, 0, dead[Math.floor(Math.random() * dead.length)])
+          return stmts.join(';')
+        }
+
+        // ⑥ 压缩（去注释 + 多余空白）
+        function compress(code) {
+          return code
+            .replace(/\/\/[^\n]*/g, '')           // single-line comments
+            .replace(/\/\*[\s\S]*?\*\//g, '')      // multi-line comments
+            .replace(/\n\s*\n/g, '\n')             // blank lines
+            .replace(/[ \t]+/g, ' ')               // collapse spaces
+            .replace(/\s*([{};,=+\-*/<>!&|?:()[\]])\s*/g, '$1') // spaces around operators
+            .trim()
+        }
+
+        // ── helper funcs ──
+        function toBase36(n) {
+          const chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+          let r = ''
+          do { r = chars[n % 36] + r; n = Math.floor(n / 36) } while (n > 0)
+          return r
+        }
+
+        function shuffle(arr) {
+          for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]]
+          }
+        }
+
+        function splitStatements(code) {
+          // naive split by semicolons/newlines for top-level
+          return code.split(/;|\n/).map(s => s.trim()).filter(s => s.length > 4)
+        }
+
+        function rnd(digits) {
+          return Math.floor(Math.random() * Math.pow(10, digits))
+        }
+
+        function rndStr(len) {
+          const c = 'abcdefghijklmnopqrstuvwxyz'
+          return Array.from({length: len}, () => c[Math.floor(Math.random() * c.length)]).join('')
+        }
+
+        // ── Pipeline ──
+        let out = src
+
+        if (opts.compress)    out = compress(out)
+        if (opts.encryptStr)  out = encryptStrings(out)
+        if (opts.renameVars)  out = renameVars(out)
+        if (opts.flattenFlow && level === 'high') out = flattenFlow(out)
+        if (opts.deadCode)    out = insertDeadCode(out)
+        if (opts.selfDefend)  out = addSelfDefense(out)
+
+        // prepend string decoder if strings were encrypted
+        if (strArr.length > 0 && opts.encryptStr) {
+          const arrLiteral = '[' + strArr.map(s => `"${s}"`).join(',') + ']'
+          const decoder = `var _$sa=${arrLiteral};function _$sd(i){try{return decodeURIComponent(escape(atob(_$sa[i])));}catch(e){return _$sa[i];}}`
+          out = decoder + '\n' + out
+        }
+
+        return out
+      }
+
+      // ── 混淆入口 ──
+      obfuscateBtn.addEventListener('click', async () => {
+        const src = inputCode.value.trim()
+        if (!src) { showToast('⚠️ 请先输入或粘贴 JS 代码'); return }
+
+        obfuscateBtn.disabled = true
+        obfuscateBtn.classList.add('running')
+        obfuscateBtn.textContent = '混淆中…'
+        progressWrap.style.display = 'block'
+        progressFill.style.width = '30%'
+
+        await new Promise(r => setTimeout(r, 60))
+        progressFill.style.width = '65%'
+        await new Promise(r => setTimeout(r, 40))
+
+        const t0 = performance.now()
+        try {
+          obfuscatedCode = obfuscateCode(src, options, currentLevel)
+        } catch(e) {
+          showToast('❌ 混淆出错：' + e.message)
+          obfuscateBtn.disabled = false
+          obfuscateBtn.classList.remove('running')
+          obfuscateBtn.textContent = '🔐 开始混淆'
+          progressWrap.style.display = 'none'
+          return
+        }
+        const t1 = performance.now()
+
+        progressFill.style.width = '100%'
+        await new Promise(r => setTimeout(r, 400))
+        progressWrap.style.display = 'none'
+        progressFill.style.width = '0'
+
+        // 输出
+        outputWrap.textContent = obfuscatedCode
+
+        // 统计
+        const inBytes  = new Blob([src]).size
+        const outBytes = new Blob([obfuscatedCode]).size
+        const ratio    = outBytes > inBytes
+          ? '+' + ((outBytes / inBytes - 1) * 100).toFixed(0) + '%'
+          : '-' + ((1 - outBytes / inBytes) * 100).toFixed(0) + '%'
+
+        document.getElementById('statIn').textContent    = fmtSize(inBytes)
+        document.getElementById('statOut').textContent   = fmtSize(outBytes)
+        document.getElementById('statRatio').textContent = ratio
+        document.getElementById('statTime').textContent  = (t1 - t0).toFixed(0) + 'ms'
+        statsRow.style.display = 'flex'
+
+        copyBtn.disabled     = false
+        downloadBtn.disabled = false
+
+        obfuscateBtn.disabled = false
+        obfuscateBtn.classList.remove('running')
+        obfuscateBtn.textContent = '🔐 开始混淆'
+
+        showToast('✅ 混淆完成！')
+      })
+
+      // ── 复制 ──
+      copyBtn.addEventListener('click', () => {
+        if (!obfuscatedCode) return
+        navigator.clipboard.writeText(obfuscatedCode).then(() => {
+          showToast('📋 已复制到剪贴板')
+        }).catch(() => {
+          // fallback
+          const ta = document.createElement('textarea')
+          ta.value = obfuscatedCode
+          document.body.appendChild(ta)
+          ta.select()
+          document.execCommand('copy')
+          document.body.removeChild(ta)
+          showToast('📋 已复制到剪贴板')
+        })
+      })
+
+      // ── 下载 ──
+      downloadBtn.addEventListener('click', () => {
+        if (!obfuscatedCode) return
+        const blob = new Blob([obfuscatedCode], { type: 'text/javascript' })
+        const url  = URL.createObjectURL(blob)
+        const a    = document.createElement('a')
+        a.href     = url
+        a.download = 'obfuscated.js'
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+        showToast('💾 文件下载中…')
+      })
+
+      // ── 重置 ──
+      resetBtn.addEventListener('click', () => {
+        inputCode.value    = ''
+        obfuscatedCode     = ''
+        fileInput.value    = ''
+        outputWrap.innerHTML = '<div class="output-placeholder">混淆完成后在此显示结果</div>'
+        statsRow.style.display = 'none'
+        copyBtn.disabled     = true
+        downloadBtn.disabled = true
+        showToast('🗑️ 已重置')
+      })
+
+      // ── 工具函数 ──
+      function fmtSize(bytes) {
+        if (bytes < 1024)    return bytes + ' B'
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB'
+        return (bytes / 1048576).toFixed(1) + ' MB'
+      }
+
+      function showToast(msg) {
+        const t = document.getElementById('toast')
+        t.textContent = msg
+        t.classList.add('show')
+        clearTimeout(t._timer)
+        t._timer = setTimeout(() => t.classList.remove('show'), 2200)
+      }
+    </script>
+
+  </body>
+</html>

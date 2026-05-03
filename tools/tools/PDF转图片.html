@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>PDF 转图片</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
+    </script>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+        @keyframes headerSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes headerShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.15); }
+        }
+        .subtitle { font-size: 0.92rem; color: var(--text-secondary); font-weight: 500; }
+
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+        @keyframes contentSlide {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-drop {
+            border: 2px dashed var(--text-muted);
+            border-radius: var(--border-radius-sm);
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            transition: var(--transition);
+        }
+        .file-drop:hover,
+        .file-drop.dragover { border-color: var(--accent-primary); }
+        .file-drop input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .file-drop-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+        .file-drop-text {
+            font-size: 0.92rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+        .file-drop-sub { font-size: 0.74rem; color: var(--text-secondary); margin-bottom: 10px; }
+        .file-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .preview-scroll {
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 10px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-sm);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+        }
+
+        .page-thumb-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            padding: 6px;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            overflow: hidden;
+        }
+        .page-thumb-item img {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light);
+            background: #fff;
+        }
+        .page-thumb-item .thumb-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        .page-thumb-item .thumb-status {
+            font-size: 0.55rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            white-space: nowrap;
+            min-height: 14px;
+            line-height: 1;
+        }
+
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .option-item { display: flex; flex-direction: column; gap: 6px; }
+        .option-item.full { grid-column: 1 / -1; }
+        .option-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .option-label span { font-weight: 600; color: var(--text-secondary); }
+
+        .format-btn, .range-btn, .res-btn {
+            padding: 10px 6px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .format-btn.active,
+        .range-btn.active,
+        .res-btn.active {
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .format-row, .range-row, .res-row {
+            display: grid;
+            gap: 8px;
+        }
+        .format-row { grid-template-columns: repeat(3, 1fr); }
+        .res-row { grid-template-columns: repeat(2, 1fr); }
+        .range-row { grid-template-columns: repeat(2, 1fr); }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 10px 12px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            outline: none;
+            width: 100%;
+            font-family: inherit;
+        }
+        input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn {
+            flex: 1;
+            padding: 13px 8px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            white-space: nowrap;
+        }
+        .btn:active {
+            transform: scale(0.97);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+        .btn.primary { background: var(--accent-gradient); color: #fff; }
+        .btn.success { background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: #fff; }
+        .btn.danger { color: var(--danger); }
+        .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+        .action-bar { display: flex; gap: 12px; margin-top: 16px; }
+
+        .progress-wrap {
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            overflow: hidden;
+            margin-bottom: 14px;
+            display: none;
+        }
+        .progress-wrap.visible { display: block; }
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--accent-gradient);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            gap: 12px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px 16px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            flex: 1;
+            min-width: 80px;
+        }
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; }
+
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--text-primary);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 999;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .instr-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .page-grid { grid-template-columns: repeat(3, 1fr); }
+            .format-row { grid-template-columns: repeat(3, 1fr); }
+            .res-row { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>PDF 转图片</h1>
+    <p class="subtitle">页面提取 · 批量打包 · 本地处理</p>
+</header>
+
+<div class="main">
+    <div class="card">
+        <div class="card-label">📁 上传 PDF</div>
+        <div class="file-drop" id="dropArea">
+            <span class="file-drop-icon">📄</span>
+            <div class="file-drop-text">拖放 PDF 文件到此处</div>
+            <div class="file-drop-sub">或点击选择文件</div>
+            <span class="file-badge">仅支持 .pdf 文件</span>
+            <input type="file" id="fileInput" accept=".pdf,application/pdf" />
+        </div>
+    </div>
+
+    <div class="card" id="previewCard" style="display: none;">
+        <div class="card-label">🖼️ 页面预览</div>
+        <div class="preview-scroll">
+            <div class="page-grid" id="pageGrid">
+                <div style="text-align:center;padding:24px;font-size:0.8rem;color:var(--text-muted);width:100%;">上传 PDF 后显示页面预览</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-label">⚙️ 转换设置</div>
+        <div class="options-grid">
+            <div class="option-item full">
+                <div class="option-label">输出格式</div>
+                <div class="format-row" id="formatRow">
+                    <button class="format-btn active" data-format="png">PNG</button>
+                    <button class="format-btn" data-format="jpeg">JPEG</button>
+                    <button class="format-btn" data-format="webp">WebP</button>
+                </div>
+            </div>
+
+            <div class="option-item full">
+                <div class="option-label">图片质量 <span id="qualityVal">90%</span></div>
+                <input type="range" id="qualitySlider" min="10" max="100" value="90">
+                <p style="font-size:0.65rem;color:var(--text-muted);margin-top:2px;">仅 JPEG / WebP 有效</p>
+            </div>
+
+            <div class="option-item full">
+                <div class="option-label">分辨率预设</div>
+                <div class="res-row" id="resRow">
+                    <button class="res-btn" data-width="custom">自定义宽度</button>
+                    <button class="res-btn" data-width="800">800px (网页)</button>
+                    <button class="res-btn active" data-width="1200">1200px (高清)</button>
+                    <button class="res-btn" data-width="2000">2000px (印刷)</button>
+                </div>
+            </div>
+
+            <div class="option-item full">
+                <div class="option-label">输出宽度 (px)</div>
+                <input type="number" id="customWidth" value="1200" min="200" max="3000" step="50" disabled>
+            </div>
+
+            <div class="option-item full">
+                <div class="option-label">页面范围</div>
+                <div class="range-row" id="rangeRow">
+                    <button class="range-btn active" data-range="all">全部页面</button>
+                    <button class="range-btn" data-range="custom">自定义范围</button>
+                </div>
+            </div>
+
+            <div class="option-item full" id="customRangeWrap" style="display:none;">
+                <div class="option-label">自定义范围</div>
+                <input type="text" id="pagesInput" placeholder="例: 1,3-5,8">
+            </div>
+
+            <div class="option-item full">
+                <div class="option-label">文件名前缀</div>
+                <input type="text" id="prefixInput" placeholder="例如: page_">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-label">📊 统计与操作</div>
+        <div class="stats-row">
+            <div class="stat-item"><div class="stat-value" id="totalPagesStat">0</div><div class="stat-label">总页数</div></div>
+            <div class="stat-item"><div class="stat-value" id="currentFormatStat">PNG</div><div class="stat-label">当前格式</div></div>
+            <div class="stat-item"><div class="stat-value" id="outputSizeStat">1200px</div><div class="stat-label">输出尺寸</div></div>
+            <div class="stat-item"><div class="stat-value" id="selectedPagesStat">0</div><div class="stat-label">选中页数</div></div>
+        </div>
+        <div class="progress-wrap" id="progressWrap">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="action-bar">
+            <button class="btn primary" id="convertBtn" disabled>🔄 开始转换</button>
+            <button class="btn success" id="downloadBtn" disabled>📦 打包下载</button>
+            <button class="btn danger" id="resetBtn">🗑️ 清空全部</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-label">📖 使用说明</div>
+        <div class="instr-list">
+            <div class="instr-item"><span class="instr-icon">📤</span><div class="instr-text"><strong>上传 PDF</strong>：拖放或点击上传 PDF 文件，自动加载并显示所有页面缩略图</div></div>
+            <div class="instr-item"><span class="instr-icon">⚙️</span><div class="instr-text"><strong>参数调节</strong>：点击按钮选择输出格式、分辨率和页面范围，拖动滑块调整质量</div></div>
+            <div class="instr-item"><span class="instr-icon">🔄</span><div class="instr-text"><strong>开始转换</strong>：点击后逐页渲染为图片，进度条显示实时进度，完成后可打包下载</div></div>
+            <div class="instr-item"><span class="instr-icon">📦</span><div class="instr-text"><strong>打包下载</strong>：将所有已转换的图片打包为 ZIP 文件，一键保存到本地</div></div>
+            <div class="instr-item"><span class="instr-icon">🔒</span><div class="instr-text"><strong>隐私安全</strong>：所有处理在浏览器本地完成，文件不上传任何服务器</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    (function() {
+        const $ = id => document.getElementById(id);
+        const dropArea = $('dropArea');
+        const fileInput = $('fileInput');
+        const previewCard = $('previewCard');
+        const pageGrid = $('pageGrid');
+        const qualitySlider = $('qualitySlider');
+        const qualityVal = $('qualityVal');
+        const customWidthInput = $('customWidth');
+        const pagesInput = $('pagesInput');
+        const prefixInput = $('prefixInput');
+        const convertBtn = $('convertBtn');
+        const downloadBtn = $('downloadBtn');
+        const resetBtn = $('resetBtn');
+        const progressWrap = $('progressWrap');
+        const progressFill = $('progressFill');
+        const totalPagesStat = $('totalPagesStat');
+        const currentFormatStat = $('currentFormatStat');
+        const outputSizeStat = $('outputSizeStat');
+        const selectedPagesStat = $('selectedPagesStat');
+        const toast = $('toast');
+        const customRangeWrap = $('customRangeWrap');
+
+        let pdfDoc = null;
+        let totalPages = 0;
+        let pageThumbs = [];
+        let renderedBlobs = {};
+        let isProcessing = false;
+
+        let currentFormat = 'png';
+        let currentRange = 'all';
+        let currentResolution = '1200'; // 默认1200
+
+        // 初始状态：1200按钮激活，输入框禁用并显示1200
+        customWidthInput.disabled = true;
+
+        document.querySelectorAll('#formatRow .format-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#formatRow .format-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFormat = btn.dataset.format;
+                currentFormatStat.textContent = currentFormat.toUpperCase();
+            });
+        });
+
+        document.querySelectorAll('#resRow .res-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#resRow .res-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentResolution = btn.dataset.width;
+                if (currentResolution !== 'custom') {
+                    customWidthInput.value = currentResolution;
+                    customWidthInput.disabled = true;
+                } else {
+                    customWidthInput.disabled = false;
+                    // 可以设置一个默认值，例如之前的值或1200
+                    if (!customWidthInput.value || customWidthInput.value === '') {
+                        customWidthInput.value = '1200';
+                    }
+                }
+                updateStats();
+            });
+        });
+
+        document.querySelectorAll('#rangeRow .range-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#rangeRow .range-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentRange = btn.dataset.range;
+                customRangeWrap.style.display = currentRange === 'custom' ? 'flex' : 'none';
+                updateStats();
+            });
+        });
+
+        function updateQualityDisplay() {
+            qualityVal.textContent = qualitySlider.value + '%';
+        }
+        qualitySlider.addEventListener('input', updateQualityDisplay);
+
+        customWidthInput.addEventListener('input', updateStats);
+        pagesInput.addEventListener('input', updateStats);
+
+        function updateStats() {
+            totalPagesStat.textContent = totalPages;
+            currentFormatStat.textContent = currentFormat.toUpperCase();
+            outputSizeStat.textContent = customWidthInput.value + 'px';
+            const selected = parsePageRange();
+            selectedPagesStat.textContent = selected.length > 0 ? selected.length : (totalPages > 0 ? totalPages : 0);
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending': return '待转换';
+                case 'processing': return '转换中…';
+                case 'completed': return '✓ 完成';
+                case 'error': return '失败';
+                default: return '';
+            }
+        }
+
+        function renderPagePreviews() {
+            if (!pdfDoc || totalPages === 0) {
+                previewCard.style.display = 'none';
+                pageGrid.innerHTML = '<div style="text-align:center;padding:24px;font-size:0.8rem;color:var(--text-muted);width:100%;">上传 PDF 后显示页面预览</div>';
+                return;
+            }
+            previewCard.style.display = '';
+            let html = '';
+            for (let i = 1; i <= totalPages; i++) {
+                html += `
+                    <div class="page-thumb-item" data-page="${i}">
+                        <img src="${pageThumbs[i - 1]}" alt="第${i}页">
+                        <span class="thumb-label">第 ${i} 页</span>
+                        <span class="thumb-status">待转换</span>
+                    </div>`;
+            }
+            pageGrid.innerHTML = html;
+        }
+
+        function updatePageStatus(pageNum, status) {
+            const item = pageGrid.querySelector(`.page-thumb-item[data-page="${pageNum}"]`);
+            if (item) {
+                const statusEl = item.querySelector('.thumb-status');
+                if (statusEl) {
+                    statusEl.textContent = getStatusText(status);
+                }
+            }
+        }
+
+        function parsePageRange() {
+            if (currentRange === 'all') {
+                return Array.from({ length: totalPages }, (_, i) => i + 1);
+            }
+            const input = pagesInput.value.trim();
+            if (!input) return [];
+            const pagesSet = new Set();
+            const parts = input.split(',');
+            for (const part of parts) {
+                if (part.includes('-')) {
+                    const [start, end] = part.split('-').map(Number);
+                    for (let i = start; i <= end; i++) {
+                        if (i >= 1 && i <= totalPages) pagesSet.add(i);
+                    }
+                } else {
+                    const num = Number(part);
+                    if (num >= 1 && num <= totalPages) pagesSet.add(num);
+                }
+            }
+            return Array.from(pagesSet).sort((a, b) => a - b);
+        }
+
+        async function renderPageToBlob(pageNum, targetWidth, format, quality) {
+            const page = await pdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale: 1 });
+            const scale = targetWidth / viewport.width;
+            const scaledViewport = page.getViewport({ scale });
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = scaledViewport.width;
+            canvas.height = scaledViewport.height;
+            await page.render({ canvasContext: ctx, viewport: scaledViewport }).promise;
+            let mimeType = 'image/png';
+            if (format === 'jpeg') mimeType = 'image/jpeg';
+            if (format === 'webp') mimeType = 'image/webp';
+            return new Promise((resolve) => {
+                canvas.toBlob(resolve, mimeType, quality / 100);
+            });
+        }
+
+        async function loadPDF(file) {
+            if (!file || file.type !== 'application/pdf') {
+                showToast('⚠️ 请选择有效的 PDF 文件');
+                return;
+            }
+            resetState(false);
+            const arrayBuffer = await file.arrayBuffer();
+            pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            totalPages = pdfDoc.numPages;
+            pageThumbs = [];
+            for (let i = 1; i <= totalPages; i++) {
+                const page = await pdfDoc.getPage(i);
+                const viewport = page.getViewport({ scale: 0.2 });
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                pageThumbs.push(canvas.toDataURL());
+            }
+            renderPagePreviews();
+            updateStats();
+            convertBtn.disabled = false;
+            downloadBtn.disabled = true;
+            renderedBlobs = {};
+            showToast('✅ PDF 已加载');
+        }
+
+        convertBtn.addEventListener('click', async () => {
+            if (!pdfDoc || isProcessing) return;
+            const format = currentFormat;
+            const quality = parseInt(qualitySlider.value);
+            let targetWidth = parseInt(customWidthInput.value);
+            if (isNaN(targetWidth) || targetWidth < 50) targetWidth = 1200;
+            const pagesToConvert = parsePageRange();
+            if (pagesToConvert.length === 0) {
+                showToast('⚠️ 未选择任何页面');
+                return;
+            }
+
+            isProcessing = true;
+            convertBtn.disabled = true;
+            downloadBtn.disabled = true;
+            renderedBlobs = {};
+
+            for (let i = 1; i <= totalPages; i++) {
+                updatePageStatus(i, 'pending');
+            }
+            pagesToConvert.forEach(p => updatePageStatus(p, 'processing'));
+
+            progressWrap.classList.add('visible');
+            progressFill.style.width = '0%';
+
+            let completed = 0;
+            const total = pagesToConvert.length;
+            for (const pageNum of pagesToConvert) {
+                try {
+                    const blob = await renderPageToBlob(pageNum, targetWidth, format, quality);
+                    renderedBlobs[pageNum] = blob;
+                    updatePageStatus(pageNum, 'completed');
+                } catch (e) {
+                    console.error(`第${pageNum}页转换失败`, e);
+                    updatePageStatus(pageNum, 'error');
+                }
+                completed++;
+                progressFill.style.width = Math.round((completed / total) * 100) + '%';
+            }
+
+            progressFill.style.width = '100%';
+            setTimeout(() => {
+                progressWrap.classList.remove('visible');
+                progressFill.style.width = '0%';
+            }, 600);
+
+            isProcessing = false;
+            convertBtn.disabled = false;
+            const successCount = Object.keys(renderedBlobs).length;
+            downloadBtn.disabled = successCount === 0;
+            selectedPagesStat.textContent = successCount;
+            showToast(`✅ 转换完成 (${successCount}/${total})`);
+        });
+
+        downloadBtn.addEventListener('click', async () => {
+            const blobKeys = Object.keys(renderedBlobs);
+            if (blobKeys.length === 0) {
+                showToast('⚠️ 没有可下载的图片');
+                return;
+            }
+            downloadBtn.disabled = true;
+            downloadBtn.textContent = '⏳ 打包中…';
+            progressWrap.classList.add('visible');
+            progressFill.style.width = '0%';
+
+            const format = currentFormat;
+            const ext = format === 'png' ? 'png' : (format === 'jpeg' ? 'jpg' : 'webp');
+            const prefix = prefixInput.value.trim() || 'page_';
+            const zip = new JSZip();
+
+            const keys = blobKeys.map(Number).sort((a, b) => a - b);
+            for (let i = 0; i < keys.length; i++) {
+                const pageNum = keys[i];
+                const paddedNum = String(pageNum).padStart(3, '0');
+                zip.file(`${prefix}${paddedNum}.${ext}`, renderedBlobs[pageNum]);
+                progressFill.style.width = Math.round(((i + 1) / keys.length) * 100) + '%';
+            }
+
+            const zipBlob = await zip.generateAsync({ type: 'blob' });
+            const url = URL.createObjectURL(zipBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `PDF转图片_${Date.now()}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            progressFill.style.width = '100%';
+            setTimeout(() => {
+                progressWrap.classList.remove('visible');
+                progressFill.style.width = '0%';
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = '📦 打包下载';
+            }, 600);
+            showToast('📦 打包下载完成');
+        });
+
+        function resetState(clearFileInput = true) {
+            if (pdfDoc) {
+                pageThumbs.forEach(url => URL.revokeObjectURL(url));
+                pdfDoc = null;
+            }
+            totalPages = 0;
+            pageThumbs = [];
+            renderedBlobs = {};
+            isProcessing = false;
+            if (clearFileInput) fileInput.value = '';
+            previewCard.style.display = 'none';
+            pageGrid.innerHTML = '<div style="text-align:center;padding:24px;font-size:0.8rem;color:var(--text-muted);width:100%;">上传 PDF 后显示页面预览</div>';
+            convertBtn.disabled = true;
+            downloadBtn.disabled = true;
+            progressWrap.classList.remove('visible');
+            progressFill.style.width = '0%';
+            updateStats();
+        }
+
+        resetBtn.addEventListener('click', () => {
+            resetState(true);
+            showToast('🗑️ 已清空全部');
+        });
+
+        function handleFile(file) {
+            loadPDF(file);
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+            fileInput.value = '';
+        });
+
+        dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.classList.add('dragover'); });
+        dropArea.addEventListener('dragleave', () => dropArea.classList.remove('dragover'));
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        updateStats();
+    })();
+</script>
+</body>
+</html>

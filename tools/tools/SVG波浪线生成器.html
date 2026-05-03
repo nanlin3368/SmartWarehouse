@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SVG 波浪线生成器</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes headerShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.15); }
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ── Main Layout ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Card ── */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Settings Tab Card ── */
+        .settings-tab-card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .settings-tab-nav {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+            padding: 6px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .settings-tab-nav::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+
+        .settings-tab-btn {
+            flex: 1 0 auto;
+            min-width: 64px;
+            padding: 9px 8px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .settings-tab-btn .tab-icon {
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .settings-tab-btn.active {
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .settings-tab-content {
+            display: none;
+            animation: tabFadeIn 0.25s ease;
+        }
+
+        .settings-tab-content.active {
+            display: block;
+        }
+
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Preset ── */
+        .preset-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .preset-btn {
+            padding: 5px 14px;
+            border: none;
+            border-radius: 30px;
+            background: var(--bg-primary);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .preset-btn.active,
+        .preset-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        /* ── Options Grid ── */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .option-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .option-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .option-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .option-label span {
+            float: right;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* ── Inputs ── */
+        select {
+            padding: 8px 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            outline: none;
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 38px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: none;
+            cursor: pointer;
+            padding: 2px;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 2px;
+            border-radius: 8px;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 6px;
+        }
+
+        .color-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .color-preview-bar {
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 4px;
+            transition: background 0.2s;
+        }
+
+        .mode-toggle {
+            display: grid;
+            gap: 10px;
+        }
+        .mode-toggle-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .mode-toggle-2 { grid-template-columns: 1fr 1fr; }
+        .mode-btn {
+            padding: 10px 8px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        .mode-btn.active {
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .preview-stage {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-sm);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            padding: 24px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 160px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #waveSvg {
+            width: 100%;
+            max-width: 100%;
+            display: block;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bg-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .bg-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+            box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+        }
+
+        .bg-swatch.active {
+            border-color: var(--accent-primary);
+            box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light);
+        }
+
+        .code-block {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 14px;
+            font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+            font-size: 0.72rem;
+            color: var(--text-primary);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.6;
+            margin-bottom: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .export-btn {
+            padding: 9px 6px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .export-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .action-bar { display: flex; gap: 12px; }
+        .action-btn {
+            flex: 1;
+            padding: 11px 8px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        .action-btn:active {
+            transform: scale(0.97);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .badge-new {
+            display: inline-block;
+            padding: 1px 6px;
+            background: var(--accent-gradient);
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: white;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .instr-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); }
+
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--text-primary);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--shadow-dark), transparent);
+            margin: 14px 0;
+            opacity: 0.5;
+        }
+
+        .anim-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .anim-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
+
+        .select-wrap { position: relative; }
+        .select-wrap::after {
+            content: '▾';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            pointer-events: none;
+        }
+
+        .anim-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 42px;
+            height: 22px;
+            cursor: pointer;
+        }
+        .toggle-switch input { display: none; }
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            border-radius: 11px;
+            background: var(--bg-primary);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            transition: var(--transition);
+        }
+        .toggle-thumb {
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
+            transition: var(--transition);
+        }
+        .toggle-switch input:checked ~ .toggle-track { background: var(--accent-primary); box-shadow: inset 2px 2px 4px rgba(0,0,0,0.2); }
+        .toggle-switch input:checked ~ .toggle-thumb { left: 23px; background: white; box-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
+
+        .gradient-stops { display: flex; flex-direction: column; gap: 8px; }
+        .stop-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+        .stop-color-wrap { display: flex; align-items: center; gap: 8px; }
+        .stop-label { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SVG 波浪线生成器</h1>
+        <p class="subtitle">可视化调节 · 实时预览 · 一键导出 SVG / CSS</p>
+    </header>
+
+    <div class="main">
+
+        <!-- ①②③④ 四合一 Tab 导航卡片 -->
+        <div class="settings-tab-card">
+            <div class="settings-tab-nav">
+                <button class="settings-tab-btn active" id="stab-preset" onclick="switchSettingsTab('preset')">
+                    <span class="tab-icon">🎨</span>快速预设
+                </button>
+                <button class="settings-tab-btn" id="stab-wave" onclick="switchSettingsTab('wave')">
+                    <span class="tab-icon">〰️</span>波形设置
+                </button>
+                <button class="settings-tab-btn" id="stab-color" onclick="switchSettingsTab('color')">
+                    <span class="tab-icon">🖌️</span>颜色配置
+                </button>
+                <button class="settings-tab-btn" id="stab-anim" onclick="switchSettingsTab('anim')">
+                    <span class="tab-icon">✨</span>动画设置
+                </button>
+            </div>
+
+            <!-- Tab 内容：快速预设 -->
+            <div class="settings-tab-content active" id="stab-content-preset">
+                <div class="preset-row">
+                    <button class="preset-btn active" data-preset="ocean">🌊 深海</button>
+                    <button class="preset-btn" data-preset="sunset">🌅 日落</button>
+                    <button class="preset-btn" data-preset="mint">🍃 薄荷</button>
+                    <button class="preset-btn" data-preset="purple">💜 紫韵</button>
+                    <button class="preset-btn" data-preset="cherry">🌸 樱花</button>
+                    <button class="preset-btn" data-preset="dark">🌑 暗夜</button>
+                </div>
+            </div>
+
+            <!-- Tab 内容：波形设置 -->
+            <div class="settings-tab-content" id="stab-content-wave">
+                <div class="options-grid">
+                    <div class="option-item">
+                        <div class="option-label">波形类型</div>
+                        <div class="select-wrap">
+                            <select id="waveType">
+                                <option value="sine">正弦波（平滑）</option>
+                                <option value="sharp">锯齿波（尖锐）</option>
+                                <option value="layered">叠层波（多层）</option>
+                                <option value="blob">有机曲线</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">填充模式</div>
+                        <div class="select-wrap">
+                            <select id="fillMode">
+                                <option value="fill">填充</option>
+                                <option value="stroke">描边</option>
+                                <option value="both">描边+填充</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">振幅（高度）<span id="amplitudeVal">40px</span></div>
+                        <input type="range" id="amplitude" min="5" max="120" step="1" value="40">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">频率（波数）<span id="frequencyVal">2</span></div>
+                        <input type="range" id="frequency" min="0.5" max="8" step="0.5" value="2">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">垂直位置 <span id="verticalPosVal">50%</span></div>
+                        <input type="range" id="verticalPos" min="10" max="90" step="1" value="50">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">相位偏移 <span id="phaseVal">0°</span></div>
+                        <input type="range" id="phase" min="0" max="360" step="5" value="0">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">描边宽度 <span id="strokeWidthVal">2px</span></div>
+                        <input type="range" id="strokeWidth" min="0.5" max="12" step="0.5" value="2">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">填充透明度 <span id="fillOpacityVal">0.8</span></div>
+                        <input type="range" id="fillOpacity" min="0" max="1" step="0.05" value="0.8">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">画布宽度 <span id="canvasWVal">640px</span></div>
+                        <input type="range" id="canvasW" min="200" max="1200" step="20" value="640">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">画布高度 <span id="canvasHVal">160px</span></div>
+                        <input type="range" id="canvasH" min="60" max="400" step="10" value="160">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 内容：颜色配置 -->
+            <div class="settings-tab-content" id="stab-content-color">
+                <div class="color-row">
+                    <div class="option-item">
+                        <div class="option-label">描边颜色</div>
+                        <input type="color" id="strokeColor" value="#667eea">
+                        <div class="color-preview-bar" id="strokeBar" style="background:#667eea"></div>
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">填充颜色</div>
+                        <input type="color" id="fillColor" value="#667eea">
+                        <div class="color-preview-bar" id="fillBar" style="background:#667eea"></div>
+                    </div>
+                </div>
+
+                <div class="option-item" style="margin-bottom:14px;">
+                    <div class="option-label" style="margin-bottom:6px;">填充渐变 <span class="badge-new">新</span></div>
+                    <div class="mode-toggle mode-toggle-2">
+                        <button class="mode-btn" id="gradNone" onclick="setGradMode('none')">🎨 纯色填充</button>
+                        <button class="mode-btn active" id="gradLinear" onclick="setGradMode('linear')">🌈 线性渐变</button>
+                    </div>
+                </div>
+
+                <div id="gradientStopsWrap">
+                    <div class="gradient-stops">
+                        <div class="stop-row">
+                            <div class="stop-color-wrap">
+                                <span class="stop-label">渐变起始</span>
+                                <input type="color" id="gradStop1" value="#667eea" style="width:60px;height:30px;">
+                            </div>
+                            <div class="color-preview-bar" id="gradBar1" style="background:#667eea;width:60px;height:6px;border-radius:3px;margin-top:0;"></div>
+                        </div>
+                        <div class="stop-row">
+                            <div class="stop-color-wrap">
+                                <span class="stop-label">渐变终止</span>
+                                <input type="color" id="gradStop2" value="#764ba2" style="width:60px;height:30px;">
+                            </div>
+                            <div class="color-preview-bar" id="gradBar2" style="background:#764ba2;width:60px;height:6px;border-radius:3px;margin-top:0;"></div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-label">渐变角度 <span id="gradAngleVal">135°</span></div>
+                            <input type="range" id="gradAngle" min="0" max="360" step="15" value="135">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+                <div class="option-item">
+                    <div class="option-label">背景色</div>
+                    <div class="bg-options" id="bgOptions">
+                        <div class="bg-swatch active" style="background:#e0e5ec" data-bg="#e0e5ec" title="银灰"></div>
+                        <div class="bg-swatch" style="background:#ffffff" data-bg="#ffffff" title="白色"></div>
+                        <div class="bg-swatch" style="background:#1a1a2e" data-bg="#1a1a2e" title="深夜"></div>
+                        <div class="bg-swatch" style="background:#0f3460" data-bg="#0f3460" title="深海"></div>
+                        <div class="bg-swatch" style="background:#f8f4f0" data-bg="#f8f4f0" title="暖白"></div>
+                        <div class="bg-swatch" style="background:#1e1e1e" data-bg="#1e1e1e" title="炭黑"></div>
+                        <input type="color" id="customBgColor" value="#e0e5ec" title="自定义" style="width:28px;height:28px;border:none;border-radius:8px;padding:2px;cursor:pointer;box-shadow:2px 2px 5px var(--shadow-dark),-2px -2px 5px var(--shadow-light);">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 内容：动画设置 -->
+            <div class="settings-tab-content" id="stab-content-anim">
+                <div class="anim-toggle-row">
+                    <div class="anim-indicator">
+                        <div class="anim-dot"></div>
+                        CSS 动画预览
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="animToggle">
+                        <div class="toggle-track"></div>
+                        <div class="toggle-thumb"></div>
+                    </label>
+                </div>
+                <div id="animControls" style="margin-top:14px;display:none;">
+                    <div class="options-grid">
+                        <div class="option-item">
+                            <div class="option-label">动画速度 <span id="animSpeedVal">4s</span></div>
+                            <input type="range" id="animSpeed" min="1" max="20" step="1" value="4">
+                        </div>
+                        <div class="option-item">
+                            <div class="option-label">动画方向</div>
+                            <div class="select-wrap">
+                                <select id="animDir">
+                                    <option value="normal">向右流动</option>
+                                    <option value="reverse">向左流动</option>
+                                    <option value="alternate">来回摆动</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ⑤ 实时预览 -->
+        <div class="card">
+            <div class="card-label">👁️ 实时预览</div>
+            <div class="preview-stage">
+                <svg id="waveSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
+        </div>
+
+        <!-- ⑥ 代码输出 -->
+        <div class="card">
+            <div class="card-label">📋 SVG / CSS 代码</div>
+            <div class="mode-toggle mode-toggle-2" style="margin-bottom:14px;">
+                <button class="mode-btn active" id="codeTabSvg" onclick="switchCodeTab('svg')">📄 SVG 代码</button>
+                <button class="mode-btn" id="codeTabCss" onclick="switchCodeTab('css')">🎨 CSS 代码</button>
+            </div>
+            <div class="code-block" id="codeOutput"></div>
+            <div class="export-grid">
+                <button class="export-btn" id="copySvgBtn">📋 复制 SVG</button>
+                <button class="export-btn" id="copyCssBtn">🎨 复制 CSS</button>
+                <button class="export-btn" id="downloadSvgBtn">⬇️ 下载 SVG</button>
+            </div>
+            <div class="action-bar">
+                <button class="action-btn" id="resetBtn">⟳ 重置默认</button>
+                <button class="action-btn" id="randomBtn">🎲 随机波形</button>
+            </div>
+        </div>
+
+        <!-- ⑦ 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item"><span class="instr-icon">〰️</span><div class="instr-text"><strong>波形类型</strong>：正弦波平滑流畅，锯齿波棱角分明，叠层波营造立体感，有机曲线自然随机</div></div>
+                <div class="instr-item"><span class="instr-icon">📐</span><div class="instr-text"><strong>振幅 & 频率</strong>：振幅控制波浪的上下起伏高度，频率控制一屏内出现的波峰数量</div></div>
+                <div class="instr-item"><span class="instr-icon">🌈</span><div class="instr-text"><strong>线性渐变</strong>：开启渐变后可设置起止颜色和角度，生成渐变填充或描边效果</div></div>
+                <div class="instr-item"><span class="instr-icon">✨</span><div class="instr-text"><strong>CSS 动画</strong>：开启动画开关后可设置流动速度和方向，导出带 CSS keyframe 的完整代码</div></div>
+                <div class="instr-item"><span class="instr-icon">⬇️</span><div class="instr-text"><strong>下载 SVG</strong>：一键下载 .svg 文件，可直接用于网页、设计软件或插画工具</div></div>
+                <div class="instr-item"><span class="instr-icon">🎲</span><div class="instr-text"><strong>随机波形</strong>：随机生成波形参数与配色，快速获得创意灵感</div></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ── State ──────────────────────────────────────────────
+        let gradMode = 'linear';
+        let codeTab = 'svg';
+        let animOn = false;
+        let bgColor = '#e0e5ec';
+
+        // ── DOM refs ──────────────────────────────────────────
+        const $ = id => document.getElementById(id);
+        const waveSvg = $('waveSvg');
+        const codeOutput = $('codeOutput');
+        const toast = $('toast');
+
+        // ── Settings Tab Switch ───────────────────────────────
+        function switchSettingsTab(name) {
+            ['preset', 'wave', 'color', 'anim'].forEach(t => {
+                document.getElementById('stab-' + t).classList.toggle('active', t === name);
+                document.getElementById('stab-content-' + t).classList.toggle('active', t === name);
+            });
+            // 自动滚动到当前激活的tab按钮
+            const activeBtn = document.getElementById('stab-' + name);
+            if (activeBtn) {
+                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // ── Presets ───────────────────────────────────────────
+        const presets = {
+            ocean: { amplitude: 45, frequency: 2, verticalPos: 55, phase: 0, strokeColor: '#00b4d8', fillColor: '#0077b6',
+                gradStop1: '#00b4d8', gradStop2: '#0077b6', gradAngle: 135, strokeWidth: 2, fillOpacity: 0.85,
+                canvasW: 640, canvasH: 160, waveType: 'sine', fillMode: 'fill', bgColor: '#e0e5ec' },
+            sunset: { amplitude: 55, frequency: 1.5, verticalPos: 60, phase: 30, strokeColor: '#f9844a', fillColor: '#f9844a',
+                gradStop1: '#f9c74f', gradStop2: '#f3722c', gradAngle: 135, strokeWidth: 2.5, fillOpacity: 0.9,
+                canvasW: 640, canvasH: 180, waveType: 'sine', fillMode: 'fill', bgColor: '#fff8f0' },
+            mint: { amplitude: 35, frequency: 3, verticalPos: 50, phase: 0, strokeColor: '#52b788', fillColor: '#52b788',
+                gradStop1: '#b7e4c7', gradStop2: '#1b4332', gradAngle: 180, strokeWidth: 2, fillOpacity: 0.75,
+                canvasW: 640, canvasH: 140, waveType: 'sine', fillMode: 'both', bgColor: '#f0faf4' },
+            purple: { amplitude: 50, frequency: 2, verticalPos: 55, phase: 15, strokeColor: '#764ba2', fillColor: '#667eea',
+                gradStop1: '#667eea', gradStop2: '#764ba2', gradAngle: 135, strokeWidth: 2, fillOpacity: 0.85,
+                canvasW: 640, canvasH: 160, waveType: 'layered', fillMode: 'fill', bgColor: '#f5f0ff' },
+            cherry: { amplitude: 40, frequency: 2.5, verticalPos: 50, phase: 0, strokeColor: '#ff6b9d', fillColor: '#ff6b9d',
+                gradStop1: '#ff9a9e', gradStop2: '#d63031', gradAngle: 135, strokeWidth: 1.5, fillOpacity: 0.8,
+                canvasW: 640, canvasH: 150, waveType: 'blob', fillMode: 'fill', bgColor: '#fff0f5' },
+            dark: { amplitude: 45, frequency: 2, verticalPos: 55, phase: 0, strokeColor: '#7c3aed', fillColor: '#5b21b6',
+                gradStop1: '#6d28d9', gradStop2: '#1e1b4b', gradAngle: 135, strokeWidth: 2, fillOpacity: 0.9,
+                canvasW: 640, canvasH: 160, waveType: 'sine', fillMode: 'fill', bgColor: '#1a1a2e' },
+        };
+
+        function applyPreset(name) {
+            const p = presets[name];
+            if (!p) return;
+            $('amplitude').value = p.amplitude;
+            $('frequency').value = p.frequency;
+            $('verticalPos').value = p.verticalPos;
+            $('phase').value = p.phase;
+            $('strokeColor').value = p.strokeColor;
+            $('fillColor').value = p.fillColor;
+            $('gradStop1').value = p.gradStop1;
+            $('gradStop2').value = p.gradStop2;
+            $('gradAngle').value = p.gradAngle;
+            $('strokeWidth').value = p.strokeWidth;
+            $('fillOpacity').value = p.fillOpacity;
+            $('canvasW').value = p.canvasW;
+            $('canvasH').value = p.canvasH;
+            $('waveType').value = p.waveType;
+            $('fillMode').value = p.fillMode;
+            setBgColor(p.bgColor);
+            document.querySelectorAll('.preset-btn').forEach(b =>
+                b.classList.toggle('active', b.dataset.preset === name)
+            );
+            updateAll();
+        }
+
+        // ── Gradient mode ──────────────────────────────────────
+        function setGradMode(mode) {
+            gradMode = mode;
+            $('gradNone').classList.toggle('active', mode === 'none');
+            $('gradLinear').classList.toggle('active', mode === 'linear');
+            $('gradientStopsWrap').style.display = mode === 'none' ? 'none' : '';
+            updateAll();
+        }
+
+        // ── BG color ──────────────────────────────────────────
+        function setBgColor(color) {
+            bgColor = color;
+            $('customBgColor').value = color;
+            document.querySelectorAll('.bg-swatch').forEach(s =>
+                s.classList.toggle('active', s.dataset.bg === color)
+            );
+            updateAll();
+        }
+
+        document.querySelectorAll('.bg-swatch').forEach(s => {
+            s.addEventListener('click', () => setBgColor(s.dataset.bg));
+        });
+        $('customBgColor').addEventListener('input', e => {
+            bgColor = e.target.value;
+            document.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+            updateAll();
+        });
+
+        // ── Wave path generators ───────────────────────────────
+        function makeSinePath(W, H, amp, freq, phase, yPos) {
+            const cy = H * (yPos / 100);
+            const pts = [];
+            const steps = W * 2;
+            for (let i = 0; i <= steps; i++) {
+                const x = (i / steps) * W;
+                const rad = ((i / steps) * freq * 2 * Math.PI) + (phase * Math.PI / 180);
+                const y = cy + Math.sin(rad) * amp;
+                pts.push(`${i === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`);
+            }
+            return pts.join(' ');
+        }
+
+        function makeSharpPath(W, H, amp, freq, phase, yPos) {
+            const cy = H * (yPos / 100);
+            const pts = [];
+            const steps = Math.round(freq) * 4;
+            for (let i = 0; i <= steps; i++) {
+                const x = (i / steps) * W;
+                const t = (i / steps * freq * 2 * Math.PI) + (phase * Math.PI / 180);
+                const y = cy + (((t % (2 * Math.PI)) < Math.PI ? 1 : -1) * amp);
+                pts.push(`${i === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`);
+            }
+            return pts.join(' ');
+        }
+
+        function makeBlobPath(W, H, amp, freq, phase, yPos) {
+            const cy = H * (yPos / 100);
+            const segs = Math.max(2, Math.round(freq * 2));
+            const segW = W / segs;
+            let d = '';
+            const rng = (s) => {
+                let x = Math.sin(s * 127.1 + phase) * 43758.5453;
+                return x - Math.floor(x);
+            };
+            for (let i = 0; i <= segs; i++) {
+                const x = i * segW;
+                const r = rng(i);
+                const y = cy + (r * 2 - 1) * amp;
+                if (i === 0) {
+                    d += `M${x.toFixed(2)},${y.toFixed(2)}`;
+                } else {
+                    const px = (i - 1) * segW;
+                    const pr = rng(i - 1);
+                    const py = cy + (pr * 2 - 1) * amp;
+                    const cpx = px + segW * 0.5;
+                    d += ` C${cpx.toFixed(2)},${py.toFixed(2)} ${cpx.toFixed(2)},${y.toFixed(2)} ${x.toFixed(2)},${y.toFixed(2)}`;
+                }
+            }
+            return d;
+        }
+
+        function getWavePath(W, H, amp, freq, phase, yPos, type) {
+            if (type === 'sharp') return makeSharpPath(W, H, amp, freq, phase, yPos);
+            if (type === 'blob') return makeBlobPath(W, H, amp, freq, phase, yPos);
+            return makeSinePath(W, H, amp, freq, phase, yPos);
+        }
+
+        function getClosedPath(openPath, W, H) {
+            return openPath + ` L${W},${H} L0,${H} Z`;
+        }
+
+        // ── Build SVG ─────────────────────────────────────────
+        function buildSvg(forExport = false) {
+            const W = parseInt($('canvasW').value);
+            const H = parseInt($('canvasH').value);
+            const amp = parseInt($('amplitude').value);
+            const freq = parseFloat($('frequency').value);
+            const phase = parseInt($('phase').value);
+            const yPos = parseInt($('verticalPos').value);
+            const strokeCol = $('strokeColor').value;
+            const fillCol = $('fillColor').value;
+            const strokeW = parseFloat($('strokeWidth').value);
+            const fillOp = parseFloat($('fillOpacity').value);
+            const waveType = $('waveType').value;
+            const fillMode = $('fillMode').value;
+            const gs1 = $('gradStop1').value;
+            const gs2 = $('gradStop2').value;
+            const gradDeg = parseInt($('gradAngle').value);
+            const animSpd = parseInt($('animSpeed').value);
+            const animDir = $('animDir').value;
+
+            const gradId = 'wg';
+            const rad = gradDeg * Math.PI / 180;
+            const gx1 = (50 - 50 * Math.cos(rad)).toFixed(1);
+            const gy1 = (50 - 50 * Math.sin(rad)).toFixed(1);
+            const gx2 = (50 + 50 * Math.cos(rad)).toFixed(1);
+            const gy2 = (50 + 50 * Math.sin(rad)).toFixed(1);
+
+            let defs = '<defs>';
+            if (gradMode === 'linear') {
+                defs +=
+                    `<linearGradient id="${gradId}" x1="${gx1}%" y1="${gy1}%" x2="${gx2}%" y2="${gy2}%">`;
+                defs += `<stop offset="0%" stop-color="${gs1}"/>`;
+                defs += `<stop offset="100%" stop-color="${gs2}"/>`;
+                defs += `</linearGradient>`;
+            }
+
+            let styleBlock = '';
+            if (animOn && !forExport) {
+                styleBlock = `<style>
+@keyframes waveMove { from { transform: translateX(0); } to { transform: translateX(-${W}px); } }
+.wave-anim { animation: waveMove ${animSpd}s linear infinite ${animDir}; }
+</style>`;
+            } else if (animOn && forExport) {
+                styleBlock = `<style>
+@keyframes waveMove { from { transform: translateX(0); } to { transform: translateX(-${W}px); } }
+.wave-anim { animation: waveMove ${animSpd}s linear infinite ${animDir}; }
+</style>`;
+            }
+            defs += '</defs>';
+
+            const fillAttr = gradMode === 'linear' ? `url(#${gradId})` : fillCol;
+            const openPath = getWavePath(W * 2, H, amp, freq, phase, yPos, waveType);
+            const closedPath = getClosedPath(openPath, W * 2, H);
+
+            let paths = '';
+
+            if (waveType === 'layered') {
+                const openPath2 = getWavePath(W * 2, H, amp * 0.6, freq, phase + 60, yPos + 8, 'sine');
+                const closedPath2 = getClosedPath(openPath2, W * 2, H);
+                if (fillMode !== 'stroke') {
+                    paths +=
+                        `<path d="${closedPath2}" fill="${fillAttr}" fill-opacity="${(fillOp * 0.5).toFixed(2)}" stroke="none" ${animOn ? 'class="wave-anim"' : ''}/>`;
+                }
+            }
+
+            if (fillMode === 'fill' || fillMode === 'both') {
+                paths +=
+                    `<path d="${closedPath}" fill="${fillAttr}" fill-opacity="${fillOp}" stroke="none" ${animOn ? 'class="wave-anim"' : ''}/>`;
+            }
+            if (fillMode === 'stroke' || fillMode === 'both') {
+                paths +=
+                    `<path d="${openPath}" fill="none" stroke="${fillAttr}" stroke-width="${strokeW}" stroke-linecap="round" ${animOn ? 'class="wave-anim"' : ''}/>`;
+            }
+
+            const svg =
+                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="background:${bgColor};overflow:hidden;">
+${styleBlock}${defs}
+${paths}
+</svg>`;
+
+            return { svg, W, H, amp, freq, phase, yPos, strokeCol, fillCol, strokeW, fillOp, waveType, fillMode, gradMode,
+                gs1, gs2, gradDeg, animOn, animSpd, animDir, bgColor };
+        }
+
+        // ── Update preview ────────────────────────────────────
+        function updateAll() {
+            // Update labels
+            $('amplitudeVal').innerText = $('amplitude').value + 'px';
+            $('frequencyVal').innerText = $('frequency').value;
+            $('verticalPosVal').innerText = $('verticalPos').value + '%';
+            $('phaseVal').innerText = $('phase').value + '°';
+            $('strokeWidthVal').innerText = $('strokeWidth').value + 'px';
+            $('fillOpacityVal').innerText = parseFloat($('fillOpacity').value).toFixed(2);
+            $('canvasWVal').innerText = $('canvasW').value + 'px';
+            $('canvasHVal').innerText = $('canvasH').value + 'px';
+            $('gradAngleVal').innerText = $('gradAngle').value + '°';
+            if ($('animSpeed')) $('animSpeedVal').innerText = $('animSpeed').value + 's';
+
+            // Color bars
+            $('strokeBar').style.background = $('strokeColor').value;
+            $('fillBar').style.background = $('fillColor').value;
+            $('gradBar1').style.background = $('gradStop1').value;
+            $('gradBar2').style.background = $('gradStop2').value;
+
+            // Build and inject SVG
+            const { svg } = buildSvg(false);
+            const wrapper = document.querySelector('.preview-stage');
+            wrapper.innerHTML = svg.replace('<svg ', '<svg id="waveSvg" ');
+
+            // Update code
+            updateCode();
+        }
+
+        function updateCode() {
+            if (codeTab === 'svg') {
+                const { svg } = buildSvg(true);
+                codeOutput.innerText = svg;
+            } else {
+                codeOutput.innerText = buildCssCode();
+            }
+        }
+
+        function buildCssCode() {
+            const { W, H, bgColor: bg, animOn, animSpd, animDir } = buildSvg(true);
+            let css =
+                `.wave-container {\n  width: ${W}px;\n  height: ${H}px;\n  background: ${bg};\n  overflow: hidden;\n  position: relative;\n}\n.wave-container svg {\n  width: 100%;\n  height: 100%;\n}`;
+            if (animOn) {
+                css +=
+                    `\n\n@keyframes waveMove {\n  from { transform: translateX(0); }\n  to   { transform: translateX(-${W}px); }\n}\n.wave-anim {\n  animation: waveMove ${animSpd}s linear infinite ${animDir};\n}`;
+            }
+            return css;
+        }
+
+        // ── Code tab switch ───────────────────────────────────
+        function switchCodeTab(tab) {
+            codeTab = tab;
+            $('codeTabSvg').classList.toggle('active', tab === 'svg');
+            $('codeTabCss').classList.toggle('active', tab === 'css');
+            updateCode();
+        }
+
+        // ── Animation toggle ──────────────────────────────────
+        $('animToggle').addEventListener('change', function() {
+            animOn = this.checked;
+            $('animControls').style.display = animOn ? '' : 'none';
+            updateAll();
+        });
+        $('animSpeed').addEventListener('input', updateAll);
+        $('animDir').addEventListener('change', updateAll);
+
+        // ── Copy functions ────────────────────────────────────
+        let toastTimer = null;
+
+        function showToast(msg) {
+            toast.innerText = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        async function copyText(text, msg) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast(msg || '✅ 已复制');
+            } catch {
+                showToast('❌ 复制失败，请手动复制');
+            }
+        }
+
+        $('copySvgBtn').addEventListener('click', () => {
+            const { svg } = buildSvg(true);
+            copyText(svg, '✅ SVG 代码已复制');
+        });
+
+        $('copyCssBtn').addEventListener('click', () => {
+            copyText(buildCssCode(), '🎨 CSS 代码已复制');
+        });
+
+        $('downloadSvgBtn').addEventListener('click', () => {
+            const { svg } = buildSvg(true);
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'wave.svg';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('⬇️ SVG 已下载');
+        });
+
+        // ── Reset ─────────────────────────────────────────────
+        $('resetBtn').addEventListener('click', () => {
+            applyPreset('ocean');
+            setGradMode('linear');
+            $('animToggle').checked = false;
+            animOn = false;
+            $('animControls').style.display = 'none';
+            showToast('⟳ 已重置为默认');
+        });
+
+        // ── Random ────────────────────────────────────────────
+        function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+        function randFloat(min, max, step) {
+            const steps = Math.round((max - min) / step);
+            return +(min + randInt(0, steps) * step).toFixed(2);
+        }
+
+        function randomHex() {
+            return '#' + [0, 0, 0].map(() => randInt(0, 255).toString(16).padStart(2, '0')).join('');
+        }
+
+        $('randomBtn').addEventListener('click', () => {
+            const types = ['sine', 'sine', 'layered', 'blob', 'sharp'];
+            const fills = ['fill', 'fill', 'both', 'stroke'];
+            $('amplitude').value = randInt(20, 80);
+            $('frequency').value = randFloat(0.5, 6, 0.5);
+            $('verticalPos').value = randInt(30, 70);
+            $('phase').value = randInt(0, 360);
+            $('strokeWidth').value = randFloat(1, 6, 0.5);
+            $('fillOpacity').value = randFloat(0.5, 1, 0.05);
+            $('canvasH').value = randInt(100, 280);
+            $('waveType').value = types[randInt(0, types.length - 1)];
+            $('fillMode').value = fills[randInt(0, fills.length - 1)];
+            const c1 = randomHex();
+            const c2 = randomHex();
+            $('strokeColor').value = c1;
+            $('fillColor').value = c1;
+            $('gradStop1').value = c1;
+            $('gradStop2').value = c2;
+            $('gradAngle').value = randInt(0, 12) * 30;
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            updateAll();
+            showToast('🎲 随机波形已生成');
+        });
+
+        // ── Event bindings ────────────────────────────────────
+        ['amplitude', 'frequency', 'verticalPos', 'phase', 'strokeColor', 'fillColor',
+            'strokeWidth', 'fillOpacity', 'canvasW', 'canvasH', 'gradStop1', 'gradStop2', 'gradAngle',
+            'waveType', 'fillMode'
+        ].forEach(id => {
+            const el = $(id);
+            if (el) el.addEventListener('input', updateAll);
+            if (el) el.addEventListener('change', updateAll);
+        });
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+        });
+
+        // ── Init ──────────────────────────────────────────────
+        applyPreset('ocean');
+    </script>
+</body>
+</html>

@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>CSS 阴影生成器</title>
+    <style>
+        :root {
+            --bg-primary: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4ecdc4;
+            --danger: #fc5c65;
+            --warning: #f7b731;
+            --border-radius: 20px;
+            --border-radius-sm: 14px;
+            --border-radius-xs: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pageLoad 0.8s ease;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Header ── */
+        header {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 28px 24px 22px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: headerSlide 0.8s ease 0.2s both;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: headerShine 4s ease-in-out infinite;
+        }
+
+        @keyframes headerSlide { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes headerShine { 0% { left: -100%; } 50% { left: 100%; } 100% { left: 100%; } }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow { from { filter: brightness(1); } to { filter: brightness(1.15); } }
+        .subtitle { font-size: 0.92rem; color: var(--text-secondary); font-weight: 500; }
+
+        /* ── Main Layout ── */
+        .main {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: contentSlide 0.8s ease 0.4s both;
+        }
+
+        @keyframes contentSlide { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ── Card ── */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .card-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Settings Tab Card ── */
+        .settings-tab-card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 22px 20px;
+        }
+
+        .settings-tab-nav {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+            padding: 6px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .settings-tab-nav::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+
+        .settings-tab-btn {
+            flex: 1 0 auto;
+            min-width: 64px;
+            padding: 9px 8px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .settings-tab-btn .tab-icon {
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .settings-tab-btn.active {
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .settings-tab-content {
+            display: none;
+            animation: tabFadeIn 0.25s ease;
+        }
+
+        .settings-tab-content.active {
+            display: block;
+        }
+
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Preset ── */
+        .preset-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .preset-btn {
+            padding: 5px 14px;
+            border: none;
+            border-radius: 30px;
+            background: var(--bg-primary);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .preset-btn.active, .preset-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        /* ── Options Grid ── */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .option-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .option-item.full-width { grid-column: 1 / -1; }
+
+        .option-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+        .option-label span { float: right; font-weight: 600; color: var(--text-secondary); }
+
+        /* ── Inputs ── */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        input[type="range"]::-webkit-slider-thumb:active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        }
+        input[type="color"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 38px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: none;
+            cursor: pointer;
+            padding: 2px;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; border-radius: 8px; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
+
+        .color-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .color-preview-bar {
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 4px;
+            transition: background 0.2s;
+        }
+
+        /* ── Content tabs ── */
+        .content-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .content-tab {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 30px;
+            background: var(--bg-primary);
+            box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .content-tab.active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .preview-stage {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-sm);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 220px;
+            position: relative;
+        }
+        .preview-element {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            gap: 4px;
+            position: relative;
+        }
+        .preview-element .preview-icon { font-size: 1.6rem; margin-bottom: 4px; }
+        .preview-element .preview-label { font-size: 0.85rem; font-weight: 600; }
+        .preview-element .preview-sub { font-size: 0.7rem; opacity: 0.7; }
+
+        .code-block {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 14px;
+            font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+
+        .export-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+        .export-btn {
+            padding: 9px 6px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        .export-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            color: var(--accent-primary);
+        }
+
+        .action-bar { display: flex; gap: 12px; }
+        .action-btn {
+            flex: 1;
+            padding: 11px 8px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        .action-btn:active {
+            transform: scale(0.97);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .badge-new {
+            display: inline-block;
+            padding: 1px 6px;
+            background: var(--accent-gradient);
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: white;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .instr-list { display: flex; flex-direction: column; gap: 8px; }
+        .instr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+        }
+        .instr-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .instr-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+        .instr-text strong { color: var(--text-primary); }
+
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--text-primary);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ── Shadow Layers ── */
+        .layers-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+        .layer-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xs);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            padding: 12px 14px;
+        }
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .layer-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .layer-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            flex-shrink: 0;
+        }
+        .layer-actions { display: flex; gap: 6px; }
+        .layer-btn {
+            padding: 3px 10px;
+            border: none;
+            border-radius: 20px;
+            background: var(--bg-primary);
+            box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .layer-btn:active, .layer-btn.active { box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); color: var(--accent-primary); }
+        .layer-btn.danger:active { color: var(--danger); }
+        .layer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .layer-field { display: flex; flex-direction: column; gap: 5px; }
+        .layer-field-label { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); }
+        .layer-field-label span { float: right; font-weight: 600; color: var(--text-secondary); }
+        .add-layer-btn {
+            padding: 10px;
+            border: none;
+            border-radius: var(--border-radius-xs);
+            background: var(--bg-primary);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            text-align: center;
+        }
+        .add-layer-btn:active { box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); }
+
+        .direction-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 90px; }
+        .dir-btn {
+            width: 26px; height: 26px;
+            border: none;
+            border-radius: 6px;
+            background: var(--bg-primary);
+            box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dir-btn.active { box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); color: var(--accent-primary); }
+        .dir-btn.center { background: var(--accent-gradient); color: white; }
+        .dir-color-row { display: flex; gap: 16px; align-items: flex-start; }
+        .dir-color-row .layer-field { flex: 1; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>CSS 阴影生成器</h1>
+        <p class="subtitle">多层叠加 · 实时预览 · 一键导出 CSS</p>
+    </header>
+
+    <div class="main">
+
+        <!-- ①②③ 三合一 Tab 导航卡片 -->
+        <div class="settings-tab-card">
+            <div class="settings-tab-nav">
+                <button class="settings-tab-btn active" id="stab-preset" onclick="switchSettingsTab('preset')">
+                    <span class="tab-icon">🎨</span>快速预设
+                </button>
+                <button class="settings-tab-btn" id="stab-color" onclick="switchSettingsTab('color')">
+                    <span class="tab-icon">🖌️</span>元素颜色
+                </button>
+                <button class="settings-tab-btn" id="stab-layers" onclick="switchSettingsTab('layers')">
+                    <span class="tab-icon">🌑</span>阴影图层
+                </button>
+            </div>
+
+            <!-- Tab 内容：快速预设 -->
+            <div class="settings-tab-content active" id="stab-content-preset">
+                <div class="preset-row">
+                    <button class="preset-btn active" data-preset="classic">经典投影</button>
+                    <button class="preset-btn" data-preset="soft">柔和漫射</button>
+                    <button class="preset-btn" data-preset="sharp">硬边锐利</button>
+                    <button class="preset-btn" data-preset="glow">彩色发光</button>
+                    <button class="preset-btn" data-preset="inset">内嵌凹陷</button>
+                    <button class="preset-btn" data-preset="layered">多层叠加</button>
+                </div>
+            </div>
+
+            <!-- Tab 内容：元素颜色 -->
+            <div class="settings-tab-content" id="stab-content-color">
+                <div class="color-row">
+                    <div class="option-item">
+                        <div class="option-label">元素背景色</div>
+                        <input type="color" id="bgColor" value="#e0e5ec">
+                        <div class="color-preview-bar" id="bgBar" style="background:#e0e5ec"></div>
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">文字颜色</div>
+                        <input type="color" id="textColor" value="#2c3e50">
+                        <div class="color-preview-bar" id="textBar" style="background:#2c3e50"></div>
+                    </div>
+                </div>
+                <div class="options-grid">
+                    <div class="option-item">
+                        <div class="option-label">圆角大小 <span id="radiusVal">12px</span></div>
+                        <input type="range" id="radius" min="0" max="80" step="1" value="12">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">元素宽度 <span id="widthVal">200px</span></div>
+                        <input type="range" id="elemWidth" min="60" max="320" step="5" value="200">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">元素高度 <span id="heightVal">120px</span></div>
+                        <input type="range" id="elemHeight" min="40" max="320" step="5" value="120">
+                    </div>
+                    <div class="option-item">
+                        <div class="option-label">背景色<span id="stageBgLabel"></span></div>
+                        <input type="color" id="stageBgColor" value="#d6dce8">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 内容：阴影图层 -->
+            <div class="settings-tab-content" id="stab-content-layers">
+                <div class="layers-list" id="layersList"></div>
+                <button class="add-layer-btn" id="addLayerBtn">＋ 添加阴影图层</button>
+            </div>
+        </div>
+
+        <!-- ④ 实时预览 -->
+        <div class="card">
+            <div class="card-label">👁️ 实时预览</div>
+            <div class="content-tabs">
+                <button class="content-tab active" onclick="setContent('card')">卡片</button>
+                <button class="content-tab" onclick="setContent('button')">按钮</button>
+                <button class="content-tab" onclick="setContent('text')">文字</button>
+                <button class="content-tab" onclick="setContent('icon')">图标</button>
+                <button class="content-tab" onclick="setContent('circle')">圆形</button>
+            </div>
+            <div class="preview-stage" id="previewStage">
+                <div id="previewBox" class="preview-element">
+                    <span class="preview-icon">✨</span>
+                    <span class="preview-label">CSS Shadow</span>
+                    <span class="preview-sub">Box Shadow</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ⑤ CSS 代码 -->
+        <div class="card">
+            <div class="card-label">📋 CSS 代码</div>
+            <div class="code-block" id="cssCode"></div>
+            <div class="export-grid">
+                <button class="export-btn" id="copyBtn">📋 复制 CSS</button>
+                <button class="export-btn" id="copyInlineBtn">⚡ 内联样式<span class="badge-new">新</span></button>
+                <button class="export-btn" id="copyVarBtn">🔧 CSS 变量<span class="badge-new">新</span></button>
+            </div>
+            <div class="action-bar">
+                <button class="action-btn" id="resetBtn">⟳ 重置默认</button>
+                <button class="action-btn" id="randomBtn">🎲 随机配色</button>
+            </div>
+        </div>
+
+        <!-- ⑥ 使用说明 -->
+        <div class="card">
+            <div class="card-label">📖 使用说明</div>
+            <div class="instr-list">
+                <div class="instr-item"><span class="instr-icon">🎨</span><div class="instr-text"><strong>快速预设</strong>：一键切换经典投影、柔和漫射、发光等常用阴影风格，快速上手</div></div>
+                <div class="instr-item"><span class="instr-icon">🌑</span><div class="instr-text"><strong>多图层叠加</strong>：可添加多个阴影图层，每层独立配置颜色、偏移、模糊、扩散，打造细腻层次感</div></div>
+                <div class="instr-item"><span class="instr-icon">🔘</span><div class="instr-text"><strong>内外阴影</strong>：外阴影产生浮起效果，内阴影（inset）产生凹陷按压质感</div></div>
+                <div class="instr-item"><span class="instr-icon">⚡</span><div class="instr-text"><strong>偏移/模糊/扩散</strong>：X/Y 偏移控制投影方向，模糊控制柔化程度，扩散控制阴影尺寸</div></div>
+                <div class="instr-item"><span class="instr-icon">🎯</span><div class="instr-text"><strong>方向快选</strong>：方向九宫格一键设置常用光源方向，快速定位阴影位置</div></div>
+                <div class="instr-item"><span class="instr-icon">📋</span><div class="instr-text"><strong>多格式导出</strong>：支持复制标准 CSS、内联样式（style=""）和 CSS 变量三种格式</div></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="toast" id="toast">✅ 已复制到剪贴板</div>
+
+    <script>
+        // ── State ─────────────────────────────────────────────
+        let layers = [];
+        let layerIdCounter = 0;
+        let contentType = 'card';
+
+        const DEFAULT_LAYER = () => ({
+            id: ++layerIdCounter,
+            color: '#2c3e50',
+            opacity: 0.3,
+            x: 4,
+            y: 8,
+            blur: 16,
+            spread: 0,
+            inset: false,
+            enabled: true,
+        });
+
+        // ── DOM Refs ──────────────────────────────────────────
+        const bgColor      = document.getElementById('bgColor');
+        const textColor    = document.getElementById('textColor');
+        const radius       = document.getElementById('radius');
+        const radiusVal    = document.getElementById('radiusVal');
+        const elemWidth    = document.getElementById('elemWidth');
+        const widthVal     = document.getElementById('widthVal');
+        const elemHeight   = document.getElementById('elemHeight');
+        const heightVal    = document.getElementById('heightVal');
+        const stageBgColor = document.getElementById('stageBgColor');
+        const layersList   = document.getElementById('layersList');
+        const cssCode      = document.getElementById('cssCode');
+        const toast        = document.getElementById('toast');
+        const previewBox   = document.getElementById('previewBox');
+        const previewStage = document.getElementById('previewStage');
+
+        // ── Helpers ───────────────────────────────────────────
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1,3),16);
+            const g = parseInt(hex.slice(3,5),16);
+            const b = parseInt(hex.slice(5,7),16);
+            return `rgba(${r},${g},${b},${alpha})`;
+        }
+
+        function randomHex() {
+            const hue = Math.floor(Math.random() * 360);
+            const sat = 40 + Math.floor(Math.random() * 40);
+            const lig = 25 + Math.floor(Math.random() * 25);
+            return hslToHex(hue, sat, lig);
+        }
+
+        function hslToHex(h, s, l) {
+            s /= 100; l /= 100;
+            const a = s * Math.min(l, 1 - l);
+            const f = n => { const k = (n + h/30)%12; const c = l-a*Math.max(Math.min(k-3,9-k,1),-1); return Math.round(255*c).toString(16).padStart(2,'0'); };
+            return `#${f(0)}${f(8)}${f(4)}`;
+        }
+
+        // ── Build shadow string ───────────────────────────────
+        function buildShadowValue(pretty = false) {
+            const parts = layers
+                .filter(l => l.enabled)
+                .map(l => {
+                    const color = hexToRgba(l.color, parseFloat(l.opacity));
+                    const inset = l.inset ? 'inset ' : '';
+                    const sp = l.spread !== 0 ? ` ${l.spread}px` : '';
+                    return `${inset}${l.x}px ${l.y}px ${l.blur}px${sp} ${color}`;
+                });
+            if (!parts.length) return 'none';
+            return pretty ? parts.join(',\n         ') : parts.join(', ');
+        }
+
+        // ── Update preview & code ─────────────────────────────
+        function updateAll() {
+            const bg   = bgColor.value;
+            const text = textColor.value;
+            const rad  = parseInt(radius.value);
+            const w    = parseInt(elemWidth.value);
+            const h    = parseInt(elemHeight.value);
+            const stBg = stageBgColor.value;
+
+            radiusVal.innerText = rad + 'px';
+            widthVal.innerText  = w + 'px';
+            heightVal.innerText = h + 'px';
+
+            document.getElementById('bgBar').style.background = bg;
+            document.getElementById('textBar').style.background = text;
+
+            const shadowVal = buildShadowValue(false);
+
+            previewStage.style.background = stBg;
+            previewBox.style.background   = bg;
+            previewBox.style.color        = text;
+            previewBox.style.borderRadius = contentType === 'circle' ? '50%' : rad + 'px';
+            previewBox.style.width        = w + 'px';
+            previewBox.style.height       = h + 'px';
+            previewBox.style.boxShadow    = shadowVal;
+
+            const prettyVal = buildShadowValue(true);
+            let css = `.element {\n`;
+            css += `  background: ${bg};\n`;
+            css += `  color: ${text};\n`;
+            css += `  border-radius: ${contentType === 'circle' ? '50%' : rad + 'px'};\n`;
+            css += `  width: ${w}px;\n`;
+            css += `  height: ${h}px;\n`;
+            css += `  box-shadow: ${prettyVal};\n`;
+            css += `}`;
+            cssCode.innerText = css;
+        }
+
+        // ── Render layers UI ──────────────────────────────────
+        const DIRECTIONS = [
+            { label: '↖', x: -1, y: -1 }, { label: '↑', x: 0, y: -1 }, { label: '↗', x: 1, y: -1 },
+            { label: '←', x: -1, y: 0  }, { label: '·', x: 0, y: 0  }, { label: '→', x: 1, y: 0  },
+            { label: '↙', x: -1, y: 1  }, { label: '↓', x: 0, y: 1  }, { label: '↘', x: 1, y: 1  },
+        ];
+
+        function renderLayers() {
+            layersList.innerHTML = '';
+            layers.forEach((layer, index) => {
+                const item = document.createElement('div');
+                item.className = 'layer-item';
+                item.dataset.id = layer.id;
+
+                const dirBtns = DIRECTIONS.map((d, di) => {
+                    const isCenter = d.x === 0 && d.y === 0;
+                    return `<button class="dir-btn${isCenter ? ' center' : ''}" data-di="${di}" title="${d.label}" onclick="applyDirection(${layer.id},${di})">${d.label}</button>`;
+                }).join('');
+
+                item.innerHTML = `
+                    <div class="layer-header">
+                        <div class="layer-title">
+                            <span class="layer-dot"></span>
+                            图层 ${index + 1}
+                        </div>
+                        <div class="layer-actions">
+                            <button class="layer-btn${layer.enabled ? ' active' : ''}" onclick="toggleLayer(${layer.id})">${layer.enabled ? '✓ 启用' : '○ 禁用'}</button>
+                            <button class="layer-btn${layer.inset ? ' active' : ''}" onclick="toggleInset(${layer.id})">${layer.inset ? '内阴影' : '外阴影'}</button>
+                            ${layers.length > 1 ? `<button class="layer-btn danger" onclick="removeLayer(${layer.id})">✕</button>` : ''}
+                        </div>
+                    </div>
+                    <div class="dir-color-row" style="margin-bottom:10px;">
+                        <div class="layer-field">
+                            <div class="layer-field-label">快速方向</div>
+                            <div class="direction-picker">${dirBtns}</div>
+                        </div>
+                        <div class="layer-field">
+                            <div class="layer-field-label">阴影颜色</div>
+                            <input type="color" value="${layer.color}" onchange="updateLayerProp(${layer.id},'color',this.value)" oninput="updateLayerProp(${layer.id},'color',this.value)">
+                        </div>
+                        <div class="layer-field">
+                            <div class="layer-field-label">不透明度 <span id="opacityVal_${layer.id}">${parseFloat(layer.opacity).toFixed(2)}</span></div>
+                            <input type="range" min="0" max="1" step="0.01" value="${layer.opacity}"
+                                oninput="updateLayerProp(${layer.id},'opacity',this.value);document.getElementById('opacityVal_${layer.id}').innerText=parseFloat(this.value).toFixed(2)">
+                        </div>
+                    </div>
+                    <div class="layer-grid">
+                        <div class="layer-field">
+                            <div class="layer-field-label">X 偏移 <span id="xVal_${layer.id}">${layer.x}px</span></div>
+                            <input type="range" min="-60" max="60" step="1" value="${layer.x}"
+                                oninput="updateLayerProp(${layer.id},'x',parseInt(this.value));document.getElementById('xVal_${layer.id}').innerText=this.value+'px'">
+                        </div>
+                        <div class="layer-field">
+                            <div class="layer-field-label">Y 偏移 <span id="yVal_${layer.id}">${layer.y}px</span></div>
+                            <input type="range" min="-60" max="60" step="1" value="${layer.y}"
+                                oninput="updateLayerProp(${layer.id},'y',parseInt(this.value));document.getElementById('yVal_${layer.id}').innerText=this.value+'px'">
+                        </div>
+                        <div class="layer-field">
+                            <div class="layer-field-label">模糊半径 <span id="blurVal_${layer.id}">${layer.blur}px</span></div>
+                            <input type="range" min="0" max="80" step="1" value="${layer.blur}"
+                                oninput="updateLayerProp(${layer.id},'blur',parseInt(this.value));document.getElementById('blurVal_${layer.id}').innerText=this.value+'px'">
+                        </div>
+                        <div class="layer-field">
+                            <div class="layer-field-label">扩散范围 <span id="spreadVal_${layer.id}">${layer.spread}px</span></div>
+                            <input type="range" min="-20" max="30" step="1" value="${layer.spread}"
+                                oninput="updateLayerProp(${layer.id},'spread',parseInt(this.value));document.getElementById('spreadVal_${layer.id}').innerText=this.value+'px'">
+                        </div>
+                    </div>
+                `;
+                layersList.appendChild(item);
+            });
+            updateAll();
+        }
+
+        // ── Layer operations ──────────────────────────────────
+        function updateLayerProp(id, prop, val) {
+            const l = layers.find(l => l.id === id);
+            if (l) { l[prop] = val; updateAll(); }
+        }
+        function toggleLayer(id) {
+            const l = layers.find(l => l.id === id);
+            if (l) { l.enabled = !l.enabled; renderLayers(); }
+        }
+        function toggleInset(id) {
+            const l = layers.find(l => l.id === id);
+            if (l) { l.inset = !l.inset; renderLayers(); }
+        }
+        function removeLayer(id) {
+            layers = layers.filter(l => l.id !== id);
+            renderLayers();
+        }
+        function applyDirection(id, di) {
+            const d = DIRECTIONS[di];
+            const l = layers.find(l => l.id === id);
+            if (!l) return;
+            const dist = Math.max(Math.abs(l.x), Math.abs(l.y), 6);
+            l.x = d.x * dist;
+            l.y = d.y * dist;
+            renderLayers();
+        }
+
+        document.getElementById('addLayerBtn').addEventListener('click', () => {
+            layers.push(DEFAULT_LAYER());
+            renderLayers();
+        });
+
+        // ── Content Type ──────────────────────────────────────
+        const contentMap = {
+            card:   `<span class="preview-icon">✨</span><span class="preview-label">CSS Shadow</span><span class="preview-sub">Box Shadow</span>`,
+            button: `<span class="preview-label" style="font-size:0.95rem;letter-spacing:0.5px">点击确认</span>`,
+            text:   `<span class="preview-label" style="font-size:0.85rem;font-weight:700;letter-spacing:1px">Aa 文字阴影</span><span class="preview-sub">Text Content</span>`,
+            icon:   `<span class="preview-icon" style="font-size:2.4rem;">🏔️</span>`,
+            circle: `<span class="preview-icon">⚡</span>`,
+        };
+
+        function setContent(type) {
+            contentType = type;
+            document.querySelectorAll('.content-tab').forEach(t => {
+                t.classList.toggle('active', t.getAttribute('onclick').includes(type));
+            });
+            previewBox.innerHTML = contentMap[type];
+            if (type === 'circle') {
+                previewBox.style.borderRadius = '50%';
+                radius.value = 999;
+                radiusVal.innerText = '50%';
+            }
+            updateAll();
+        }
+
+        // ── Settings Tab Switch ───────────────────────────────
+        function switchSettingsTab(name) {
+            ['preset', 'color', 'layers'].forEach(t => {
+                document.getElementById('stab-' + t).classList.toggle('active', t === name);
+                document.getElementById('stab-content-' + t).classList.toggle('active', t === name);
+            });
+            // 自动滚动到当前激活的tab按钮
+            const activeBtn = document.getElementById('stab-' + name);
+            if (activeBtn) {
+                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // ── Presets ───────────────────────────────────────────
+        const presets = {
+            classic: {
+                bg: '#ffffff', text: '#2c3e50', rad: 12, w: 200, h: 120, stBg: '#f0f2f5',
+                layers: [
+                    { color: '#000000', opacity: 0.15, x: 0, y: 4, blur: 6, spread: 0, inset: false },
+                    { color: '#000000', opacity: 0.08, x: 0, y: 12, blur: 20, spread: -2, inset: false },
+                ]
+            },
+            soft: {
+                bg: '#f8f9ff', text: '#3a3d5c', rad: 20, w: 200, h: 120, stBg: '#eef0f8',
+                layers: [
+                    { color: '#667eea', opacity: 0.12, x: 0, y: 8, blur: 30, spread: 0, inset: false },
+                    { color: '#ffffff', opacity: 0.9,  x: 0, y: -4, blur: 10, spread: 0, inset: false },
+                ]
+            },
+            sharp: {
+                bg: '#ffffff', text: '#111111', rad: 4, w: 200, h: 120, stBg: '#f5f5f5',
+                layers: [
+                    { color: '#000000', opacity: 1, x: 4, y: 4, blur: 0, spread: 0, inset: false },
+                ]
+            },
+            glow: {
+                bg: '#1a1a2e', text: '#e8b4f8', rad: 16, w: 200, h: 120, stBg: '#111122',
+                layers: [
+                    { color: '#667eea', opacity: 0.7, x: 0, y: 0, blur: 20, spread: 2, inset: false },
+                    { color: '#764ba2', opacity: 0.4, x: 0, y: 0, blur: 40, spread: 8, inset: false },
+                    { color: '#000000', opacity: 0.5, x: 0, y: 10, blur: 30, spread: -5, inset: false },
+                ]
+            },
+            inset: {
+                bg: '#e0e5ec', text: '#5a6c7d', rad: 14, w: 200, h: 120, stBg: '#d0d6e4',
+                layers: [
+                    { color: '#a3b1c6', opacity: 1, x: 6, y: 6, blur: 12, spread: 0, inset: true },
+                    { color: '#ffffff', opacity: 0.8, x: -6, y: -6, blur: 12, spread: 0, inset: true },
+                ]
+            },
+            layered: {
+                bg: '#ffffff', text: '#2c3e50', rad: 24, w: 200, h: 120, stBg: '#f0f2f5',
+                layers: [
+                    { color: '#000000', opacity: 0.04, x: 0, y: 2,  blur: 4,  spread: 0, inset: false },
+                    { color: '#000000', opacity: 0.08, x: 0, y: 8,  blur: 16, spread: -2, inset: false },
+                    { color: '#000000', opacity: 0.06, x: 0, y: 20, blur: 40, spread: -4, inset: false },
+                    { color: '#667eea', opacity: 0.05, x: 0, y: 30, blur: 60, spread: -8, inset: false },
+                ]
+            },
+        };
+
+        function applyPreset(name) {
+            const p = presets[name];
+            if (!p) return;
+            bgColor.value      = p.bg;
+            textColor.value    = p.text;
+            radius.value       = p.rad;
+            elemWidth.value    = p.w;
+            elemHeight.value   = p.h;
+            stageBgColor.value = p.stBg;
+            layerIdCounter = 0;
+            layers = p.layers.map(l => ({ ...l, id: ++layerIdCounter, enabled: true }));
+            document.querySelectorAll('.preset-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.preset === name);
+            });
+            renderLayers();
+        }
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+        });
+
+        // ── Reset ─────────────────────────────────────────────
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            setContent('card');
+            applyPreset('classic');
+        });
+
+        // ── Random ────────────────────────────────────────────
+        document.getElementById('randomBtn').addEventListener('click', () => {
+            const c1 = randomHex();
+            const c2 = randomHex();
+            layers.forEach(l => {
+                l.color = Math.random() > 0.5 ? c1 : c2;
+                l.opacity = (0.1 + Math.random() * 0.3).toFixed(2);
+            });
+            renderLayers();
+            showToast('🎲 随机配色已生成');
+        });
+
+        // ── Copy ──────────────────────────────────────────────
+        async function copyText(text, msg) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast(msg || '✅ 已复制');
+            } catch {
+                showToast('❌ 复制失败，请手动复制');
+            }
+        }
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            copyText(cssCode.innerText, '✅ CSS 已复制到剪贴板');
+        });
+
+        document.getElementById('copyInlineBtn').addEventListener('click', () => {
+            const bg  = bgColor.value;
+            const rad = parseInt(radius.value);
+            const w   = parseInt(elemWidth.value);
+            const h   = parseInt(elemHeight.value);
+            const sv  = buildShadowValue(false);
+            const inline = `style="background:${bg};border-radius:${rad}px;width:${w}px;height:${h}px;box-shadow:${sv}"`;
+            copyText(inline, '⚡ 内联样式已复制');
+        });
+
+        document.getElementById('copyVarBtn').addEventListener('click', () => {
+            const sv = buildShadowValue(false);
+            const vars = `:root {\n  --shadow: ${sv};\n}\n\n.element {\n  box-shadow: var(--shadow);\n}`;
+            copyText(vars, '🔧 CSS 变量已复制');
+        });
+
+        // ── Toast ─────────────────────────────────────────────
+        let toastTimer = null;
+        function showToast(msg) {
+            toast.innerText = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // ── Event Bindings ────────────────────────────────────
+        [bgColor, textColor, radius, elemWidth, elemHeight, stageBgColor]
+            .forEach(el => el.addEventListener('input', updateAll));
+
+        // ── Init ──────────────────────────────────────────────
+        applyPreset('classic');
+    </script>
+</body>
+</html>
