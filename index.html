@@ -1334,7 +1334,7 @@
             if (window.settingsOpen) { closeSettings(true); return; }
             // 侧栏次优先
             if (window.sidebarOpen) { closeSidebar(true); return; }
-            // 时间线弹窗：强制只能点按钮关闭，返回键无效
+            // 拾光足迹弹窗：强制只能点按钮关闭，返回键无效
             if (window.timelineOpen) {
                 window.history.pushState({ state: 'timeline' }, '');
                 return;
@@ -2079,12 +2079,17 @@
                     <div class="sidebar-stat-num" id="stat-posts">—</div>
                     <div class="sidebar-stat-label">文档</div>
                 </div>
+                <div class="sidebar-stat-item">
+                    <div class="sidebar-stat-num" id="stat-online-tools">—</div>
+                    <div class="sidebar-stat-label">工具</div>
+                </div>
             </div>
 
             <!-- Tab 切换栏（在 header 内，固定不滚动） -->
             <div class="sidebar-tab-bar" id="sidebar-tab-bar">
                 <button class="sidebar-tab active" id="tab-tools" onclick="switchSidebarTab('tools')">网站导航</button>
                 <button class="sidebar-tab" id="tab-posts" onclick="switchSidebarTab('posts')">知识文档</button>
+                <button class="sidebar-tab" id="tab-online-tools" onclick="switchSidebarTab('online-tools')">在线工具</button>
             </div>
         </div>
 
@@ -2097,6 +2102,10 @@
             <!-- 知识文档：分类手风琴 -->
             <div class="sidebar-panel" id="panel-posts" style="display:none">
                 <div class="sidebar-cat-nav" id="sidebar-posts-nav"></div>
+            </div>
+            <!-- 在线工具：分类手风琴 -->
+            <div class="sidebar-panel" id="panel-online-tools" style="display:none">
+                <div class="sidebar-cat-nav" id="sidebar-online-tools-nav"></div>
             </div>
         </div>
     </div>
