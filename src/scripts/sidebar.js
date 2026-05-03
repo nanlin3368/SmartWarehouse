@@ -123,10 +123,14 @@ const TOOLS_BASE_URL = 'sites/sites_';
 // docs 路径：docs_N.json 对应 POST_CAT_LABELS[N-1]，与分类名无关
 const POSTS_BASE_URL = './docs/docs_';   // + fileNum + '.json'
 const POSTS_BASE_PATH = './docs/docs/';
+// 在线工具路径：tools/tools_N.json 对应 ONLINE_TOOLS_CAT_LABELS[N-1]
+const ONLINE_TOOLS_BASE_URL = './tools/tools_';  // + fileNum + '.json'
+const ONLINE_TOOLS_BASE_PATH = './tools/tools/';
 
 // ── 分类数据由 src/scripts/category.js 提供，此处直接读取 ──
 const POST_CAT_LABELS = window.POST_CAT_LABELS || [];
 const CAT_LABELS      = window.CAT_LABELS      || [];
+const ONLINE_TOOLS_CAT_LABELS = window.ONLINE_TOOLS_CAT_LABELS || [];
 const CAT_MAP = {};
 CAT_LABELS.forEach(c => { CAT_MAP[c] = c; });
 
@@ -135,6 +139,9 @@ function getIconForPostCat(name) {
 }
 function getIconForCat(name) {
     return (window.CAT_ICONS && window.CAT_ICONS[name]) || '🔧';
+}
+function getIconForOnlineToolsCat(name) {
+    return (window.ONLINE_TOOLS_CAT_ICONS && window.ONLINE_TOOLS_CAT_ICONS[name]) || '🛠️';
 }
 
 // ── 自动生成手风琴 DOM，CAT_LABELS 改了这里自动跟着变 ──
@@ -172,17 +179,29 @@ let sbTouchStartX = 0, sbTouchStartY = 0;
 // 每个分类对应独立缓存：postsCache[catIndex] = { status: 'ok'|'loading'|'error', posts: [] }
 const postsCache = {};
 let postsTotalCount = 0;
-let currentSidebarTab = 'tools'; // 'tools' | 'posts'
+let currentSidebarTab = 'tools'; // 'tools' | 'posts' | 'online-tools'
 let openPostCatRow = null;
+
+// ── 在线工具状态 ──
+// 每个分类对应独立缓存：onlineToolsCache[catIndex] = { status: 'ok'|'loading'|'error', items: [] }
+const onlineToolsCache = {};
+let onlineToolsTotalCount = 0;
+let openOnlineToolsCatRow = null;
 
 function switchSidebarTab(tab) {
     currentSidebarTab = tab;
     document.getElementById('tab-tools').classList.toggle('active', tab === 'tools');
     document.getElementById('tab-posts').classList.toggle('active', tab === 'posts');
+    document.getElementById('tab-online-tools').classList.toggle('active', tab === 'online-tools');
     document.getElementById('panel-tools').style.display = tab === 'tools' ? '' : 'none';
     document.getElementById('panel-posts').style.display = tab === 'posts' ? '' : 'none';
+    document.getElementById('panel-online-tools').style.display = tab === 'online-tools' ? '' : 'none';
     if (tab === 'posts') {
         if (!document.getElementById('post-cat-row-0')) buildPostCatNav();
+        // 已在 openSidebar 里并行预加载，此处无需重复触发
+    }
+    if (tab === 'online-tools') {
+        if (!document.getElementById('online-tool-cat-row-0')) buildOnlineToolsCatNav();
         // 已在 openSidebar 里并行预加载，此处无需重复触发
     }
 }
@@ -221,9 +240,10 @@ function openSidebar() {
     document.body.style.top = '-' + _scrollY + 'px';
     document.body.style.left = '0';
     document.body.style.right = '0';
-    // 后台并行预加载所有分类（tools + posts），不阻塞 UI，加载完后刷新统计
+    // 后台并行预加载所有分类（tools + posts + online-tools），不阻塞 UI，加载完后刷新统计
     preloadAllTools();
     preloadAllPosts();
+    preloadAllOnlineTools();
     // 首次打开时动态生成分类行（之后直接复用）
     if (!document.getElementById('cat-row-0')) buildCatNav();
     // 更新应用总数：等待所有页面都加载完毕后再统计，避免后台页未加载完导致数字偏少
@@ -669,5 +689,152 @@ async function preloadAllPosts() {
     // 全部加载完毕，刷新精确总数
     const total = Object.values(postsCache).reduce((sum, c) => sum + (c.status === 'ok' ? c.posts.length : 0), 0);
     const statEl = document.getElementById('stat-posts');
+    if (statEl && total > 0) statEl.textContent = total;
+}
+
+
+// ════ 在线工具 tools/tools_N.json 逻辑 ════
+
+function buildOnlineToolsCatNav() {
+    const nav = document.getElementById('sidebar-online-tools-nav');
+    if (!nav) return;
+    const arrowSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>`;
+    nav.innerHTML = ONLINE_TOOLS_CAT_LABELS.map((label, idx) => `
+        <div class="sidebar-cat-row" id="online-tool-cat-row-${idx}" data-cat="${label}">
+            <button class="sidebar-cat-head" onclick="toggleOnlineToolsCatRow(${idx})">
+                <span class="sidebar-cat-head-icon">${getIconForOnlineToolsCat(label)}</span>
+                <span class="sidebar-cat-head-label">${label}</span>
+                <span class="sidebar-cat-count" id="online-tool-cat-count-${idx}"></span>
+                <span class="sidebar-cat-head-arrow">${arrowSVG}</span>
+            </button>
+            <div class="sidebar-cat-content">
+                <div class="sidebar-cat-content-inner" id="online-tool-cat-content-${idx}"></div>
+            </div>
+        </div>`
+    ).join('');
+    // DOM 刚建好，把已缓存的数量立即回填
+    ONLINE_TOOLS_CAT_LABELS.forEach((_, idx) => {
+        const cached = onlineToolsCache[idx];
+        if (cached && cached.status === 'ok') {
+            const el = document.getElementById('online-tool-cat-count-' + idx);
+            if (el) el.textContent = cached.items.length;
+        }
+    });
+}
+
+function toggleOnlineToolsCatRow(idx) {
+    const row = document.getElementById('online-tool-cat-row-' + idx);
+    if (!row) return;
+    const isOpen = row.classList.contains('open');
+
+    // 收起所有已展开的行
+    document.querySelectorAll('#sidebar-online-tools-nav .sidebar-cat-row.open').forEach(r => {
+        if (r !== row) collapseRow(r);
+    });
+
+    if (!isOpen) {
+        openOnlineToolsCatRow = idx;
+        const cached = onlineToolsCache[idx];
+        if (cached && cached.status === 'ok') {
+            renderOnlineToolsCatContent(idx);
+            expandRow(row, idx);
+        } else {
+            expandRow(row, idx);
+            loadOnlineToolsForCat(idx).then(() => {
+                renderOnlineToolsCatContent(idx);
+                const content = row.querySelector('.sidebar-cat-content');
+                if (content && row.classList.contains('open')) {
+                    content.style.height = content.scrollHeight + 'px';
+                    content.addEventListener('transitionend', function onEnd2(e) {
+                        if (e.propertyName !== 'height') return;
+                        content.removeEventListener('transitionend', onEnd2);
+                        if (row.classList.contains('open')) content.style.height = 'auto';
+                    });
+                }
+            });
+        }
+    } else {
+        openOnlineToolsCatRow = null;
+        collapseRow(row);
+    }
+}
+
+function renderOnlineToolsCatContent(idx) {
+    const contentEl = document.getElementById('online-tool-cat-content-' + idx);
+    if (!contentEl) return;
+
+    const cached = onlineToolsCache[idx];
+    if (!cached || cached.status === 'loading') {
+        contentEl.innerHTML = '<div class="sidebar-empty"><div class="sidebar-empty-icon">⏳</div>加载中…</div>';
+        return;
+    }
+    if (cached.status === 'error') {
+        contentEl.innerHTML = '<div class="sidebar-empty"><div class="sidebar-empty-icon">🛠️</div>读取失败，请检查 tools_' + (idx + 1) + '.json</div>';
+        return;
+    }
+
+    const items = cached.items;
+    if (!items || !items.length) {
+        contentEl.innerHTML = '<div class="sidebar-empty"><div class="sidebar-empty-icon">📭</div>暂无工具</div>';
+        return;
+    }
+    contentEl.innerHTML = '<div class="tool-list-inner">' + items.map(p => {
+        const href = ONLINE_TOOLS_BASE_PATH + p.path;
+        return `
+        <a class="post-item" href="${href}" target="_blank" rel="noopener">
+            <div class="post-item-bar"></div>
+            <span class="post-item-title">${p.title || '未命名工具'}</span>
+            <span class="post-item-arrow">›</span>
+        </a>`;
+    }).join('') + '</div>';
+}
+
+// ── 按分类索引懒加载对应 tools/tools_N.json ──
+// catIndex 从 0 开始，对应文件 tools_1.json（索引+1）
+async function loadOnlineToolsForCat(catIndex) {
+    const cached = onlineToolsCache[catIndex];
+    if (cached && cached.status === 'ok') return;
+    if (cached && cached.status === 'loading') {
+        await new Promise(resolve => {
+            let t = 0;
+            const check = setInterval(() => {
+                t += 100;
+                if (!onlineToolsCache[catIndex] || onlineToolsCache[catIndex].status !== 'loading' || t > 5000) {
+                    clearInterval(check);
+                    resolve();
+                }
+            }, 100);
+        });
+        return;
+    }
+    onlineToolsCache[catIndex] = { status: 'loading', items: [] };
+    const fileNum = catIndex + 1; // tools_1.json = 第0个分类
+    try {
+        const res = await fetch(ONLINE_TOOLS_BASE_URL + fileNum + '.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const items = await res.json();
+        onlineToolsCache[catIndex] = { status: 'ok', items };
+        // 更新分类行数量 badge
+        const countEl = document.getElementById('online-tool-cat-count-' + catIndex);
+        if (countEl) countEl.textContent = items.length;
+        // 更新总计数
+        onlineToolsTotalCount = Object.values(onlineToolsCache).reduce((sum, c) => sum + (c.status === 'ok' ? c.items.length : 0), 0);
+        const statEl = document.getElementById('stat-online-tools');
+        if (statEl) statEl.textContent = onlineToolsTotalCount;
+        // 如果当前展开行就是这个分类，立即渲染
+        if (openOnlineToolsCatRow === catIndex) renderOnlineToolsCatContent(catIndex);
+    } catch (e) {
+        onlineToolsCache[catIndex] = { status: 'error', items: [] };
+        const statFail = document.getElementById('stat-online-tools');
+        if (statFail && statFail.textContent === '—') statFail.textContent = '0';
+    }
+}
+
+async function preloadAllOnlineTools() {
+    const fetches = ONLINE_TOOLS_CAT_LABELS.map((_, idx) => loadOnlineToolsForCat(idx));
+    await Promise.allSettled(fetches);
+    // 全部加载完毕，刷新精确总数
+    const total = Object.values(onlineToolsCache).reduce((sum, c) => sum + (c.status === 'ok' ? c.items.length : 0), 0);
+    const statEl = document.getElementById('stat-online-tools');
     if (statEl && total > 0) statEl.textContent = total;
 }
